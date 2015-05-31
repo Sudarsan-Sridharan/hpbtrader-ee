@@ -5,6 +5,14 @@
     <groupId>com.highpowerbear</groupId>
     <artifactId>hpbtrader</artifactId>
     <version>3.0-SNAPSHOT</version>
+    <modules>
+        <module>htr-linear-logic</module>
+        <module>htr-linear-app</module>
+        <module>htr-options-logic</module>
+        <module>htr-options-app</module>
+        <module>htr-ibapi-client</module>
+        <module>htr-ibapi-lib</module>
+    </modules>
     <packaging>pom</packaging>
 
     <dependencies>
