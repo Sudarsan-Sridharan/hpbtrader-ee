@@ -4,7 +4,7 @@
 
     <groupId>com.highpowerbear</groupId>
     <artifactId>hpbtrader</artifactId>
-    <version>3.0-SNAPSHOT</version>
+    <version>3.0</version>
     <modules>
         <module>htr-linear-logic</module>
         <module>htr-linear-app</module>
