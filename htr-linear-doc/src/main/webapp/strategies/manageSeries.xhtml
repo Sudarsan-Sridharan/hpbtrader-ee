@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Manage Series</h1>
+
+A new series is added by clicking the 'plus' button (toolbar button 6) and opening a dialog for entering the series parametrs.
+The series can also be deleted by clicking the 'delete' button (toolbar button 9). All corresponding strategies data, trades, orders, logs and
+other data related to the series also get deleted, so this operation needs to be used with caution. After the series is defined and enabled,
+the collection of the series quote data starts automatically and is visually presented by the series chart or quote table.
+Technical indicators like Exponential Moving Averages, MACD or Stochastics get calculated on demand when needed in the strategy or in the chart.
+Multiple automated strategies can be defined for the series and one of the defined strategy can be marked active.
+In addition to automated strategy orders, a manual order for the selected series and the active strategy can be submitted as well.
+This is performed by clicking the 'circle-plus' button (toolbar button 15) and opening a dialog for entering the manual order parameters.
+
+<p>
+<img src="resources/images/sshots/add-series.png"/>
+<img src="resources/images/sshots/delete-series.png"/>
+<img src="resources/images/sshots/manual-order.png"/>
+</p>
+
+Add New Series dialog fields:
+<ul>
+    <li><span style="color: green;">Underlying: </span>underlyng symbol of the financial instrument</li>
+    <li><span style="color: green;">Symbol: </span>financial instrument symbol</li>
+    <li><span style="color: green;">Currency: </span>currency of the financial instrument</li>
+    <li><span style="color: green;">Exchange: </span>an exchange where the financial instrument is traded</li>
+    <li><span style="color: green;">Interval: </span>series interval, for example 5 min, 60 min</li>
+    <li><span style="color: green;">Security Type: </span>security type, STK - stock, OPT - option, FUT - future, FOP - future option, CSH - cash</li>
+    <li><span style="color: green;">Strategy Type: </span>a name of the default strategy</li>
+    <li><span style="color: green;">Submit: </span>add a newly defined series</li>
+    <li><span style="color: green;">Strategy Type: </span>cancel the operation</li>
+</ul>
+<br/>
+Manual Order dialog fields:
+<ul>
+    <li><span style="color: green;">Action: </span>underlyng symbol of the financial instrument</li>
+    <li><span style="color: green;">Quantity: </span>trading quantity</li>
+    <li><span style="color: green;">Symbol: </span>financial instrument symbol</li>
+    <li><span style="color: green;">Currency: </span>currency of the financial instrument</li>
+    <li><span style="color: green;">Sec Type: </span>security type, STK - stock, OPT - option, FUT - future, FOP - future option, CSH - cash</li>
+    <li><span style="color: green;">OrderType: </span>MKT - market order, LMT - limit order, STP - stop order</li>
+    <li><span style="color: green;">SubmitType: </span>manual for the manual order</li>
+    <li><span style="color: green;">Initial Stop Pct: </span>initial stop percent in case of an opening order</li>
+    <li><span style="color: green;">Target Pct: </span>target percent in case of an opening order</li>
+
+    <li><span style="color: green;">Submit: </span>submit the manual order (live or simulated according to the active strategy mode)</li>
+    <li><span style="color: green;">Strategy Type: </span>cancel the operation</li>
+</ul>
+</body>
+</html>

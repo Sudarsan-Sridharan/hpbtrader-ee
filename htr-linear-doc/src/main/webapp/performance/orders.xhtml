@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Orders</h1>
+Orders table displays a list list of orders submitted during a live or simulated strategy operation.
+When the strategy triggers a new signal, a new order gets submitted and placed live to the exchange via the IB Gateway.
+In case of the simulated operation the order is managed wihin the strategy simulated account and doesn't get placed to the exchange.
+During the lifecycle the order passes through the multiple phases according to the order events like new, submitReq, submitted, filled, cancelReq, canceled.
+
+<p><img src="resources/images/sshots/perf-orders.png"/><br/><img src="resources/images/sshots/order-events.png"/></p>
+
+Orders table contains the following columns:
+<ul>
+    <li><span style="color: green;">Strategy: </span>ticker symbol, interval, trading strategy name</li>
+    <li><span style="color: green;">Date Created: </span>order creation date</li>
+    <li><span style="color: green;">Mode: </span>IB - live order sent to IB Gateway, SIM - HPB Trader simulated order for testing and simulation</li>
+    <li><span style="color: green;">PermId: </span>Interactive Brokers order id, unique across IB sessions, applies only to IB orders</li>
+    <li><span style="color: green;">OrdId: </span>Interactive Brokers order id, not unique across IB sessions, applies only to IB orders</li>
+    <li><span style="color: green;">Trigger: </span>a strategy defined trigger that initiated an order creation</li>
+    <li><span style="color: green;">Submit: </span>auto - a strategy inititated automatic order, manual - manual order</li>
+    <li><span style="color: green;">Action: </span>BTO - buy to open, BTC - buy to close, STO - sell to open, STC - sell to close, BREV- buy reversal, SREV - sell reversal</li>
+    <li><span style="color: green;">Quant: </span>order trading quantity</li>
+    <li><span style="color: green;">Type: </span>MKT - market order, LMT - limit order, STP - stop order</li>
+    <li><span style="color: green;">Limit: </span>limit price in case of a limit order</li>
+    <li><span style="color: green;">Stop: </span>stop price in case of a stop order</li>
+    <li><span style="color: green;">Fill Price: </span>order fill price, if the order has already been filled</li>
+    <li><span style="color: green;">Status: </span>order status, one of: new, newRetry, submitReq, submitted, filled, cancelReq, canceled, unknown</li>
+</ul>
+</body>
+</html>

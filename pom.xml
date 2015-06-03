@@ -8,6 +8,7 @@
     <modules>
         <module>htr-linear-logic</module>
         <module>htr-linear-app</module>
+        <module>htr-linear-doc</module>
         <module>htr-options-logic</module>
         <module>htr-options-app</module>
         <module>htr-ibapi-client</module>

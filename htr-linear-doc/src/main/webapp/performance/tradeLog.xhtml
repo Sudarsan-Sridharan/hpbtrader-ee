@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Trade Log</h1>
+
+Trade logs table displays a series of snapshots of the trade state during the lifetime of the trade.
+Trade logs table is dynamically updated with the trade data of the trade selected in the trades table.
+A new log entry is added when any trade event takes place. A graphical representation of the trade log is also displayed.
+
+<p><img src="resources/images/sshots/perf-trade-logs.png"/></p>
+<p><img src="resources/images/sshots/perf-trade-log-graph.png"/></p>
+
+Trade logs table columns:
+<ul>
+    <li><span style="color: green;">Log Date: </span>date and time of the log entry</li>
+    <li><span style="color: green;">Pos: </span>trade position at the time of the log entry</li>
+    <li><span style="color: green;">Stop: </span>strategy stop price at the time of the log entry</li>
+    <li><span style="color: green;">Price: </span>trading instrument price at the time of the log entry</li>
+    <li><span style="color: green;">Target: </span>strategy target at the time of the log entry</li>
+    <li><span style="color: green;">Unrl PL: </span>trade unrealized profit or loss at the time of the log entry</li>
+    <li><span style="color: green;">Rlzd PL: </span>trade realized profit or loss at the time of the log entry</li>
+    <li><span style="color: green;">Status: </span>trade status at the time of the log entry, one of: initOpen, open, initClose, closed, cncClosed, errClosed</li>
+</ul>
+</body>
+</html>

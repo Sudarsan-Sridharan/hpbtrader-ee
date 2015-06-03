@@ -1,0 +1,65 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>HPB Trader 1.2 Documentation</title>
+    <link rel="icon" href="resources/images/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="resources/css/redmond/jquery-ui-1.9.0.custom.css" />
+    <link rel="stylesheet" href="resources/css/layout-default.css" />
+    <link rel="stylesheet" href="resources/css/webdoc.css" />
+    <script src="resources/js/jquery-1.8.2.min.js"></script>
+    <script src="resources/js/jquery-ui-1.9.0.custom.min.js"></script>
+    <script src="resources/js/jquery.layout-latest.min.js"></script>
+    <script src="resources/js/index.js"></script>
+</head>
+<body>
+<div class="ui-layout-north ui-widget">
+    HPB Trader 1.2 Documentation
+</div>
+<div class="ui-layout-west">
+    <div id="accordion">
+        <h3>Introduction</h3>
+        <ul id="introduction">
+            <li onclick="$('#content').load('introduction/architecture.xhtml')"><a>Architecture</a></li>
+            <li onclick="$('#content').load('introduction/features.xhtml')"><a>Features</a></li>
+            <li onclick="$('#content').load('introduction/requirements.xhtml')"><a>Requirements</a></li>
+        </ul>
+        <h3>Operations</h3>
+        <ul id="operations">
+            <li onclick="$('#content').load('operations/controlView.xhtml')"><a>Control View</a></li>
+            <li onclick="$('#content').load('operations/toolbar.xhtml')"><a>Toolbar</a></li>
+            <li onclick="$('#content').load('operations/series.xhtml')"><a>Series</a></li>
+            <li onclick="$('#content').load('operations/rtQuotes.xhtml')"><a>Real-time Quotes</a></li>
+            <li onclick="$('#content').load('operations/recentOrders.xhtml')"><a>Recent Orders</a></li>
+            <li onclick="$('#content').load('operations/entityDiagram.xhtml')"><a>Entity Diagram</a></li>
+        </ul>
+        <h3>Strategies</h3>
+        <ul id="strategies">
+            <li onclick="$('#content').load('strategies/manageSeries.xhtml')"><a>Manage Series</a></li>
+            <li onclick="$('#content').load('strategies/manageStrategies.xhtml')"><a>Manage Strategies</a></li>
+            <li onclick="$('#content').load('strategies/strategyLogic.xhtml')"><a>Strategy Logic</a></li>
+            <li onclick="$('#content').load('strategies/backtesting.xhtml')"><a>Backtesting</a></li>
+        </ul>
+        <h3>Performance</h3>
+        <ul id="performance">
+            <li onclick="$('#content').load('performance/strategy.xhtml')"><a>Strategy</a></li>
+            <li onclick="$('#content').load('performance/orders.xhtml')"><a>Orders</a></li>
+            <li onclick="$('#content').load('performance/trades.xhtml')"><a>Trades</a></li>
+            <li onclick="$('#content').load('performance/tradeOrders.xhtml')"><a>Trade Orders</a></li>
+            <li onclick="$('#content').load('performance/tradeLog.xhtml')"><a>Trade Log</a></li>
+            <li onclick="$('#content').load('performance/chart.xhtml')"><a>Chart</a></li>
+            <li onclick="$('#content').load('performance/quotes.xhtml')"><a>Quotes</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="ui-layout-center ui-widget">
+    <div id="content">
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Trades</h1>
+
+Trade tab of the performance view shows the list of all trades that took place during the live or simulated strategy operation.
+A trade can either be long or short and is related to at least two orders - the opening and the closing order.
+Trade PL chart is a graphical represantation of a cummulative PL for every trade during the lifetime of the strategy.
+
+<p><img src="resources/images/sshots/perf-trades.png"/></p>
+<p><img src="resources/images/sshots/perf-trade-pl-graph.png"/></p>
+
+Trades table columns:
+<ul>
+    <li><span style="color: green;">Strategy: </span>ticker symbol, interval, trading strategy name</li>
+    <li><span style="color: green;">Typ: </span>S - short or L - long</li>
+    <li><span style="color: green;">Quant: </span>quantity traded</li>
+    <li><span style="color: green;">TPos: </span>trade position, -quant or +quant</li>
+    <li><span style="color: green;">Date InitOpen: </span>date and time of the trade initialization</li>
+    <li><span style="color: green;">Date Closed: </span>date and time of the trade close</li>
+    <li><span style="color: green;">Open: </span>the price of the trading instrument at the trade open</li>
+    <li><span style="color: green;">Close: </span>the price of the trading instrument at the trade close</li>
+    <li><span style="color: green;">InitStop: </span>initial stop set by the strategy</li>
+    <li><span style="color: green;">Stop: </span>the final stop at the trade close time set by the strategy</li>
+    <li><span style="color: green;">Target: </span>price target set by the strategy</li>
+    <li><span style="color: green;">Rlzd PL: </span>realized profit or loss</li>
+    <li><span style="color: green;">Status: </span>trade status, one of: initOpen, open, initClose, closed, cncClosed, errClosed</li>
+</ul>
+</body>
+</html>

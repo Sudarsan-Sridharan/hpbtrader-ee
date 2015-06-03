@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Strategy Logic</h1>
+
+A modular application design allows for easy strategy creation by making use of predefined structures like series, quotes and technical indicators along with java language.
+The quote data is being automatically collected and technical indicators are calculated on demand.
+
+<p>A sample trading strategy java code:</p>
+<pre><code style="font-size: 10px;">
+public class LuxorStrategyLogic extends AbstractStrategyLogic {
+    // strategy parameters
+    private Double stopPct; // trailing stop calculated from current price
+    private Double targetPct; // calculated from entry
+    private Integer emaShortPeriod;
+    private Integer emaLongPeriod;
+    private Integer startHourEst;
+    private Integer durationHours;
+
+    // required indicators
+    private Double prevEmaShortValue;
+    private Double emaShortValue;
+    private Double prevEmaLongValue;
+    private Double emaLongValue;
+
+    @Override
+    public Order processSignals() {
+        createOrder();
+        if (ctx.activeTrade != null) {
+            setPl();
+            setTrailStop(stopPct);
+            if (targetMet()) {
+                order.setOrderAction(ctx.activeTrade.isLong() ? AppEnums.OrderAction.STC : AppEnums.OrderAction.BTC);
+                order.setTriggerDesc(getTriggerDesc(TriggerEvent.TARGET));
+            } else if (stopTriggered()) {
+                order.setOrderAction(ctx.activeTrade.isLong() ? AppEnums.OrderAction.STC : AppEnums.OrderAction.BTC);
+                order.setTriggerDesc(getTriggerDesc(TriggerEvent.STOP));
+            } else if (((ctx.activeTrade.isLong() &amp;&amp; crossBelowEma()) || (ctx.activeTrade.isShort() &amp;&amp; crossAboveEma())) &amp;&amp; isTradeTime()) {
+                order.setOrderAction(ctx.activeTrade.isLong() ? AppEnums.OrderAction.SREV : AppEnums.OrderAction.BREV);
+                order.setTriggerDesc(getTriggerDesc(TriggerEvent.REVERSE));
+                order.setQuantity(order.getQuantity() * 2);
+            }
+        } else if ((crossAboveEma() || crossBelowEma()) &amp;&amp; isTradeTime()) {
+            order.setOrderAction(crossAboveEma() ? AppEnums.OrderAction.BTO : AppEnums.OrderAction.STO);
+            order.setTriggerDesc(getTriggerDesc(TriggerEvent.OPEN));
+            ctx.activeTrade = new Trade().initOpen(order);
+            setInitialStopAndTarget();
+        }
+        if (order.getOrderAction() == null) {
+            order = null;
+        }
+        return order;
+    }
+
+    @Override
+    public void setInitialStopAndTarget() {
+        setInitialStop(stopPct);
+        setTarget(targetPct);
+    }
+
+    @Override
+    protected void reloadParameters() {
+        String params[] = ctx.strategy.getParams().split(",");
+        emaShortPeriod = Integer.valueOf(params[0].trim());
+        emaLongPeriod = Integer.valueOf(params[1].trim());
+        stopPct = Double.valueOf(params[2].trim());
+        targetPct = Double.valueOf(params[3].trim());
+        startHourEst = Integer.valueOf(params[4].trim());
+        durationHours = Integer.valueOf(params[5].trim());
+    }
+
+    @Override
+    protected void calculateIndicators() {
+        List&lt;Ema&gt; emaShortList = tiCalculator.calculateEma(ctx.quotes, emaShortPeriod);
+        List&lt;Ema&gt; emaLongList = tiCalculator.calculateEma(ctx.quotes, emaLongPeriod);
+        prevEmaShortValue = emaShortList.get(emaShortList.size() - 2).getEma();
+        emaShortValue = emaShortList.get(emaShortList.size() - 1).getEma();
+        prevEmaLongValue = emaLongList.get(emaLongList.size() - 2).getEma();
+        emaLongValue = emaLongList.get(emaLongList.size() - 1).getEma();
+    }
+
+    private boolean crossAboveEma() {
+        return (prevEmaShortValue &lt;= prevEmaLongValue &amp;&amp; emaShortValue > emaLongValue);
+    }
+
+    private boolean crossBelowEma() {
+        return (prevEmaShortValue >= prevEmaLongValue &amp;&amp; emaShortValue &lt; emaLongValue);
+    }
+
+    private boolean isTradeTime() {
+        int quoteHour = quote.getqDateBarClose().get(Calendar.HOUR_OF_DAY);
+        return (quoteHour >= this.startHourEst &amp;&amp; quoteHour &lt; (this.startHourEst + this.durationHours));
+    }
+}
+</code></pre>
+</body>
+</html>
