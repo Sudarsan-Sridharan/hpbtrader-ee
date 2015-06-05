@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+    <title>Series</title>
+    <link rel="icon" href="#{resource['images/favicon.ico']}" type="image/x-icon" />
+    <h:outputStylesheet library="css" name="style.css"/>
+    <h:outputScript library="primefaces" name="jquery/jquery.js"/>
+    <h:outputScript library="js" name="highstock.js"/>
+    <h:outputScript library="js" name="exporting.js"/>
+    <h:outputScript library="js" name="chart.js"/>
+    <h:outputScript library="js" name="series.js"/>
+</h:head>
+<h:body>
+    <f:view>
+        <ui:include src="common/ajaxStatus.xhtml"/>
+        <h:form id="toolbarForm">
+            <p:toolbar style="width: 1290px;" id="mainToolbar">
+                <f:facet name="left">
+                    <p:commandButton icon="ui-icon-refresh" update="mainToolbar, :seriesForm:seriesTable, :recentOrderForm:recentOrderTable" title="Refresh"/>
+                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+
+                    <p:commandButton actionListener="#{seriesController.connect()}" icon="ui-icon-play" title="Connect IB" update="mainToolbar" disabled="#{seriesController.connected}"/>
+                    <p:commandButton actionListener="#{seriesController.disconnect()}" icon="ui-icon-pause" title="Disconnect IB" update="mainToolbar, :seriesForm:seriesTable, :realtimeDataForm:realtimeDataTable" disabled="#{!seriesController.connected}"/>
+                    <h:outputText value="Con" style="background-color: green; color: white; font-family: Monospace; padding: 5px;" rendered="#{seriesController.connected}"/>
+                    <h:outputText value="Dis" style="background-color: red; color: white; font-family: Monospace;  padding: 5px;" rendered="#{!seriesController.connected}"/>
+
+                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                    <p:commandButton icon="ui-icon-plus" title="Add New Series" actionListener="#{newSeriesBean.init()}" update=":newSeriesForm:newSeriesDialog" oncomplete="PF('newSeriesDlg').show();"/>
+                    <p:commandButton icon="ui-icon-arrowthick-1-n" title="Move Series Up" actionListener="#{seriesController.moveSeriesUp()}" update=":seriesForm:seriesTable" disabled="#{!seriesController.isSeriesSelected()}"/>
+                    <p:commandButton icon="ui-icon-arrowthick-1-s" title="Move Series Down" actionListener="#{seriesController.moveSeriesDown()}" update=":seriesForm:seriesTable" disabled="#{!seriesController.isSeriesSelected()}"/>
+                    <p:commandButton icon="ui-icon-trash" title="Delete Series" update=":deleteSeriesForm:deleteSeriesDialog" oncomplete="PF('deleteSeriesDlg').show();" disabled="#{!seriesController.isSeriesSelected()}" />
+
+                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                    <p:selectBooleanCheckbox id="disabledSeries" value="#{seriesBean.showDisabledSeries}" style="vertical-align: middle">
+                        <p:ajax update="mainToolbar, :seriesForm:seriesTable"/>
+                    </p:selectBooleanCheckbox>
+                    <p:outputLabel for="disabledSeries" value="All" title="Show Disabled Series" style="margin-left: 1px;"/>
+
+                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                    <p:commandButton icon="ui-icon-wrench" title="Edit Strategies" actionListener="#{editStrategiesBean.init()}" update=":editStrategiesForm:editStrategiesDialog" oncomplete="PF('editStrategiesDlg').show();" disabled="#{!seriesController.isSeriesSelected()}"/>
+                    <p:commandButton icon="ui-icon-check" title="Enable/Disable Series" actionListener="#{seriesController.toggleEnableSeries()}" update="mainToolbar, :seriesForm:seriesTable, :realtimeDataForm:realtimeDataTable" disabled="#{!seriesController.isSeriesSelected()}"/>
+                    <p:commandButton icon="ui-icon-signal-diag" title="Toggle Realtime Data" actionListener="#{seriesController.toggleRealtimeData()}" update=":seriesForm:seriesTable, :realtimeDataForm:realtimeDataTable" disabled="#{!seriesController.isSelectedSeriesEnabled() || !seriesController.connected}"/>
+                    <p:commandButton icon="ui-icon-arrowreturnthick-1-w" actionListener="#{seriesController.backfillManual()}" title="Manual Backfill" disabled="#{!seriesController.isSelectedSeriesEnabled() || !seriesController.connected}"/>
+                    <p:commandButton icon="ui-icon-circle-plus" title="Submit Manual Order" disabled="#{!seriesController.allowManual || !seriesController.connected}" actionListener="#{manualOrderBean.init()}" update=":seriesForm:seriesTable, :manualOrderForm:manualOrderDialog" oncomplete="PF('manualOrderDlg').show();"/>
+                    <p:commandButton icon="ui-icon-lightbulb" title="Show Last Trade" actionListener="#{lastTradeBean.init}" oncomplete="createLastTradeLogChart(); PF('lastTradeDlg').show();" update=":lastTradeForm:tradeTable, :lastTradeForm:tradeOrderTable, :lastTradeForm:tradeLogTable" disabled="#{!seriesController.isSeriesSelected()}"/>
+                    <p:commandButton icon="ui-icon-image" action="#{seriesController.showChart()}" oncomplete="PF('chartDlg').show(); createChart('/chartparams_series');" update=":chartForm:chartDialog" title="Show Chart" disabled="#{!seriesController.isSeriesSelected()}"/>
+                </f:facet>
+                <f:facet name="right">
+                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                    <p:commandButton icon="ui-icon-folder-open" action="#{seriesController.show()}" title="Open Selected Strategy" ajax="false" disabled="#{!seriesController.isSeriesSelected()}"/>
+                    <p:selectOneMenu value="#{seriesBean.tabStrategyId}" style="width: 140px; vertical-align: middle;" converter="strategyConverter" >
+                        <f:selectItems value="#{seriesBean.selectedSeriesRecord.series.strategies}" var="strategy" itemLabel="#{strategy.strategyType.displayName}-#{strategy.id}" itemValue="#{strategy.id}"/>
+                    </p:selectOneMenu>
+
+                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical"/></span>
+                    <p:commandButton icon="ui-icon-arrowthickstop-1-e" action="#{seriesController.backtest()}" title="Backtest Selected Strategy" ajax="false" disabled="#{!seriesController.isSeriesSelected()}"/>
+                    <p:calendar id="startDate" value="#{seriesBean.backtestStartDate}" disabled="#{!seriesController.isSeriesSelected() || seriesBean.backtestAll}" pattern="MM/dd/yyyy HH:mm" title="Backtest Start Date" size="13"/>
+                    <p:calendar id="endDate" value="#{seriesBean.backtestEndDate}" disabled="#{!seriesController.isSeriesSelected() || seriesBean.backtestAll}" pattern="MM/dd/yyyy HH:mm" title="Backtest End Date" size="13"/>
+                    <p:selectBooleanCheckbox id="allCheck" value="#{seriesBean.backtestAll}" style="vertical-align: middle; margin-left: 2px;" disabled="#{!seriesController.isSeriesSelected()}">
+                        <p:ajax update="startDate, endDate"/>
+                    </p:selectBooleanCheckbox>
+                    <p:outputLabel for="allCheck" value="All" title="Backtest on All Series Data" style="margin-left: 1px;"/>
+                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical"/></span>
+                </f:facet>
+            </p:toolbar>
+        </h:form>
+        <div style="width: 300px; margin-top: 5px; margin-bottom: 5px; font-size: small;" id="wsOutput"></div>
+        <h:form id="seriesForm">
+            <p:remoteCommand name="updateSeriesTable" update=":seriesForm:seriesTable"/>
+            <ui:include src="/series/seriesTable.xhtml"/>
+        </h:form>
+        <br/>
+        <h:form id="realtimeDataForm">
+            <ui:include src="/series/realtimeDataTable.xhtml"/>
+        </h:form>
+        <br/>
+        <h:form id="recentOrderForm">
+            <p:remoteCommand name="updateRecentOrderTable" update=":recentOrderForm:recentOrderTable"/>
+            <ui:include src="/series/recentOrderTable.xhtml"/>
+        </h:form>
+
+        <h:form id="newSeriesForm">
+            <ui:include src="/series/newSeriesDialog.xhtml"/>
+        </h:form>
+        <h:form id="deleteSeriesForm">
+            <ui:include src="/series/deleteSeriesDialog.xhtml"/>
+        </h:form>
+        <h:form id="editStrategiesForm">
+            <ui:include src="/series/editStrategiesDialog.xhtml"/>
+        </h:form>
+        <h:form id="manualOrderForm">
+            <ui:include src="/series/manualOrderDialog.xhtml"/>
+        </h:form>
+        <h:form id="lastTradeForm">
+            <ui:include src="/series/lastTradeDialog.xhtml"/>
+        </h:form>
+        <h:form id="chartForm">
+            <ui:include src="/series/chartDialog.xhtml"/>
+        </h:form>
+    </f:view>
+</h:body>
+</html>

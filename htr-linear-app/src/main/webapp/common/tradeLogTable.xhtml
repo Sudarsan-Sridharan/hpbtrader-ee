@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition>
+<p:dataTable
+    id="tradeLogTable"
+    value="#{tradeLogs}" 
+    var="stl" 
+    paginator="true"
+    paginatorAlwaysVisible="true"
+    paginatorPosition="bottom"
+    rows="10"
+    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+    currentPageReportTemplate="{startRecord}-{endRecord} / {totalRecords}"
+    rowsPerPageTemplate="10, 25, 50, 100"
+    pageLinks="5"
+    styleClass="hpbtrader-narrow">
+
+    <f:facet name="header">
+        Trade Logs,
+        <h:outputText value="#{trade.dateInitOpen.time}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss.SSS" timeZone="#{seriesController.timezone}"/></h:outputText>,
+        #{trade.tradeType}, #{trade.tradeStatus.displayName}
+    </f:facet>
+
+    <p:column headerText="Log Date" style="text-align: right;" width="140">
+        <h:outputText value="#{stl.logDate.time}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss.SSS" timeZone="#{seriesController.timezone}"/></h:outputText>
+    </p:column>
+    <p:column headerText="Pos" style="text-align: right;">
+        <h:outputText value="#{stl.tradePosition}"/>
+    </p:column>
+    <p:column headerText="Stop" style="text-align: right;">
+        <h:outputText value="#{stl.stopLoss != null ? stl.stopLoss : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+    </p:column>
+    <p:column headerText="Price" style="text-align: right;">
+        <h:outputText value="#{stl.price}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+    </p:column>
+    <p:column headerText="Target" style="text-align: right;">
+        <h:outputText value="#{stl.profitTarget != null ? stl.profitTarget : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+    </p:column>
+    <p:column headerText="Unrl PL" style="text-align: right;">
+        <h:outputText value="#{stl.unrealizedPl}" styleClass="#{stl.unrealizedPl >= 0 ? 'col-green' : 'col-red'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+    </p:column>
+    <p:column headerText="Rlzd PL" style="text-align: right;">
+        <h:outputText value="#{stl.realizedPl}" styleClass="#{stl.realizedPl >= 0 ? 'col-green' : 'col-red'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+    </p:column>
+    <p:column headerText="Status" styleClass="#{stl.tradeStatus.colorClass}">
+        <h:outputText value=" #{stl.tradeStatus.displayName}"/>
+    </p:column>
+</p:dataTable>
+</ui:composition>
+</html>

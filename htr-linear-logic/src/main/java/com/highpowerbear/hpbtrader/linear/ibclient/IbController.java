@@ -6,7 +6,7 @@ import com.highpowerbear.hpbtrader.linear.common.LinUtil;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
 import com.highpowerbear.hpbtrader.linear.entity.Order;
-import com.highpowerbear.hpbtrader.persistence.DatabaseDao;
+import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
 import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
 import com.ib.client.EWrapper;

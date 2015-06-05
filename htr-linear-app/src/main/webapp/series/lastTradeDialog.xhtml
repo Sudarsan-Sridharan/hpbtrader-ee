@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:body>
+<ui:composition>
+    <p:dialog id="lastTradeDialog" header="Last Trade" widgetVar="lastTradeDlg" resizable="false" modal="true">
+    <p:scrollPanel style="height: 900px;">
+    <p:dataTable
+        id="tradeTable"
+        value="#{lastTradeBean.tradeList}" 
+        var="t"
+        styleClass="hpbtrader-wide">
+        
+        <f:facet name="header">  
+            Trade, #{lastTradeBean.strategy.series.symbol}, #{lastTradeBean.strategy.series.interval.displayName}, #{lastTradeBean.strategy.strategyType.displayName}
+        </f:facet>
+
+        <p:column headerText="Strategy" width="150">
+            <h:outputText value="#{t.strategy.series.symbol}, #{t.strategy.series.interval.displayName}, #{t.strategy.strategyType.displayName}"
+                          title="#{t.strategy.series.symbol}, #{t.strategy.series.interval.displayName}, #{t.strategy.strategyType.displayName}"/>
+        </p:column>
+        <p:column headerText="Typ" styleClass="#{t.tradeType.colorClass}" width="20">
+            #{t.tradeType.displayName}
+        </p:column>
+        <p:column headerText="Quant" style="text-align: right;">
+            #{t.quantity}
+        </p:column>
+        <p:column headerText="TPos" style="text-align: right;">
+            #{t.tradePosition}
+        </p:column>
+        <p:column headerText="Date InitOpen" style="text-align: right;" width="140">
+            <h:outputText value="#{t.dateInitOpen.time}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss.SSS" timeZone="#{seriesController.timezone}"/></h:outputText>
+        </p:column>
+        <p:column headerText="Date Closed" style="text-align: right;">
+            <h:outputText value="#{t.dateClosed != null ? t.dateClosed.time : '-'}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss.SSS" timeZone="#{seriesController.timezone}"/></h:outputText>
+        </p:column>
+        <p:column headerText="Open" style="text-align: right;">
+            <h:outputText value="#{t.openPrice != null ? t.openPrice : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="Close" style="text-align: right;">
+            <h:outputText value="#{t.closePrice != null ? t.closePrice : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="InitStop" style="text-align: right;">
+            <h:outputText value="#{t.initialStop != null ? t.initialStop : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="Stop" style="text-align: right;">
+            <h:outputText value="#{t.stopLoss != null ? t.stopLoss : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="Target" style="text-align: right;">
+            <h:outputText value="#{t.profitTarget != null ? t.profitTarget : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="Rlzd PL" style="text-align: right;">
+            <h:outputText value="#{t.realizedPl}" styleClass="#{t.realizedPl >= 0 ? 'col-green' : 'col-red'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="Status" styleClass="#{t.tradeStatus.colorClass}">
+            <h:outputText value="#{t.tradeStatus.displayName}"/>
+        </p:column>
+    </p:dataTable>
+
+    <br/><br/>
+    <ui:include src="/common/tradeOrderTable.xhtml">
+        <ui:param name="tradeOrders" value="#{lastTradeBean.trade.tradeOrders}"/>
+        <ui:param name="trade" value="#{lastTradeBean.trade}"/>
+    </ui:include>
+
+    <br/><br/>
+    <ui:include src="/common/tradeLogTable.xhtml">
+        <ui:param name="tradeLogs" value="#{lastTradeBean.tradeLogs}"/>
+        <ui:param name="trade" value="#{lastTradeBean.trade}"/>
+    </ui:include>
+    
+    <br/><br/>
+    <div id="lastTradeLogChart" style="height: 400px; width: 1000px"></div>
+
+    </p:scrollPanel>
+    </p:dialog>
+
+</ui:composition>
+</h:body>
+</html>

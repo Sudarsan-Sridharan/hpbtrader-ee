@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:body>
+<ui:composition>
+    <p:toolbar style="width: 300px;">
+        <f:facet name="left">
+            <p:commandButton icon="ui-icon-refresh" onclick="createCumulPlChart();" actionListener="#{tabController.refreshStrategy()}" update="strategyLogsTable" title="Refresh"/>
+            <p:commandButton icon="ui-icon-home" action="series" ajax="false" title="Home"/>
+
+            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+            <h:outputText value="#{tabBean.strategy.strategyType.displayName}-#{tabBean.strategy.id}"/>
+        </f:facet>
+    </p:toolbar>
+
+    <br/><br/>
+    <p:dataTable 
+        value="#{tabBean.strategyList}"
+        var="str"
+        styleClass="hpbtrader"
+        id="strategyTable">
+
+        <p:column headerText="Strategy" width="150">
+            <h:outputText value="#{str.series.symbol}, #{str.series.interval.displayName}, #{str.strategyType.displayName}"
+                          title="#{str.series.symbol}, #{str.series.interval.displayName}, #{str.strategyType.displayName}"/>
+        </p:column>
+        <p:column headerText="Mode" styleClass="#{str.strategyMode.colorClass}">
+            #{str.strategyMode}
+        </p:column>
+        <p:column headerText="Act" width="15">
+            <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{str.isActive}"/>
+            <h:outputText styleClass="ui-icon ui-icon-bullet" rendered="#{!str.isActive}"/>
+        </p:column>
+        <p:column headerText="Quant" style="text-align: right;">
+            #{str.tradingQuantity}
+        </p:column>
+        <p:column headerText="Params" width="140">
+            <h:outputText value="#{str.params}"/>
+        </p:column>
+        <p:column headerText="Pos" style="text-align: right;">
+            #{str.currentPosition}
+        </p:column>
+        <p:column headerText="Trd-Ord-Fil" style="text-align: right;" width="100">
+            #{tabBean.trades.size()}-#{str.numAllOrders}-#{str.numFilledOrders}
+        </p:column>
+        <p:column headerText="Cls-Lon-Sho" style="text-align: right;" width="100">
+            #{str.numClosedTrades}-#{str.numLongs}-#{str.numShorts}
+        </p:column>
+        <p:column headerText="Win-Los" style="text-align: right;">
+            #{str.numWinners}-#{str.numLosers}
+        </p:column>
+        <p:column headerText="PL Cum" style="text-align: right;">
+            <h:outputText value="#{str.cumulativePl}" styleClass="#{str.cumulativePl >= 0 ? 'col-green' : 'col-red'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="2"/></h:outputText>
+        </p:column>
+    </p:dataTable>
+    <br/>
+    
+    <p:dataTable 
+        id="strategyLogsTable"
+        value="#{tabBean.strategyLogs}"
+        var="sl" 
+        paginator="true"
+        paginatorAlwaysVisible="true"
+        paginatorPosition="bottom"
+        rows="10"
+        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+        currentPageReportTemplate="{startRecord}-{endRecord} / {totalRecords}"
+        rowsPerPageTemplate="10, 25, 50, 100"
+        pageLinks="5"
+        styleClass="hpbtrader">
+        
+        <f:facet name="header">
+            Strategy Logs,
+            #{tabBean.series.symbol}, #{tabBean.series.interval.displayName}, #{tabBean.strategy.strategyType.displayName}
+        </f:facet>
+
+        <p:column headerText="Log Date" style="text-align: right;" width="140">
+            <h:outputText value="#{sl.logDate.time}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss.SSS" timeZone="#{seriesController.timezone}"/></h:outputText>
+        </p:column>
+
+        <p:column headerText="Strategy">
+            #{sl.strategy.strategyType.displayName}
+        </p:column>
+        <p:column headerText="Mode" styleClass="#{sl.strategyMode.colorClass}" >
+            #{sl.strategyMode}
+        </p:column>
+        <p:column headerText="Act" width="15">
+            <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{sl.isActive}"/>
+            <h:outputText styleClass="ui-icon ui-icon-bullet" rendered="#{!sl.isActive}"/>
+        </p:column>
+        <p:column headerText="Quant" style="text-align: right;">
+            #{sl.tradingQuantity}
+        </p:column>
+        <p:column headerText="Params" width="140">
+            #{sl.params}
+        </p:column>
+
+        <p:column headerText="Pos" style="text-align: right;">
+            #{sl.currentPosition}
+        </p:column>
+        <p:column headerText="Ord-Fil" style="text-align: right;">
+            #{sl.numAllOrders}-#{sl.numFilledOrders}
+        </p:column>
+        <p:column headerText="Lon-Sho" style="text-align: right;">
+            #{sl.numLongs}-#{sl.numShorts}
+        </p:column>
+        <p:column headerText="Win-Los" style="text-align: right;">
+            #{sl.numWinners}-#{sl.numLosers}
+        </p:column>
+        <p:column headerText="PL Cum" style="text-align: right;">
+            <h:outputText value="#{sl.cumulativePl}" styleClass="#{sl.cumulativePl >= 0 ? 'col-green' : 'col-red'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="2"/></h:outputText>
+        </p:column>
+    </p:dataTable>
+    
+</ui:composition>
+</h:body>
+</html>

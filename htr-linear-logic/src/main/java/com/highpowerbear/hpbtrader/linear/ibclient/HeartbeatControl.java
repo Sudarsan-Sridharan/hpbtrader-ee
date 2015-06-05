@@ -7,7 +7,7 @@ import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
 import com.highpowerbear.hpbtrader.linear.entity.Order;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
-import com.highpowerbear.hpbtrader.persistence.DatabaseDao;
+import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;

@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:body>
+<ui:composition>
+    <p:toolbar style="width: 300px;" id="quoteToolbar">
+        <f:facet name="left">
+            <p:commandButton icon="ui-icon-refresh" actionListener="#{tabController.refreshQuotes()}" update="quoteTable" title="Refresh"/>
+            <p:commandButton icon="ui-icon-home" action="series" ajax="false" title="Home"/>
+            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+        </f:facet>
+    </p:toolbar>
+
+    <br/><br/>
+    <p:dataTable 
+        id="quoteTable"
+        value="#{tabBean.quotes}"
+        var="q" 
+        paginator="true"
+        paginatorAlwaysVisible="true"
+        paginatorPosition="bottom"
+        rows="25"
+        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+        currentPageReportTemplate="{startRecord}-{endRecord} / {totalRecords}"
+        rowsPerPageTemplate="10, 25, 50, 100"
+        pageLinks="5"
+        styleClass="hpbtrader-narrow">
+        <f:facet name="header">  
+            #{tabBean.series.symbol}, #{tabBean.series.interval.displayName}
+        </f:facet>  
+
+        <p:column headerText="Date" style="text-align: right;">
+            <h:outputText value="#{q.getqDateBarClose().time}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm" timeZone="#{seriesController.timezone}"/></h:outputText>
+        </p:column>
+        <p:column headerText="Open" style="text-align: right;">
+            <h:outputText value="#{q.getqOpen()}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="High" style="text-align: right;">
+            <h:outputText value="#{q.high}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="Low" style="text-align: right;">
+            <h:outputText value="#{q.low}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="Close" style="text-align: right;">
+            <h:outputText value="#{q.getqClose()}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="Volume" style="text-align: right;">
+            #{q.volume}
+        </p:column>
+    </p:dataTable>
+</ui:composition>
+</h:body>
+</html>
+

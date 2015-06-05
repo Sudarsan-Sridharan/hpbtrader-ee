@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head>
+        <title>#{tabBean.series.symbol}#{tabBean.series.interval.displayName}, #{tabBean.strategy.strategyType.displayName}</title>
+        <link rel="icon" href="#{resource['images/favicon.ico']}" type="image/x-icon" />
+        <h:outputStylesheet library="css" name="style.css"/>
+        <h:outputScript library="primefaces" name="jquery/jquery.js"/>
+        <h:outputScript library="js" name="highstock.js"/>
+        <h:outputScript library="js" name="exporting.js"/>
+        <h:outputScript library="js" name="chart.js"/>
+        <h:outputScript library="js" name="chartPl.js"/>
+        <h:outputScript library="js" name="tab.js"/>
+    </h:head>
+    <h:body>
+
+    <p:tabView id="tabView">
+        <p:tab title="Strategy">
+            <h:form id="strform">
+                <ui:include src="common/ajaxStatus.xhtml"/>
+                <ui:include src="tab/strategyTab.xhtml"/>
+            </h:form>
+            <br/><br/>
+            <div id="cumulPlChart" style="height: 400px; width: 1000px"></div>
+        </p:tab>
+        <p:tab title="Orders">
+            <h:form id="oform">
+                <ui:include src="common/ajaxStatus.xhtml"/>
+                <ui:include src="tab/orderTab.xhtml"/>
+            </h:form>
+        </p:tab>
+        <p:tab title="Trades">
+            <h:form id="tform">
+                <ui:include src="common/ajaxStatus.xhtml"/>
+                <ui:include src="tab/tradeTab.xhtml"/>
+            </h:form>
+        </p:tab>
+        <p:tab title="Chart">
+            <h:form id="cform">
+                <ui:include src="common/ajaxStatus.xhtml"/>
+                <ui:include src="tab/chartTab.xhtml"/>
+            </h:form>
+            <div id="chart" style="height: 1020px; width: 1000px"></div>
+        </p:tab>
+        <p:tab title="Quotes">
+            <h:form id="qform">
+                <ui:include src="common/ajaxStatus.xhtml"/>
+                <ui:include src="tab/quoteTab.xhtml"/>
+            </h:form>
+        </p:tab>
+        </p:tabView>
+    </h:body>
+</html>
+

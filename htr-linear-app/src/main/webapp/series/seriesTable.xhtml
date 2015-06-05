@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:body>
+<ui:composition>
+    <p:dataTable 
+        value="#{seriesController.seriesRecords}"
+        var="sr"
+        styleClass="hpbtrader-wide"
+        rowKey="#{sr.id}"
+        selection="#{seriesBean.selectedSeriesRecord}"
+        selectionMode="single"
+        id="seriesTable">
+        <p:ajax event="rowSelect" listener="#{seriesController.onSeriesSelect}" update=":toolbarForm:mainToolbar, seriesTable"/>
+
+        <p:column headerText="#" width="15" style="text-align: right;">
+            #{sr.displayOrder}
+        </p:column>
+        <p:column headerText="Undl" width="40">
+            #{sr.underlying}
+        </p:column>
+        <p:column headerText="Symbol">
+            <h:outputText value="#{sr.symbol}" title="#{s.symbol}"/>
+        </p:column>
+        <p:column headerText="Cur" width="30">
+            #{sr.currency}
+        </p:column>
+        <p:column headerText="Int" width="20">
+            #{sr.interval}
+        </p:column>
+        <p:column headerText="SecT" width="30">
+            #{sr.secType}
+        </p:column>
+        <p:column headerText="Exch" width="50">
+            #{sr.exchange}
+        </p:column>
+        <p:column headerText="Enb" width="20">
+            <h:outputText styleClass="ui-icon ui-icon-check" rendered="#{sr.enabled}"/>
+            <h:outputText styleClass="ui-icon ui-icon-bullet" rendered="#{!sr.enabled}"/>
+        </p:column>
+        <p:column headerText="Rtq" width="20">
+            <h:outputText styleClass="ui-icon ui-icon-signal-diag" rendered="#{sr.realtimeDataEnabled}"/>
+            <h:outputText styleClass="ui-icon ui-icon-bullet" rendered="#{!sr.realtimeDataEnabled}"/>
+        </p:column>
+        <p:column headerText="Qts-Strs" style="text-align: right;">
+            #{sr.numQuotes}-#{sr.numStrategies}
+        </p:column>
+        <p:column headerText="Last" style="text-align: right;">
+            <h:outputText value="#{sr.lastQuote != null ? sr.lastQuote : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+
+        <p:column headerText="Act Str">
+            #{sr.activeStrategy}
+        </p:column>
+        <p:column headerText="Mode" styleClass="#{sr.strategyModeClass}" width="30">
+            #{sr.strategyMode}
+        </p:column>
+        <p:column headerText="Pos" style="text-align: right;">
+            #{sr.currentPosition}
+        </p:column>
+        <p:column headerText="Trd-Ord-Fil" style="text-align: right;">
+            #{sr.numTrades}-#{sr.numAllOrders}-#{sr.numFilledOrders}
+        </p:column>
+        <p:column headerText="Cum PL" style="text-align: right;">
+            <h:outputText value="#{sr.cumulativePl}" styleClass="#{sr.cumulativePlClass}"><f:convertNumber minFractionDigits="2" maxFractionDigits="2"/></h:outputText>
+        </p:column>
+
+        <p:column headerText="Typ" styleClass="#{sr.tradeTypeClass}" width="20">
+            <h:outputText value="#{sr.tradeType}"/>
+        </p:column>
+        <p:column headerText="Unrl PL" style="text-align: right;">
+            <h:outputText value="#{sr.unrealizedPl}" styleClass="#{sr.unrealizedPlClass}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="Sts" styleClass="#{sr.tradeStatusClass}" width="60">
+            <h:outputText value="#{sr.tradeStatus}"/>
+        </p:column>
+    </p:dataTable>
+</ui:composition>
+</h:body>
+</html>

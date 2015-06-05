@@ -11,7 +11,7 @@ import com.highpowerbear.hpbtrader.linear.entity.Series;
 import com.highpowerbear.hpbtrader.linear.ibclient.classifier.DefaultListener;
 import com.highpowerbear.hpbtrader.linear.quote.QuoteController;
 import com.highpowerbear.hpbtrader.linear.strategy.OrderStateHandler;
-import com.highpowerbear.hpbtrader.persistence.DatabaseDao;
+import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
 import com.ib.client.Contract;
 import com.ib.client.OrderState;
 import javax.enterprise.context.ApplicationScoped;

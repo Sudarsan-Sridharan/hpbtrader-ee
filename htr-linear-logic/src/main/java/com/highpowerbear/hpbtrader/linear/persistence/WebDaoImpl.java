@@ -1,11 +1,11 @@
-package com.highpowerbear.hpbtrader.persistence;
+package com.highpowerbear.hpbtrader.linear.persistence;
 
 import com.highpowerbear.hpbtrader.linear.common.LinData;
 import com.highpowerbear.hpbtrader.linear.entity.Order;
 import com.highpowerbear.hpbtrader.linear.entity.Series;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
 import com.highpowerbear.hpbtrader.linear.quote.model.RealtimeData;
-import com.highpowerbear.hpbtrader.persistence.model.SeriesRecord;
+import com.highpowerbear.hpbtrader.linear.persistence.model.SeriesRecord;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;

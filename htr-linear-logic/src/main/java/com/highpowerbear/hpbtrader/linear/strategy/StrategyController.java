@@ -8,7 +8,7 @@ import com.highpowerbear.hpbtrader.linear.strategy.logic.LuxorStrategyLogic;
 import com.highpowerbear.hpbtrader.linear.strategy.logic.MacdCrossStrategyLogic;
 import com.highpowerbear.hpbtrader.linear.strategy.logic.TestStrategyLogic;
 import com.highpowerbear.hpbtrader.linear.strategy.model.BacktestResult;
-import com.highpowerbear.hpbtrader.persistence.DatabaseDao;
+import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;

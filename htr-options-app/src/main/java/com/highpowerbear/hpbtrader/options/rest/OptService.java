@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  *
  * @author rkolar
  */
-@Path("hop")
+@Path("options")
 public class OptService {
     private static final Logger l = Logger.getLogger(OptDefinitions.LOGGER);
 

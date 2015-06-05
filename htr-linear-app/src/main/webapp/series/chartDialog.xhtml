@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:body>
+    <ui:composition>
+        <p:dialog id="chartDialog" header="Chart #{seriesBean.selectedSeriesRecord.symbol}, #{seriesBean.selectedSeriesRecord.interval}" widgetVar="chartDlg" resizable="false" modal="true">
+            <p:scrollPanel style="height: 900px; width: 1050px">
+                <div id="chart" style="height: 1020px; width: 1000px"></div>
+            </p:scrollPanel>
+        </p:dialog>
+    </ui:composition>
+</h:body>
+</html>

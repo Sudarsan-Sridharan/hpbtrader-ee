@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition>
+<p:dataTable
+    id="tradeOrderTable"
+    value="#{tradeOrders}"
+    var="to"
+    styleClass="hpbtrader-wide">
+
+    <f:facet name="header">
+        Trade Orders,
+        <h:outputText value="#{trade.dateInitOpen.time}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss.SSS" timeZone="#{seriesController.timezone}"/></h:outputText>,
+        #{trade.tradeType}, #{trade.tradeStatus.displayName}
+    </f:facet>
+
+    <p:column headerText="Strategy" width="150">
+        <h:outputText value="#{to.order.strategy.series.symbol}, #{to.order.strategy.series.interval.displayName}, #{to.order.strategy.strategyType.displayName}"
+                      title="#{to.order.strategy.series.symbol}, #{to.order.strategy.series.interval.displayName}, #{to.order.strategy.strategyType.displayName}"/>
+    </p:column>
+    <p:column headerText="Date Created" style="text-align: right;" width="140">
+        <h:outputText value="#{to.order.dateCreated.time}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss.SSS" timeZone="#{seriesController.timezone}"/></h:outputText>
+    </p:column>
+    <p:column headerText="Mode" styleClass="#{to.order.strategyMode.colorClass}">
+        #{to.order.strategyMode}
+    </p:column>
+    <p:column headerText="PermId" style="text-align: right;" width="70">
+        #{to.order.ibPermId != null ? to.order.ibPermId : '-'}
+    </p:column>
+    <p:column headerText="OrdId" style="text-align: right;">
+        #{to.order.ibOrderId != null ? to.order.ibOrderId : '-'}
+    </p:column>
+    <p:column headerText="Trigger" width="70">
+        <h:outputText value="#{seriesController.getOrderTriggerDescShort(to.order)}" title="#{to.order.triggerDesc}"/>
+    </p:column>
+    <p:column headerText="Submit">
+        #{to.order.submitType.displayName}
+    </p:column>
+    <p:column headerText="Action">
+        #{to.order.orderAction}
+    </p:column>
+    <p:column headerText="Quant" style="text-align: right;" width="100">
+        #{to.quantity} (#{to.order.quantity})
+    </p:column>
+    <p:column headerText="Type">
+        #{to.order.orderType}
+    </p:column>
+    <p:column headerText="Limit" style="text-align: right;">
+        <h:outputText value="#{to.order.limitPrice != null ? to.order.limitPrice : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+    </p:column>
+    <p:column headerText="Stop" style="text-align: right;">
+        <h:outputText value="#{to.order.stopPrice != null ? to.order.stopPrice : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+    </p:column>
+    <p:column headerText="Fill Price" style="text-align: right;">
+        <h:outputText value="#{to.order.fillPrice != null ? to.order.fillPrice : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+    </p:column>
+    <p:column headerText="Status" styleClass="#{to.order.orderStatus.colorClass}">
+        <h:outputText value="#{to.order.orderStatus.displayName}"/>
+    </p:column>
+</p:dataTable>
+</ui:composition>
+</html>

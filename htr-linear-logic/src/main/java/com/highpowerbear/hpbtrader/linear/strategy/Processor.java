@@ -8,7 +8,7 @@ import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
 import com.highpowerbear.hpbtrader.linear.entity.*;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
 import com.highpowerbear.hpbtrader.linear.strategy.model.StrategyLogicContext;
-import com.highpowerbear.hpbtrader.persistence.DatabaseDao;
+import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;

@@ -14,7 +14,7 @@ import com.highpowerbear.hpbtrader.linear.quote.model.RealtimeData;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyController;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyLogic;
 import com.highpowerbear.hpbtrader.linear.websocket.WebsocketController;
-import com.highpowerbear.hpbtrader.persistence.DatabaseDao;
+import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
 import com.ib.client.Contract;
 import com.ib.client.TickType;
 import javax.ejb.Asynchronous;

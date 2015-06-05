@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.persistence.model;
+package com.highpowerbear.hpbtrader.linear.persistence.model;
 
 import com.highpowerbear.hpbtrader.linear.entity.Series;
 import java.io.Serializable;

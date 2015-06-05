@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.persistence;
+package com.highpowerbear.hpbtrader.linear.persistence;
 
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.entity.*;

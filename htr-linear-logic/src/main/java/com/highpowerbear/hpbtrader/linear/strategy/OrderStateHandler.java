@@ -7,7 +7,7 @@ import com.highpowerbear.hpbtrader.linear.entity.Order;
 import com.highpowerbear.hpbtrader.linear.entity.Quote;
 import com.highpowerbear.hpbtrader.linear.entity.Strategy;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
-import com.highpowerbear.hpbtrader.persistence.DatabaseDao;
+import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;

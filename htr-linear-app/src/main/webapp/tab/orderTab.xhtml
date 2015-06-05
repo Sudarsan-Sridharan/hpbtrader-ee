@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:body>
+<ui:composition>
+    <p:toolbar style="width: 300px;">
+        <f:facet name="left">
+            <p:commandButton icon="ui-icon-refresh" actionListener="#{tabController.refreshOrders()}" update="orderTable" title="Refresh"/>
+            <p:commandButton icon="ui-icon-home" action="series" ajax="false" title="Home"/>
+            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+        </f:facet>
+    </p:toolbar>
+    
+    <br/><br/>
+    <p:dataTable
+            id="orderTable"
+            value="#{tabBean.orders}"
+            var="o"
+            rowKey="#{o.id}"
+            selection="#{tabBean.selectedOrder}"
+            selectionMode="single"
+            paginator="true"
+            paginatorAlwaysVisible="true"
+            paginatorPosition="bottom"
+            rows="25"
+            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+            currentPageReportTemplate="{startRecord}-{endRecord} / {totalRecords}"
+            rowsPerPageTemplate="10, 25, 50, 100"
+            pageLinks="5"
+            styleClass="hpbtrader-wide">
+
+        <p:ajax event="rowSelect" update=":tabView:oform:orderEventDialog" oncomplete="PF('orderEventDlg').show();"/>
+
+        <f:facet name="header">
+            #{tabBean.series.symbol}, #{tabBean.series.interval.displayName}, #{tabBean.strategy.strategyType.displayName}
+        </f:facet>
+
+        <p:column headerText="Strategy" width="150">
+            <h:outputText value="#{o.strategy.series.symbol}, #{o.strategy.series.interval.displayName}, #{o.strategy.strategyType.displayName}"
+                          title="#{o.strategy.series.symbol}, #{o.strategy.series.interval.displayName}, #{o.strategy.strategyType.displayName}"/>
+        </p:column>
+        <p:column headerText="Date Created" style="text-align: right;" width="140">
+            <h:outputText value="#{o.dateCreated.time}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss.SSS" timeZone="#{seriesController.timezone}"/></h:outputText>
+        </p:column>
+        <p:column headerText="Mode" styleClass="#{o.strategyMode.colorClass}">
+            #{o.strategyMode}
+        </p:column>
+        <p:column headerText="PermId" style="text-align: right;" width="80">
+            #{o.ibPermId != null ? o.ibPermId : '-'}
+        </p:column>
+        <p:column headerText="OrdId" style="text-align: right;">
+            #{o.ibOrderId != null ? o.ibOrderId : '-'}
+        </p:column>
+        <p:column headerText="Trigger" width="80">
+            <h:outputText value="#{seriesController.getOrderTriggerDescShort(o)}" title="#{o.triggerDesc}"/>
+        </p:column>
+        <p:column headerText="Submit">
+            #{o.submitType.displayName}
+        </p:column>
+        <p:column headerText="Action">
+            #{o.orderAction}
+        </p:column>
+        <p:column headerText="Quant" style="text-align: right;">
+            #{o.quantity}
+        </p:column>
+        <p:column headerText="Type">
+            #{o.orderType}
+        </p:column>
+        <p:column headerText="Limit" style="text-align: right;">
+            <h:outputText value="#{o.limitPrice != null ? o.limitPrice : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="Stop" style="text-align: right;">
+            <h:outputText value="#{o.stopPrice != null ? o.stopPrice : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="Fill Price" style="text-align: right;">
+            <h:outputText value="#{o.fillPrice != null ? o.fillPrice : '-'}"><f:convertNumber minFractionDigits="2" maxFractionDigits="6"/></h:outputText>
+        </p:column>
+        <p:column headerText="Status" styleClass="#{o.orderStatus.colorClass}">
+            <h:outputText value="#{o.orderStatus.displayName}"/>
+        </p:column>
+    </p:dataTable>
+
+    <p:dialog id="orderEventDialog" widgetVar="orderEventDlg" resizable="false">
+        <f:facet name="header">
+            Order Events,
+            <h:outputText value="#{tabBean.selectedOrder.dateCreated.time}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss.SSS" timeZone="#{seriesController.timezone}"/></h:outputText>,
+            #{tabBean.selectedOrder.orderAction}
+        </f:facet>
+
+        <p:dataTable
+                value="#{tabBean.selectedOrder.events}"
+                var="e"
+                style="width: 300px;">
+            <p:column headerText="Date" width="160">
+                <h:outputText value="#{e.eventDate.time}"><f:convertDateTime pattern="MM/dd/yyyy HH:mm:ss.SSS" timeZone="#{seriesController.timezone}"/></h:outputText>
+            </p:column>
+            <p:column headerText="Status" styleClass="#{e.orderStatus.colorClass}">
+                <h:outputText value="#{e.orderStatus.displayName}"/>
+            </p:column>
+        </p:dataTable>
+    </p:dialog>
+    
+</ui:composition>
+</h:body>
+</html>
