@@ -2,6 +2,7 @@ package com.highpowerbear.hpbtrader.linear.persistence;
 
 import com.highpowerbear.hpbtrader.linear.common.LinData;
 import com.highpowerbear.hpbtrader.linear.entity.Order;
+import com.highpowerbear.hpbtrader.linear.entity.Quote;
 import com.highpowerbear.hpbtrader.linear.entity.Series;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
 import com.highpowerbear.hpbtrader.linear.quote.model.RealtimeData;
@@ -40,7 +41,8 @@ public class WebDaoImpl implements Serializable, WebDao {
             r.setRealtimeDataEnabled(isRealtimeDataEnabled(s));
             r.setNumQuotes(databaseDao.getNumQuotes(s));
             r.setNumStrategies(s.getNumStrategies());
-            r.setLastQuote(databaseDao.getLastQuote(s).getqClose());
+            Quote lastQuote = databaseDao.getLastQuote(s);
+            r.setLastQuote(lastQuote != null ? databaseDao.getLastQuote(s).getqClose() : null);
             r.setActiveStrategy(s.getActiveStrategy().getStrategyType().getDisplayName());
             r.setStrategyMode(s.getActiveStrategy().getStrategyMode().name());
             r.setStrategyModeClass(s.getActiveStrategy().getStrategyMode().getColorClass());
