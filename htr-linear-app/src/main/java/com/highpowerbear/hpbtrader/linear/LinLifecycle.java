@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.linear;
 
-import com.highpowerbear.hpbtrader.linear.common.LinDefinitions;
+import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 @Singleton
 @Startup
 public class LinLifecycle {
-    private static final Logger l = Logger.getLogger(LinDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
 
     @PostConstruct
     public void startup() {

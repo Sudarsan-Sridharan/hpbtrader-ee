@@ -11,4 +11,11 @@
 
     <artifactId>htr-linear-logic</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.highpowerbear</groupId>
+            <artifactId>htr-ibapi-lib</artifactId>
+            <version>9.71</version>
+        </dependency>
+    </dependencies>
 </project>
