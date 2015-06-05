@@ -83,9 +83,7 @@ public class IbController {
     }
 
     private void retrySubmit() {
-        for (Order o : databaseDao.getNewRetryOrders()) {
-            submitIbOrder(o);
-        }
+        databaseDao.getNewRetryOrders().forEach(this::submitIbOrder);
     }
 
     public void submitIbOrder(Order order) {

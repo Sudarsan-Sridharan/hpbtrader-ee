@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    restUrlPrefix = "http://" + getUrlBase()  + "/rest/atr";
+    restUrlPrefix = "http://" + getUrlBase()  + "/rest/linear";
     Highcharts.setOptions({
         global: {
             useUTC: false
