@@ -1,8 +1,9 @@
 package com.highpowerbear.hpbtrader.options.common;
 
+import com.highpowerbear.hpbtrader.options.data.OptData;
 import com.highpowerbear.hpbtrader.options.persistence.OptDao;
-import com.highpowerbear.hpbtrader.options.process.DataRetriever;
-import com.highpowerbear.hpbtrader.options.process.SignalProcessor;
+import com.highpowerbear.hpbtrader.options.data.DataRetriever;
+import com.highpowerbear.hpbtrader.options.execution.SignalProcessor;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

@@ -10,19 +10,20 @@ import java.util.Calendar;
  * @author rkolar
  */
 @Entity
-public class IbOrderEvent implements Serializable {
+@Table(name = "opt_orderevent")
+public class OrderEvent implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="ibOrderEvent")
+    @TableGenerator(name="opt_orderevent")
     @Id
-    @GeneratedValue(generator="ibOrderEvent")
+    @GeneratedValue(generator="opt_orderevent")
     private Long id;
     @Enumerated(EnumType.STRING)
     private OptEnums.OrderStatus orderStatus;
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar eventDate;
     @ManyToOne
-    IbOrder ibOrder;
+    OptionOrder optionOrder;
     
     public Long getId() {
         return id;
@@ -48,20 +49,20 @@ public class IbOrderEvent implements Serializable {
         this.eventDate = eventDate;
     }
 
-    public IbOrder getIbOrder() {
-        return ibOrder;
+    public OptionOrder getOptionOrder() {
+        return optionOrder;
     }
 
-    public void setIbOrder(IbOrder ibOrder) {
-        this.ibOrder = ibOrder;
+    public void setOptionOrder(OptionOrder optionOrder) {
+        this.optionOrder = optionOrder;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof IbOrderEvent)) return false;
+        if (!(o instanceof OrderEvent)) return false;
 
-        IbOrderEvent that = (IbOrderEvent) o;
+        OrderEvent that = (OrderEvent) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
 

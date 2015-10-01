@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
 public class OptDaoImpl implements OptDao {
     private static final Logger l = Logger.getLogger(OptDefinitions.LOGGER);
 
-    @Inject private EventBroker eventBroker;
-
     @PersistenceContext
     private EntityManager em;
 
@@ -81,97 +79,93 @@ public class OptDaoImpl implements OptDao {
     }
 
     @Override
-    public void addSignal(InputSignal inputSignal) {
-        em.persist(inputSignal);
-        eventBroker.trigger(OptEnums.DataChangeEvent.SIGNAL);
+    public void addSignal(InputSentiment inputSentiment) {
+        em.persist(inputSentiment);
     }
 
     @Override
-    public void updateSignal(InputSignal inputSignal) {
-        em.merge(inputSignal);
-        eventBroker.trigger(OptEnums.DataChangeEvent.SIGNAL);
+    public void updateSignal(InputSentiment inputSentiment) {
+        em.merge(inputSentiment);
     }
     
     @Override
     public boolean existsSignal(Long signalId) {
-        return (em.find(InputSignal.class, signalId) != null);
+        return (em.find(InputSentiment.class, signalId) != null);
     }
     
     @Override
-    public List<InputSignal> getSignals(String underlying) {
+    public List<InputSentiment> getSignals(String underlying) {
         l.info(B + "getSignals, underlying=" + underlying);
-        TypedQuery<InputSignal> query;
+        TypedQuery<InputSentiment> query;
         if (underlying != null) {
-            query = em.createQuery("SELECT s FROM InputSignal s WHERE s.underlying = :underlying ORDER BY s.signalDate DESC", InputSignal.class);
+            query = em.createQuery("SELECT s FROM InputSentiment s WHERE s.underlying = :underlying ORDER BY s.sentimentDate DESC", InputSentiment.class);
             query.setParameter("underlying", underlying);
         } else {
-           query = em.createQuery("SELECT s FROM InputSignal s ORDER BY s.signalDate DESC", InputSignal.class);
+           query = em.createQuery("SELECT s FROM InputSentiment s ORDER BY s.sentimentDate DESC", InputSentiment.class);
         }
         query.setMaxResults(OptDefinitions.JPA_MAX_RESULTS);
-        List<InputSignal> inputSignals = query.getResultList();
+        List<InputSentiment> inputSentiments = query.getResultList();
         l.info(E + "getSignals, underlying=" + underlying);
-        return inputSignals;
+        return inputSentiments;
     }
 
     @Override
-    public void addOrder(IbOrder ibOrder) {
-        l.info(B + "addOrder, order=" + ibOrder.print());
-        em.persist(ibOrder);
-        eventBroker.trigger(OptEnums.DataChangeEvent.ORDER);
-        l.info(E + "addOrder, order=" + ibOrder.print());
+    public void addOrder(OptionOrder optionOrder) {
+        l.info(B + "addOrder, order=" + optionOrder.print());
+        em.persist(optionOrder);
+        l.info(E + "addOrder, order=" + optionOrder.print());
     }
     
     @Override
-    public void updateOrder(IbOrder ibOrder) {
-        em.merge(ibOrder);
-        eventBroker.trigger(OptEnums.DataChangeEvent.ORDER);
+    public void updateOrder(OptionOrder optionOrder) {
+        em.merge(optionOrder);
     }
 
     @Override
-    public IbOrder getOrder(Long id) {
-        return em.find(IbOrder.class, id);
+    public OptionOrder getOrder(Long id) {
+        return em.find(OptionOrder.class, id);
     }
     
     
     @Override
-    public IbOrder getOrderByIbPermId(Integer ibPermId) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibPermId = :ibPermId", IbOrder.class);
+    public OptionOrder getOrderByIbPermId(Integer ibPermId) {
+        TypedQuery<OptionOrder> query = em.createQuery("SELECT o FROM OptionOrder o WHERE o.ibPermId = :ibPermId", OptionOrder.class);
         query.setParameter("ibPermId", ibPermId);
-        List<IbOrder> list = query.getResultList();
+        List<OptionOrder> list = query.getResultList();
         return (list.size() > 0 ? list.get(0) : null);
     }
     
     @Override
-    public IbOrder getOrderByIbOrderId(Integer ibOrderId) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibOrderId = :ibOrderId ORDER BY o.dateCreated DESC", IbOrder.class);
+    public OptionOrder getOrderByIbOrderId(Integer ibOrderId) {
+        TypedQuery<OptionOrder> query = em.createQuery("SELECT o FROM OptionOrder o WHERE o.ibOrderId = :ibOrderId ORDER BY o.dateCreated DESC", OptionOrder.class);
         query.setParameter("ibOrderId", ibOrderId);
-        List<IbOrder> list = query.getResultList();
+        List<OptionOrder> list = query.getResultList();
         return (list.size() > 0 ? list.get(0) : null);
     }
 
     @Override
-    public List<IbOrder> getOrders(String underlying) {
-        TypedQuery<IbOrder> query;
+    public List<OptionOrder> getOrders(String underlying) {
+        TypedQuery<OptionOrder> query;
         if (underlying != null) {
-            query = em.createQuery("SELECT o FROM IbOrder o WHERE o.inputSignal.underlying = :underlying ORDER BY o.dateCreated DESC", IbOrder.class);
+            query = em.createQuery("SELECT o FROM OptionOrder o WHERE o.inputSignal.underlying = :underlying ORDER BY o.dateCreated DESC", OptionOrder.class);
             query.setParameter("underlying", underlying);
         } else {
-            query = em.createQuery("SELECT o FROM IbOrder o ORDER BY o.dateCreated DESC", IbOrder.class);
+            query = em.createQuery("SELECT o FROM OptionOrder o ORDER BY o.dateCreated DESC", OptionOrder.class);
         }
         query.setMaxResults(OptDefinitions.JPA_MAX_RESULTS);
         return query.getResultList();
     }
 
     @Override
-    public List<IbOrder> getOrdersBySignalId(Long signalId) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.inputSignal.id = :signalId ORDER BY o.dateCreated, o.id", IbOrder.class);
+    public List<OptionOrder> getOrdersBySignalId(Long signalId) {
+        TypedQuery<OptionOrder> query = em.createQuery("SELECT o FROM OptionOrder o WHERE o.inputSignal.id = :signalId ORDER BY o.dateCreated, o.id", OptionOrder.class);
         query.setParameter("signalId", signalId);
         return query.getResultList();
     }
     
     @Override
-    public List<IbOrder> getNewRetryOrders() {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o, IbOrderEvent evt WHERE o = evt.ibOrder AND o.orderStatus = evt.orderStatus AND o.orderStatus IN :statuses ORDER BY evt.eventDate ASC", IbOrder.class);
+    public List<OptionOrder> getNewRetryOrders() {
+        TypedQuery<OptionOrder> query = em.createQuery("SELECT o FROM OptionOrder o, OrderEvent evt WHERE o = evt.ibOrder AND o.orderStatus = evt.orderStatus AND o.orderStatus IN :statuses ORDER BY evt.eventDate ASC", OptionOrder.class);
         Set<OptEnums.OrderStatus> statuses = new HashSet<>();
         statuses.add(OptEnums.OrderStatus.NEW_RETRY);
         query.setParameter("statuses", statuses);
@@ -179,8 +173,8 @@ public class OptDaoImpl implements OptDao {
     }
 
     @Override
-    public List<IbOrder> getOpenOrders() {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.orderStatus IN :statuses ORDER BY o.dateCreated DESC", IbOrder.class);
+    public List<OptionOrder> getOpenOrders() {
+        TypedQuery<OptionOrder> query = em.createQuery("SELECT o FROM OptionOrder o WHERE o.orderStatus IN :statuses ORDER BY o.dateCreated DESC", OptionOrder.class);
         Set<OptEnums.OrderStatus> statuses = new HashSet<>();
         statuses.add(OptEnums.OrderStatus.NEW);
         statuses.add(OptEnums.OrderStatus.NEW_RETRY);
@@ -193,17 +187,11 @@ public class OptDaoImpl implements OptDao {
     @Override
     public void addTrade(Trade trade) {
         em.persist(trade);
-        eventBroker.trigger(OptEnums.DataChangeEvent.TRADE);
     }
     
     @Override
     public void updateTrade(Trade trade) {
         em.merge(trade);
-        eventBroker.trigger(OptEnums.DataChangeEvent.TRADE);
-        // if opening or closing the position (or if the trade becomes invalid), the option contract get purchased or sold and its status changes
-        eventBroker.trigger(OptEnums.DataChangeEvent.MARKET_DATA);
-        eventBroker.trigger(OptEnums.DataChangeEvent.OPTION_CONTRACT);
-        eventBroker.trigger(OptEnums.DataChangeEvent.CONTRACT_LOG);
     }
 
     @Override
@@ -231,8 +219,6 @@ public class OptDaoImpl implements OptDao {
         Set<OptEnums.TradeStatus> statuses = new HashSet<>();
         statuses.add(OptEnums.TradeStatus.INIT_OPEN);
         statuses.add(OptEnums.TradeStatus.OPEN);
-        statuses.add(OptEnums.TradeStatus.INIT_FIRST_EXIT);
-        statuses.add(OptEnums.TradeStatus.FIRST_EXITED);
         statuses.add(OptEnums.TradeStatus.INIT_CLOSE);
         query.setParameter("statuses", statuses);
         return query.getResultList();
@@ -256,30 +242,8 @@ public class OptDaoImpl implements OptDao {
         query.setParameter("underlying", underlying);
         Set<OptEnums.TradeStatus> statuses = new HashSet<>();
         statuses.add(OptEnums.TradeStatus.OPEN);
-        statuses.add(OptEnums.TradeStatus.INIT_FIRST_EXIT);
-        statuses.add(OptEnums.TradeStatus.FIRST_EXITED);
         statuses.add(OptEnums.TradeStatus.INIT_CLOSE);
         query.setParameter("statuses", statuses);
         return query.getResultList().stream().map(t -> new Position(t.getOptionSymbol(), t.getCurrentPosition())).collect(Collectors.toList());
-    }
-    
-    
-    @Override
-    public void addContractLog(ContractLog contractLog) {
-        em.persist(contractLog);
-        eventBroker.trigger(OptEnums.DataChangeEvent.CONTRACT_LOG);
-    }
-    
-    @Override
-    public List<ContractLog> getContractLogs(String underlying) {
-        TypedQuery<ContractLog> query;
-        if (underlying != null) {
-            query = em.createQuery("SELECT cl FROM ContractLog cl WHERE cl.underlying = :underlying ORDER BY cl.dateActiveFrom DESC", ContractLog.class);
-            query.setParameter("underlying", underlying);
-        } else {
-            query = em.createQuery("SELECT cl FROM ContractLog cl ORDER BY cl.dateActiveFrom DESC", ContractLog.class);
-        }
-        query.setMaxResults(OptDefinitions.JPA_MAX_RESULTS);
-        return query.getResultList();
     }
 }

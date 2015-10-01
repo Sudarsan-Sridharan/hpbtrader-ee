@@ -15,6 +15,7 @@ import java.util.List;
  * @author robertk
  */
 @Entity
+@Table(name = "opt_trade")
 public class Trade implements Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -22,7 +23,8 @@ public class Trade implements Serializable {
     @Id
     @GeneratedValue(generator="trade")
     private Long id;
-    private String underlying;
+    @Enumerated(EnumType.STRING)
+    private OptEnums.Underlying underlying;
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar dateInitOpen;
     @Enumerated(EnumType.STRING)
@@ -39,7 +41,7 @@ public class Trade implements Serializable {
     private List<TradeEvent> events;
     
     public void addInitEvent(OptEnums.TradeStatus status) {
-        if (!OptEnums.TradeStatus.INIT_OPEN.equals(status) && !OptEnums.TradeStatus.INIT_FIRST_EXIT.equals(status) && !OptEnums.TradeStatus.INIT_CLOSE.equals(status)) {
+        if (!OptEnums.TradeStatus.INIT_OPEN.equals(status) && !OptEnums.TradeStatus.INIT_CLOSE.equals(status)) {
             return;
         }
         addEvent(status, (currentPosition != null ? currentPosition : 0));
@@ -61,54 +63,35 @@ public class Trade implements Serializable {
         }
     }
     
-    public void addEventByOrderFilled(IbOrder ibOrder) {
-        if (ibOrder == null || !ibOrder.getTrade().equals(this) || !OptEnums.OrderStatus.FILLED.equals(ibOrder.getOrderStatus())) {
+    public void addEventByOrderFilled(OptionOrder optionOrder) {
+        if (optionOrder == null || !optionOrder.getTrade().equals(this) || !OptEnums.OrderStatus.FILLED.equals(optionOrder.getOrderStatus())) {
             return;
         }
-        if (OptEnums.TradeStatus.INIT_OPEN.equals(tradeStatus) && IbApiEnums.Action.BUY.equals(ibOrder.getAction())) {
-            addEvent(OptEnums.TradeStatus.OPEN, currentPosition + ibOrder.getQuantity());
+        if (OptEnums.TradeStatus.INIT_OPEN.equals(tradeStatus) && IbApiEnums.Action.BUY.equals(optionOrder.getAction())) {
+            addEvent(OptEnums.TradeStatus.OPEN, currentPosition + optionOrder.getQuantity());
             SingletonRepo.getInstance().getOptData().getUnderlyingDataMap().get(underlying).purchaseMade(this);
-        } else if (OptEnums.TradeStatus.INIT_FIRST_EXIT.equals(tradeStatus) && IbApiEnums.Action.SELL.equals(ibOrder.getAction())) {
-            addEvent(OptEnums.TradeStatus.FIRST_EXITED, currentPosition - ibOrder.getQuantity());
-        } else if (OptEnums.TradeStatus.INIT_CLOSE.equals(tradeStatus) && IbApiEnums.Action.SELL.equals(ibOrder.getAction())) {
-            addEvent(OptEnums.TradeStatus.CLOSED, currentPosition - ibOrder.getQuantity());
+        } else if (OptEnums.TradeStatus.INIT_CLOSE.equals(tradeStatus) && IbApiEnums.Action.SELL.equals(optionOrder.getAction())) {
+            addEvent(OptEnums.TradeStatus.CLOSED, currentPosition - optionOrder.getQuantity());
             SingletonRepo.getInstance().getOptData().getUnderlyingDataMap().get(underlying).purchaseReleased(this);
         }
     }
     
-    public void addEventByOrderCanceled(IbOrder ibOrder) {
-        if (ibOrder == null || !ibOrder.getTrade().equals(this) || !OptEnums.OrderStatus.EXT_CANCELED.equals(ibOrder.getOrderStatus())) {
+    public void addEventByOrderCanceled(OptionOrder optionOrder) {
+        if (optionOrder == null || !optionOrder.getTrade().equals(this) || !OptEnums.OrderStatus.EXT_CANCELED.equals(optionOrder.getOrderStatus())) {
             return;
         }
         addEvent(OptEnums.TradeStatus.INVALID, null);
         SingletonRepo.getInstance().getOptData().getUnderlyingDataMap().get(underlying).purchaseReleased(this);
     }
     
-    public void addEventByOrderUnknown(IbOrder ibOrder) {
-        if (ibOrder == null || !ibOrder.getTrade().equals(this) || !OptEnums.OrderStatus.UNKNOWN.equals(ibOrder.getOrderStatus())) {
+    public void addEventByOrderUnknown(OptionOrder optionOrder) {
+        if (optionOrder == null || !optionOrder.getTrade().equals(this) || !OptEnums.OrderStatus.UNKNOWN.equals(optionOrder.getOrderStatus())) {
             return;
         }
         addEvent(OptEnums.TradeStatus.INVALID, null);
         SingletonRepo.getInstance().getOptData().getUnderlyingDataMap().get(underlying).purchaseReleased(this);
     }
-    
-    public boolean canAcceptSignal(OptEnums.SignalAction signalAction) {
-        if (OptEnums.TradeStatus.INIT_OPEN.equals(tradeStatus) || OptEnums.TradeStatus.INIT_FIRST_EXIT.equals(tradeStatus) || OptEnums.TradeStatus.INIT_CLOSE.equals(tradeStatus)) {
-            return false;
-        } else if (OptEnums.TradeStatus.OPEN.equals(tradeStatus) || OptEnums.TradeStatus.FIRST_EXITED.equals(tradeStatus)) {
-            return (OptEnums.SignalAction.CLOSE.equals(signalAction) || OptEnums.SignalAction.REVERSE.equals(signalAction));
-        }
-        return false;
-    }
-    
-    public boolean lotReadyToClose(OptEnums.Lot lot) {
-        if (OptEnums.Lot.FIRST.equals(lot)) {
-            return (OptEnums.TradeStatus.OPEN.equals(tradeStatus));
-        } else {
-            return (OptEnums.TradeStatus.FIRST_EXITED.equals(tradeStatus));
-        }
-    }
-    
+
     public Long getId() {
         return id;
     }
@@ -116,15 +99,15 @@ public class Trade implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
-    public String getUnderlying() {
+
+    public OptEnums.Underlying getUnderlying() {
         return underlying;
     }
 
-    public void setUnderlying(String underlying) {
+    public void setUnderlying(OptEnums.Underlying underlying) {
         this.underlying = underlying;
     }
-    
+
     public Calendar getDateInitOpen() {
         return dateInitOpen;
     }
@@ -190,7 +173,7 @@ public class Trade implements Serializable {
     }
     
     public String print() {
-        return tradeStatus.getName() + ", " + optionSymbol;
+        return tradeStatus.getLabel() + ", " + optionSymbol;
     }
 
     @Override

@@ -73,10 +73,6 @@ public class UnderlyingData {
         return purchasedSymbols;
     }
     
-    public OptEnums.ContractStatus getContractStatus(String contractSymbol) {
-        return (isPurchased(contractSymbol) ? OptEnums.ContractStatus.PURCHASED : (isActive(contractSymbol) ? OptEnums.ContractStatus.ACTIVE : (isStandby(contractSymbol) ? OptEnums.ContractStatus.STANDBY : OptEnums.ContractStatus.NONE)));
-    }
-    
     private boolean isStandby(String optionSymbol) {
         return (optionSymbol != null && (optionSymbol.equals(frontExpiryCallSymbol) || optionSymbol.equals(nextExpiryCallSymbol) || optionSymbol.equals(frontExpiryPutSymbol) || optionSymbol.equals(nextExpiryPutSymbol)));
     }

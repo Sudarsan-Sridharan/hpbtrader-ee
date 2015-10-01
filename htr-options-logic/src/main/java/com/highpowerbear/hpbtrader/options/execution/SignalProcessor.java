@@ -1,11 +1,10 @@
-package com.highpowerbear.hpbtrader.options.process;
+package com.highpowerbear.hpbtrader.options.execution;
 
-import com.highpowerbear.hpbtrader.options.entity.IbOrder;
+import com.highpowerbear.hpbtrader.options.entity.OptionOrder;
 import com.highpowerbear.hpbtrader.options.entity.Trade;
 import com.highpowerbear.hpbtrader.options.model.Position;
-import com.highpowerbear.hpbtrader.options.model.TradeLot;
 import com.highpowerbear.hpbtrader.options.persistence.OptDao;
-import com.highpowerbear.hpbtrader.options.process.action.*;
+import com.highpowerbear.hpbtrader.options.execution.action.*;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,23 +35,16 @@ public class SignalProcessor {
     public synchronized Long close(String underlying, String name) {
         return close.process(underlying, name);
     }
-    
-    public synchronized Long closeManual(TradeLot tradeLot) {
-        Trade trade = tradeLot.getTrade();
-        String underlying = trade.getUnderlying();
-        String name = "Manual close " + trade.getId() + "/" + tradeLot.getLot().getNumber();
-        return closeManual.process(underlying, name);
-    }
-    
+
     public synchronized Long reverse(String underlying, String name) {
         return reverse.process(underlying, name);
     }
     
     public String orderStatus(Long signalID) {
         // example: FILLED,SUBMITTED (if reversal signal)
-        List<IbOrder> ibOrders = optDao.getOrdersBySignalId(signalID);
+        List<OptionOrder> optionOrders = optDao.getOrdersBySignalId(signalID);
         StringBuilder sb = new StringBuilder();
-        for (IbOrder o : ibOrders) {
+        for (OptionOrder o : optionOrders) {
             sb.append(o.getOrderStatus()).append(",");
         }
         if (sb.lastIndexOf(",") > 0 ) {

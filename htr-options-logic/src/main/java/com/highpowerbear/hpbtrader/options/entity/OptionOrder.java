@@ -14,12 +14,13 @@ import java.util.List;
  * @author Robert
  */
 @Entity
-public class IbOrder implements Serializable {
+@Table(name = "opt_optionorder")
+public class OptionOrder implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="ibOrder")
+    @TableGenerator(name="opt_optionorder")
     @Id
-    @GeneratedValue(generator="ibOrder")
+    @GeneratedValue(generator="opt_optionorder")
     private Long id;
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar dateCreated;
@@ -35,17 +36,15 @@ public class IbOrder implements Serializable {
     @Enumerated(EnumType.STRING)
     private OptEnums.OrderStatus orderStatus;
     @ManyToOne
-    private InputSignal inputSignal;
-    @ManyToOne
     private Trade trade;
-    @OneToMany(mappedBy = "ibOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "optionOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("eventDate ASC, id ASC")
-    private List<IbOrderEvent> events = new ArrayList<>();
+    private List<OrderEvent> events = new ArrayList<>();
     
     public void addEvent(OptEnums.OrderStatus status) {
         this.orderStatus = status;
-        IbOrderEvent event = new IbOrderEvent();
-        event.setIbOrder(this);
+        OrderEvent event = new OrderEvent();
+        event.setOptionOrder(this);
         event.setEventDate(OptUtil.getNowCalendar());
         event.setOrderStatus(orderStatus);
         events.add(event);
@@ -56,7 +55,7 @@ public class IbOrder implements Serializable {
     
     public Calendar getEventDate(OptEnums.OrderStatus orderStatus) {
         Calendar eventDate = null;
-        for (IbOrderEvent oe : events) {
+        for (OrderEvent oe : events) {
             if (orderStatus.equals(oe.getOrderStatus())) {
                 eventDate = oe.getEventDate();
                 break;
@@ -81,6 +80,26 @@ public class IbOrder implements Serializable {
         contract.m_exchange = IbApiEnums.Exchange.SMART.getName();
         contract.m_currency = IbApiEnums.Currency.USD.getName();
         return contract;
+    }
+
+    public String print() {
+        return action.name() + " " + quantity + " " + optionSymbol + " " + orderType.name() + " " + lmtPrice;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OptionOrder that = (OptionOrder) o;
+
+        return !(id != null ? !id.equals(that.id) : that.id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 
     public Long getId() {
@@ -171,14 +190,6 @@ public class IbOrder implements Serializable {
         this.orderStatus = orderStatus;
     }
 
-    public InputSignal getInputSignal() {
-        return inputSignal;
-    }
-
-    public void setInputSignal(InputSignal inputSignal) {
-        this.inputSignal = inputSignal;
-    }
-
     public Trade getTrade() {
         return trade;
     }
@@ -187,31 +198,11 @@ public class IbOrder implements Serializable {
         this.trade = trade;
     }
 
-    public List<IbOrderEvent> getEvents() {
+    public List<OrderEvent> getEvents() {
         return events;
     }
 
-    public void setEvents(List<IbOrderEvent> events) {
+    public void setEvents(List<OrderEvent> events) {
         this.events = events;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof IbOrder)) return false;
-
-        IbOrder ibOrder = (IbOrder) o;
-
-        return !(id != null ? !id.equals(ibOrder.id) : ibOrder.id != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
-
-    public String print() {
-        return action.getName() + ", " + quantity + ", " + optionSymbol;
     }
 }

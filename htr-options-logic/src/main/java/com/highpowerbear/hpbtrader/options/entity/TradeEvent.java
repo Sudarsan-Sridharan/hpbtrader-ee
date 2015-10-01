@@ -10,6 +10,7 @@ import java.util.Calendar;
  * @author robertk
  */
 @Entity
+@Table(name = "opt_tradeevent")
 public class TradeEvent implements Serializable {
     private static final long serialVersionUID = 1L;
     

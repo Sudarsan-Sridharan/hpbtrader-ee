@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.options.process;
+package com.highpowerbear.hpbtrader.options.data;
 
 import com.highpowerbear.hpbtrader.options.common.*;
 import com.highpowerbear.hpbtrader.options.ibclient.IbApiEnums;
@@ -22,7 +22,7 @@ public class DataRetriever {
 
     @Inject private IbController ibController;
     @Inject private OptData optData;
-    @Inject private OptionDataRetriever optionDataRetriever;
+    @Inject private ChainsRetriever chainsRetriever;
     @Inject private EventBroker eventBroker;
 
     public void start() throws Exception {
@@ -30,7 +30,7 @@ public class DataRetriever {
         for (String underlying : optData.getUnderlyingDataMap().keySet()) {
             optData.getUnderlyingDataMap().get(underlying).setIbRequestIdBase(OptDefinitions.REQUEST_ID_MULTIPLIER * i++);
         }
-        optionDataRetriever.reloadOptionChains();
+        chainsRetriever.reloadOptionChains();
         OptUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS * 4);
         requestRtDataForUnderlyings();
     }
@@ -47,7 +47,7 @@ public class DataRetriever {
             OptUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS);
             optData.getMarketDataMap().put(underlying, new MarketData(underlying, IbApiEnums.SecType.STK, underlying));
             com.ib.client.Contract ibContract = OptUtil.constructIbContract(underlying);
-            int reqId = optData.getUnderlyingDataMap().get(underlying).getIbRequestIdBase() + OptEnums.RequestIdOffset.UNDERLYING.getValue();
+            int reqId = optData.getUnderlyingDataMap().get(underlying).getIbRequestIdBase() + OptEnums.RequestIdOffset.MKTDATA_UNDERLYING.getValue();
             optData.getMarketDataRequestMap().put(reqId, underlying);
             ibController.requestRealtimeData(reqId, ibContract);
         }
@@ -63,7 +63,7 @@ public class DataRetriever {
             return;
         }
         marketData.setField(field, price);
-        eventBroker.trigger(OptEnums.DataChangeEvent.MARKET_DATA);
+        eventBroker.trigger(OptEnums.DataChangeEvent.MKT_DATA);
         if (TickType.LAST != field || OptUtil.isOptionSymbol(symbol)) {
             return;
         }
@@ -73,12 +73,12 @@ public class DataRetriever {
         }
         if (ud.isCallContractChangeTimoutElapsed() && triggerContractChange(price, ud.getCallContractChangeTriggerPrice())) {
             if (ud.lockCallContract()) {
-                optionDataRetriever.prepareCallContracts(ud, price);
+                //chainsRetriever.prepareCallContracts(ud, price);
             }
         }
         if (ud.isPutContractChangeTimoutElapsed() && triggerContractChange(price, ud.getPutContractChangeTriggerPrice())) {
             if (ud.lockPutContract()) {
-                optionDataRetriever.preparePutContracts(ud, price);
+                //chainsRetriever.preparePutContracts(ud, price);
             }
         }
     }
@@ -93,7 +93,7 @@ public class DataRetriever {
             return;
         }
         marketData.setField(field, size);
-        eventBroker.trigger(OptEnums.DataChangeEvent.MARKET_DATA);
+        eventBroker.trigger(OptEnums.DataChangeEvent.MKT_DATA);
     }
     
     private boolean triggerContractChange(Double currentPrice, Double lastContractChangeTriggerPrice) {

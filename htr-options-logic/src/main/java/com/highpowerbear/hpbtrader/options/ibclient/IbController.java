@@ -1,10 +1,10 @@
 package com.highpowerbear.hpbtrader.options.ibclient;
 
-import com.highpowerbear.hpbtrader.options.common.OptData;
+import com.highpowerbear.hpbtrader.options.data.OptData;
 import com.highpowerbear.hpbtrader.options.common.OptEnums;
 import com.highpowerbear.hpbtrader.options.common.OptUtil;
 import com.highpowerbear.hpbtrader.options.common.OptDefinitions;
-import com.highpowerbear.hpbtrader.options.entity.IbOrder;
+import com.highpowerbear.hpbtrader.options.entity.OptionOrder;
 import com.highpowerbear.hpbtrader.options.persistence.OptDao;
 import com.ib.client.EClientSocket;
 import com.ib.client.EWrapper;
@@ -41,8 +41,8 @@ public class IbController {
     }
     
     private void setupHeartbeat() {
-        List<IbOrder> openIbOrders = optDao.getOpenOrders();
-        for (IbOrder o : openIbOrders) {
+        List<OptionOrder> openOptionOrders = optDao.getOpenOrders();
+        for (OptionOrder o : openOptionOrders) {
             optData.getOpenOrderHeartbeatMap().put(o.getId(), OptDefinitions.MAX_ORDER_HEARTBEAT_FAILS);
         }
     }
@@ -94,7 +94,7 @@ public class IbController {
         optDao.getNewRetryOrders().forEach(this::submitIbOrder);
     }
     
-    public synchronized void submitIbOrder(IbOrder o) {
+    public synchronized void submitIbOrder(OptionOrder o) {
         l.info("START submit order " + o.print());
         optData.getOpenOrderHeartbeatMap().put(o.getId(), OptDefinitions.MAX_ORDER_HEARTBEAT_FAILS);
         if (!isConnected()) {

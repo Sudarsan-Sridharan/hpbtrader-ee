@@ -1,12 +1,14 @@
 package com.highpowerbear.hpbtrader.options.ibclient;
 
 import com.highpowerbear.hpbtrader.options.common.*;
+import com.highpowerbear.hpbtrader.options.data.ChainsRetriever;
+import com.highpowerbear.hpbtrader.options.data.OptData;
 import com.highpowerbear.hpbtrader.options.entity.OptionContract;
-import com.highpowerbear.hpbtrader.options.entity.IbOrder;
+import com.highpowerbear.hpbtrader.options.entity.OptionOrder;
 import com.highpowerbear.hpbtrader.options.entity.Trade;
 import com.highpowerbear.hpbtrader.options.persistence.OptDao;
-import com.highpowerbear.hpbtrader.options.process.DataRetriever;
-import com.highpowerbear.hpbtrader.options.process.OptionDataRetriever;
+import com.highpowerbear.hpbtrader.options.data.DataRetriever;
+import com.highpowerbear.hpbtrader.options.data.OptionDataRetriever;
 import com.ib.client.Contract;
 import com.ib.client.ContractDetails;
 import com.ib.client.OrderState;
@@ -25,17 +27,18 @@ public class IbListenerImpl extends GenericIbListener {
     @Inject private IbController ibController;
     @Inject private DataRetriever dataRetriever;
     @Inject private OptionDataRetriever optionDataRetriever;
+    @Inject private ChainsRetriever chainsRetriever;
     @Inject private OptData optData;
     @Inject private EventBroker eventBroker;
     
-    private void updateHeartbeat(IbOrder o) {
+    private void updateHeartbeat(OptionOrder o) {
         Integer failedHeartbeatsLeft = optData.getOpenOrderHeartbeatMap().get(o.getId());
         if (failedHeartbeatsLeft != null) {
             optData.getOpenOrderHeartbeatMap().put(o.getId(), (failedHeartbeatsLeft < OptDefinitions.MAX_ORDER_HEARTBEAT_FAILS ? failedHeartbeatsLeft + 1 : failedHeartbeatsLeft));
         }
     }
     
-    private void removeHeartbeat(IbOrder o) {
+    private void removeHeartbeat(OptionOrder o) {
         Integer failedHeartbeatsLeft = optData.getOpenOrderHeartbeatMap().get(o.getId());
         if (failedHeartbeatsLeft != null) {
             optData.getOpenOrderHeartbeatMap().remove(o.getId());
@@ -52,32 +55,32 @@ public class IbListenerImpl extends GenericIbListener {
         {
             return;
         }
-        IbOrder ibOrder = optDao.getOrderByIbPermId(permId);
-        if (ibOrder == null) {
+        OptionOrder optionOrder = optDao.getOrderByIbPermId(permId);
+        if (optionOrder == null) {
             return;
         }
-        if (IbApiEnums.OrderStatus.SUBMITTED.getName().equalsIgnoreCase(status) && OptEnums.OrderStatus.SUBMITTED.equals(ibOrder.getOrderStatus())) {
-            updateHeartbeat(ibOrder);
-            eventBroker.trigger(OptEnums.DataChangeEvent.ORDER);
-        } else if (IbApiEnums.OrderStatus.SUBMITTED.getName().equalsIgnoreCase(status) && !OptEnums.OrderStatus.SUBMITTED.equals(ibOrder.getOrderStatus())) {
-            updateHeartbeat(ibOrder);
-            ibOrder.addEvent(OptEnums.OrderStatus.SUBMITTED);
-            optDao.updateOrder(ibOrder);
-        } else if (IbApiEnums.OrderStatus.CANCELLED.getName().equalsIgnoreCase(status) && !OptEnums.OrderStatus.EXT_CANCELED.equals(ibOrder.getOrderStatus())) {
-            ibOrder.addEvent(OptEnums.OrderStatus.EXT_CANCELED);
-            optDao.updateOrder(ibOrder);
-            Trade trade = ibOrder.getTrade();
-            trade.addEventByOrderCanceled(ibOrder);
+        if (IbApiEnums.OrderStatus.SUBMITTED.getName().equalsIgnoreCase(status) && OptEnums.OrderStatus.SUBMITTED.equals(optionOrder.getOrderStatus())) {
+            updateHeartbeat(optionOrder);
+            eventBroker.trigger(OptEnums.DataChangeEvent.OPT_ORDER);
+        } else if (IbApiEnums.OrderStatus.SUBMITTED.getName().equalsIgnoreCase(status) && !OptEnums.OrderStatus.SUBMITTED.equals(optionOrder.getOrderStatus())) {
+            updateHeartbeat(optionOrder);
+            optionOrder.addEvent(OptEnums.OrderStatus.SUBMITTED);
+            optDao.updateOrder(optionOrder);
+        } else if (IbApiEnums.OrderStatus.CANCELLED.getName().equalsIgnoreCase(status) && !OptEnums.OrderStatus.EXT_CANCELED.equals(optionOrder.getOrderStatus())) {
+            optionOrder.addEvent(OptEnums.OrderStatus.EXT_CANCELED);
+            optDao.updateOrder(optionOrder);
+            Trade trade = optionOrder.getTrade();
+            trade.addEventByOrderCanceled(optionOrder);
             optDao.updateTrade(trade);
-            removeHeartbeat(ibOrder);
-        } else if (IbApiEnums.OrderStatus.FILLED.getName().equalsIgnoreCase(status) && remaining == 0 && !OptEnums.OrderStatus.FILLED.equals(ibOrder.getOrderStatus())) {
-            ibOrder.addEvent(OptEnums.OrderStatus.FILLED);
-            ibOrder.setFillPrice(avgFillPrice);
-            optDao.updateOrder(ibOrder);
-            Trade trade = ibOrder.getTrade();
-            trade.addEventByOrderFilled(ibOrder);
+            removeHeartbeat(optionOrder);
+        } else if (IbApiEnums.OrderStatus.FILLED.getName().equalsIgnoreCase(status) && remaining == 0 && !OptEnums.OrderStatus.FILLED.equals(optionOrder.getOrderStatus())) {
+            optionOrder.addEvent(OptEnums.OrderStatus.FILLED);
+            optionOrder.setFillPrice(avgFillPrice);
+            optDao.updateOrder(optionOrder);
+            Trade trade = optionOrder.getTrade();
+            trade.addEventByOrderFilled(optionOrder);
             optDao.updateTrade(trade);
-            removeHeartbeat(ibOrder);
+            removeHeartbeat(optionOrder);
         }
     }
 
@@ -85,7 +88,7 @@ public class IbListenerImpl extends GenericIbListener {
     public void openOrder(int orderId, Contract contract, com.ib.client.Order ibOrder, OrderState orderState) {
         super.openOrder(orderId, contract, ibOrder, orderState);
         
-        IbOrder order = optDao.getOrderByIbOrderId(orderId);
+        OptionOrder order = optDao.getOrderByIbOrderId(orderId);
         if (order != null && order.getIbPermId() == null) {
             order.setIbPermId(ibOrder.m_permId);
             optDao.updateOrder(order);
@@ -104,7 +107,7 @@ public class IbListenerImpl extends GenericIbListener {
         if (IbApiEnums.SecType.OPT.getName().equals(contractDetails.m_summary.m_secType)) {
             OptionContract optionContract = new OptionContract();
             optionContract.setOptionSymbol(contractDetails.m_summary.m_localSymbol);
-            optionContract.setUnderlying(contractDetails.m_summary.m_symbol);
+            optionContract.setUnderlying(OptEnums.Underlying.valueOf(contractDetails.m_summary.m_symbol));
             optionContract.setExpiry(OptUtil.expiryFullToCalendar(contractDetails.m_summary.m_expiry));
             optionContract.setOptionType(IbApiEnums.OptionType.getByName(contractDetails.m_summary.m_right));
             optionContract.setStrike(contractDetails.m_summary.m_strike);
@@ -116,7 +119,7 @@ public class IbListenerImpl extends GenericIbListener {
     @Override
     public void contractDetailsEnd(int reqId) {
         super.contractDetailsEnd(reqId);
-        optionDataRetriever.optionChainRequestCompleted(reqId);
+        chainsRetriever.optionChainRequestCompleted(reqId);
     }
 
     @Override
