@@ -23,7 +23,7 @@ public class OrderEvent implements Serializable {
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar eventDate;
     @ManyToOne
-    OptionOrder optionOrder;
+    Order order;
     
     public Long getId() {
         return id;
@@ -49,12 +49,12 @@ public class OrderEvent implements Serializable {
         this.eventDate = eventDate;
     }
 
-    public OptionOrder getOptionOrder() {
-        return optionOrder;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOptionOrder(OptionOrder optionOrder) {
-        this.optionOrder = optionOrder;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     @Override

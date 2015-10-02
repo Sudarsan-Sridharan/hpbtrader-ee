@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.options.execution;
 
-import com.highpowerbear.hpbtrader.options.entity.OptionOrder;
+import com.highpowerbear.hpbtrader.options.entity.Order;
 import com.highpowerbear.hpbtrader.options.entity.Trade;
 import com.highpowerbear.hpbtrader.options.model.Position;
 import com.highpowerbear.hpbtrader.options.persistence.OptDao;
@@ -42,9 +42,9 @@ public class SignalProcessor {
     
     public String orderStatus(Long signalID) {
         // example: FILLED,SUBMITTED (if reversal signal)
-        List<OptionOrder> optionOrders = optDao.getOrdersBySignalId(signalID);
+        List<Order> orders = optDao.getOrdersBySignalId(signalID);
         StringBuilder sb = new StringBuilder();
-        for (OptionOrder o : optionOrders) {
+        for (Order o : orders) {
             sb.append(o.getOrderStatus()).append(",");
         }
         if (sb.lastIndexOf(",") > 0 ) {

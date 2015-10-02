@@ -15,8 +15,10 @@ import java.util.Calendar;
 @Table(name = "opt_optioncontract")
 public class OptionContract implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+
+    @TableGenerator(name="opt_optioncontract")
     @Id
+    @GeneratedValue(generator="opt_optioncontract")
     private String optionSymbol;
     @Enumerated(EnumType.STRING)
     private OptEnums.Underlying underlying;

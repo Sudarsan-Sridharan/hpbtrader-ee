@@ -19,12 +19,16 @@ import java.util.List;
 public class Trade implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="trade")
+    @TableGenerator(name="opt_trade")
     @Id
-    @GeneratedValue(generator="trade")
+    @GeneratedValue(generator="opt_trade")
     private Long id;
+    @ManyToOne
+    private ComboTrade comboTrade;
     @Enumerated(EnumType.STRING)
     private OptEnums.Underlying underlying;
+    @ManyToOne
+    private Strategy strategy;
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar dateInitOpen;
     @Enumerated(EnumType.STRING)
@@ -63,29 +67,29 @@ public class Trade implements Serializable {
         }
     }
     
-    public void addEventByOrderFilled(OptionOrder optionOrder) {
-        if (optionOrder == null || !optionOrder.getTrade().equals(this) || !OptEnums.OrderStatus.FILLED.equals(optionOrder.getOrderStatus())) {
+    public void addEventByOrderFilled(Order order) {
+        if (order == null || !order.getTrade().equals(this) || !OptEnums.OrderStatus.FILLED.equals(order.getOrderStatus())) {
             return;
         }
-        if (OptEnums.TradeStatus.INIT_OPEN.equals(tradeStatus) && IbApiEnums.Action.BUY.equals(optionOrder.getAction())) {
-            addEvent(OptEnums.TradeStatus.OPEN, currentPosition + optionOrder.getQuantity());
+        if (OptEnums.TradeStatus.INIT_OPEN.equals(tradeStatus) && IbApiEnums.Action.BUY.equals(order.getAction())) {
+            addEvent(OptEnums.TradeStatus.OPEN, currentPosition + order.getQuantity());
             SingletonRepo.getInstance().getOptData().getUnderlyingDataMap().get(underlying).purchaseMade(this);
-        } else if (OptEnums.TradeStatus.INIT_CLOSE.equals(tradeStatus) && IbApiEnums.Action.SELL.equals(optionOrder.getAction())) {
-            addEvent(OptEnums.TradeStatus.CLOSED, currentPosition - optionOrder.getQuantity());
+        } else if (OptEnums.TradeStatus.INIT_CLOSE.equals(tradeStatus) && IbApiEnums.Action.SELL.equals(order.getAction())) {
+            addEvent(OptEnums.TradeStatus.CLOSED, currentPosition - order.getQuantity());
             SingletonRepo.getInstance().getOptData().getUnderlyingDataMap().get(underlying).purchaseReleased(this);
         }
     }
     
-    public void addEventByOrderCanceled(OptionOrder optionOrder) {
-        if (optionOrder == null || !optionOrder.getTrade().equals(this) || !OptEnums.OrderStatus.EXT_CANCELED.equals(optionOrder.getOrderStatus())) {
+    public void addEventByOrderCanceled(Order order) {
+        if (order == null || !order.getTrade().equals(this) || !OptEnums.OrderStatus.EXT_CANCELED.equals(order.getOrderStatus())) {
             return;
         }
         addEvent(OptEnums.TradeStatus.INVALID, null);
         SingletonRepo.getInstance().getOptData().getUnderlyingDataMap().get(underlying).purchaseReleased(this);
     }
     
-    public void addEventByOrderUnknown(OptionOrder optionOrder) {
-        if (optionOrder == null || !optionOrder.getTrade().equals(this) || !OptEnums.OrderStatus.UNKNOWN.equals(optionOrder.getOrderStatus())) {
+    public void addEventByOrderUnknown(Order order) {
+        if (order == null || !order.getTrade().equals(this) || !OptEnums.OrderStatus.UNKNOWN.equals(order.getOrderStatus())) {
             return;
         }
         addEvent(OptEnums.TradeStatus.INVALID, null);
@@ -100,12 +104,28 @@ public class Trade implements Serializable {
         this.id = id;
     }
 
+    public ComboTrade getComboTrade() {
+        return comboTrade;
+    }
+
+    public void setComboTrade(ComboTrade comboTrade) {
+        this.comboTrade = comboTrade;
+    }
+
     public OptEnums.Underlying getUnderlying() {
         return underlying;
     }
 
     public void setUnderlying(OptEnums.Underlying underlying) {
         this.underlying = underlying;
+    }
+
+    public Strategy getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
     }
 
     public Calendar getDateInitOpen() {

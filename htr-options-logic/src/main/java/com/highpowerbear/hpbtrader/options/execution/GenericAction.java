@@ -2,9 +2,8 @@ package com.highpowerbear.hpbtrader.options.execution;
 
 import com.highpowerbear.hpbtrader.options.data.OptData;
 import com.highpowerbear.hpbtrader.options.common.OptEnums;
-import com.highpowerbear.hpbtrader.options.common.OptUtil;
 import com.highpowerbear.hpbtrader.options.common.OptDefinitions;
-import com.highpowerbear.hpbtrader.options.entity.OptionOrder;
+import com.highpowerbear.hpbtrader.options.entity.Order;
 import com.highpowerbear.hpbtrader.options.entity.InputSentiment;
 import com.highpowerbear.hpbtrader.options.entity.Trade;
 import com.highpowerbear.hpbtrader.options.ibclient.IbApiEnums;
@@ -51,32 +50,32 @@ public class GenericAction {
         return trade;
     }
     
-    protected OptionOrder createOrder(Trade trade, ReadinessStatus rs) {
+    protected Order createOrder(Trade trade, ReadinessStatus rs) {
         MarketData mdSnapshot = (IbApiEnums.OptionType.CALL.equals(trade.getOptionType()) ? rs.getActiveCallMarketDataSnapshot() : rs.getActivePutMarketDataSnapshot());
         ContractProperties cp = optData.getContractPropertiesMap().get(trade.getUnderlying());
-        OptionOrder optionOrder = new OptionOrder();
-        optionOrder.setTrade(trade);
+        Order order = new Order();
+        order.setTrade(trade);
         switch (trade.getTradeStatus()) {
-            case INIT_OPEN: optionOrder.setAction(IbApiEnums.Action.BUY); break;
-            case INIT_CLOSE: optionOrder.setAction(IbApiEnums.Action.SELL); break;
+            case INIT_OPEN: order.setAction(IbApiEnums.Action.BUY); break;
+            case INIT_CLOSE: order.setAction(IbApiEnums.Action.SELL); break;
         }
         switch (trade.getTradeStatus()) {
-            case INIT_OPEN: optionOrder.setQuantity(trade.getTradeQuantity()); break;
-            case INIT_CLOSE: optionOrder.setQuantity(trade.getCurrentPosition()); break;
+            case INIT_OPEN: order.setQuantity(trade.getTradeQuantity()); break;
+            case INIT_CLOSE: order.setQuantity(trade.getCurrentPosition()); break;
         }
-        optionOrder.setOptionSymbol(trade.getOptionSymbol());
-        optionOrder.setOrderType(IbApiEnums.OrderType.LMT);
+        order.setOptionSymbol(trade.getOptionSymbol());
+        order.setOrderType(IbApiEnums.OrderType.LMT);
         
         Double limitPrice;
         if (cp.getAutoLimit()) {
-            limitPrice = (IbApiEnums.Action.BUY.equals(optionOrder.getAction()) ? mdSnapshot.getAutoLimitBuy() : mdSnapshot.getAutoLimitSell());
+            limitPrice = (IbApiEnums.Action.BUY.equals(order.getAction()) ? mdSnapshot.getAutoLimitBuy() : mdSnapshot.getAutoLimitSell());
         } else {
             Double bidPrice = mdSnapshot.getBid().getValue();
-            limitPrice = (IbApiEnums.Action.BUY.equals(optionOrder.getAction()) ? bidPrice + cp.getBidPriceOffsetBuy() : bidPrice + cp.getBidPriceOffsetSell());
+            limitPrice = (IbApiEnums.Action.BUY.equals(order.getAction()) ? bidPrice + cp.getBidPriceOffsetBuy() : bidPrice + cp.getBidPriceOffsetSell());
         }
-        optionOrder.setLmtPrice(limitPrice);
-        optionOrder.addEvent(OptEnums.OrderStatus.NEW);
-        return optionOrder;
+        order.setLmtPrice(limitPrice);
+        order.addEvent(OptEnums.OrderStatus.NEW);
+        return order;
     }
 
     protected boolean lock(InputSentiment inputSentiment, Trade activeTrade) {

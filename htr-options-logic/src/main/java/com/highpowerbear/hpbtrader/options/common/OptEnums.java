@@ -44,7 +44,7 @@ public class OptEnums {
     }
 
     public enum StrategyType {
-        WEEKLY_WRITE("WeeklyWrite");
+        WEEKLY_WRITE_HEDGE("WeeklyWriteHedge");
 
         private String label;
 

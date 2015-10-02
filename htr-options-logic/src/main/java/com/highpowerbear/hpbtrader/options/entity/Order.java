@@ -14,13 +14,13 @@ import java.util.List;
  * @author Robert
  */
 @Entity
-@Table(name = "opt_optionorder")
-public class OptionOrder implements Serializable {
+@Table(name = "opt_order")
+public class Order implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="opt_optionorder")
+    @TableGenerator(name="opt_order")
     @Id
-    @GeneratedValue(generator="opt_optionorder")
+    @GeneratedValue(generator="opt_order")
     private Long id;
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar dateCreated;
@@ -37,14 +37,14 @@ public class OptionOrder implements Serializable {
     private OptEnums.OrderStatus orderStatus;
     @ManyToOne
     private Trade trade;
-    @OneToMany(mappedBy = "optionOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("eventDate ASC, id ASC")
     private List<OrderEvent> events = new ArrayList<>();
     
     public void addEvent(OptEnums.OrderStatus status) {
         this.orderStatus = status;
         OrderEvent event = new OrderEvent();
-        event.setOptionOrder(this);
+        event.setOrder(this);
         event.setEventDate(OptUtil.getNowCalendar());
         event.setOrderStatus(orderStatus);
         events.add(event);
@@ -91,7 +91,7 @@ public class OptionOrder implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OptionOrder that = (OptionOrder) o;
+        Order that = (Order) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
 

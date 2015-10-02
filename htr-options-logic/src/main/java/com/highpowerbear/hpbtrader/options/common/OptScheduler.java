@@ -2,14 +2,10 @@ package com.highpowerbear.hpbtrader.options.common;
 
 import com.highpowerbear.hpbtrader.options.data.ChainsRetriever;
 import com.highpowerbear.hpbtrader.options.data.OptData;
-import com.highpowerbear.hpbtrader.options.entity.OptionOrder;
+import com.highpowerbear.hpbtrader.options.entity.Order;
 import com.highpowerbear.hpbtrader.options.entity.Trade;
-import com.highpowerbear.hpbtrader.options.ibclient.IbApiEnums;
 import com.highpowerbear.hpbtrader.options.ibclient.IbController;
-import com.highpowerbear.hpbtrader.options.model.ContractProperties;
 import com.highpowerbear.hpbtrader.options.model.MarketData;
-import com.highpowerbear.hpbtrader.options.model.ReadinessStatus;
-import com.highpowerbear.hpbtrader.options.model.UnderlyingData;
 import com.highpowerbear.hpbtrader.options.persistence.OptDao;
 import com.highpowerbear.hpbtrader.options.data.OptionDataRetriever;
 import com.highpowerbear.hpbtrader.options.execution.StatusChecker;
@@ -72,12 +68,12 @@ public class OptScheduler {
         for (Long dbId : optData.getOpenOrderHeartbeatMap().keySet()) {
             Integer failedHeartbeatsLeft = optData.getOpenOrderHeartbeatMap().get(dbId);
             if (failedHeartbeatsLeft <= 0) {
-                OptionOrder optionOrder = optDao.getOrder(dbId);
-                if (!OptEnums.OrderStatus.UNKNOWN.equals(optionOrder.getOrderStatus())) {
-                    optionOrder.addEvent(OptEnums.OrderStatus.UNKNOWN);
-                    optDao.updateOrder(optionOrder);
-                    Trade trade = optionOrder.getTrade();
-                    trade.addEventByOrderUnknown(optionOrder);
+                Order order = optDao.getOrder(dbId);
+                if (!OptEnums.OrderStatus.UNKNOWN.equals(order.getOrderStatus())) {
+                    order.addEvent(OptEnums.OrderStatus.UNKNOWN);
+                    optDao.updateOrder(order);
+                    Trade trade = order.getTrade();
+                    trade.addEventByOrderUnknown(order);
                     optDao.updateTrade(trade);
                 }
                 optData.getOpenOrderHeartbeatMap().remove(dbId);

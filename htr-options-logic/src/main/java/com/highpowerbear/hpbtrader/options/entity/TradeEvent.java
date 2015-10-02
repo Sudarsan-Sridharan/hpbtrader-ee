@@ -14,9 +14,9 @@ import java.util.Calendar;
 public class TradeEvent implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="tradeEvent")
+    @TableGenerator(name="opt_tradeevent")
     @Id
-    @GeneratedValue(generator="tradeEvent")
+    @GeneratedValue(generator="opt_tradeevent")
     private Long id;
     private Integer currentPosition;
     @Enumerated(EnumType.STRING)
