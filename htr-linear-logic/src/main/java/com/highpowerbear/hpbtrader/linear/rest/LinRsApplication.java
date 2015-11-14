@@ -1,0 +1,31 @@
+package com.highpowerbear.hpbtrader.linear.rest;
+
+import javax.ws.rs.core.Application;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ *
+ * @author rkolar
+ */
+@javax.ws.rs.ApplicationPath("rest")
+public class LinRsApplication extends Application {
+    private Set<Object> singletons = new HashSet<>();
+    private Set<Class<?>> classes = new HashSet<>();
+
+    public LinRsApplication(){
+        classes.add(LinService.class);
+        classes.add(ChartService.class);
+        // singletons.add(new RestService());
+    }
+
+    @Override
+    public Set<Class<?>> getClasses() {
+        return classes;
+    }
+
+    @Override
+    public Set<Object> getSingletons() {
+        return singletons;
+    }
+}

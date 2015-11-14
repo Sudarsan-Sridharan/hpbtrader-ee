@@ -1,14 +1,16 @@
 package com.highpowerbear.hpbtrader.options.rest;
 
-import com.highpowerbear.hpbtrader.options.data.OptData;
-import com.highpowerbear.hpbtrader.options.common.OptEnums;
 import com.highpowerbear.hpbtrader.options.common.OptDefinitions;
 import com.highpowerbear.hpbtrader.options.common.SingletonRepo;
-import com.highpowerbear.hpbtrader.options.persistence.OptDao;
+import com.highpowerbear.hpbtrader.options.data.OptData;
 import com.highpowerbear.hpbtrader.options.execution.SignalProcessor;
-import javax.ws.rs.*;
+import com.highpowerbear.hpbtrader.options.persistence.OptDao;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
