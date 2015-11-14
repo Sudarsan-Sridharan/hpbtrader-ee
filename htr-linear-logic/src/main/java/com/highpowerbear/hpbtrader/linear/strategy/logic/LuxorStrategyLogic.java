@@ -3,7 +3,7 @@ package com.highpowerbear.hpbtrader.linear.strategy.logic;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.entity.Order;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
-import com.highpowerbear.hpbtrader.linear.quote.indicator.Ema;
+import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Ema;
 import com.highpowerbear.hpbtrader.linear.strategy.AbstractStrategyLogic;
 import java.util.Calendar;
 import java.util.List;
@@ -75,8 +75,8 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
 
     @Override
     protected void calculateIndicators() {
-        List<Ema> emaShortList = tiCalculator.calculateEma(ctx.quotes, emaShortPeriod);
-        List<Ema> emaLongList = tiCalculator.calculateEma(ctx.quotes, emaLongPeriod);
+        List<Ema> emaShortList = tiCalculator.calculateEma(ctx.bars, emaShortPeriod);
+        List<Ema> emaLongList = tiCalculator.calculateEma(ctx.bars, emaLongPeriod);
         prevEmaShortValue = emaShortList.get(emaShortList.size() - 2).getEma();
         emaShortValue = emaShortList.get(emaShortList.size() - 1).getEma();
         prevEmaLongValue = emaLongList.get(emaLongList.size() - 2).getEma();
@@ -92,8 +92,8 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
     }
     
     private boolean isTradeTime() {
-        int quoteHour = quote.getqDateBarClose().get(Calendar.HOUR_OF_DAY);
-        return (quoteHour >= this.startHourEst && quoteHour < (this.startHourEst + this.durationHours));
+        int barHour = bar.getqDateBarClose().get(Calendar.HOUR_OF_DAY);
+        return (barHour >= this.startHourEst && barHour < (this.startHourEst + this.durationHours));
     }
     
     private enum TriggerEvent {

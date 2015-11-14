@@ -47,7 +47,23 @@ public class StrategyLog  implements Serializable {
     public long getTimeInMillis() {
         return (logDate.getTimeInMillis());
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StrategyLog that = (StrategyLog) o;
+
+        return !(id != null ? !id.equals(that.id) : that.id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
     public Long getId() {
         return id;
     }
@@ -166,21 +182,5 @@ public class StrategyLog  implements Serializable {
 
     public void setNumLosers(Integer numLosers) {
         this.numLosers = numLosers;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof StrategyLog)) return false;
-
-        StrategyLog that = (StrategyLog) o;
-
-        return !(id != null ? !id.equals(that.id) : that.id != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
     }
 }

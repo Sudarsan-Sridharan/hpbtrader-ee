@@ -125,7 +125,82 @@ public class Trade implements Serializable {
     public boolean isOpen() {
         return (LinEnums.TradeStatus.OPEN.equals(tradeStatus));
     }
+
+    public TradeLog copyValues(TradeLog stl) {
+        if (stl == null) {
+            return null;
+        }
+        stl.setTradePosition(tradePosition);
+        stl.setStopLoss(stopLoss);
+        stl.setProfitTarget(profitTarget);
+        stl.setUnrealizedPl(unrealizedPl);
+        stl.setRealizedPl(realizedPl);
+        stl.setTradeStatus(tradeStatus);
+        return stl;
+    }
     
+    public Trade deepCopy(Trade otherTrade) {
+        otherTrade.setId(id);
+        otherTrade.setStrategy(strategy);
+        otherTrade.setQuantity(quantity);
+        otherTrade.setTradePosition(tradePosition);
+        otherTrade.setDateInitOpen(dateInitOpen);
+        otherTrade.setDateClosed(dateClosed);
+        otherTrade.setOpenPrice(openPrice);
+        otherTrade.setClosePrice(closePrice);
+        otherTrade.setInitialStop(initialStop);
+        otherTrade.setStopLoss(stopLoss);
+        otherTrade.setProfitTarget(profitTarget);
+        otherTrade.setUnrealizedPl(unrealizedPl);
+        otherTrade.setRealizedPl(realizedPl);
+        otherTrade.setTradeType(tradeType);
+        otherTrade.setTradeStatus(tradeStatus);
+        otherTrade.setTradeOrders(tradeOrders);
+        return otherTrade;
+    }
+    
+    public boolean valuesEqual(Trade otherTrade) {
+        if (otherTrade == null) {
+            return false;
+        }
+        if (    LinUtil.equalsWithNulls(stopLoss, otherTrade.stopLoss) &&
+                LinUtil.equalsWithNulls(initialStop, otherTrade.initialStop) &&
+                LinUtil.equalsWithNulls(profitTarget, otherTrade.profitTarget) &&
+                LinUtil.equalsWithNulls(unrealizedPl, otherTrade.unrealizedPl) &&
+                LinUtil.equalsWithNulls(realizedPl, otherTrade.realizedPl) &&
+                LinUtil.equalsWithNulls(tradeType, otherTrade.tradeType) &&
+                LinUtil.equalsWithNulls(tradeStatus, otherTrade.tradeStatus)
+           )
+        {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Trade trade = (Trade) o;
+
+        return !(id != null ? !id.equals(trade.id) : trade.id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Strategy getStrategy() {
         return strategy;
     }
@@ -237,14 +312,6 @@ public class Trade implements Serializable {
     public void setTradeStatus(LinEnums.TradeStatus tradeStatus) {
         this.tradeStatus = tradeStatus;
     }
-    
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public List<TradeOrder> getTradeOrders() {
         return tradeOrders;
@@ -252,76 +319,5 @@ public class Trade implements Serializable {
 
     public void setTradeOrders(List<TradeOrder> tradeOrders) {
         this.tradeOrders = tradeOrders;
-    }
-
-    public TradeLog copyValues(TradeLog stl) {
-        if (stl == null) {
-            return null;
-        }
-        stl.setTradePosition(tradePosition);
-        stl.setStopLoss(stopLoss);
-        stl.setProfitTarget(profitTarget);
-        stl.setUnrealizedPl(unrealizedPl);
-        stl.setRealizedPl(realizedPl);
-        stl.setTradeStatus(tradeStatus);
-        return stl;
-    }
-    
-    public Trade deepCopy(Trade otherTrade) {
-        otherTrade.setId(id);
-        otherTrade.setStrategy(strategy);
-        otherTrade.setQuantity(quantity);
-        otherTrade.setTradePosition(tradePosition);
-        otherTrade.setDateInitOpen(dateInitOpen);
-        otherTrade.setDateClosed(dateClosed);
-        otherTrade.setOpenPrice(openPrice);
-        otherTrade.setClosePrice(closePrice);
-        otherTrade.setInitialStop(initialStop);
-        otherTrade.setStopLoss(stopLoss);
-        otherTrade.setProfitTarget(profitTarget);
-        otherTrade.setUnrealizedPl(unrealizedPl);
-        otherTrade.setRealizedPl(realizedPl);
-        otherTrade.setTradeType(tradeType);
-        otherTrade.setTradeStatus(tradeStatus);
-        otherTrade.setTradeOrders(tradeOrders);
-        return otherTrade;
-    }
-    
-    public boolean valuesEqual(Trade otherTrade) {
-        if (otherTrade == null) {
-            return false;
-        }
-        if (    LinUtil.equalsWithNulls(stopLoss, otherTrade.stopLoss) &&
-                LinUtil.equalsWithNulls(initialStop, otherTrade.initialStop) &&
-                LinUtil.equalsWithNulls(profitTarget, otherTrade.profitTarget) &&
-                LinUtil.equalsWithNulls(unrealizedPl, otherTrade.unrealizedPl) &&
-                LinUtil.equalsWithNulls(realizedPl, otherTrade.realizedPl) &&
-                LinUtil.equalsWithNulls(tradeType, otherTrade.tradeType) &&
-                LinUtil.equalsWithNulls(tradeStatus, otherTrade.tradeStatus)
-           )
-        {
-            return true;
-        }
-        return false;
-    }
-    
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Trade)) {
-            return false;
-        }
-        Trade other = (Trade) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 }

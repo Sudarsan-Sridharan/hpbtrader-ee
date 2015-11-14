@@ -32,20 +32,20 @@ public class LinEnums {
     }
     
     public enum SecType {
-        STK("STK", 100, LinConstants.IB_QUOTE_TYPE_TRADES),
-        OPT("OPT", 1, LinConstants.IB_QUOTE_TYPE_TRADES),
-        FUT("FUT", 1, LinConstants.IB_QUOTE_TYPE_TRADES),
-        FOP("FOP", 1, LinConstants.IB_QUOTE_TYPE_TRADES),
-        CASH("CSH", 100000, LinConstants.IB_QUOTE_TYPE_ASK);
+        STK("STK", 100, LinConstants.IB_BAR_TYPE_TRADES),
+        OPT("OPT", 1, LinConstants.IB_BAR_TYPE_TRADES),
+        FUT("FUT", 1, LinConstants.IB_BAR_TYPE_TRADES),
+        FOP("FOP", 1, LinConstants.IB_BAR_TYPE_TRADES),
+        CASH("CSH", 100000, LinConstants.IB_BAR_TYPE_ASK);
 
         private String displayName;
         private int defaultTradingQuantity;
-        private String ibQuoteType;
+        private String ibBarType;
 
-        SecType(String displayName, int defaultTradingQuantity, String ibQuoteType) {
+        SecType(String displayName, int defaultTradingQuantity, String ibBarType) {
             this.displayName = displayName;
             this.defaultTradingQuantity = defaultTradingQuantity;
-            this.ibQuoteType = ibQuoteType;
+            this.ibBarType = ibBarType;
         }
 
         public String getDisplayName() {
@@ -55,8 +55,9 @@ public class LinEnums {
         public int getDefaultTradingQuantity() {
             return defaultTradingQuantity;
         }
-        public String getIbQuoteType() {
-            return ibQuoteType;
+
+        public String getIbBarType() {
+            return ibBarType;
         }
 
         public static String getIbSecType(SecType secType) {
@@ -284,7 +285,7 @@ public class LinEnums {
     }
 
     public enum DataChangeEvent {
-        QUOTE_UPDATE,
+        BAR_UPDATE,
         STRATEGY_UPDATE
     }
 

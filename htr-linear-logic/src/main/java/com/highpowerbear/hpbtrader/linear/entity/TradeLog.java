@@ -43,7 +43,23 @@ public class TradeLog implements Serializable {
     public long getTimeInMillis() {
         return (logDate.getTimeInMillis());
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TradeLog tradeLog = (TradeLog) o;
+
+        return !(id != null ? !id.equals(tradeLog.id) : tradeLog.id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
     public Long getId() {
         return id;
     }
@@ -84,6 +100,14 @@ public class TradeLog implements Serializable {
         this.stopLoss = stopLoss;
     }
 
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
     public Double getProfitTarget() {
         return profitTarget;
     }
@@ -114,33 +138,5 @@ public class TradeLog implements Serializable {
 
     public void setTradeStatus(LinEnums.TradeStatus tradeStatus) {
         this.tradeStatus = tradeStatus;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof TradeLog)) {
-            return false;
-        }
-        TradeLog other = (TradeLog) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 }

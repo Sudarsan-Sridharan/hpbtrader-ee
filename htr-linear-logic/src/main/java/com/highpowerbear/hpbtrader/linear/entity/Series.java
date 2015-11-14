@@ -1,8 +1,9 @@
 package com.highpowerbear.hpbtrader.linear.entity;
 
-import com.highpowerbear.hpbtrader.linear.common.LinUtil;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
+
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,9 @@ public class Series implements Serializable {
     @Id
     @GeneratedValue(generator="lin_series")
     private Integer id;
+    @XmlTransient
+    @ManyToOne
+    private IbAccount ibAccount;
     private String symbol;
     private String underlying;
     @Enumerated(EnumType.STRING)
@@ -48,6 +52,37 @@ public class Series implements Serializable {
         contract.m_currency = this.currency.toString();
         return contract;
     }
+    
+    public Strategy getActiveStrategy() {
+        Strategy activeStrategy = null;
+        for (Strategy s : strategies) {
+            if (s.getActive()) {
+                activeStrategy = s;
+                break;
+            }
+        }
+        return activeStrategy;
+    }
+    
+    public Integer getNumStrategies() {
+        return strategies.size();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Series series = (Series) o;
+
+        return !(id != null ? !id.equals(series.id) : series.id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 
     public Integer getId() {
         return id;
@@ -57,16 +92,16 @@ public class Series implements Serializable {
         this.id = id;
     }
 
-    public Boolean getIsEnabled() {
-        return isEnabled;
+    public IbAccount getIbAccount() {
+        return ibAccount;
     }
 
-    public void setIsEnabled(Boolean isEnabled) {
-        this.isEnabled = isEnabled;
+    public void setIbAccount(IbAccount ibAccount) {
+        this.ibAccount = ibAccount;
     }
 
     public String getSymbol() {
-        return LinUtil.removeSpace(symbol);
+        return symbol;
     }
 
     public void setSymbol(String symbol) {
@@ -79,6 +114,22 @@ public class Series implements Serializable {
 
     public void setUnderlying(String underlying) {
         this.underlying = underlying;
+    }
+
+    public LinEnums.Interval getInterval() {
+        return interval;
+    }
+
+    public void setInterval(LinEnums.Interval interval) {
+        this.interval = interval;
+    }
+
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public LinEnums.SecType getSecType() {
@@ -105,58 +156,19 @@ public class Series implements Serializable {
         this.exchange = exchange;
     }
 
-    public LinEnums.Interval getInterval() {
-        return interval;
+    public Boolean getEnabled() {
+        return isEnabled;
     }
 
-    public void setInterval(LinEnums.Interval interval) {
-        this.interval = interval;
-    }
-
-    public Integer getDisplayOrder() {
-        return displayOrder;
-    }
-
-    public void setDisplayOrder(Integer displayOrder) {
-        this.displayOrder = displayOrder;
+    public void setEnabled(Boolean enabled) {
+        isEnabled = enabled;
     }
 
     public List<Strategy> getStrategies() {
         return strategies;
     }
-    
-    public Strategy getActiveStrategy() {
-        Strategy activeStrategy = null;
-        for (Strategy s : strategies) {
-            if (s.getIsActive()) {
-                activeStrategy = s;
-                break;
-            }
-        }
-        return activeStrategy;
-    }
-    
-    public Integer getNumStrategies() {
-        return strategies.size();
-    }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Series)) {
-            return false;
-        }
-        Series other = (Series) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public void setStrategies(List<Strategy> strategies) {
+        this.strategies = strategies;
     }
 }

@@ -4,7 +4,7 @@ import com.highpowerbear.hpbtrader.linear.common.EventBroker;
 import com.highpowerbear.hpbtrader.linear.common.LinUtil;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.entity.Order;
-import com.highpowerbear.hpbtrader.linear.entity.Quote;
+import com.highpowerbear.hpbtrader.linear.entity.Bar;
 import com.highpowerbear.hpbtrader.linear.entity.Strategy;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
 import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
@@ -23,7 +23,7 @@ public class OrderStateHandler {
     @Inject private DatabaseDao databaseDao;
     @Inject private EventBroker eventBroker;
 
-    public void simulateFill(Order order, Quote quote) {
+    public void simulateFill(Order order, Bar bar) {
         Calendar t1 = LinUtil.getCalendar();
         order.addEvent(LinEnums.OrderStatus.SUBMIT_REQ, t1);
         databaseDao.updateOrder(order);
@@ -43,7 +43,7 @@ public class OrderStateHandler {
         if (t3.getTimeInMillis() <= t2.getTimeInMillis()) {
             t3.setTimeInMillis(t2.getTimeInMillis() + 1);
         }
-        order.setFillPrice(quote.getqClose());
+        order.setFillPrice(bar.getqClose());
         orderFilled(order, t3);
     }
 

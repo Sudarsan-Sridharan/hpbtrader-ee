@@ -3,7 +3,7 @@ package com.highpowerbear.hpbtrader.linear.persistence;
 import com.highpowerbear.hpbtrader.linear.entity.Order;
 import com.highpowerbear.hpbtrader.linear.entity.Series;
 import com.highpowerbear.hpbtrader.linear.persistence.model.SeriesRecord;
-import com.highpowerbear.hpbtrader.linear.quote.model.RealtimeData;
+import com.highpowerbear.hpbtrader.linear.mktdata.model.RealtimeData;
 import java.util.List;
 
 

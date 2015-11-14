@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.linear.quote;
+package com.highpowerbear.hpbtrader.linear.mktdata;
 
 import com.highpowerbear.hpbtrader.linear.common.EventBroker;
 import com.highpowerbear.hpbtrader.linear.common.LinData;
@@ -6,11 +6,11 @@ import com.highpowerbear.hpbtrader.linear.common.LinUtil;
 import com.highpowerbear.hpbtrader.linear.definitions.LinConstants;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
-import com.highpowerbear.hpbtrader.linear.entity.Quote;
+import com.highpowerbear.hpbtrader.linear.entity.Bar;
 import com.highpowerbear.hpbtrader.linear.entity.Series;
 import com.highpowerbear.hpbtrader.linear.entity.Strategy;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
-import com.highpowerbear.hpbtrader.linear.quote.model.RealtimeData;
+import com.highpowerbear.hpbtrader.linear.mktdata.model.RealtimeData;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyController;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyLogic;
 import com.highpowerbear.hpbtrader.linear.websocket.WebsocketController;
@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  */
 @Named
 @Singleton
-public class QuoteController {
+public class MktDataController {
     private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
     @Inject private DatabaseDao databaseDao;
     @Inject private LinData linData;
@@ -46,18 +46,18 @@ public class QuoteController {
 
     private DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
-    public void requestFiveMinQuotes() {
-        l.info("START requestFiveMinQuotes");
+    public void requestFiveMinBars() {
+        l.info("START requestFiveMinBars");
         if (!ibController.isConnected()) {
             l.info("Not connected");
-            l.info("END requestFiveMinQuotes");
+            l.info("END requestFiveMinBars");
             return;
         }
         for (Series s : databaseDao.getSeriesByInterval(LinEnums.Interval.INT_5_MIN)) {
-            if (!s.getIsEnabled()) {
+            if (!s.getEnabled()) {
                 continue;
             }
-            linData.getQuotesReceivedMap().put(s.getId(), new ArrayList<>());
+            linData.getBarsReceivedMap().put(s.getId(), new ArrayList<>());
             linData.getBackfillStatusMap().put(s.getId(), null);
             Contract contract = s.createIbContract();
             Calendar now = LinUtil.getCalendar();
@@ -68,25 +68,25 @@ public class QuoteController {
                     df.format(now.getTime()) + " " + LinConstants.IB_TIMEZONE,
                     (LinEnums.SecType.CASH.equals(s.getSecType()) ? LinConstants.IB_DURATION_1_DAY : LinConstants.IB_DURATION_2_DAY),
                     LinConstants.IB_BAR_5_MIN,
-                    s.getSecType().getIbQuoteType(),
+                    s.getSecType().getIbBarType(),
                     isUseRTH,
                     LinConstants.IB_FORMAT_DATE_MILLIS);
         }
-        l.info("END requestFiveMinQuotes");
+        l.info("END requestFiveMinBars");
     }
 
-    public void requestSixtyMinQuotes() {
-        l.info("START requestSixtyMinQuotes");
+    public void requestSixtyMinBars() {
+        l.info("START requestSixtyMinBars");
         if (!ibController.isConnected()) {
             l.info("Not connected");
-            l.info("END requestSixtyMinQuotes");
+            l.info("END requestSixtyMinBars");
             return;
         }
         for (Series s : databaseDao.getSeriesByInterval(LinEnums.Interval.INT_60_MIN)) {
-            if (!s.getIsEnabled()) {
+            if (!s.getEnabled()) {
                 continue;
             }
-            linData.getQuotesReceivedMap().put(s.getId(), new ArrayList<>());
+            linData.getBarsReceivedMap().put(s.getId(), new ArrayList<>());
             linData.getBackfillStatusMap().put(s.getId(), null);
             Contract contract = s.createIbContract();
             Calendar now = LinUtil.getCalendar();
@@ -97,15 +97,15 @@ public class QuoteController {
                     df.format(now.getTime()) + " " + LinConstants.IB_TIMEZONE,
                     LinConstants.IB_DURATION_1_WEEK,
                     LinConstants.IB_BAR_1_HOUR,
-                    s.getSecType().getIbQuoteType(),
+                    s.getSecType().getIbBarType(),
                     isUseRTH,
                     LinConstants.IB_FORMAT_DATE_MILLIS);
         }
-        l.info("END requestSixtyMinQuotes");
+        l.info("END requestSixtyMinBars");
     }
 
     public void backfillManual(Series s) {
-        if (!s.getIsEnabled()) {
+        if (!s.getEnabled()) {
             l.info("Series not enabled, backfill won't be performed, seriesId=" + s.getId() + ", symbol=" + s.getSymbol());
             return;
         }
@@ -115,7 +115,7 @@ public class QuoteController {
             l.info("END backfillManual, series=" + s.getId() + ", symbol=" + s.getSymbol());
             return;
         }
-        linData.getQuotesReceivedMap().put(s.getId(), new ArrayList<>());
+        linData.getBarsReceivedMap().put(s.getId(), new ArrayList<>());
         Contract contract = s.createIbContract();
         Calendar now = LinUtil.getCalendar();
         int isUseRTH = (LinEnums.SecType.FUT.equals(s.getSecType()) ? LinConstants.IB_ETH_TOO : LinConstants.IB_RTH_ONLY);
@@ -127,7 +127,7 @@ public class QuoteController {
                     df.format(now.getTime()) + " " + LinConstants.IB_TIMEZONE,
                     LinConstants.IB_DURATION_10_DAY,
                     LinConstants.IB_BAR_5_MIN,
-                    s.getSecType().getIbQuoteType(),
+                    s.getSecType().getIbBarType(),
                     isUseRTH,
                     LinConstants.IB_FORMAT_DATE_MILLIS);
         } else if (LinEnums.Interval.INT_60_MIN.equals(s.getInterval())) {
@@ -143,7 +143,7 @@ public class QuoteController {
                         df.format(his.getTime()) + " " + LinConstants.IB_TIMEZONE,
                         LinConstants.IB_DURATION_1_MONTH,
                         LinConstants.IB_BAR_1_HOUR,
-                        s.getSecType().getIbQuoteType(),
+                        s.getSecType().getIbBarType(),
                         isUseRTH,
                         LinConstants.IB_FORMAT_DATE_MILLIS);
                 his.add(Calendar.MONTH, 1);
@@ -155,7 +155,7 @@ public class QuoteController {
                     df.format(now.getTime()) + " " + LinConstants.IB_TIMEZONE,
                     LinConstants.IB_DURATION_1_MONTH,
                     LinConstants.IB_BAR_1_HOUR,
-                    s.getSecType().getIbQuoteType(),
+                    s.getSecType().getIbBarType(),
                     isUseRTH,
                     LinConstants.IB_FORMAT_DATE_MILLIS);
         }
@@ -164,27 +164,27 @@ public class QuoteController {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void processQuotes(Series series) {
-        if (!series.getIsEnabled()) {
-            l.info("Series not enabled, quotes won't be processed, seriesId=" + series.getId() + ", symbol=" + series.getSymbol());
+    public void processBars(Series series) {
+        if (!series.getEnabled()) {
+            l.info("Series not enabled, bars won't be processed, seriesId=" + series.getId() + ", symbol=" + series.getSymbol());
             return;
         }
-        l.info("START processQuotes, seriesId=" + series.getId() + ", symbol=" + series.getSymbol());
-        List<Quote> quotesReceived = linData.getQuotesReceivedMap().get(series.getId());
+        l.info("START processBars, seriesId=" + series.getId() + ", symbol=" + series.getSymbol());
+        List<Bar> barsReceived = linData.getBarsReceivedMap().get(series.getId());
         Integer backfillStatus = linData.getBackfillStatusMap().get(series.getId());
         l.info("backfillStatus=" + backfillStatus);
         if (backfillStatus == null || backfillStatus == 0) {
-            databaseDao.addQuotes(quotesReceived);
+            databaseDao.addBars(barsReceived);
             Strategy activeStrategy = databaseDao.getActiveStrategy(series);
             StrategyLogic strategyLogic = linData.getStrategyLogicMap().get(series.getId());
-            if (databaseDao.getNumQuotes(series) >= LinSettings.BARS_REQUIRED) {
+            if (databaseDao.getNumBars(series) >= LinSettings.BARS_REQUIRED) {
                 strategyController.process(activeStrategy, strategyLogic);
             }
-            eventBroker.trigger(LinEnums.DataChangeEvent.QUOTE_UPDATE);
+            eventBroker.trigger(LinEnums.DataChangeEvent.BAR_UPDATE);
         } else {
             linData.getBackfillStatusMap().put(series.getId(), --backfillStatus);
         }
-        l.info("END processQuotes, seriesId=" + series.getId() + ", symbol=" + series.getSymbol());
+        l.info("END processBars, seriesId=" + series.getId() + ", symbol=" + series.getSymbol());
     }
 
     public void toggleRealtimeData(Series series) {

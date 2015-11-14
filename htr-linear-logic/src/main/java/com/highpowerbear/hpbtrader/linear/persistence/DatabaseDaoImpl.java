@@ -24,71 +24,71 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
     private EntityManager em;
 
     @Override
-    public void addQuotes(List<Quote> quotes) {
-        if (quotes == null || quotes.isEmpty()) {
+    public void addBars(List<Bar> bars) {
+        if (bars == null || bars.isEmpty()) {
             return;
         }
-        String symbol = quotes.iterator().next().getSeries().getSymbol();
-        l.fine("START addQuotes, symbol=" + symbol);
+        String symbol = bars.iterator().next().getSeries().getSymbol();
+        l.fine("START addBars, symbol=" + symbol);
         int added = 0;
         int modified = 0;
-        for (Quote q : quotes) {
-            TypedQuery<Quote> query = em.createQuery("SELECT q FROM Quote q WHERE q.series = :series AND q.qDateBarClose = :qDateBarClose", Quote.class);
+        for (Bar q : bars) {
+            TypedQuery<Bar> query = em.createQuery("SELECT q FROM Bar q WHERE q.series = :series AND q.qDateBarClose = :qDateBarClose", Bar.class);
             query.setParameter("series", q.getSeries());
             query.setParameter("qDateBarClose", q.getqDateBarClose());
-            List<Quote> ql = query.getResultList();
-            Quote dbQuote = (ql != null && !ql.isEmpty() ? ql.get(0) : null);
-            if (dbQuote == null) {
+            List<Bar> ql = query.getResultList();
+            Bar dbBar = (ql != null && !ql.isEmpty() ? ql.get(0) : null);
+            if (dbBar == null) {
                 // insert
                 l.fine("Adding " + q.printValues());
                 added++;
                 em.persist(q);
             } else {
                 // update
-                if (!dbQuote.valuesEqual(q)) {
-                    l.fine(dbQuote.printValues() + " --> " + q.printValues());
-                    dbQuote.copyValuesFrom(q);
+                if (!dbBar.valuesEqual(q)) {
+                    l.fine(dbBar.printValues() + " --> " + q.printValues());
+                    dbBar.copyValuesFrom(q);
                     modified++;
-                    em.merge(dbQuote);
+                    em.merge(dbBar);
                 }
             }
         }
         em.flush();
         em.clear();
-        l.fine("END addQuotes, symbol=" + symbol + ", added=" + added + ", modified=" + modified);
+        l.fine("END addBars, symbol=" + symbol + ", added=" + added + ", modified=" + modified);
     }
 
     @Override
-    public List<Quote> getQuotes(Integer seriesId, Integer numQuotes) {
-        TypedQuery<Quote> query = em.createQuery("SELECT q FROM Quote q WHERE q.series.id = :seriesId ORDER BY q.qDateBarClose DESC", Quote.class);
+    public List<Bar> getBars(Integer seriesId, Integer numBars) {
+        TypedQuery<Bar> query = em.createQuery("SELECT q FROM Bar q WHERE q.series.id = :seriesId ORDER BY q.qDateBarClose DESC", Bar.class);
         query.setParameter("seriesId", seriesId);
-        if (numQuotes != null && numQuotes > 0) {
-            query.setMaxResults(numQuotes);
+        if (numBars != null && numBars > 0) {
+            query.setMaxResults(numBars);
         }
-        List<Quote> quotes = query.getResultList();
+        List<Bar> bars = query.getResultList();
         em.flush();
         em.clear();
-        if (quotes == null) {
-            quotes = new ArrayList<>();
+        if (bars == null) {
+            bars = new ArrayList<>();
         }
-        Collections.reverse(quotes);
-        return quotes;
+        Collections.reverse(bars);
+        return bars;
     }
 
     @Override
-    public Quote getLastQuote(Series series) {
-        TypedQuery<Quote> query = em.createQuery("SELECT q FROM Quote q WHERE q.series = :series ORDER BY q.qDateBarClose DESC", Quote.class);
+    public Bar getLastBar(Series series) {
+        TypedQuery<Bar> query = em.createQuery("SELECT q FROM Bar q WHERE q.series = :series ORDER BY q.qDateBarClose DESC", Bar.class);
         query.setParameter("series", series);
         query.setMaxResults(1);
-        List<Quote> quotes = query.getResultList();
+        List<Bar> bars = query.getResultList();
         em.flush();
         em.clear();
-        return (quotes == null || quotes.isEmpty() ? null : quotes.get(0));
+        return (bars == null || bars.isEmpty() ? null : bars.get(0));
     }
 
     @Override
-    public Long getNumQuotes(Series s) {
-        Query query = em.createQuery("SELECT COUNT(q) FROM Quote q WHERE q.series.id = :seriesId");
+    public Long getNumBars(Series s) {
+        Query query = em.createQuery("SELECT COUNT(q) FROM Bar q WHERE q.series.id = :seriesId");
         query.setParameter("seriesId", s.getId());
         Long nq = (Long) query.getSingleResult();
         em.flush();
@@ -176,7 +176,7 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
         for (Strategy strategy : series.getStrategies()) {
             this.deleteStrategy(strategy);
         }
-        Query q = em.createQuery("DELETE FROM Quote q WHERE q.series = :series");
+        Query q = em.createQuery("DELETE FROM Bar q WHERE q.series = :series");
         q.setParameter("series", series);
         q.executeUpdate();
         em.remove(series);

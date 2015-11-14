@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.linear.quote.model;
+package com.highpowerbear.hpbtrader.linear.mktdata.model;
 
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 

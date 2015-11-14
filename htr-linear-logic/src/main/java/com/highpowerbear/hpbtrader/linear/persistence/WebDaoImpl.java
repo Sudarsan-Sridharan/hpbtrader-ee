@@ -1,11 +1,11 @@
 package com.highpowerbear.hpbtrader.linear.persistence;
 
 import com.highpowerbear.hpbtrader.linear.common.LinData;
+import com.highpowerbear.hpbtrader.linear.entity.Bar;
 import com.highpowerbear.hpbtrader.linear.entity.Order;
-import com.highpowerbear.hpbtrader.linear.entity.Quote;
 import com.highpowerbear.hpbtrader.linear.entity.Series;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
-import com.highpowerbear.hpbtrader.linear.quote.model.RealtimeData;
+import com.highpowerbear.hpbtrader.linear.mktdata.model.RealtimeData;
 import com.highpowerbear.hpbtrader.linear.persistence.model.SeriesRecord;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -37,12 +37,12 @@ public class WebDaoImpl implements Serializable, WebDao {
             r.setInterval(s.getInterval().getDisplayName());
             r.setSecType(s.getSecType().getDisplayName());
             r.setExchange(s.getExchange().getDisplayName());
-            r.setEnabled(s.getIsEnabled());
+            r.setEnabled(s.getEnabled());
             r.setRealtimeDataEnabled(isRealtimeDataEnabled(s));
-            r.setNumQuotes(databaseDao.getNumQuotes(s));
+            r.setNumBars(databaseDao.getNumBars(s));
             r.setNumStrategies(s.getNumStrategies());
-            Quote lastQuote = databaseDao.getLastQuote(s);
-            r.setLastQuote(lastQuote != null ? databaseDao.getLastQuote(s).getqClose() : null);
+            Bar lastBar = databaseDao.getLastBar(s);
+            r.setLastQuote(lastBar != null ? databaseDao.getLastBar(s).getqClose() : null);
             r.setActiveStrategy(s.getActiveStrategy().getStrategyType().getDisplayName());
             r.setStrategyMode(s.getActiveStrategy().getStrategyMode().name());
             r.setStrategyModeClass(s.getActiveStrategy().getStrategyMode().getColorClass());
@@ -67,7 +67,7 @@ public class WebDaoImpl implements Serializable, WebDao {
     @Override
     public Boolean getAllowManual(Series series) {
         Trade activeTrade = databaseDao.getActiveTrade(series.getActiveStrategy());
-        return (series.getIsEnabled() && databaseDao.getLastQuote(series) != null && (activeTrade == null || activeTrade.isOpen()));
+        return (series.getEnabled() && databaseDao.getLastBar(series) != null && (activeTrade == null || activeTrade.isOpen()));
     }
 
     @Override

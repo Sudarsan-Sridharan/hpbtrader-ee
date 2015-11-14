@@ -2,7 +2,7 @@ package com.highpowerbear.hpbtrader.linear.common;
 
 import com.highpowerbear.hpbtrader.linear.ibclient.HeartbeatControl;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
-import com.highpowerbear.hpbtrader.linear.quote.QuoteController;
+import com.highpowerbear.hpbtrader.linear.mktdata.MktDataController;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
@@ -15,7 +15,7 @@ import javax.inject.Inject;
 public class LinScheduler {
     @Inject private IbController ibController;
     @Inject private HeartbeatControl heartbeatControl;
-    @Inject private QuoteController quoteController;
+    @Inject private MktDataController mktDataController;
 
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="21", timezone="US/Eastern", persistent=false)
     public void reconnect() {
@@ -33,12 +33,12 @@ public class LinScheduler {
     }
 
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*/5", second="1", timezone="US/Eastern", persistent=false)
-    public void requestFiveMinQuotes() {
-        quoteController.requestFiveMinQuotes();
+    public void requestFiveMinBars() {
+        mktDataController.requestFiveMinBars();
     }
 
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "0", second="11", timezone="US/Eastern", persistent=false)
-    public void requestSixtyMinQuotes() {
-        quoteController.requestSixtyMinQuotes();
+    public void requestSixtyMinBars() {
+        mktDataController.requestSixtyMinBars();
     }
 }

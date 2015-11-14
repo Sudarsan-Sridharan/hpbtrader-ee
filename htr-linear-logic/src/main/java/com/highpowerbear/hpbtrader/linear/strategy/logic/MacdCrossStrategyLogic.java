@@ -3,8 +3,8 @@ package com.highpowerbear.hpbtrader.linear.strategy.logic;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.entity.Order;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
-import com.highpowerbear.hpbtrader.linear.quote.indicator.Macd;
-import com.highpowerbear.hpbtrader.linear.quote.indicator.Stochastics;
+import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Macd;
+import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Stochastics;
 import com.highpowerbear.hpbtrader.linear.strategy.AbstractStrategyLogic;
 import java.util.List;
 
@@ -58,8 +58,8 @@ public class MacdCrossStrategyLogic extends AbstractStrategyLogic {
     
     @Override
     protected void calculateIndicators() {
-        List<Macd> macdList = tiCalculator.calculateMacd(ctx.quotes);
-        List<Stochastics> stochList = tiCalculator.calculateStoch(ctx.quotes);
+        List<Macd> macdList = tiCalculator.calculateMacd(ctx.bars);
+        List<Stochastics> stochList = tiCalculator.calculateStoch(ctx.bars);
         prevMacdL = macdList.get(macdList.size() - 2).getMacdL();
         macdL = macdList.get(macdList.size() - 1).getMacdL();
         prevMacdSl = macdList.get(macdList.size() - 2).getMacdSl();

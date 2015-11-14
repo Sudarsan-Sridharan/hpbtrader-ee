@@ -17,14 +17,14 @@ import javax.inject.Named;
 public class EventBroker {
 
     @Inject private WebsocketController websocketController;
-    private int numQuoteUpdates = 0;
+    private int numBarUpdates = 0;
     private int numStrategyUpdates = 0;
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void trigger(LinEnums.DataChangeEvent dataChangeEvent) {
-        if (LinEnums.DataChangeEvent.QUOTE_UPDATE.equals(dataChangeEvent)) {
-            websocketController.broadcastSeriesMessage("qu=" + ++numQuoteUpdates);
+        if (LinEnums.DataChangeEvent.BAR_UPDATE.equals(dataChangeEvent)) {
+            websocketController.broadcastSeriesMessage("qu=" + ++numBarUpdates);
         }  else if (LinEnums.DataChangeEvent.STRATEGY_UPDATE.equals(dataChangeEvent)) {
             websocketController.broadcastSeriesMessage("su=" + ++numStrategyUpdates);
         }

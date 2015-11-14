@@ -5,11 +5,11 @@ import com.highpowerbear.hpbtrader.linear.common.LinData;
 import com.highpowerbear.hpbtrader.linear.common.LinUtil;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
+import com.highpowerbear.hpbtrader.linear.entity.Bar;
 import com.highpowerbear.hpbtrader.linear.entity.Order;
-import com.highpowerbear.hpbtrader.linear.entity.Quote;
 import com.highpowerbear.hpbtrader.linear.entity.Series;
 import com.highpowerbear.hpbtrader.linear.ibclient.classifier.DefaultListener;
-import com.highpowerbear.hpbtrader.linear.quote.QuoteController;
+import com.highpowerbear.hpbtrader.linear.mktdata.MktDataController;
 import com.highpowerbear.hpbtrader.linear.strategy.OrderStateHandler;
 import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
 import com.ib.client.Contract;
@@ -31,7 +31,7 @@ public class IbListenerImpl extends AbstractIbListener {
     @Inject private LinData linData;
     @Inject private DatabaseDao databaseDao;
     @Inject private IbController ibController;
-    @Inject private QuoteController quoteController;
+    @Inject private MktDataController mktDataController;
     @Inject private OrderStateHandler orderStateHandler;
     @Inject private HeartbeatControl heartbeatControl;
     @Inject private EventBroker eventBroker;
@@ -92,16 +92,16 @@ public class IbListenerImpl extends AbstractIbListener {
         Series s = databaseDao.findSeries(reqId / LinSettings.IB_REQUEST_MULT);
         if (date.startsWith("finish")) {
             // remove last bar if it is not finished yet
-            List<Quote> quotesReceived = linData.getQuotesReceivedMap().get(s.getId());
-            int numQuotes = quotesReceived.size();
-            Quote lastQuote = quotesReceived.get(numQuotes - 1);
-            if (lastQuote.getTimeInMillisBarClose() > LinUtil.getCalendar().getTimeInMillis()) {
-                quotesReceived.remove(numQuotes - 1);
+            List<Bar> barsReceived = linData.getBarsReceivedMap().get(s.getId());
+            int numBars = barsReceived.size();
+            Bar lastBar = barsReceived.get(numBars - 1);
+            if (lastBar.getTimeInMillisBarClose() > LinUtil.getCalendar().getTimeInMillis()) {
+                barsReceived.remove(numBars - 1);
             }
-            quoteController.processQuotes(s);
+            mktDataController.processBars(s);
             return;
         }
-        Quote q = new Quote();
+        Bar q = new Bar();
         Calendar c = LinUtil.getCalendar();
         c.setTimeInMillis(Long.valueOf(date) * 1000 + s.getInterval().getMillis()); // date-time stamp of the end of the bar
         if (LinEnums.Interval.INT_60_MIN.equals(s.getInterval())) {
@@ -117,22 +117,22 @@ public class IbListenerImpl extends AbstractIbListener {
         q.setWap(WAP);
         q.setHasGaps(hasGaps);
         q.setSeries(s);
-        linData.getQuotesReceivedMap().get(s.getId()).add(q);
+        linData.getBarsReceivedMap().get(s.getId()).add(q);
     }
 
     @Override
     public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {
-        quoteController.updateRealtimeData(tickerId, field, price);
+        mktDataController.updateRealtimeData(tickerId, field, price);
     }
 
     @Override
     public void tickSize(int tickerId, int field, int size) {
-        quoteController.updateRealtimeData(tickerId, field, size);
+        mktDataController.updateRealtimeData(tickerId, field, size);
     }
 
     @Override
     public void tickGeneric(int tickerId, int tickType, double value) {
-        quoteController.updateRealtimeData(tickerId, tickType, value);
+        mktDataController.updateRealtimeData(tickerId, tickType, value);
     }
 
     @Override

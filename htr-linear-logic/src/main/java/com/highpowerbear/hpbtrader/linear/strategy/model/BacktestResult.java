@@ -39,13 +39,13 @@ public class BacktestResult {
         }
         return activeTrade;
     }
-    public void updateStrategy(Strategy strategy, Quote quote) {
+    public void updateStrategy(Strategy strategy, Bar bar) {
         if (!this.strategy.valuesEqual(strategy)) {
             StrategyLog strategyLog = new StrategyLog();
             strategyLog.setId(nextStrategyLogId++);
             strategyLog.setStrategy(strategy);
             strategyLog.setStrategyMode(LinEnums.StrategyMode.BTEST);
-            strategyLog.setLogDate(quote.getqDateBarClose());
+            strategyLog.setLogDate(bar.getqDateBarClose());
             strategy.copyValues(strategyLog);
             strategyLogs.add(strategyLog);
         }
@@ -53,15 +53,15 @@ public class BacktestResult {
         this.strategy.setStrategyMode(LinEnums.StrategyMode.BTEST);
     }
     
-    public void updateTrade(Trade trade, Quote quote) {
+    public void updateTrade(Trade trade, Bar bar) {
         Trade dbTrade = findTrade(trade.getId());
         if (dbTrade == null || !dbTrade.valuesEqual(trade)) {
             TradeLog tradeLog = new TradeLog();
             tradeLog.setId(nextTradeLogId++);
             tradeLog.setTrade(trade);
-            tradeLog.setLogDate(quote.getqDateBarClose());
+            tradeLog.setLogDate(bar.getqDateBarClose());
             trade.copyValues(tradeLog);
-            tradeLog.setPrice(quote.getqClose());
+            tradeLog.setPrice(bar.getqClose());
             tradeLogs.add(tradeLog);
         }
         if (dbTrade == null) {

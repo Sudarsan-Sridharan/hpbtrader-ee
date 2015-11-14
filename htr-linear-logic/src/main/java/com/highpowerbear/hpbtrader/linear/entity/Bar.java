@@ -16,7 +16,7 @@ import java.util.Calendar;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(propOrder = {"timeInMillisBarClose", "qOpen", "high", "low", "qClose", "volume"})
-public class Quote implements Serializable {
+public class Bar implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableGenerator(name="lin_quote", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
@@ -45,7 +45,23 @@ public class Quote implements Serializable {
     public long getTimeInMillisBarClose() {
         return qDateBarClose.getTimeInMillis();
     }
-    
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Bar bar = (Bar) o;
+
+        return !(id != null ? !id.equals(bar.id) : bar.id != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
     public Integer getCount() {
         return count;
     }
@@ -134,18 +150,18 @@ public class Quote implements Serializable {
         this.wap = wap;
     }
     
-    public boolean valuesEqual(Quote otherQuote) {
-        if (otherQuote == null) {
+    public boolean valuesEqual(Bar otherBar) {
+        if (otherBar == null) {
             return false;
         }
-        if (    this.qOpen.equals(otherQuote.getqOpen()) && 
-                this.high.equals(otherQuote.getHigh()) && 
-                this.low.equals(otherQuote.getLow()) &&
-                this.qClose.equals(otherQuote.getqClose()) &&
-                this.volume.equals(otherQuote.getVolume()) &&
-                this.count.equals(otherQuote.getCount()) &&
-                this.wap.equals(otherQuote.getWap()) &&
-                this.hasGaps.equals(otherQuote.getHasGaps())
+        if (    this.qOpen.equals(otherBar.getqOpen()) &&
+                this.high.equals(otherBar.getHigh()) &&
+                this.low.equals(otherBar.getLow()) &&
+                this.qClose.equals(otherBar.getqClose()) &&
+                this.volume.equals(otherBar.getVolume()) &&
+                this.count.equals(otherBar.getCount()) &&
+                this.wap.equals(otherBar.getWap()) &&
+                this.hasGaps.equals(otherBar.getHasGaps())
            )
         {
             return true;
@@ -153,41 +169,21 @@ public class Quote implements Serializable {
         return false;
     }
     
-    public void copyValuesFrom(Quote otherQuote) {
-        if (otherQuote == null) {
+    public void copyValuesFrom(Bar otherBar) {
+        if (otherBar == null) {
             return;
         }
-        this.qOpen = otherQuote.getqOpen();
-        this.high = otherQuote.getHigh();
-        this.low = otherQuote.getLow();
-        this.qClose = otherQuote.getqClose();
-        this.volume = otherQuote.getVolume();
-        this.count = otherQuote.getCount();
-        this.wap = otherQuote.getWap();
-        this.hasGaps = otherQuote.getHasGaps();
+        this.qOpen = otherBar.getqOpen();
+        this.high = otherBar.getHigh();
+        this.low = otherBar.getLow();
+        this.qClose = otherBar.getqClose();
+        this.volume = otherBar.getVolume();
+        this.count = otherBar.getCount();
+        this.wap = otherBar.getWap();
+        this.hasGaps = otherBar.getHasGaps();
     }
     
     public String printValues() {
         return series.getSymbol() + ": " + LinUtil.getFormattedDate(qDateBarClose) + ", " + qOpen + ", " + high + ", " + low + ", " + qClose + ", " + volume + ", " + count + ", " + hasGaps;
-    }
-    
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Quote)) {
-            return false;
-        }
-        Quote other = (Quote) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
     }
 }

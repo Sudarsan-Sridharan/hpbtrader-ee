@@ -39,18 +39,18 @@ public class Processor implements Serializable {
         StrategyLogicContext ctx = new StrategyLogicContext();
         ctx.strategy = strategy;
         ctx.activeTrade = databaseDao.getActiveTrade(strategy);
-        ctx.quotes = databaseDao.getQuotes(series.getId(), LinSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE);
-        if (ctx.quotes.size() < LinSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE) {
-            l.info("END " + logMessage + ", not enough  quotes available");
+        ctx.bars = databaseDao.getBars(series.getId(), LinSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE);
+        if (ctx.bars.size() < LinSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE) {
+            l.info("END " + logMessage + ", not enough  bars available");
             return;
         }
-        Quote quote = ctx.quotes.get(ctx.quotes.size() - 1);
+        Bar bar = ctx.bars.get(ctx.bars.size() - 1);
         
         long intervalMillis = series.getInterval().getMillis();
         long nowMillis = LinUtil.getCalendar().getTimeInMillis();
-        boolean isCurrentQuote = ((quote.getTimeInMillisBarClose() + intervalMillis) > nowMillis);
-        if (!isCurrentQuote) {
-            l.info("END " + logMessage + ", not current quote");
+        boolean isCurrentBar = ((bar.getTimeInMillisBarClose() + intervalMillis) > nowMillis);
+        if (!isCurrentBar) {
+            l.info("END " + logMessage + ", not current bar");
             return;
         }
         
@@ -64,7 +64,7 @@ public class Processor implements Serializable {
         
         if (order == null) {
             if (ctx.activeTrade != null) {
-                databaseDao.updateTrade(ctx.activeTrade, quote.getqClose());
+                databaseDao.updateTrade(ctx.activeTrade, bar.getqClose());
             }
             l.info("END " + logMessage + ", no new order");
             return;
@@ -72,19 +72,19 @@ public class Processor implements Serializable {
         
         databaseDao.addOrder(order);
         ctx.activeTrade.addTradeOrder(order);
-        databaseDao.updateTrade(ctx.activeTrade, quote.getqClose());
+        databaseDao.updateTrade(ctx.activeTrade, bar.getqClose());
         // needed to get fresh copy of trade and trade orders with set ids to prevent trade order duplication in the next update
         ctx.activeTrade = databaseDao.getActiveTrade(strategy);
         
         if (order.isClosingOrder()) {
             ctx.activeTrade.initClose();
-            databaseDao.updateTrade(ctx.activeTrade, quote.getqClose());
+            databaseDao.updateTrade(ctx.activeTrade, bar.getqClose());
         }
         if (order.isReversalOrder()) {
             ctx.activeTrade = new Trade().initOpen(order);
             strategyLogic.setInitialStopAndTarget();
             ctx.activeTrade.addTradeOrder(order);
-            databaseDao.updateTrade(ctx.activeTrade, quote.getqClose());
+            databaseDao.updateTrade(ctx.activeTrade, bar.getqClose());
         }
         
         ctx.strategy.setNumAllOrders(strategy.getNumAllOrders() + 1);
@@ -93,7 +93,7 @@ public class Processor implements Serializable {
 
         // send email, notifying about new order
         String subject = order.getDescription();
-        String content = order.getTriggerDesc() + "\n" + quote.printValues();
+        String content = order.getTriggerDesc() + "\n" + bar.printValues();
         emailSender.sendEmail(subject, content);
 
         l.info("END " + logMessage + ", new order, trigger=" + order.getTriggerDesc());
@@ -101,11 +101,11 @@ public class Processor implements Serializable {
         if (LinEnums.StrategyMode.IB.equals(strategy.getStrategyMode())) {
             ibController.submitIbOrder(order);
         } else {
-            orderStateHandler.simulateFill(order, quote);
+            orderStateHandler.simulateFill(order, bar);
         }
     }
 
-    void processManual(Order manualOrder, Trade activeTrade, Quote quote) {
+    void processManual(Order manualOrder, Trade activeTrade, Bar bar) {
         Strategy strategy = manualOrder.getStrategy();
         Series series = strategy.getSeries();
         String logMessage = "processing " + series.getSymbol() + ", " + series.getCurrency() + ", " + series.getInterval().getDisplayName() + ", " +  strategy.getStrategyType() + " --> manual order";
@@ -113,13 +113,13 @@ public class Processor implements Serializable {
         l.info("START " + logMessage);
         databaseDao.addOrder(manualOrder);
         activeTrade.addTradeOrder(manualOrder);
-        databaseDao.updateTrade(activeTrade, quote.getqClose());
+        databaseDao.updateTrade(activeTrade, bar.getqClose());
         // needed to get fresh copy of trade and trade orders with set ids to prevent trade order duplication in the next update
         activeTrade = databaseDao.getActiveTrade(strategy);
 
         if (manualOrder.isClosingOrder()) {
             activeTrade.initClose();
-            databaseDao.updateTrade(activeTrade, quote.getqClose());
+            databaseDao.updateTrade(activeTrade, bar.getqClose());
         }
         strategy.setNumAllOrders(strategy.getNumAllOrders() + 1);
         databaseDao.updateStrategy(strategy);
@@ -127,7 +127,7 @@ public class Processor implements Serializable {
 
         // send email, notifying about new order
         String subject = manualOrder.getDescription();
-        String content = manualOrder.getTriggerDesc() + "\n" + quote.printValues();
+        String content = manualOrder.getTriggerDesc() + "\n" + bar.printValues();
         emailSender.sendEmail(subject, content);
 
         l.info("END " + logMessage + ", new order, trigger=" + manualOrder.getTriggerDesc());
@@ -135,7 +135,7 @@ public class Processor implements Serializable {
         if (LinEnums.StrategyMode.IB.equals(strategy.getStrategyMode())) {
             ibController.submitIbOrder(manualOrder);
         } else {
-            orderStateHandler.simulateFill(manualOrder, quote);
+            orderStateHandler.simulateFill(manualOrder, bar);
         }
     }
 }

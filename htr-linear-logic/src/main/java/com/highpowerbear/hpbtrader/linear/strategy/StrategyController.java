@@ -35,7 +35,7 @@ public class StrategyController implements Serializable {
     }
 
     public void swapStrategyLogic(Series series) {
-        if (series.getIsEnabled()) {
+        if (series.getEnabled()) {
             Strategy activeStrategy = databaseDao.getActiveStrategy(series);
             linData.getStrategyLogicMap().put(series.getId(), createStrategyLogic(activeStrategy));
         } else {
@@ -59,8 +59,8 @@ public class StrategyController implements Serializable {
         processor.process(strategy, strategyLogic);
     }
 
-    public void processManual(Order manualOrder, Trade activeTrade, Quote quote) {
-        processor.processManual(manualOrder, activeTrade, quote);
+    public void processManual(Order manualOrder, Trade activeTrade, Bar bar) {
+        processor.processManual(manualOrder, activeTrade, bar);
     }
 
     public BacktestResult backtest(Strategy strategy, Calendar startDate, Calendar endDate) {

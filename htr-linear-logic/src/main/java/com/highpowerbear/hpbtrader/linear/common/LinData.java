@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.linear.common;
 
-import com.highpowerbear.hpbtrader.linear.entity.Quote;
-import com.highpowerbear.hpbtrader.linear.quote.model.RealtimeData;
+import com.highpowerbear.hpbtrader.linear.entity.Bar;
+import com.highpowerbear.hpbtrader.linear.mktdata.model.RealtimeData;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyLogic;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @ApplicationScoped
 public class LinData {
     private Map<Integer, Integer> backfillStatusMap = new HashMap<>(); // seriesId --> backfillStatus
-    private Map<Integer, List<Quote>> quotesReceivedMap = new HashMap<>(); // seriesId --> quoteList
+    private Map<Integer, List<Bar>> barsReceivedMap = new HashMap<>(); // seriesId --> barList
     private Map<Integer, StrategyLogic> strategyLogicMap = new HashMap<>(); // seriesId --> strategyLogic
     private Map<Long, Integer> openOrderHeartbeatMap = new ConcurrentHashMap<>(); // order dbId --> number of failed heartbeats left before declaring order UNKNOWN
     private Map<Integer, String> realtimeDataRequestMap = new HashMap<>(); // ib request id --> contract string
@@ -28,8 +28,8 @@ public class LinData {
         return backfillStatusMap;
     }
 
-    public Map<Integer, List<Quote>> getQuotesReceivedMap() {
-        return quotesReceivedMap;
+    public Map<Integer, List<Bar>> getBarsReceivedMap() {
+        return barsReceivedMap;
     }
 
     public Map<Integer, StrategyLogic> getStrategyLogicMap() {

@@ -8,10 +8,10 @@ import java.util.List;
  * Created by rkolar on 4/14/14.
  */
 public interface DatabaseDao {
-    void addQuotes(List<Quote> quotes);
-    List<Quote> getQuotes(Integer seriesId, Integer numQuotes);
-    Quote getLastQuote(Series series);
-    Long getNumQuotes(Series series);
+    void addBars(List<Bar> bars);
+    List<Bar> getBars(Integer seriesId, Integer numBars);
+    Bar getLastBar(Series series);
+    Long getNumBars(Series series);
     boolean addSeries(Series series);
     List<Series> getAllSeries(boolean disabledToo);
     List<Series> getSeriesByInterval(LinEnums.Interval interval);

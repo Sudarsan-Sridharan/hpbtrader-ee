@@ -19,7 +19,7 @@ public class SeriesRecord implements Serializable {
     private String exchange;
     private Boolean enabled;
     private Boolean realtimeDataEnabled;
-    private Long numQuotes;
+    private Long numBars;
     private Integer numStrategies;
     private Double lastQuote;
     private String activeStrategy;
@@ -126,12 +126,12 @@ public class SeriesRecord implements Serializable {
         this.realtimeDataEnabled = realtimeDataEnabled;
     }
 
-    public Long getNumQuotes() {
-        return numQuotes;
+    public Long getNumBars() {
+        return numBars;
     }
 
-    public void setNumQuotes(Long numQuotes) {
-        this.numQuotes = numQuotes;
+    public void setNumBars(Long numBars) {
+        this.numBars = numBars;
     }
 
     public Integer getNumStrategies() {

@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.linear.common;
 
-import com.highpowerbear.hpbtrader.linear.quote.TiCalculator;
+import com.highpowerbear.hpbtrader.linear.mktdata.TiCalculator;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;

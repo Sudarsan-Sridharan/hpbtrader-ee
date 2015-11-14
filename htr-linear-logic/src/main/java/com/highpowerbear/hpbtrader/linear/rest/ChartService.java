@@ -1,15 +1,15 @@
 package com.highpowerbear.hpbtrader.linear.rest;
 
 import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
-import com.highpowerbear.hpbtrader.linear.entity.Quote;
+import com.highpowerbear.hpbtrader.linear.entity.Bar;
 import com.highpowerbear.hpbtrader.linear.entity.StrategyLog;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
 import com.highpowerbear.hpbtrader.linear.entity.TradeLog;
 import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
-import com.highpowerbear.hpbtrader.linear.quote.TiCalculator;
-import com.highpowerbear.hpbtrader.linear.quote.indicator.Ema;
-import com.highpowerbear.hpbtrader.linear.quote.indicator.Macd;
-import com.highpowerbear.hpbtrader.linear.quote.indicator.Stochastics;
+import com.highpowerbear.hpbtrader.linear.mktdata.TiCalculator;
+import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Ema;
+import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Macd;
+import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Stochastics;
 import com.highpowerbear.hpbtrader.linear.rest.model.ChartParams;
 
 import javax.ejb.Singleton;
@@ -29,34 +29,34 @@ public class ChartService {
     @Inject private TiCalculator tiCalculator;
     
     @GET
-    @Path("quotes/{seriesId}")
+    @Path("bars/{seriesId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Quote> getQuotes(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
-        return databaseDao.getQuotes(seriesId, numBars);
+    public List<Bar> getBars(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
+        return databaseDao.getBars(seriesId, numBars);
     }
     
     @GET
     @Path("ema/{seriesId}/{emaPeriod}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Ema> getEma(@PathParam("seriesId") Integer seriesId, @PathParam("emaPeriod") Integer emaPeriod, @QueryParam("numBars") Integer numBars) {
-        List<Quote> quotes = databaseDao.getQuotes(seriesId, LinSettings.BARS_REQUIRED + numBars);
-        return tiCalculator.calculateEma(quotes, emaPeriod);
+        List<Bar> bars = databaseDao.getBars(seriesId, LinSettings.BARS_REQUIRED + numBars);
+        return tiCalculator.calculateEma(bars, emaPeriod);
     }
     
     @GET
     @Path("stoch/{seriesId}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Stochastics> getStoch(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
-        List<Quote> quotes = databaseDao.getQuotes(seriesId, LinSettings.BARS_REQUIRED + numBars);
-        return tiCalculator.calculateStoch(quotes);
+        List<Bar> bars = databaseDao.getBars(seriesId, LinSettings.BARS_REQUIRED + numBars);
+        return tiCalculator.calculateStoch(bars);
     }
     
     @GET
     @Path("macd/{seriesId}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Macd> getMacd(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
-        List<Quote> quotes = databaseDao.getQuotes(seriesId, LinSettings.BARS_REQUIRED + numBars);
-        return tiCalculator.calculateMacd(quotes);
+        List<Bar> bars = databaseDao.getBars(seriesId, LinSettings.BARS_REQUIRED + numBars);
+        return tiCalculator.calculateMacd(bars);
     }
     
     @GET
