@@ -1,10 +1,10 @@
 package com.highpowerbear.hpbtrader.linear.model;
 
-import com.highpowerbear.hpbtrader.linear.common.LinUtil;
-import com.highpowerbear.hpbtrader.linear.definitions.LinConstants;
-import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
-import com.highpowerbear.hpbtrader.linear.entity.Series;
+import com.highpowerbear.hpbtrader.shared.common.HtrConstants;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+import com.highpowerbear.hpbtrader.shared.entity.Series;
 import com.ib.client.TickType;
 
 /**
@@ -31,21 +31,21 @@ public class RealtimeData {
 
     public RealtimeData(Series series) {
         this.series = series;
-        this.contractClassName = (LinUtil.removeDot(series.getSymbol()) + "-" + series.getCurrency()).toLowerCase();
-        this.ibRequestId = series.getId() * LinSettings.IB_REQUEST_MULT + 10;
+        this.contractClassName = (HtrUtil.removeDot(series.getSymbol()) + "-" + series.getCurrency()).toLowerCase();
+        this.ibRequestId = series.getId() * HtrSettings.IB_REQUEST_MULT + 10;
         initFields();
     }
 
     private void initFields() {
-        bid = new RealtimeField<>(LinConstants.INVALID_PRICE, LinEnums.RealtimeStatus.UNCHANGED, "bid", "col-gray-bck");
-        ask = new RealtimeField<>(LinConstants.INVALID_PRICE, LinEnums.RealtimeStatus.UNCHANGED, "ask", "col-gray-bck");
-        last = new RealtimeField<>(LinConstants.INVALID_PRICE, LinEnums.RealtimeStatus.UNCHANGED, "last", "col-gray-bck");
-        close = new RealtimeField<>(LinConstants.INVALID_PRICE, LinEnums.RealtimeStatus.UNCHANGED, "close", "col-gray-bck");
-        changePct = new RealtimeField<>(null, LinEnums.RealtimeStatus.POSITIVE, "changePct", "");
-        bidSize = new RealtimeField<>(LinConstants.INVALID_SIZE, LinEnums.RealtimeStatus.UNCHANGED, "bid_size", "col-gray-bck");
-        askSize = new RealtimeField<>(LinConstants.INVALID_SIZE, LinEnums.RealtimeStatus.UNCHANGED, "ask_size", "col-gray-bck");
-        lastSize = new RealtimeField<>(LinConstants.INVALID_SIZE, LinEnums.RealtimeStatus.UNCHANGED, "last_size", "col-gray-bck");
-        volume = new RealtimeField<>(LinConstants.INVALID_SIZE, LinEnums.RealtimeStatus.UNCHANGED, "volume", "col-gray-bck");
+        bid = new RealtimeField<>(HtrConstants.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "bid", "col-gray-bck");
+        ask = new RealtimeField<>(HtrConstants.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "ask", "col-gray-bck");
+        last = new RealtimeField<>(HtrConstants.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "last", "col-gray-bck");
+        close = new RealtimeField<>(HtrConstants.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "close", "col-gray-bck");
+        changePct = new RealtimeField<>(null, HtrEnums.RealtimeStatus.POSITIVE, "changePct", "");
+        bidSize = new RealtimeField<>(HtrConstants.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "bid_size", "col-gray-bck");
+        askSize = new RealtimeField<>(HtrConstants.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "ask_size", "col-gray-bck");
+        lastSize = new RealtimeField<>(HtrConstants.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "last_size", "col-gray-bck");
+        volume = new RealtimeField<>(HtrConstants.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "volume", "col-gray-bck");
     }
 
     public String createUpdateMessage(int field, double price) {
@@ -96,10 +96,10 @@ public class RealtimeData {
 
     public String createChangePctUpdateMsg() {
         String message = "rt,";
-        if (!LinEnums.SecType.CASH.equals(series.getSecType()) && !LinConstants.INVALID_PRICE.equals(last.getValue()) && !LinConstants.INVALID_PRICE.equals(close.getValue())) {
+        if (!HtrEnums.SecType.CASH.equals(series.getSecType()) && !HtrConstants.INVALID_PRICE.equals(last.getValue()) && !HtrConstants.INVALID_PRICE.equals(close.getValue())) {
             double price = ((last.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
-        } else if (LinEnums.SecType.CASH.equals(series.getSecType()) && !LinConstants.INVALID_PRICE.equals(ask.getValue()) && !LinConstants.INVALID_PRICE.equals(close.getValue())) {
+        } else if (HtrEnums.SecType.CASH.equals(series.getSecType()) && !HtrConstants.INVALID_PRICE.equals(ask.getValue()) && !HtrConstants.INVALID_PRICE.equals(close.getValue())) {
             double price = ((ask.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
         }
@@ -108,17 +108,17 @@ public class RealtimeData {
     }
 
     private void setValueStatus(RealtimeField<Double> v, Double price) {
-        v.setValueStatus(price > v.getValue() ? LinEnums.RealtimeStatus.UPTICK : (price < v.getValue() ? LinEnums.RealtimeStatus.DOWNTICK : LinEnums.RealtimeStatus.UNCHANGED));
+        v.setValueStatus(price > v.getValue() ? HtrEnums.RealtimeStatus.UPTICK : (price < v.getValue() ? HtrEnums.RealtimeStatus.DOWNTICK : HtrEnums.RealtimeStatus.UNCHANGED));
         v.setValue(price);
     }
 
     private void setValueStatus(RealtimeField<Integer> v, Integer size) {
-        v.setValueStatus(size > v.getValue() ? LinEnums.RealtimeStatus.UPTICK : (size < v.getValue() ? LinEnums.RealtimeStatus.DOWNTICK : LinEnums.RealtimeStatus.UNCHANGED));
+        v.setValueStatus(size > v.getValue() ? HtrEnums.RealtimeStatus.UPTICK : (size < v.getValue() ? HtrEnums.RealtimeStatus.DOWNTICK : HtrEnums.RealtimeStatus.UNCHANGED));
         v.setValue(size);
     }
 
     private void setValueStatusChangePct(RealtimeField<Double> v, Double price) {
-        v.setValueStatus(price == null || price >= 0d ? LinEnums.RealtimeStatus.POSITIVE : LinEnums.RealtimeStatus.NEGATIVE);
+        v.setValueStatus(price == null || price >= 0d ? HtrEnums.RealtimeStatus.POSITIVE : HtrEnums.RealtimeStatus.NEGATIVE);
         v.setValue(price);
     }
 
@@ -171,6 +171,6 @@ public class RealtimeData {
     }
 
     public String getChangePctStr() {
-        return changePct.getValue() == null ? "N/A" : LinUtil.round(changePct.getValue(), 2) + "%";
+        return changePct.getValue() == null ? "N/A" : HtrUtil.round(changePct.getValue(), 2) + "%";
     }
 }

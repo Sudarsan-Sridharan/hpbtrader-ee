@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.linear.rest;
 
-import com.highpowerbear.hpbtrader.linear.entity.IbAccount;
+import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 
 import javax.ejb.Singleton;
 import javax.ws.rs.PUT;

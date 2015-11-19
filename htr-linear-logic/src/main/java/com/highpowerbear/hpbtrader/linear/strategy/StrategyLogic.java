@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.linear.strategy;
 
-import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
 import com.highpowerbear.hpbtrader.linear.model.StrategyLogicContext;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 
 /**
  *

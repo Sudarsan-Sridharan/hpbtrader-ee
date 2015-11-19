@@ -1,14 +1,16 @@
 package com.highpowerbear.hpbtrader.linear.strategy;
 
-import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
-import com.highpowerbear.hpbtrader.linear.entity.Bar;
-import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
-import com.highpowerbear.hpbtrader.linear.entity.Strategy;
-import com.highpowerbear.hpbtrader.linear.entity.Trade;
+import com.highpowerbear.hpbtrader.linear.common.LinSettings;
 import com.highpowerbear.hpbtrader.linear.model.BacktestResult;
 import com.highpowerbear.hpbtrader.linear.model.StrategyLogicContext;
-import com.highpowerbear.hpbtrader.linear.persistence.LinDao;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.entity.Bar;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+import com.highpowerbear.hpbtrader.shared.entity.Strategy;
+import com.highpowerbear.hpbtrader.shared.entity.Trade;
+import com.highpowerbear.hpbtrader.shared.persistence.BarDao;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,24 +29,24 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class Backtester {
     private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
-    @Inject private LinDao linDao;
+    @Inject private BarDao barDao;
 
     private DateFormat df = new SimpleDateFormat("yy/MM/dd HH:mm");
     private static final int INDICATORS_LIST_SIZE = 10;
     
     BacktestResult backtest(Strategy dbStrategy, StrategyLogic strategyLogic, Calendar startDate, Calendar endDate) {
         String logMessage = "backtesting strategy, " + dbStrategy.getStrategyType().toString() + " --> " + strategyLogic.getName();
-        List<Bar> bars = linDao.getBars(dbStrategy.getSeries().getId(), null);
+        List<Bar> bars = barDao.getBars(dbStrategy.getSeries().getId(), null);
         bars = filterBars(bars, startDate, endDate);
-        int numIterations = bars.size() - LinSettings.BARS_REQUIRED - INDICATORS_LIST_SIZE;
+        int numIterations = bars.size() - HtrSettings.BARS_REQUIRED - INDICATORS_LIST_SIZE;
         l.info("START " + logMessage + ", iterations=" + numIterations);
         BacktestResult backtestResult = new BacktestResult(dbStrategy);
-        if (bars.size() < LinSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE) {
+        if (bars.size() < HtrSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE) {
             l.info("END " + logMessage + ", not enough  bars available");
             return backtestResult;
         }
         
-        for (int i = LinSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE; i < bars.size(); i++) {
+        for (int i = HtrSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE; i < bars.size(); i++) {
             Strategy strategy = new Strategy();
             backtestResult.getStrategy().deepCopy(strategy);
             List<Bar> iterationBars = bars.subList(0, i);
@@ -67,9 +69,9 @@ public class Backtester {
             l.fine("Backtest iteration=" + i + ", new order, trigger=" + ibOrder.getTriggerDesc() + ", date=" + df.format(bar.getqDateBarClose().getTime()));
             backtestResult.addOrder(ibOrder);
             ctx.activeTrade.addTradeOrder(ibOrder);
-            ibOrder.addEvent(LinEnums.IbOrderStatus.SUBMIT_REQ, bar.getqDateBarClose(), null);
-            ibOrder.addEvent(LinEnums.IbOrderStatus.SUBMITTED, bar.getqDateBarClose(), null);
-            ibOrder.addEvent(LinEnums.IbOrderStatus.FILLED, bar.getqDateBarClose(), null);
+            ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, bar.getqDateBarClose(), null);
+            ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, bar.getqDateBarClose(), null);
+            ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, bar.getqDateBarClose(), null);
             ibOrder.setFillPrice(bar.getqClose());
             backtestResult.updateTrade(ctx.activeTrade, bar);
             

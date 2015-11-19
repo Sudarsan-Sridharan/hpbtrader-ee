@@ -1,7 +1,8 @@
 package com.highpowerbear.hpbtrader.linear.model;
 
-import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.entity.*;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.entity.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,14 +23,14 @@ public class BacktestResult {
 
     public BacktestResult(Strategy strategy) {
         this.strategy = strategy;
-        this.strategy.setStrategyMode(LinEnums.StrategyMode.BTEST);
+        this.strategy.setStrategyMode(HtrEnums.StrategyMode.BTEST);
     }
     
     public Trade getActiveTrade() {
         Trade dbActiveTrade = null;
         Trade activeTrade = null; // need to create a copy to simulate jpa detachment
         for (Trade t : trades) {
-            if (LinEnums.TradeStatus.INIT_OPEN.equals(t.getTradeStatus() ) || LinEnums.TradeStatus.OPEN.equals(t.getTradeStatus())) {
+            if (HtrEnums.TradeStatus.INIT_OPEN.equals(t.getTradeStatus() ) || HtrEnums.TradeStatus.OPEN.equals(t.getTradeStatus())) {
                 dbActiveTrade = t;
                 break;
             }
@@ -44,13 +45,13 @@ public class BacktestResult {
             StrategyLog strategyLog = new StrategyLog();
             strategyLog.setId(nextStrategyLogId++);
             strategyLog.setStrategy(strategy);
-            strategyLog.setStrategyMode(LinEnums.StrategyMode.BTEST);
+            strategyLog.setStrategyMode(HtrEnums.StrategyMode.BTEST);
             strategyLog.setLogDate(bar.getqDateBarClose());
             strategy.copyValues(strategyLog);
             strategyLogs.add(strategyLog);
         }
         this.strategy = strategy;
-        this.strategy.setStrategyMode(LinEnums.StrategyMode.BTEST);
+        this.strategy.setStrategyMode(HtrEnums.StrategyMode.BTEST);
     }
     
     public void updateTrade(Trade trade, Bar bar) {
@@ -74,7 +75,7 @@ public class BacktestResult {
     
     public void addOrder(IbOrder ibOrder) {
         ibOrder.setId(nextOrderId++);
-        ibOrder.setStrategyMode(LinEnums.StrategyMode.BTEST);
+        ibOrder.setStrategyMode(HtrEnums.StrategyMode.BTEST);
         ibOrders.add(ibOrder);
     }
     

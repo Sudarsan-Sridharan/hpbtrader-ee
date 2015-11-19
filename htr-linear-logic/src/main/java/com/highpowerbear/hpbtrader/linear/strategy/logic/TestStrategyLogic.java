@@ -1,9 +1,9 @@
 package com.highpowerbear.hpbtrader.linear.strategy.logic;
 
-import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
-import com.highpowerbear.hpbtrader.linear.entity.Trade;
 import com.highpowerbear.hpbtrader.linear.strategy.AbstractStrategyLogic;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+import com.highpowerbear.hpbtrader.shared.entity.Trade;
 
 /**
  *
@@ -19,11 +19,11 @@ public class TestStrategyLogic extends AbstractStrategyLogic {
         createOrder();
         if (ctx.activeTrade != null) {
             ibOrder.setTriggerDesc("testReverse: test reverse");
-            ibOrder.setOrderAction(ctx.activeTrade.isLong() ? LinEnums.OrderAction.SREV : LinEnums.OrderAction.BREV);
+            ibOrder.setOrderAction(ctx.activeTrade.isLong() ? HtrEnums.OrderAction.SREV : HtrEnums.OrderAction.BREV);
             ibOrder.setQuantity(ibOrder.getQuantity() * 2);
         } else {
             ibOrder.setTriggerDesc("testOpen: test open");
-            ibOrder.setOrderAction(LinEnums.OrderAction.BTO);
+            ibOrder.setOrderAction(HtrEnums.OrderAction.BTO);
             ctx.activeTrade = new Trade().initOpen(ibOrder);
             setInitialStopAndTarget();
         }

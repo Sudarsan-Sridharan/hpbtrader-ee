@@ -2,17 +2,18 @@ package com.highpowerbear.hpbtrader.linear.ibclient;
 
 import com.highpowerbear.hpbtrader.linear.common.EventBroker;
 import com.highpowerbear.hpbtrader.linear.common.LinData;
-import com.highpowerbear.hpbtrader.linear.common.LinUtil;
 import com.highpowerbear.hpbtrader.linear.common.SingletonRepo;
-import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
-import com.highpowerbear.hpbtrader.linear.entity.Bar;
-import com.highpowerbear.hpbtrader.linear.entity.IbAccount;
-import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
-import com.highpowerbear.hpbtrader.linear.entity.Series;
 import com.highpowerbear.hpbtrader.linear.mktdata.MktDataController;
 import com.highpowerbear.hpbtrader.linear.strategy.OrderStateHandler;
-import com.highpowerbear.hpbtrader.linear.persistence.LinDao;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+import com.highpowerbear.hpbtrader.shared.entity.Bar;
+import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+import com.highpowerbear.hpbtrader.shared.entity.Series;
+import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
+import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
 import com.ib.client.Contract;
 import com.ib.client.OrderState;
 
@@ -25,7 +26,8 @@ import java.util.List;
  */
 public class IbListenerImpl extends AbstractIbListener {
     private LinData linData = SingletonRepo.getInstance().getLinData();
-    private LinDao linDao = SingletonRepo.getInstance().getLinDao();
+    private IbOrderDao ibOrderDao = SingletonRepo.getInstance().getIbOrderDao();
+    private SeriesDao seriesDao = SingletonRepo.getInstance().getSeriesDao();
     private IbController ibController = SingletonRepo.getInstance().getIbController();
     private MktDataController mktDataController = SingletonRepo.getInstance().getMktDataController();
     private OrderStateHandler orderStateHandler = SingletonRepo.getInstance().getOrderStateHandler();
@@ -48,23 +50,23 @@ public class IbListenerImpl extends AbstractIbListener {
         {
             return;
         }
-        IbOrder ibOrder = linDao.getIbOrderByIbPermId(ibAccount, permId);
+        IbOrder ibOrder = ibOrderDao.getIbOrderByIbPermId(ibAccount, permId);
         if (ibOrder == null) {
             return;
         }
 
-        if (IbApiEnums.OrderStatus.SUBMITTED.getName().equalsIgnoreCase(status) && LinEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
+        if (IbApiEnums.OrderStatus.SUBMITTED.getName().equalsIgnoreCase(status) && HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
             heartbeatControl.heartbeatReceived(ibOrder);
-            eventBroker.trigger(LinEnums.DataChangeEvent.STRATEGY_UPDATE);
-        } else if (IbApiEnums.OrderStatus.SUBMITTED.getName().equalsIgnoreCase(status) && !LinEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
+            eventBroker.trigger(HtrEnums.DataChangeEvent.STRATEGY_UPDATE);
+        } else if (IbApiEnums.OrderStatus.SUBMITTED.getName().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
             heartbeatControl.heartbeatReceived(ibOrder);
-            orderStateHandler.orderSubmitted(ibOrder, LinUtil.getCalendar());
-        } else if (IbApiEnums.OrderStatus.CANCELLED.getName().equalsIgnoreCase(status) && !LinEnums.IbOrderStatus.CANCELED.equals(ibOrder.getStatus())) {
+            orderStateHandler.orderSubmitted(ibOrder, HtrUtil.getCalendar());
+        } else if (IbApiEnums.OrderStatus.CANCELLED.getName().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.CANCELED.equals(ibOrder.getStatus())) {
             heartbeatControl.removeHeartbeat(ibOrder);
-            orderStateHandler.orderCanceled(ibOrder, LinUtil.getCalendar());
-        } else if (IbApiEnums.OrderStatus.FILLED.getName().equalsIgnoreCase(status) && remaining == 0 && !LinEnums.IbOrderStatus.FILLED.equals(ibOrder.getStatus())) {
+            orderStateHandler.orderCanceled(ibOrder, HtrUtil.getCalendar());
+        } else if (IbApiEnums.OrderStatus.FILLED.getName().equalsIgnoreCase(status) && remaining == 0 && !HtrEnums.IbOrderStatus.FILLED.equals(ibOrder.getStatus())) {
             heartbeatControl.removeHeartbeat(ibOrder);
-            orderStateHandler.orderFilled(ibOrder, LinUtil.getCalendar(), avgFillPrice);
+            orderStateHandler.orderFilled(ibOrder, HtrUtil.getCalendar(), avgFillPrice);
         }
     }
 
@@ -72,11 +74,11 @@ public class IbListenerImpl extends AbstractIbListener {
     public void openOrder(int orderId, Contract contract, com.ib.client.Order order, OrderState orderState) {
         super.openOrder(orderId, contract, order, orderState);
         
-        IbOrder dbIbOrder = linDao.getIbOrderByIbOrderId(ibAccount, orderId);
+        IbOrder dbIbOrder = ibOrderDao.getIbOrderByIbOrderId(ibAccount, orderId);
         if (dbIbOrder != null && dbIbOrder.getIbPermId() == null) {
             dbIbOrder.setIbPermId(order.m_permId);
-            linDao.updateIbOrder(dbIbOrder);
-            eventBroker.trigger(LinEnums.DataChangeEvent.STRATEGY_UPDATE);
+            ibOrderDao.updateIbOrder(dbIbOrder);
+            eventBroker.trigger(HtrEnums.DataChangeEvent.STRATEGY_UPDATE);
         }
     }
 
@@ -90,22 +92,22 @@ public class IbListenerImpl extends AbstractIbListener {
     public void historicalData(int reqId, String date, double open, double high, double low, double close, int volume, int count, double WAP, boolean hasGaps) {
         //super.historicalData(reqId, date, open, high, low, close, volume, count, WAP, hasGaps);
         
-        Series s = linDao.findSeries(reqId / LinSettings.IB_REQUEST_MULT);
+        Series s = seriesDao.findSeries(reqId / HtrSettings.IB_REQUEST_MULT);
         if (date.startsWith("finish")) {
             // remove last bar if it is not finished yet
             List<Bar> barsReceived = linData.getBarsReceivedMap().get(s.getId());
             int numBars = barsReceived.size();
             Bar lastBar = barsReceived.get(numBars - 1);
-            if (lastBar.getTimeInMillisBarClose() > LinUtil.getCalendar().getTimeInMillis()) {
+            if (lastBar.getTimeInMillisBarClose() > HtrUtil.getCalendar().getTimeInMillis()) {
                 barsReceived.remove(numBars - 1);
             }
             mktDataController.processBars(s);
             return;
         }
         Bar q = new Bar();
-        Calendar c = LinUtil.getCalendar();
+        Calendar c = HtrUtil.getCalendar();
         c.setTimeInMillis(Long.valueOf(date) * 1000 + s.getInterval().getMillis()); // date-time stamp of the end of the bar
-        if (LinEnums.Interval.INT_60_MIN.equals(s.getInterval())) {
+        if (HtrEnums.Interval.INT_60_MIN.equals(s.getInterval())) {
             c.set(Calendar.MINUTE, 0); // needed in case of bars started at 9:30 (END 10:00 not 10:30) or 17:15 (END 18:00 not 18:15)
         }
         q.setqDateBarClose(c);

@@ -6,13 +6,18 @@
     <artifactId>hpbtrader</artifactId>
     <version>3.0</version>
     <modules>
-        <module>htr-linear-logic</module>
-        <module>htr-linear-app</module>
-        <module>htr-linear-doc</module>
-        <module>htr-options-logic</module>
-        <module>htr-options-app</module>
+        <module>htr-doc</module>
         <module>htr-ibapi-client</module>
         <module>htr-ibapi-lib</module>
+        <module>htr-mktdata-logic</module>
+        <module>htr-mktdata-app</module>
+        <module>htr-exec-logic</module>
+        <module>htr-exec-app</module>
+        <module>htr-linear-logic</module>
+        <module>htr-linear-app</module>
+        <module>htr-options-logic</module>
+        <module>htr-options-app</module>
+        <module>htr-shared-lib</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -1,11 +1,12 @@
 package com.highpowerbear.hpbtrader.linear.ibclient;
 
 import com.highpowerbear.hpbtrader.linear.common.LinData;
-import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
-import com.highpowerbear.hpbtrader.linear.entity.IbAccount;
-import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
-import com.highpowerbear.hpbtrader.linear.persistence.LinDao;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,10 +21,10 @@ import java.util.Set;
 @ApplicationScoped
 public class HeartbeatControl {
     @Inject private LinData linData;
-    @Inject private LinDao linDao;
+    @Inject private IbOrderDao ibOrderDao;
 
     public void init(IbAccount ibAccount) {
-        linDao.getOpenIbOrders(ibAccount).forEach(this::addHeartbeat);
+        ibOrderDao.getOpenIbOrders(ibAccount).forEach(this::addHeartbeat);
     }
 
     public void updateHeartbeats(IbAccount ibAccount) {
@@ -32,9 +33,9 @@ public class HeartbeatControl {
         for (IbOrder ibOrder : keyset) {
             Integer failedHeartbeatsLeft = hm.get(ibOrder);
             if (failedHeartbeatsLeft <= 0) {
-                if (!LinEnums.IbOrderStatus.UNKNOWN.equals(ibOrder.getStatus())) {
-                    ibOrder.addEvent(LinEnums.IbOrderStatus.UNKNOWN, null, null);
-                    linDao.updateIbOrder(ibOrder);
+                if (!HtrEnums.IbOrderStatus.UNKNOWN.equals(ibOrder.getStatus())) {
+                    ibOrder.addEvent(HtrEnums.IbOrderStatus.UNKNOWN, null, null);
+                    ibOrderDao.updateIbOrder(ibOrder);
                 }
                 hm.remove(ibOrder);
             } else {
@@ -47,12 +48,12 @@ public class HeartbeatControl {
         Map<IbOrder, Integer> hm = linData.getOpenOrderHeartbeatMap().get(ibOrder.getIbAccount());
         Integer failedHeartbeatsLeft = hm.get(ibOrder);
         if (failedHeartbeatsLeft != null) {
-            hm.put(ibOrder, (failedHeartbeatsLeft < LinSettings.MAX_ORDER_HEARTBEAT_FAILS ? failedHeartbeatsLeft + 1 : failedHeartbeatsLeft));
+            hm.put(ibOrder, (failedHeartbeatsLeft < HtrSettings.MAX_ORDER_HEARTBEAT_FAILS ? failedHeartbeatsLeft + 1 : failedHeartbeatsLeft));
         }
     }
 
     public void addHeartbeat(IbOrder ibOrder) {
-        linData.getOpenOrderHeartbeatMap().get(ibOrder.getIbAccount()).put(ibOrder, LinSettings.MAX_ORDER_HEARTBEAT_FAILS);
+        linData.getOpenOrderHeartbeatMap().get(ibOrder.getIbAccount()).put(ibOrder, HtrSettings.MAX_ORDER_HEARTBEAT_FAILS);
     }
 
     public void removeHeartbeat(IbOrder ibOrder) {

@@ -2,14 +2,15 @@ package com.highpowerbear.hpbtrader.linear.ibclient;
 
 import com.highpowerbear.hpbtrader.linear.common.EventBroker;
 import com.highpowerbear.hpbtrader.linear.common.LinData;
-import com.highpowerbear.hpbtrader.linear.common.LinUtil;
-import com.highpowerbear.hpbtrader.linear.definitions.LinConstants;
-import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
-import com.highpowerbear.hpbtrader.linear.entity.IbAccount;
-import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
-import com.highpowerbear.hpbtrader.linear.model.IbConnection;
-import com.highpowerbear.hpbtrader.linear.persistence.LinDao;
+import com.highpowerbear.hpbtrader.linear.common.LinSettings;
+import com.highpowerbear.hpbtrader.shared.common.HtrConstants;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+import com.highpowerbear.hpbtrader.shared.model.IbConnection;
+import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
 
@@ -26,7 +27,7 @@ import java.util.logging.Logger;
 public class IbController {
     private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
     @Inject private LinData linData;
-    @Inject private LinDao linDao;
+    @Inject private IbOrderDao ibOrderDao;
     @Inject private HeartbeatControl heartbeatControl;
     @Inject private EventBroker eventBroker;
 
@@ -50,8 +51,8 @@ public class IbController {
             c.setAccounts(null);
             c.setIsConnected(false);
             l.info("Connecting ibAccount " + ibAccount.print());
-            c.getClientSocket().eConnect(ibAccount.getHost(), ibAccount.getPort(), LinSettings.IB_CONNECT_CLIENT_ID);
-            LinUtil.waitMilliseconds(LinConstants.ONE_SECOND);
+            c.getClientSocket().eConnect(ibAccount.getHost(), ibAccount.getPort(), HtrSettings.IB_CONNECT_CLIENT_ID);
+            HtrUtil.waitMilliseconds(HtrConstants.ONE_SECOND);
             if (isConnected(ibAccount)) {
                 c.setIsConnected(true);
                 l.info("Sucessfully connected ibAccount " + ibAccount.print());
@@ -66,7 +67,7 @@ public class IbController {
         if (c.getClientSocket() != null && c.getClientSocket().isConnected()) {
             l.info("Disconnecting ibAccount " + ibAccount.print());
             c.getClientSocket().eDisconnect();
-            LinUtil.waitMilliseconds(LinConstants.ONE_SECOND);
+            HtrUtil.waitMilliseconds(HtrConstants.ONE_SECOND);
             if (!isConnected(ibAccount)) {
                 l.info("Successfully disconnected ibAccount " + ibAccount.print());
                 c.clear();
@@ -93,7 +94,7 @@ public class IbController {
     }
 
     private void retrySubmit(IbAccount ibAccount) {
-        linDao.getNewRetryIbOrders(ibAccount).forEach(this::submitIbOrder);
+        ibOrderDao.getNewRetryIbOrders(ibAccount).forEach(this::submitIbOrder);
     }
 
     public void submitIbOrder(IbOrder ibOrder) {
@@ -101,20 +102,20 @@ public class IbController {
         IbConnection c = linData.getIbConnectionMap().get(ibOrder.getIbAccount());
         heartbeatControl.addHeartbeat(ibOrder);
         if (!isConnected(ibOrder.getIbAccount())) {
-            if (!LinEnums.IbOrderStatus.NEW_RETRY.equals(ibOrder.getStatus())) {
-                ibOrder.addEvent(LinEnums.IbOrderStatus.NEW_RETRY, LinUtil.getCalendar(), null);
-                linDao.updateIbOrder(ibOrder);
-                eventBroker.trigger(LinEnums.DataChangeEvent.STRATEGY_UPDATE);
+            if (!HtrEnums.IbOrderStatus.NEW_RETRY.equals(ibOrder.getStatus())) {
+                ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW_RETRY, HtrUtil.getCalendar(), null);
+                ibOrderDao.updateIbOrder(ibOrder);
+                eventBroker.trigger(HtrEnums.DataChangeEvent.STRATEGY_UPDATE);
             }
             l.info("Not connected to IB, cannot submit order " + ibOrder.getDescription());
             return;
         }
         Integer ibOrderId = getNextValidOrderId();
         c.getClientSocket().placeOrder(ibOrderId, ibOrder.getStrategy().getSeries().createIbContract(), ibOrder.createIbOrder());
-        ibOrder.addEvent(LinEnums.IbOrderStatus.SUBMIT_REQ, LinUtil.getCalendar(), null);
+        ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, HtrUtil.getCalendar(), null);
         ibOrder.setIbOrderId(ibOrderId);
-        linDao.updateIbOrder(ibOrder);
-        eventBroker.trigger(LinEnums.DataChangeEvent.STRATEGY_UPDATE);
+        ibOrderDao.updateIbOrder(ibOrder);
+        eventBroker.trigger(HtrEnums.DataChangeEvent.STRATEGY_UPDATE);
         l.info("END submit order " + ibOrder.getDescription());
     }
 
@@ -128,7 +129,7 @@ public class IbController {
             return false;
         }
         IbConnection c = linData.getIbConnectionMap().get(ibAccount);
-        l.fine("Requested realtime data, reqId=" + reqId + ", contract=" + LinUtil.printIbContract(contract));
+        l.fine("Requested realtime data, reqId=" + reqId + ", contract=" + HtrUtil.printIbContract(contract));
         c.getClientSocket().reqMktData(reqId, contract, "", false, null);
         return true;
     }

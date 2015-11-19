@@ -1,11 +1,12 @@
 package com.highpowerbear.hpbtrader.linear.common;
 
-import com.highpowerbear.hpbtrader.linear.entity.Bar;
-import com.highpowerbear.hpbtrader.linear.entity.IbAccount;
-import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
-import com.highpowerbear.hpbtrader.linear.model.IbConnection;
 import com.highpowerbear.hpbtrader.linear.model.RealtimeData;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyLogic;
+import com.highpowerbear.hpbtrader.shared.entity.Bar;
+import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+import com.highpowerbear.hpbtrader.shared.model.IbConnection;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import java.util.HashMap;

@@ -1,0 +1,9 @@
+<persistence>
+    <persistence-unit name="htr-shared-PU">
+        <jta-data-source>java:/datasources/hpbtrader</jta-data-source>
+        <properties>
+            <!--<property name="hibernate.show_sql" value="true"/>-->
+            <!--<property name="hibernate.format_sql" value="true"/>-->
+        </properties>
+    </persistence-unit>
+</persistence>

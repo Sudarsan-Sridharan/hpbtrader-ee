@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.linear.common;
 
-import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
+import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -30,11 +30,11 @@ public class EmailSender {
     public void sendEmail(String subject, String content) {
         Message msg = new MimeMessage(mailSession);
         try {
-            msg.setFrom(new InternetAddress(LinSettings.EMAIL_FROM));
-            msg.setRecipient(Message.RecipientType.TO, new InternetAddress(LinSettings.EMAIL_TO));
+            msg.setFrom(new InternetAddress(HtrSettings.EMAIL_FROM));
+            msg.setRecipient(Message.RecipientType.TO, new InternetAddress(HtrSettings.EMAIL_TO));
             msg.setSubject(subject);
             msg.setText(content);
-            l.info("Sending email, from=" + LinSettings.EMAIL_FROM + ", to=" + LinSettings.EMAIL_TO + ", subject=" + subject);
+            l.info("Sending email, from=" + HtrSettings.EMAIL_FROM + ", to=" + HtrSettings.EMAIL_TO + ", subject=" + subject);
             Transport.send(msg);
         } catch (Exception e) {
             l.log(Level.SEVERE, "Error sending email", e);

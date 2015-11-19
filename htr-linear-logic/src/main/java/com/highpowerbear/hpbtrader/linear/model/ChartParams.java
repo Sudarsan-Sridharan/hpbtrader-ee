@@ -3,7 +3,8 @@ package com.highpowerbear.hpbtrader.linear.model;
 /**
  * Created by robertk on 11/14/2015.
  */
-import com.highpowerbear.hpbtrader.linear.entity.Series;
+
+import com.highpowerbear.hpbtrader.shared.entity.Series;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

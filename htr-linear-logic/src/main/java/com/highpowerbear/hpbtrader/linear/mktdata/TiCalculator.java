@@ -1,10 +1,10 @@
 package com.highpowerbear.hpbtrader.linear.mktdata;
 
-import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
-import com.highpowerbear.hpbtrader.linear.entity.Bar;
 import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Ema;
 import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Macd;
 import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Stochastics;
+import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.entity.Bar;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -19,21 +19,21 @@ import java.util.List;
 @ApplicationScoped
 public class TiCalculator {
     public List<Ema> calculateEma(List<Bar> bars, Integer emaPeriod) {
-        if (bars.size() < LinSettings.BARS_REQUIRED || emaPeriod > LinSettings.MAX_EMA_PERIOD) {
+        if (bars.size() < HtrSettings.BARS_REQUIRED || emaPeriod > HtrSettings.MAX_EMA_PERIOD) {
             return null;
         }
         return doCalculateEma(bars, emaPeriod);
     }
     
     public List<Stochastics> calculateStoch(List<Bar> bars) {
-        if (bars.size() < LinSettings.BARS_REQUIRED) {
+        if (bars.size() < HtrSettings.BARS_REQUIRED) {
             return null;
         }
         return doCalculateStoch(bars, 14, 3, 3);
     }
     
     public List<Macd> calculateMacd(List<Bar> bars) {
-        if (bars.size() < LinSettings.BARS_REQUIRED) {
+        if (bars.size() < HtrSettings.BARS_REQUIRED) {
             return null;
         }
         return doCalculateMacd(bars, 12, 26, 9);
@@ -50,7 +50,7 @@ public class TiCalculator {
         double mult = 2d/((double) period +  1d);
         for (int i = period; i < bars.size(); i++) {
             ema = (bars.get(i).getqClose() - ema) * mult + ema;
-            if (i >= LinSettings.BARS_REQUIRED) {
+            if (i >= HtrSettings.BARS_REQUIRED) {
                 Long timeInMillis = bars.get(i).getTimeInMillisBarClose();
                 emaList.add(new Ema(timeInMillis, ema));
             }
@@ -93,7 +93,7 @@ public class TiCalculator {
                 d += k[i];
             }
             d = d/(double) smaDPeriod;
-            if (currentBarIndex >= LinSettings.BARS_REQUIRED) {
+            if (currentBarIndex >= HtrSettings.BARS_REQUIRED) {
                 Long timeInMillis = bars.get(currentBarIndex).getTimeInMillisBarClose();
                 stochList.add(new Stochastics(timeInMillis, k[smaDPeriod - 1], d));
             }
@@ -133,7 +133,7 @@ public class TiCalculator {
             macdL = macdEma1 - macdEma2;
             macdSl = (macdL - macdSl) * m3 + macdSl;
             macdH = macdL - macdSl;
-            if (i >= LinSettings.BARS_REQUIRED) {
+            if (i >= HtrSettings.BARS_REQUIRED) {
                 Long timeInMillis = bars.get(i).getTimeInMillisBarClose();
                 macdList.add(new Macd(timeInMillis, macdL, macdSl,macdH));
             }

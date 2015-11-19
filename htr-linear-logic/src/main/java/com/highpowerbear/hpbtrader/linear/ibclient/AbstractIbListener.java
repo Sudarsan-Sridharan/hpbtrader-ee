@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.linear.ibclient;
 
-import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
+import com.highpowerbear.hpbtrader.linear.common.LinSettings;
 import com.ib.client.*;
 
 import java.util.logging.Logger;

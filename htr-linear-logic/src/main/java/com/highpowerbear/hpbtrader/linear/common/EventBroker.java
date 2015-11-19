@@ -1,7 +1,8 @@
 package com.highpowerbear.hpbtrader.linear.common;
 
-import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.websocket.WebsocketController;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+
 import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
@@ -22,10 +23,10 @@ public class EventBroker {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void trigger(LinEnums.DataChangeEvent dataChangeEvent) {
-        if (LinEnums.DataChangeEvent.BAR_UPDATE.equals(dataChangeEvent)) {
+    public void trigger(HtrEnums.DataChangeEvent dataChangeEvent) {
+        if (HtrEnums.DataChangeEvent.BAR_UPDATE.equals(dataChangeEvent)) {
             websocketController.broadcastSeriesMessage("qu=" + ++numBarUpdates);
-        }  else if (LinEnums.DataChangeEvent.STRATEGY_UPDATE.equals(dataChangeEvent)) {
+        }  else if (HtrEnums.DataChangeEvent.STRATEGY_UPDATE.equals(dataChangeEvent)) {
             websocketController.broadcastSeriesMessage("su=" + ++numStrategyUpdates);
         }
     }

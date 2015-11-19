@@ -1,14 +1,16 @@
 package com.highpowerbear.hpbtrader.linear.strategy;
 
 import com.highpowerbear.hpbtrader.linear.common.LinData;
-import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
-import com.highpowerbear.hpbtrader.linear.entity.*;
+import com.highpowerbear.hpbtrader.linear.common.LinSettings;
 import com.highpowerbear.hpbtrader.linear.strategy.logic.LuxorStrategyLogic;
 import com.highpowerbear.hpbtrader.linear.strategy.logic.MacdCrossStrategyLogic;
 import com.highpowerbear.hpbtrader.linear.strategy.logic.TestStrategyLogic;
 import com.highpowerbear.hpbtrader.linear.model.BacktestResult;
-import com.highpowerbear.hpbtrader.linear.persistence.LinDao;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.entity.*;
+import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
+import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,20 +25,19 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class StrategyController implements Serializable {
     private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
-    @Inject private LinDao linDao;
+    @Inject private StrategyDao strategyDao;
+    @Inject private SeriesDao seriesDao;
     @Inject private LinData linData;
     @Inject private Processor processor;
     @Inject private Backtester backtester;
 
     public void init() {
-        for (Series s : linDao.getAllSeries(false)) {
-            swapStrategyLogic(s);
-        }
+        seriesDao.getAllSeries(false).forEach(this::swapStrategyLogic);
     }
 
     public void swapStrategyLogic(Series series) {
         if (series.getEnabled()) {
-            Strategy activeStrategy = linDao.getActiveStrategy(series);
+            Strategy activeStrategy = strategyDao.getActiveStrategy(series);
             linData.getStrategyLogicMap().put(series.getId(), createStrategyLogic(activeStrategy));
         } else {
             linData.getStrategyLogicMap().remove(series.getId());
@@ -45,11 +46,11 @@ public class StrategyController implements Serializable {
 
     private StrategyLogic createStrategyLogic(Strategy strategy) {
         StrategyLogic strategyLogic = null;
-        if (LinEnums.StrategyType.MACD_CROSS.equals(strategy.getStrategyType())) {
+        if (HtrEnums.StrategyType.MACD_CROSS.equals(strategy.getStrategyType())) {
             strategyLogic = new MacdCrossStrategyLogic();
-        } else if (LinEnums.StrategyType.TEST.equals(strategy.getStrategyType())) {
+        } else if (HtrEnums.StrategyType.TEST.equals(strategy.getStrategyType())) {
             strategyLogic = new TestStrategyLogic();
-        } else if (LinEnums.StrategyType.LUXOR.equals(strategy.getStrategyType())) {
+        } else if (HtrEnums.StrategyType.LUXOR.equals(strategy.getStrategyType())) {
             strategyLogic = new LuxorStrategyLogic();
         }
         return strategyLogic;

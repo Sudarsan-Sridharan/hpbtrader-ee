@@ -1,6 +1,7 @@
 package com.highpowerbear.hpbtrader.linear.websocket;
 
-import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
+import com.highpowerbear.hpbtrader.linear.common.LinSettings;
+
 import javax.inject.Inject;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;

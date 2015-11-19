@@ -1,10 +1,11 @@
 package com.highpowerbear.hpbtrader.linear;
 
+import com.highpowerbear.hpbtrader.linear.common.LinSettings;
 import com.highpowerbear.hpbtrader.linear.common.SingletonRepo;
-import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
 import com.highpowerbear.hpbtrader.linear.ibclient.HeartbeatControl;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyController;
+import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -25,6 +26,7 @@ public class LinLifecycle {
     @Inject private StrategyController strategyController;
     @Inject private HeartbeatControl heartbeatControl;
     @Inject private SingletonRepo singletonRepo;
+    @Inject private IbAccountDao ibAccountDao;
 
 
     @PostConstruct
@@ -32,7 +34,7 @@ public class LinLifecycle {
         l.info("BEGIN OptLinLifecycleLifecycle.startup");
         SingletonRepo.setInstance(singletonRepo);
         strategyController.init();
-        heartbeatControl.init();
+        ibAccountDao.getIbAccounts().forEach(heartbeatControl::init);
         l.info("END LinLifecycle.startup");
     }
 

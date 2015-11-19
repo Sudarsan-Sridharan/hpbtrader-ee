@@ -1,8 +1,9 @@
 package com.highpowerbear.hpbtrader.linear.model;
 
-import com.highpowerbear.hpbtrader.linear.entity.Bar;
-import com.highpowerbear.hpbtrader.linear.entity.Strategy;
-import com.highpowerbear.hpbtrader.linear.entity.Trade;
+import com.highpowerbear.hpbtrader.shared.entity.Bar;
+import com.highpowerbear.hpbtrader.shared.entity.Strategy;
+import com.highpowerbear.hpbtrader.shared.entity.Trade;
+
 import java.util.List;
 
 /**

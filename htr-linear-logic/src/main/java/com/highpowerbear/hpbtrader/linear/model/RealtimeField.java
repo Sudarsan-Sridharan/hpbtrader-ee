@@ -1,17 +1,17 @@
 package com.highpowerbear.hpbtrader.linear.model;
 
-import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 
 /**
  * Created by rkolar on 5/23/14.
  */
 public class RealtimeField<T> {
     private T value;
-    private LinEnums.RealtimeStatus status;
+    private HtrEnums.RealtimeStatus status;
     private String fieldName;
     private String colorClass;
 
-    public RealtimeField(T value, LinEnums.RealtimeStatus status, String fieldName, String colorClass) {
+    public RealtimeField(T value, HtrEnums.RealtimeStatus status, String fieldName, String colorClass) {
         this.value = value;
         this.status = status;
         this.fieldName = fieldName;
@@ -26,11 +26,11 @@ public class RealtimeField<T> {
         this.value = raeltimeValue;
     }
 
-    public LinEnums.RealtimeStatus getStatus() {
+    public HtrEnums.RealtimeStatus getStatus() {
         return status;
     }
 
-    public void setValueStatus(LinEnums.RealtimeStatus realtimeStatus) {
+    public void setValueStatus(HtrEnums.RealtimeStatus realtimeStatus) {
         this.status = realtimeStatus;
     }
 

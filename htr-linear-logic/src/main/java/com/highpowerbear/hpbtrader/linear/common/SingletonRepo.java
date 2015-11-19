@@ -4,8 +4,9 @@ import com.highpowerbear.hpbtrader.linear.ibclient.HeartbeatControl;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
 import com.highpowerbear.hpbtrader.linear.mktdata.MktDataController;
 import com.highpowerbear.hpbtrader.linear.mktdata.TiCalculator;
-import com.highpowerbear.hpbtrader.linear.persistence.LinDao;
 import com.highpowerbear.hpbtrader.linear.strategy.OrderStateHandler;
+import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
+import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -30,7 +31,8 @@ public class SingletonRepo {
 
     @Inject private TiCalculator tiCalculator;
     @Inject private LinData linData;
-    @Inject private LinDao linDao;
+    @Inject private IbOrderDao ibOrderDao;
+    @Inject private SeriesDao seriesDao;
     @Inject private IbController ibController;
     @Inject private MktDataController mktDataController;
     @Inject private OrderStateHandler orderStateHandler;
@@ -45,8 +47,12 @@ public class SingletonRepo {
         return linData;
     }
 
-    public LinDao getLinDao() {
-        return linDao;
+    public IbOrderDao getIbOrderDao() {
+        return ibOrderDao;
+    }
+
+    public SeriesDao getSeriesDao() {
+        return seriesDao;
     }
 
     public IbController getIbController() {

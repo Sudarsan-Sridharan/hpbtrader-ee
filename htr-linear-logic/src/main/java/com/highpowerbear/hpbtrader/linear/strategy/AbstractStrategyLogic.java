@@ -1,12 +1,13 @@
 package com.highpowerbear.hpbtrader.linear.strategy;
 
-import com.highpowerbear.hpbtrader.linear.common.LinUtil;
 import com.highpowerbear.hpbtrader.linear.common.SingletonRepo;
-import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.entity.Bar;
-import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
 import com.highpowerbear.hpbtrader.linear.mktdata.TiCalculator;
 import com.highpowerbear.hpbtrader.linear.model.StrategyLogicContext;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+import com.highpowerbear.hpbtrader.shared.entity.Bar;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -55,12 +56,12 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
         ibOrder = new IbOrder();
         ibOrder.setStrategy(ctx.strategy);
         ibOrder.setStrategyMode(ctx.strategy.getStrategyMode());
-        ibOrder.setSubmitType(LinEnums.SubmitType.AUTO);
+        ibOrder.setSubmitType(HtrEnums.SubmitType.AUTO);
         ibOrder.setQuantity(ctx.strategy.getTradingQuantity());
-        ibOrder.setOrderType(LinEnums.OrderType.MKT);
+        ibOrder.setOrderType(HtrEnums.OrderType.MKT);
         ibOrder.setLimitPrice(null); // N/A for market order
         ibOrder.setStopPrice(null); // N/A for market order
-        ibOrder.addEvent(LinEnums.IbOrderStatus.NEW, (ctx.isBacktest ? bar.getqDateBarClose() : LinUtil.getCalendar()), null);
+        ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW, (ctx.isBacktest ? bar.getqDateBarClose() : HtrUtil.getCalendar()), null);
     }
     
     protected Double getPrice() {
@@ -85,7 +86,7 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
         if (ctx.activeTrade == null) {
             return;
         }
-        Double stop = (ctx.activeTrade.isLong() ? LinUtil.round5(bar.getqClose() - (stopPct / 100.0) * bar.getqClose()) : LinUtil.round5(bar.getqClose() + (stopPct / 100.0) * bar.getqClose()));
+        Double stop = (ctx.activeTrade.isLong() ? HtrUtil.round5(bar.getqClose() - (stopPct / 100.0) * bar.getqClose()) : HtrUtil.round5(bar.getqClose() + (stopPct / 100.0) * bar.getqClose()));
         ctx.activeTrade.setStopLoss(stop);
         ctx.activeTrade.setInitialStop(stop);
     }
@@ -96,14 +97,14 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
         }
         if (ctx.activeTrade.isLong()) {
             if (bar.getqClose() > prevBar.getqClose()) {
-                Double newStop = LinUtil.round5(bar.getqClose() - (stopPct / 100.0) * bar.getqClose());
+                Double newStop = HtrUtil.round5(bar.getqClose() - (stopPct / 100.0) * bar.getqClose());
                 if (newStop > ctx.activeTrade.getStopLoss()) {
                     ctx.activeTrade.setStopLoss(newStop);
                 }
             }
         } else {
             if (bar.getqClose() < prevBar.getqClose()) {
-                Double newStop = LinUtil.round5(bar.getqClose() + (stopPct / 100.0) * bar.getqClose());
+                Double newStop = HtrUtil.round5(bar.getqClose() + (stopPct / 100.0) * bar.getqClose());
                 if (newStop < ctx.activeTrade.getStopLoss()) {
                     ctx.activeTrade.setStopLoss(newStop);
                 }
@@ -115,19 +116,19 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
         if (ctx.activeTrade == null) {
             return;
         }
-        ctx.activeTrade.setProfitTarget(ctx.activeTrade.isLong() ? LinUtil.round5(bar.getqClose() + (targetPct / 100.0) * bar.getqClose()) : LinUtil.round5(bar.getqClose() - (targetPct / 100.0) * bar.getqClose()));
+        ctx.activeTrade.setProfitTarget(ctx.activeTrade.isLong() ? HtrUtil.round5(bar.getqClose() + (targetPct / 100.0) * bar.getqClose()) : HtrUtil.round5(bar.getqClose() - (targetPct / 100.0) * bar.getqClose()));
     }
     
     protected void setPl() {
         if (ctx.activeTrade == null || ctx.activeTrade.getOpenPrice() == null) {
             return;
         }
-        Double unrealizedPl = (ctx.activeTrade.isLong() ? LinUtil.round5((bar.getqClose() - ctx.activeTrade.getOpenPrice()) * ctx.strategy.getTradingQuantity()) : LinUtil.round5((ctx.activeTrade.getOpenPrice() - bar.getqClose()) * ctx.strategy.getTradingQuantity()));
-        if (LinEnums.SecType.FUT.equals(ctx.strategy.getSeries().getSecType())) {
-            unrealizedPl *= LinEnums.FutureMultiplier.getMultiplierBySymbol(ctx.strategy.getSeries().getSymbol());
+        Double unrealizedPl = (ctx.activeTrade.isLong() ? HtrUtil.round5((bar.getqClose() - ctx.activeTrade.getOpenPrice()) * ctx.strategy.getTradingQuantity()) : HtrUtil.round5((ctx.activeTrade.getOpenPrice() - bar.getqClose()) * ctx.strategy.getTradingQuantity()));
+        if (HtrEnums.SecType.FUT.equals(ctx.strategy.getSeries().getSecType())) {
+            unrealizedPl *= HtrEnums.FutureMultiplier.getMultiplierBySymbol(ctx.strategy.getSeries().getSymbol());
         }
-        if (LinEnums.SecType.OPT.equals(ctx.strategy.getSeries().getSecType())) {
-            unrealizedPl *= (LinEnums.MiniOption.isMiniOption(ctx.strategy.getSeries().getSymbol()) ? 10 : 100);
+        if (HtrEnums.SecType.OPT.equals(ctx.strategy.getSeries().getSecType())) {
+            unrealizedPl *= (HtrEnums.MiniOption.isMiniOption(ctx.strategy.getSeries().getSymbol()) ? 10 : 100);
         }
         ctx.activeTrade.setUnrealizedPl(unrealizedPl);
     }
