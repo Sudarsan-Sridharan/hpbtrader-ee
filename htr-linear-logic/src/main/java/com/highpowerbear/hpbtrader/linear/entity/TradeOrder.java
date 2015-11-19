@@ -1,12 +1,15 @@
 package com.highpowerbear.hpbtrader.linear.entity;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 
 /**
  *
  * @author rkolar
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "lin_tradeorder")
 public class TradeOrder implements Serializable {
@@ -18,7 +21,7 @@ public class TradeOrder implements Serializable {
     private Long id;
     private Integer quantity;
     @ManyToOne
-    private Order order;
+    private IbOrder ibOrder;
     @ManyToOne
     private Trade trade;
 
@@ -54,12 +57,12 @@ public class TradeOrder implements Serializable {
         this.quantity = quantity;
     }
 
-    public Order getOrder() {
-        return order;
+    public IbOrder getIbOrder() {
+        return ibOrder;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setIbOrder(IbOrder ibOrder) {
+        this.ibOrder = ibOrder;
     }
 
     public Trade getTrade() {

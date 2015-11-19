@@ -11,11 +11,9 @@ import java.util.Calendar;
  *
  * @author rkolar
  */
+@XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "lin_quote", uniqueConstraints = @UniqueConstraint(columnNames = {"qDateBarClose", "series_id"}))
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = {"timeInMillisBarClose", "qOpen", "high", "low", "qClose", "volume"})
 public class Bar implements Serializable {
     private static final long serialVersionUID = 1L;
 

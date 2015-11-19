@@ -3,6 +3,9 @@ package com.highpowerbear.hpbtrader.linear.entity;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbApiEnums;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,15 +15,19 @@ import java.util.List;
  *
  * @author rkolar
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "lin_order")
-public class Order implements Serializable {
+@Table(name = "lin_iborder")
+public class IbOrder implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @TableGenerator(name="lin_order", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
     @GeneratedValue(generator="lin_order")
     private Long id;
+    @XmlTransient
+    @ManyToOne
+    private IbAccount ibAccount;
     private Integer ibPermId; // not null only for IB order
     private Integer ibOrderId; // not null only for IB orders
     @ManyToOne
@@ -39,29 +46,30 @@ public class Order implements Serializable {
     private Double stopPrice;
     private Double fillPrice;
     @Enumerated(EnumType.STRING)
-    private LinEnums.OrderStatus orderStatus;
+    private LinEnums.IbOrderStatus status;
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar dateCreated;
-    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ibOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("eventDate ASC")
     private List<OrderEvent> events = new ArrayList<>();
     
-    public void addEvent(LinEnums.OrderStatus orderStatus, Calendar date) {
-        this.orderStatus = orderStatus;
+    public void addEvent(LinEnums.IbOrderStatus status, Calendar date, Double fillPrice) {
+        this.status = status;
         OrderEvent event = new OrderEvent();
-        event.setOrder(this);
+        event.setIbOrder(this);
         event.setEventDate(date);
-        event.setOrderStatus(orderStatus);
+        event.setStatus(status);
+        event.setFillPrice(fillPrice);
         events.add(event);
-        if (LinEnums.OrderStatus.NEW.equals(event.getOrderStatus())) {
+        if (LinEnums.IbOrderStatus.NEW.equals(event.getStatus())) {
             this.setDateCreated(event.getEventDate());
         }
     }
     
-    public Calendar getEventDate(LinEnums.OrderStatus orderStatus) {
+    public Calendar getEventDate(LinEnums.IbOrderStatus ibOrderStatus) {
         Calendar eventDate = null;
         for (OrderEvent oe : events) {
-            if (orderStatus.equals(oe.getOrderStatus())) {
+            if (ibOrderStatus.equals(oe.getStatus())) {
                 eventDate = oe.getEventDate();
                 break;
             }
@@ -113,9 +121,9 @@ public class Order implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Order order = (Order) o;
+        IbOrder ibOrder = (IbOrder) o;
 
-        return !(id != null ? !id.equals(order.id) : order.id != null);
+        return !(id != null ? !id.equals(ibOrder.id) : ibOrder.id != null);
 
     }
 
@@ -131,7 +139,15 @@ public class Order implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
+    public IbAccount getIbAccount() {
+        return ibAccount;
+    }
+
+    public void setIbAccount(IbAccount ibAccount) {
+        this.ibAccount = ibAccount;
+    }
+
     public Integer getIbPermId() {
         return ibPermId;
     }
@@ -228,12 +244,12 @@ public class Order implements Serializable {
         this.fillPrice = fillPrice;
     }
 
-    public LinEnums.OrderStatus getOrderStatus() {
-        return orderStatus;
+    public LinEnums.IbOrderStatus getStatus() {
+        return status;
     }
 
-    public void setOrderStatus(LinEnums.OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setStatus(LinEnums.IbOrderStatus ibOrderStatus) {
+        this.status = ibOrderStatus;
     }
 
     public Calendar getDateCreated() {

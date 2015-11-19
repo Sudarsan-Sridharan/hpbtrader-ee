@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.linear.rest.model;
+package com.highpowerbear.hpbtrader.linear.model;
 
 /**
  * Created by robertk on 11/14/2015.

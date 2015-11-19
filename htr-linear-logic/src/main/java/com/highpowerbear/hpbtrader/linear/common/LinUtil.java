@@ -17,6 +17,14 @@ import java.util.TimeZone;
  */
 public class LinUtil {
     private static final DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+
+    public static void waitMilliseconds(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException ie) {
+            // Ignore
+        }
+    }
     
     public static String getFormattedDate(Calendar cal) {
         if (cal == null) {

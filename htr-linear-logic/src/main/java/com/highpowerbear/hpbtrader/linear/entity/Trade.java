@@ -14,11 +14,9 @@ import java.util.List;
  *
  * @author robertk
  */
+@XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "lin_trade")
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = {"timeInMillis", "realizedPl"})
 public class Trade implements Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -55,19 +53,19 @@ public class Trade implements Serializable {
         return (dateClosed != null ? dateClosed.getTimeInMillis() : LinUtil.getCalendar().getTimeInMillis());
     }
     
-    public void addTradeOrder(Order order) {
+    public void addTradeOrder(IbOrder ibOrder) {
         TradeOrder tradeOrder = new TradeOrder();
-        tradeOrder.setOrder(order);
+        tradeOrder.setIbOrder(ibOrder);
         tradeOrder.setTrade(this);
-        tradeOrder.setQuantity(order.isReversalOrder() ? order.getQuantity()/2 : order.getQuantity());
+        tradeOrder.setQuantity(ibOrder.isReversalOrder() ? ibOrder.getQuantity()/2 : ibOrder.getQuantity());
         tradeOrders.add(tradeOrder);
     }
     
-    public Trade initOpen(Order order) {
-        this.strategy = order.getStrategy();
-        this.dateInitOpen = order.getDateCreated();
+    public Trade initOpen(IbOrder ibOrder) {
+        this.strategy = ibOrder.getStrategy();
+        this.dateInitOpen = ibOrder.getDateCreated();
         this.tradeStatus = LinEnums.TradeStatus.INIT_OPEN;
-        this.tradeType = (order.isBuyOrder() ? LinEnums.TradeType.LONG : LinEnums.TradeType.SHORT);
+        this.tradeType = (ibOrder.isBuyOrder() ? LinEnums.TradeType.LONG : LinEnums.TradeType.SHORT);
         this.quantity = strategy.getTradingQuantity();
         return this;
     }

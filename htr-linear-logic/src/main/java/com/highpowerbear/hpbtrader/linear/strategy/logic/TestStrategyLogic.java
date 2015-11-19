@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.linear.strategy.logic;
 
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.entity.Order;
+import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
 import com.highpowerbear.hpbtrader.linear.strategy.AbstractStrategyLogic;
 
@@ -15,19 +15,19 @@ public class TestStrategyLogic extends AbstractStrategyLogic {
     private Double targetPct;
 
     @Override
-    public Order processSignals() {
+    public IbOrder processSignals() {
         createOrder();
         if (ctx.activeTrade != null) {
-            order.setTriggerDesc("testReverse: test reverse");
-            order.setOrderAction(ctx.activeTrade.isLong() ? LinEnums.OrderAction.SREV : LinEnums.OrderAction.BREV);
-            order.setQuantity(order.getQuantity() * 2);
+            ibOrder.setTriggerDesc("testReverse: test reverse");
+            ibOrder.setOrderAction(ctx.activeTrade.isLong() ? LinEnums.OrderAction.SREV : LinEnums.OrderAction.BREV);
+            ibOrder.setQuantity(ibOrder.getQuantity() * 2);
         } else {
-            order.setTriggerDesc("testOpen: test open");
-            order.setOrderAction(LinEnums.OrderAction.BTO);
-            ctx.activeTrade = new Trade().initOpen(order);
+            ibOrder.setTriggerDesc("testOpen: test open");
+            ibOrder.setOrderAction(LinEnums.OrderAction.BTO);
+            ctx.activeTrade = new Trade().initOpen(ibOrder);
             setInitialStopAndTarget();
         }
-        return order;
+        return ibOrder;
     }
     
     @Override

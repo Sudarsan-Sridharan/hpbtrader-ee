@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.linear.entity;
 
-import com.highpowerbear.hpbtrader.linear.entity.model.IbConnection;
+import com.highpowerbear.hpbtrader.linear.model.IbConnection;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,12 +8,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  * Created by robertk on 11/14/2015.
  */
-@XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name="lin_ibaccount")
@@ -24,6 +22,10 @@ public class IbAccount {
     private Integer port;
     @Transient
     private IbConnection ibConnection;
+
+    public String print() {
+        return accountId + ", " + host + ":" + port;
+    }
 
     @Override
     public boolean equals(Object o) {

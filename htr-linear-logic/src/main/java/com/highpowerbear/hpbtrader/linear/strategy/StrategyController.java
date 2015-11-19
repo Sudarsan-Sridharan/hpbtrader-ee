@@ -7,8 +7,8 @@ import com.highpowerbear.hpbtrader.linear.entity.*;
 import com.highpowerbear.hpbtrader.linear.strategy.logic.LuxorStrategyLogic;
 import com.highpowerbear.hpbtrader.linear.strategy.logic.MacdCrossStrategyLogic;
 import com.highpowerbear.hpbtrader.linear.strategy.logic.TestStrategyLogic;
-import com.highpowerbear.hpbtrader.linear.strategy.model.BacktestResult;
-import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
+import com.highpowerbear.hpbtrader.linear.model.BacktestResult;
+import com.highpowerbear.hpbtrader.linear.persistence.LinDao;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,20 +23,20 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class StrategyController implements Serializable {
     private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
-    @Inject private DatabaseDao databaseDao;
+    @Inject private LinDao linDao;
     @Inject private LinData linData;
     @Inject private Processor processor;
     @Inject private Backtester backtester;
 
     public void init() {
-        for (Series s : databaseDao.getAllSeries(false)) {
+        for (Series s : linDao.getAllSeries(false)) {
             swapStrategyLogic(s);
         }
     }
 
     public void swapStrategyLogic(Series series) {
         if (series.getEnabled()) {
-            Strategy activeStrategy = databaseDao.getActiveStrategy(series);
+            Strategy activeStrategy = linDao.getActiveStrategy(series);
             linData.getStrategyLogicMap().put(series.getId(), createStrategyLogic(activeStrategy));
         } else {
             linData.getStrategyLogicMap().remove(series.getId());
@@ -59,8 +59,8 @@ public class StrategyController implements Serializable {
         processor.process(strategy, strategyLogic);
     }
 
-    public void processManual(Order manualOrder, Trade activeTrade, Bar bar) {
-        processor.processManual(manualOrder, activeTrade, bar);
+    public void processManual(IbOrder manualIbOrder, Trade activeTrade, Bar bar) {
+        processor.processManual(manualIbOrder, activeTrade, bar);
     }
 
     public BacktestResult backtest(Strategy strategy, Calendar startDate, Calendar endDate) {

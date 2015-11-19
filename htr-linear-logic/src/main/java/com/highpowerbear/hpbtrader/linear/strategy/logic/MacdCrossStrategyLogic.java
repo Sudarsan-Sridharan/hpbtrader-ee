@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.linear.strategy.logic;
 
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.entity.Order;
+import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
 import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Macd;
 import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Stochastics;
@@ -25,24 +25,24 @@ public class MacdCrossStrategyLogic extends AbstractStrategyLogic {
     private Double stochD;
     
     @Override
-    public Order processSignals() {
+    public IbOrder processSignals() {
         createOrder();
         if (ctx.activeTrade != null) {
             setPl();
             if (((ctx.activeTrade.isLong() && crossBelowMacd()) || (ctx.activeTrade.isShort() && crossAboveMacd()))) {
-                order.setOrderAction(ctx.activeTrade.isLong() ? LinEnums.OrderAction.SREV : LinEnums.OrderAction.BREV);
-                order.setTriggerDesc(getTriggerDesc(TriggerEvent.REVERSE));
-                order.setQuantity(order.getQuantity() * 2);
+                ibOrder.setOrderAction(ctx.activeTrade.isLong() ? LinEnums.OrderAction.SREV : LinEnums.OrderAction.BREV);
+                ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.REVERSE));
+                ibOrder.setQuantity(ibOrder.getQuantity() * 2);
             }
         } else if ((crossAboveMacd() || crossBelowMacd())) {
-            order.setOrderAction(crossAboveMacd() ? LinEnums.OrderAction.BTO : LinEnums.OrderAction.STO);
-            order.setTriggerDesc(getTriggerDesc(TriggerEvent.OPEN));
-            ctx.activeTrade = new Trade().initOpen(order);
+            ibOrder.setOrderAction(crossAboveMacd() ? LinEnums.OrderAction.BTO : LinEnums.OrderAction.STO);
+            ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.OPEN));
+            ctx.activeTrade = new Trade().initOpen(ibOrder);
         }
-        if (order.getOrderAction() == null) {
-            order = null;
+        if (ibOrder.getOrderAction() == null) {
+            ibOrder = null;
         }
-        return order;
+        return ibOrder;
     }
     
     @Override

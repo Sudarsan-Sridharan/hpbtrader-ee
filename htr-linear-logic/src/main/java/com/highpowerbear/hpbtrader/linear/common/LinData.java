@@ -1,7 +1,10 @@
 package com.highpowerbear.hpbtrader.linear.common;
 
 import com.highpowerbear.hpbtrader.linear.entity.Bar;
-import com.highpowerbear.hpbtrader.linear.mktdata.model.RealtimeData;
+import com.highpowerbear.hpbtrader.linear.entity.IbAccount;
+import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
+import com.highpowerbear.hpbtrader.linear.model.IbConnection;
+import com.highpowerbear.hpbtrader.linear.model.RealtimeData;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyLogic;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -17,12 +20,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @Named
 @ApplicationScoped
 public class LinData {
+    private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>();
+    private Map<IbAccount, Integer> validOrderMap = new HashMap<>();
     private Map<Integer, Integer> backfillStatusMap = new HashMap<>(); // seriesId --> backfillStatus
     private Map<Integer, List<Bar>> barsReceivedMap = new HashMap<>(); // seriesId --> barList
     private Map<Integer, StrategyLogic> strategyLogicMap = new HashMap<>(); // seriesId --> strategyLogic
-    private Map<Long, Integer> openOrderHeartbeatMap = new ConcurrentHashMap<>(); // order dbId --> number of failed heartbeats left before declaring order UNKNOWN
+    private Map<IbAccount, Map<IbOrder, Integer>> openOrderHeartbeatMap = new ConcurrentHashMap<>(); // ibAccount --> (ibOrder --> number of failed heartbeats left before UNKNOWN)
     private Map<Integer, String> realtimeDataRequestMap = new HashMap<>(); // ib request id --> contract string
     private Map<String, RealtimeData> realtimeDataMap = new LinkedHashMap<>(); // contract string --> realtimeData
+
+    public Map<IbAccount, IbConnection> getIbConnectionMap() {
+        return ibConnectionMap;
+    }
 
     public Map<Integer, Integer> getBackfillStatusMap() {
         return backfillStatusMap;
@@ -36,7 +45,7 @@ public class LinData {
         return strategyLogicMap;
     }
 
-    public Map<Long, Integer> getOpenOrderHeartbeatMap() {
+    public Map<IbAccount, Map<IbOrder, Integer>> getOpenOrderHeartbeatMap() {
         return openOrderHeartbeatMap;
     }
 

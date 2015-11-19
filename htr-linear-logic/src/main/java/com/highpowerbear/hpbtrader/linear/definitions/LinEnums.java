@@ -108,7 +108,7 @@ public class LinEnums {
         }
     }
     
-    public enum OrderStatus {
+    public enum IbOrderStatus {
         NEW("new", "col-magenta-bck"),
         NEW_RETRY("newRetry", "col-magenta-bck"),
         SUBMIT_REQ("submitReq", "col-dodgerblue-bck"),
@@ -121,7 +121,7 @@ public class LinEnums {
         private String displayName;
         private String colorClass;
         
-        OrderStatus(String displayName, String colorClass) {
+        IbOrderStatus(String displayName, String colorClass) {
             this.displayName = displayName;
             this.colorClass = colorClass;
         }

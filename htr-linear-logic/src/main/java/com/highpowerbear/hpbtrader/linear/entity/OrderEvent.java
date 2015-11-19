@@ -3,6 +3,8 @@ package com.highpowerbear.hpbtrader.linear.entity;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -10,6 +12,7 @@ import java.util.Calendar;
  *
  * @author robertk
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "lin_orderevent", uniqueConstraints = @UniqueConstraint(columnNames = {"order_id", "orderStatus"}))
 public class OrderEvent implements Serializable {
@@ -20,11 +23,12 @@ public class OrderEvent implements Serializable {
     @GeneratedValue(generator="lin_orderevent")
     private Long id;
     @Enumerated(EnumType.STRING)
-    private LinEnums.OrderStatus orderStatus;
+    private LinEnums.IbOrderStatus status;
+    private Double fillPrice;
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar eventDate;
     @ManyToOne
-    Order order;
+    IbOrder ibOrder;
 
     @Override
     public boolean equals(Object o) {
@@ -50,12 +54,20 @@ public class OrderEvent implements Serializable {
         this.id = id;
     }
 
-    public LinEnums.OrderStatus getOrderStatus() {
-        return orderStatus;
+    public LinEnums.IbOrderStatus getStatus() {
+        return status;
     }
 
-    public void setOrderStatus(LinEnums.OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setStatus(LinEnums.IbOrderStatus ibOrderStatus) {
+        this.status = ibOrderStatus;
+    }
+
+    public Double getFillPrice() {
+        return fillPrice;
+    }
+
+    public void setFillPrice(Double fillPrice) {
+        this.fillPrice = fillPrice;
     }
 
     public Calendar getEventDate() {
@@ -66,11 +78,11 @@ public class OrderEvent implements Serializable {
         this.eventDate = eventDate;
     }
 
-    public Order getOrder() {
-        return order;
+    public IbOrder getIbOrder() {
+        return ibOrder;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setIbOrder(IbOrder ibOrder) {
+        this.ibOrder = ibOrder;
     }
 }

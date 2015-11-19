@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.linear.mktdata.model;
+package com.highpowerbear.hpbtrader.linear.model;
 
 import com.highpowerbear.hpbtrader.linear.common.LinUtil;
 import com.highpowerbear.hpbtrader.linear.definitions.LinConstants;

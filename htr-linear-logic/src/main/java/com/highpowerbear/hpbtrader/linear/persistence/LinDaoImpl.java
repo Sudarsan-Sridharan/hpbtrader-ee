@@ -17,19 +17,35 @@ import java.util.logging.Logger;
  */
 @Named
 @Singleton
-public class DatabaseDaoImpl implements Serializable, DatabaseDao {
+public class LinDaoImpl implements Serializable, LinDao {
     private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
 
     @PersistenceContext
     private EntityManager em;
 
     @Override
-    public void addBars(List<Bar> bars) {
+    public IbAccount findIbAccount(String accountId) {
+        return em.find(IbAccount.class, accountId);
+    }
+
+    @Override
+    public List<IbAccount> getIbAccounts() {
+        TypedQuery<IbAccount> q = em.createQuery("SELECT ia FROM IbAccount ia ORDER BY ia.port", IbAccount.class);
+        return q.getResultList();
+    }
+
+    @Override
+    public IbAccount updateIbAccount(IbAccount ibAccount) {
+        return em.merge(ibAccount);
+    }
+
+    @Override
+    public void createBars(List<Bar> bars) {
         if (bars == null || bars.isEmpty()) {
             return;
         }
         String symbol = bars.iterator().next().getSeries().getSymbol();
-        l.fine("START addBars, symbol=" + symbol);
+        l.fine("START createBars, symbol=" + symbol);
         int added = 0;
         int modified = 0;
         for (Bar q : bars) {
@@ -53,9 +69,7 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
                 }
             }
         }
-        em.flush();
-        em.clear();
-        l.fine("END addBars, symbol=" + symbol + ", added=" + added + ", modified=" + modified);
+        l.fine("END createBars, symbol=" + symbol + ", added=" + added + ", modified=" + modified);
     }
 
     @Override
@@ -66,8 +80,6 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
             query.setMaxResults(numBars);
         }
         List<Bar> bars = query.getResultList();
-        em.flush();
-        em.clear();
         if (bars == null) {
             bars = new ArrayList<>();
         }
@@ -81,8 +93,6 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
         query.setParameter("series", series);
         query.setMaxResults(1);
         List<Bar> bars = query.getResultList();
-        em.flush();
-        em.clear();
         return (bars == null || bars.isEmpty() ? null : bars.get(0));
     }
 
@@ -90,23 +100,12 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
     public Long getNumBars(Series s) {
         Query query = em.createQuery("SELECT COUNT(q) FROM Bar q WHERE q.series.id = :seriesId");
         query.setParameter("seriesId", s.getId());
-        Long nq = (Long) query.getSingleResult();
-        em.flush();
-        em.clear();
-        return nq;
+        return (Long) query.getSingleResult();
     }
 
     @Override
-    public boolean addSeries(Series series) {
-        boolean sucess = true;
-        try {
-            em.persist(series);
-            em.flush();
-            em.clear();
-        } catch (PersistenceException pe) {
-            sucess = false;
-        }
-        return sucess;
+    public void addSeries(Series series) {
+        em.persist(series);
     }
 
     @Override
@@ -118,20 +117,14 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
             q = em.createQuery("SELECT s from Series s WHERE s.isEnabled = :isEnabled ORDER BY s.displayOrder ASC", Series.class);
             q.setParameter("isEnabled", Boolean.TRUE);
         }
-        List<Series> sl = q.getResultList();
-        em.flush();
-        em.clear();
-        return sl;
+        return q.getResultList();
     }
 
     @Override
     public List<Series> getSeriesByInterval(LinEnums.Interval interval) {
         TypedQuery<Series> query = em.createQuery("SELECT s FROM Series s WHERE s.interval = :interval", Series.class);
         query.setParameter("interval", interval);
-        List<Series> series = query.getResultList();
-        em.flush();
-        em.clear();
-        return series;
+        return query.getResultList();
     }
 
     @Override
@@ -139,34 +132,23 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
         TypedQuery<Series> query = em.createQuery("SELECT s FROM Series s WHERE s.symbol = :symbol AND s.interval = :interval", Series.class);
         query.setParameter("symbol", symbol);
         query.setParameter("interval", interval);
-        List<Series> series = query.getResultList();
-        em.flush();
-        em.clear();
-        return series;
+        return query.getResultList();
     }
 
     @Override
     public Series findSeries(Integer id) {
-        Series s = em.find(Series.class, id);
-        em.flush();
-        em.clear();
-        return s;
+        return em.find(Series.class, id);
     }
 
     @Override
     public void updateSeries(Series series) {
         em.merge(series);
-        em.flush();
-        em.clear();
     }
 
     @Override
     public Integer getHighestDisplayOrder() {
         Query query = em.createQuery("SELECT MAX(s.displayOrder) from Series s");
-        Integer highestDisplayOrder = (Integer) query.getSingleResult();
-        em.flush();
-        em.clear();
-        return highestDisplayOrder;
+        return (Integer) query.getSingleResult();
     }
 
     @Override
@@ -181,120 +163,81 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
         q.executeUpdate();
         em.remove(series);
         l.info("END deleteSeries " + series.getSymbol());
-        em.flush();
-        em.clear();
     }
 
     @Override
-    public void addOrder(Order order) {
-        em.persist(order); // strategy order events get persisted too
-        em.flush();
-        em.clear();
+    public void createIbOrder(IbOrder ibOrder) {
+        em.persist(ibOrder); // strategy order events get persisted too
     }
 
     @Override
-    public void updateOrder(Order order) {
-        em.merge(order); // strategy order events get persisted too
-        em.flush();
-        em.clear();
+    public void updateIbOrder(IbOrder ibOrder) {
+        em.merge(ibOrder); // strategy order events get persisted too
     }
 
     @Override
-    public Order findOrder(Long id) {
-        Order order = em.find(Order.class, id);
-        em.flush();
-        em.clear();
-        return order;
+    public IbOrder findIbOrder(Long id) {
+        return em.find(IbOrder.class, id);
     }
 
     @Override
-    public Order getOrderByIbPermId(Integer ibPermId) {
-        TypedQuery<Order> query = em.createQuery("SELECT o FROM Order o WHERE o.ibPermId = :ibPermId", Order.class);
+    public IbOrder getIbOrderByIbPermId(IbAccount ibAccount, Integer ibPermId) {
+        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibAccount = :ibAccount AND o.ibPermId = :ibPermId", IbOrder.class);
+        query.setParameter("ibAccount", ibAccount);
         query.setParameter("ibPermId", ibPermId);
-        List<Order> orders = query.getResultList();
-        em.flush();
-        em.clear();
-        return (!orders.isEmpty() ? orders.get(0) : null);
+        List<IbOrder> ibOrders = query.getResultList();
+        return (!ibOrders.isEmpty() ? ibOrders.get(0) : null);
     }
 
     @Override
-    public Order getOrderByIbOrderId(Integer ibOrderId) {
-        TypedQuery<Order> query = em.createQuery("SELECT o FROM Order o WHERE o.ibOrderId = :ibOrderId ORDER BY o.dateCreated DESC", Order.class);
+    public IbOrder getIbOrderByIbOrderId(IbAccount ibAccount, Integer ibOrderId) {
+        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibAccount = :ibAccount AND o.ibOrderId = :ibOrderId ORDER BY o.dateCreated DESC", IbOrder.class);
+        query.setParameter("ibAccount", ibAccount);
         query.setParameter("ibOrderId", ibOrderId);
-        List<Order> orders = query.getResultList();
-        em.flush();
-        em.clear();
-        return (!orders.isEmpty() ? orders.get(0) : null);
+        List<IbOrder> ibOrders = query.getResultList();
+        return (!ibOrders.isEmpty() ? ibOrders.get(0) : null);
     }
 
     @Override
-    public List<Order> getOrdersByStrategy(Strategy strategy) {
-        TypedQuery<Order> query = em.createQuery("SELECT o FROM Order o WHERE o.strategy = :strategy ORDER BY o.dateCreated DESC", Order.class);
+    public List<IbOrder> getIbOrdersByStrategy(Strategy strategy) {
+        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy = :strategy ORDER BY o.dateCreated DESC", IbOrder.class);
         query.setParameter("strategy", strategy);
         return query.getResultList();
     }
 
     @Override
-    public List<Order> getRecentOrders() {
-        TypedQuery<Order> query = em.createQuery("SELECT o FROM Order o, OrderEvent e WHERE o = e.order AND o.orderStatus = e.orderStatus AND (o.orderStatus IN :statuses OR e.eventDate > :recentDate) ORDER BY e.eventDate DESC", Order.class);
-        Set<LinEnums.OrderStatus> statuses = new HashSet<>();
-        statuses.add(LinEnums.OrderStatus.NEW);
-        statuses.add(LinEnums.OrderStatus.NEW_RETRY);
-        statuses.add(LinEnums.OrderStatus.SUBMIT_REQ);
-        statuses.add(LinEnums.OrderStatus.SUBMITTED);
-        statuses.add(LinEnums.OrderStatus.CANCEL_REQ);
+    public List<IbOrder> getNewRetryIbOrders(IbAccount ibAccount) {
+        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o, OrderEvent e WHERE o.ibAccount = :ibAccount AND o = e.ibOrder AND o.orderStatus = e.orderStatus AND o.orderStatus IN :statuses ORDER BY e.eventDate ASC", IbOrder.class);
+        Set<LinEnums.IbOrderStatus> statuses = new HashSet<>();
+        statuses.add(LinEnums.IbOrderStatus.NEW_RETRY);
+        query.setParameter("ibAccount", ibAccount);
         query.setParameter("statuses", statuses);
-        Calendar recentDate = LinUtil.getCalendar();
-        recentDate.add(Calendar.DAY_OF_MONTH, -LinSettings.RECENT_ORDER_DAYS);
-        query.setParameter("recentDate", recentDate);
-        List<Order> orders = query.getResultList();
-        em.flush();
-        em.clear();
-        return orders;
+        return query.getResultList();
     }
 
     @Override
-    public List<Order> getNewRetryOrders() {
-        TypedQuery<Order> query = em.createQuery("SELECT o FROM Order o, OrderEvent e WHERE o = e.order AND o.orderStatus = e.orderStatus AND o.orderStatus IN :statuses ORDER BY e.eventDate ASC", Order.class);
-        Set<LinEnums.OrderStatus> statuses = new HashSet<>();
-        statuses.add(LinEnums.OrderStatus.NEW_RETRY);
-        query.setParameter("statuses", statuses);
-        List<Order> orders = query.getResultList();
-        em.flush();
-        em.clear();
-        return orders;
-    }
-
-    @Override
-    public List<Order> getIbOpenOrders() {
-        TypedQuery<Order> query = em.createQuery("SELECT o FROM Order o WHERE o.orderStatus IN :statuses AND o.strategyMode = :strategyMode", Order.class);
-        Set<LinEnums.OrderStatus> statuses = new HashSet<>();
-        statuses.add(LinEnums.OrderStatus.NEW);
-        statuses.add(LinEnums.OrderStatus.NEW_RETRY);
-        statuses.add(LinEnums.OrderStatus.SUBMIT_REQ);
-        statuses.add(LinEnums.OrderStatus.SUBMITTED);
-        statuses.add(LinEnums.OrderStatus.CANCEL_REQ);
+    public List<IbOrder> getOpenIbOrders(IbAccount ibAccount) {
+        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibAccount = :ibAccount AND o.orderStatus IN :statuses AND o.strategyMode = :strategyMode", IbOrder.class);
+        Set<LinEnums.IbOrderStatus> statuses = new HashSet<>();
+        statuses.add(LinEnums.IbOrderStatus.NEW);
+        statuses.add(LinEnums.IbOrderStatus.NEW_RETRY);
+        statuses.add(LinEnums.IbOrderStatus.SUBMIT_REQ);
+        statuses.add(LinEnums.IbOrderStatus.SUBMITTED);
+        statuses.add(LinEnums.IbOrderStatus.CANCEL_REQ);
+        query.setParameter("ibAccount", ibAccount);
         query.setParameter("statuses", statuses);
         query.setParameter("strategyMode", LinEnums.StrategyMode.IB);
-        List<Order> orders = query.getResultList();
-        em.flush();
-        em.clear();
-        return orders;
+        return query.getResultList();
     }
 
     @Override
-    public void addStrategy(Strategy strategy) {
+    public void createStrategy(Strategy strategy) {
         em.persist(strategy);
-        em.flush();
-        em.clear();
     }
 
     @Override
     public Strategy findStrategy(Integer id) {
-        Strategy str = em.find(Strategy.class, id);
-        em.flush();
-        em.clear();
-        return str;
+        return em.find(Strategy.class, id);
     }
 
     @Override
@@ -303,10 +246,7 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
         query.setParameter("series", series);
         query.setParameter("isActive", Boolean.TRUE);
         List<Strategy> strategyList = query.getResultList();
-        Strategy strategy = strategyList.get(0);
-        em.flush();
-        em.clear();
-        return strategy;
+        return strategyList.get(0);
     }
 
     @Override
@@ -321,8 +261,6 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
             strategy.copyValues(strategyLog);
             em.persist(strategyLog);
         }
-        em.flush();
-        em.clear();
     }
 
     @Override
@@ -340,9 +278,9 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
         q = em.createQuery("DELETE FROM StrategyLog sl WHERE sl.strategy = :strategy");
         q.setParameter("strategy", strategy);
         q.executeUpdate();
-        for (Order order : this.getOrdersByStrategy(strategy)) {
-            order.getEvents().forEach(em::remove);
-            em.remove(order);
+        for (IbOrder ibOrder : this.getIbOrdersByStrategy(strategy)) {
+            ibOrder.getEvents().forEach(em::remove);
+            em.remove(ibOrder);
         }
         em.remove(strategy);
         l.info("END deleteStrategy " + strategy.getSeries().getSymbol() + ", " + strategy.getSeries().getInterval().getDisplayName() + ", " + strategy.getStrategyType().getDisplayName());
@@ -352,10 +290,7 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
     public List<StrategyLog> getStrategyLogs(Strategy strategy, boolean ascending) {
         TypedQuery<StrategyLog> query = em.createQuery("SELECT sl FROM StrategyLog sl WHERE sl.strategy = :strategy ORDER BY sl.logDate " + (ascending ? "ASC" : "DESC"), StrategyLog.class);
         query.setParameter("strategy", strategy);
-        List<StrategyLog> logs = query.getResultList();
-        em.flush();
-        em.clear();
-        return logs;
+        return query.getResultList();
     }
 
     @Override
@@ -366,23 +301,17 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
     }
 
     @Override
-    public List<Trade> getTradesByOrder(Order order) {
-        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t, TradeOrder to WHERE to.order = :order AND to.trade = t ORDER BY t.dateInitOpen ASC", Trade.class);
-        query.setParameter("order", order);
-        List<Trade> trades = query.getResultList();
-        em.flush();
-        em.clear();
-        return trades;
+    public List<Trade> getTradesByOrder(IbOrder ibOrder) {
+        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t, TradeOrder to WHERE to.ibOrder = :ibOrder AND to.trade = t ORDER BY t.dateInitOpen ASC", Trade.class);
+        query.setParameter("ibOrder", ibOrder);
+        return query.getResultList();
     }
 
     @Override
     public Long getNumTrades(Strategy strategy) {
         Query query = em.createQuery("SELECT COUNT(t) FROM Trade t WHERE t.strategy = :strategy");
         query.setParameter("strategy", strategy);
-        Long nt = (Long) query.getSingleResult();
-        em.flush();
-        em.clear();
-        return nt;
+        return (Long) query.getSingleResult();
     }
 
     @Override
@@ -395,8 +324,6 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
         statuses.add(LinEnums.TradeStatus.INIT_CLOSE);
         query.setParameter("statuses", statuses);
         List<Trade> trades = query.getResultList();
-        em.flush();
-        em.clear();
         return (trades != null && !trades.isEmpty() ? trades.get(0) : null);
     }
 
@@ -405,8 +332,6 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
         TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy ORDER BY t.dateInitOpen DESC", Trade.class);
         query.setParameter("strategy", strategy);
         List<Trade> trades = query.getResultList();
-        em.flush();
-        em.clear();
         return (trades != null && !trades.isEmpty() ? trades.get(0) : null);
     }
 
@@ -418,8 +343,6 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
         trade.copyValues(tradeLog);
         tradeLog.setPrice(price);
         em.persist(tradeLog);
-        em.flush();
-        em.clear();
     }
 
     @Override
@@ -439,18 +362,12 @@ public class DatabaseDaoImpl implements Serializable, DatabaseDao {
             tradeLog.setPrice(price);
             em.persist(tradeLog);
         }
-        em.flush();
-        em.clear();
-        
     }
 
     @Override
     public List<TradeLog> getTradeLogs(Trade trade, boolean ascending) {
         TypedQuery<TradeLog> query = em.createQuery("SELECT l FROM TradeLog l WHERE l.trade = :trade ORDER BY l.logDate " + (ascending ? "ASC" : "DESC"), TradeLog.class);
         query.setParameter("trade", trade);
-        List<TradeLog> logs = query.getResultList();
-        em.flush();
-        em.clear();
-        return logs;
+        return query.getResultList();
     }
 }

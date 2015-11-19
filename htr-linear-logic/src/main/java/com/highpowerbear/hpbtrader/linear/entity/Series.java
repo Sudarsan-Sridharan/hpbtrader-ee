@@ -3,6 +3,8 @@ package com.highpowerbear.hpbtrader.linear.entity;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.List;
  *
  * @author rkolar
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Cacheable(false)
 @Table(name = "lin_series")

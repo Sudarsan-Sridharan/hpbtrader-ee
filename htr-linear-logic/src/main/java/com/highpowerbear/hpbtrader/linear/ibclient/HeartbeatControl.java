@@ -1,17 +1,17 @@
 package com.highpowerbear.hpbtrader.linear.ibclient;
 
-import com.highpowerbear.hpbtrader.linear.common.EventBroker;
 import com.highpowerbear.hpbtrader.linear.common.LinData;
-import com.highpowerbear.hpbtrader.linear.common.LinUtil;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
-import com.highpowerbear.hpbtrader.linear.entity.Order;
-import com.highpowerbear.hpbtrader.linear.entity.Trade;
-import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
+import com.highpowerbear.hpbtrader.linear.entity.IbAccount;
+import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
+import com.highpowerbear.hpbtrader.linear.persistence.LinDao;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by rkolar on 5/9/14.
@@ -20,53 +20,46 @@ import java.util.List;
 @ApplicationScoped
 public class HeartbeatControl {
     @Inject private LinData linData;
-    @Inject private DatabaseDao databaseDao;
-    @Inject private EventBroker eventBroker;
+    @Inject private LinDao linDao;
 
-    public void init() {
-        List<Order> openOrders = databaseDao.getIbOpenOrders();
-        for (Order o : openOrders) {
-            addHeartbeat(o);
-        }
+    public void init(IbAccount ibAccount) {
+        linDao.getOpenIbOrders(ibAccount).forEach(this::addHeartbeat);
     }
 
-    public void updateHeartbeats() {
-        for (Long dbId : linData.getOpenOrderHeartbeatMap().keySet()) {
-            Integer failedHeartbeatsLeft = linData.getOpenOrderHeartbeatMap().get(dbId);
+    public void updateHeartbeats(IbAccount ibAccount) {
+        Map<IbOrder, Integer> hm = linData.getOpenOrderHeartbeatMap().get(ibAccount);
+        Set<IbOrder> keyset = new HashSet<>(hm.keySet());
+        for (IbOrder ibOrder : keyset) {
+            Integer failedHeartbeatsLeft = hm.get(ibOrder);
             if (failedHeartbeatsLeft <= 0) {
-                Order order = databaseDao.findOrder(dbId);
-                if (!LinEnums.OrderStatus.UNKNOWN.equals(order.getOrderStatus())) {
-                    order.addEvent(LinEnums.OrderStatus.UNKNOWN, LinUtil.getCalendar());
-                    List<Trade> trades = databaseDao.getTradesByOrder(order);
-                    for (Trade t : trades) {
-                        t.errClose();
-                        databaseDao.updateTrade(t, null);
-                    }
-                    databaseDao.updateOrder(order);
+                if (!LinEnums.IbOrderStatus.UNKNOWN.equals(ibOrder.getStatus())) {
+                    ibOrder.addEvent(LinEnums.IbOrderStatus.UNKNOWN, null, null);
+                    linDao.updateIbOrder(ibOrder);
                 }
-                linData.getOpenOrderHeartbeatMap().remove(dbId);
+                hm.remove(ibOrder);
             } else {
-                linData.getOpenOrderHeartbeatMap().put(dbId, failedHeartbeatsLeft - 1);
+                hm.put(ibOrder, failedHeartbeatsLeft - 1);
             }
-            eventBroker.trigger(LinEnums.DataChangeEvent.STRATEGY_UPDATE);
         }
     }
 
-    public void heartbeatReceived(Order o) {
-        Integer failedHeartbeatsLeft = linData.getOpenOrderHeartbeatMap().get(o.getId());
+    public void heartbeatReceived(IbOrder ibOrder) {
+        Map<IbOrder, Integer> hm = linData.getOpenOrderHeartbeatMap().get(ibOrder.getIbAccount());
+        Integer failedHeartbeatsLeft = hm.get(ibOrder);
         if (failedHeartbeatsLeft != null) {
-            linData.getOpenOrderHeartbeatMap().put(o.getId(), (failedHeartbeatsLeft < LinSettings.MAX_ORDER_HEARTBEAT_FAILS ? failedHeartbeatsLeft + 1 : failedHeartbeatsLeft));
+            hm.put(ibOrder, (failedHeartbeatsLeft < LinSettings.MAX_ORDER_HEARTBEAT_FAILS ? failedHeartbeatsLeft + 1 : failedHeartbeatsLeft));
         }
     }
 
-    public void addHeartbeat(Order o) {
-        linData.getOpenOrderHeartbeatMap().put(o.getId(), LinSettings.MAX_ORDER_HEARTBEAT_FAILS);
+    public void addHeartbeat(IbOrder ibOrder) {
+        linData.getOpenOrderHeartbeatMap().get(ibOrder.getIbAccount()).put(ibOrder, LinSettings.MAX_ORDER_HEARTBEAT_FAILS);
     }
 
-    public void removeHeartbeat(Order o) {
-        Integer failedHeartbeatsLeft = linData.getOpenOrderHeartbeatMap().get(o.getId());
+    public void removeHeartbeat(IbOrder ibOrder) {
+        Map<IbOrder, Integer> hm = linData.getOpenOrderHeartbeatMap().get(ibOrder.getIbAccount());
+        Integer failedHeartbeatsLeft = hm.get(ibOrder);
         if (failedHeartbeatsLeft != null) {
-            linData.getOpenOrderHeartbeatMap().remove(o.getId());
+            hm.remove(ibOrder);
         }
     }
 }

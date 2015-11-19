@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.linear.strategy.model;
+package com.highpowerbear.hpbtrader.linear.model;
 
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.entity.*;
@@ -12,7 +12,7 @@ import java.util.List;
 public class BacktestResult {
     private Strategy strategy;
     private List<StrategyLog> strategyLogs = new ArrayList<>();
-    private List<Order> orders = new ArrayList<>(); // will include also OrderEvent list
+    private List<IbOrder> ibOrders = new ArrayList<>(); // will include also OrderEvent list
     private List<Trade> trades = new ArrayList<>(); // will include also TradeOrder list
     private List<TradeLog> tradeLogs = new ArrayList<>();
     private Long nextStrategyLogId = 1L;
@@ -72,10 +72,10 @@ public class BacktestResult {
         }
     }
     
-    public void addOrder(Order order) {
-        order.setId(nextOrderId++);
-        order.setStrategyMode(LinEnums.StrategyMode.BTEST);
-        orders.add(order);
+    public void addOrder(IbOrder ibOrder) {
+        ibOrder.setId(nextOrderId++);
+        ibOrder.setStrategyMode(LinEnums.StrategyMode.BTEST);
+        ibOrders.add(ibOrder);
     }
     
     private Trade findTrade(Long tradeId) {
@@ -100,8 +100,8 @@ public class BacktestResult {
         return strategyLogs;
     }
 
-    public List<Order> getOrders() {
-        return orders;
+    public List<IbOrder> getIbOrders() {
+        return ibOrders;
     }
 
     public List<Trade> getTrades() {

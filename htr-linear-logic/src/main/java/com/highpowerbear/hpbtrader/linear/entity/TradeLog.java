@@ -11,11 +11,9 @@ import java.util.Calendar;
  *
  * @author robertk
  */
+@XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "lin_tradelog")
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = {"timeInMillis", "stopLoss", "price", "profitTarget"})
 public class TradeLog implements Serializable {
     private static final long serialVersionUID = 1L;
     

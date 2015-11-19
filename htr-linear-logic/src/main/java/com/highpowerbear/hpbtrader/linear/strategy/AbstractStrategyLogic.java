@@ -4,9 +4,9 @@ import com.highpowerbear.hpbtrader.linear.common.LinUtil;
 import com.highpowerbear.hpbtrader.linear.common.SingletonRepo;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.entity.Bar;
-import com.highpowerbear.hpbtrader.linear.entity.Order;
+import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
 import com.highpowerbear.hpbtrader.linear.mktdata.TiCalculator;
-import com.highpowerbear.hpbtrader.linear.strategy.model.StrategyLogicContext;
+import com.highpowerbear.hpbtrader.linear.model.StrategyLogicContext;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -17,7 +17,7 @@ import java.util.Locale;
 public abstract class AbstractStrategyLogic implements StrategyLogic {
     protected TiCalculator tiCalculator;
     protected StrategyLogicContext ctx;
-    protected Order order;
+    protected IbOrder ibOrder;
     protected Bar bar;
     protected Bar prevBar;
     protected NumberFormat doubleValueFormat = NumberFormat.getInstance(Locale.US);
@@ -38,7 +38,7 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     }
     
     @Override
-    public abstract Order processSignals();
+    public abstract IbOrder processSignals();
     
     @Override
     public abstract void setInitialStopAndTarget();
@@ -52,15 +52,15 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     protected abstract void reloadParameters();
     
     protected void createOrder() {
-        order = new Order();
-        order.setStrategy(ctx.strategy);
-        order.setStrategyMode(ctx.strategy.getStrategyMode());
-        order.setSubmitType(LinEnums.SubmitType.AUTO);
-        order.setQuantity(ctx.strategy.getTradingQuantity());
-        order.setOrderType(LinEnums.OrderType.MKT);
-        order.setLimitPrice(null); // N/A for market order
-        order.setStopPrice(null); // N/A for market order
-        order.addEvent(LinEnums.OrderStatus.NEW, (ctx.isBacktest ? bar.getqDateBarClose() : LinUtil.getCalendar()));
+        ibOrder = new IbOrder();
+        ibOrder.setStrategy(ctx.strategy);
+        ibOrder.setStrategyMode(ctx.strategy.getStrategyMode());
+        ibOrder.setSubmitType(LinEnums.SubmitType.AUTO);
+        ibOrder.setQuantity(ctx.strategy.getTradingQuantity());
+        ibOrder.setOrderType(LinEnums.OrderType.MKT);
+        ibOrder.setLimitPrice(null); // N/A for market order
+        ibOrder.setStopPrice(null); // N/A for market order
+        ibOrder.addEvent(LinEnums.IbOrderStatus.NEW, (ctx.isBacktest ? bar.getqDateBarClose() : LinUtil.getCalendar()), null);
     }
     
     protected Double getPrice() {

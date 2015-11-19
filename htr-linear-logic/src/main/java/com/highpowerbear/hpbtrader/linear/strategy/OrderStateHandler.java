@@ -3,11 +3,11 @@ package com.highpowerbear.hpbtrader.linear.strategy;
 import com.highpowerbear.hpbtrader.linear.common.EventBroker;
 import com.highpowerbear.hpbtrader.linear.common.LinUtil;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.entity.Order;
+import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
 import com.highpowerbear.hpbtrader.linear.entity.Bar;
 import com.highpowerbear.hpbtrader.linear.entity.Strategy;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
-import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
+import com.highpowerbear.hpbtrader.linear.persistence.LinDao;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,76 +20,74 @@ import java.util.List;
 @Named
 @ApplicationScoped
 public class OrderStateHandler {
-    @Inject private DatabaseDao databaseDao;
+    @Inject private LinDao linDao;
     @Inject private EventBroker eventBroker;
 
-    public void simulateFill(Order order, Bar bar) {
+    public void simulateFill(IbOrder ibOrder, Bar bar) {
         Calendar t1 = LinUtil.getCalendar();
-        order.addEvent(LinEnums.OrderStatus.SUBMIT_REQ, t1);
-        databaseDao.updateOrder(order);
-        Long dbId = order.getId();
+        ibOrder.addEvent(LinEnums.IbOrderStatus.SUBMIT_REQ, t1, null);
+        linDao.updateIbOrder(ibOrder);
+        Long dbId = ibOrder.getId();
 
         // get a fresh copy from db
-        order = databaseDao.findOrder(dbId);
+        ibOrder = linDao.findIbOrder(dbId);
         Calendar t2 = LinUtil.getCalendar();
         if (t2.getTimeInMillis() <= t1.getTimeInMillis()) {
             t2.setTimeInMillis(t1.getTimeInMillis() + 1);
         }
-        orderSubmitted(order, t2);
+        orderSubmitted(ibOrder, t2);
 
         // get a fresh copy from db
-        order = databaseDao.findOrder(dbId);
+        ibOrder = linDao.findIbOrder(dbId);
         Calendar t3 = LinUtil.getCalendar();
         if (t3.getTimeInMillis() <= t2.getTimeInMillis()) {
             t3.setTimeInMillis(t2.getTimeInMillis() + 1);
         }
-        order.setFillPrice(bar.getqClose());
-        orderFilled(order, t3);
+        orderFilled(ibOrder, t3, bar.getqClose());
     }
 
-    public void orderSubmitted(Order order, Calendar cal) {
-        order.addEvent(LinEnums.OrderStatus.SUBMITTED, cal);
-        databaseDao.updateOrder(order);
+    public void orderSubmitted(IbOrder ibOrder, Calendar cal) {
+        ibOrder.addEvent(LinEnums.IbOrderStatus.SUBMITTED, cal, null);
+        linDao.updateIbOrder(ibOrder);
         eventBroker.trigger(LinEnums.DataChangeEvent.STRATEGY_UPDATE);
     }
 
-    public void orderFilled(Order order, Calendar cal) {
-        order.addEvent(LinEnums.OrderStatus.FILLED, cal);
-        databaseDao.updateOrder(order);
+    public void orderFilled(IbOrder ibOrder, Calendar cal, Double fillPrice) {
+        ibOrder.addEvent(ibOrder.getStatus(), cal, fillPrice);
+        linDao.updateIbOrder(ibOrder);
+        Strategy strategy = ibOrder.getStrategy();
 
-        Strategy strategy = order.getStrategy();
-
-        List<Trade> trades = databaseDao.getTradesByOrder(order);
+        List<Trade> trades = linDao.getTradesByOrder(ibOrder);
         Trade trade1 = trades.get(0);
-        Trade trade2 = (order.isReversalOrder() ? trades.get(1) : null);
+        Trade trade2 = (ibOrder.isReversalOrder() ? trades.get(1) : null);
 
-        if (order.isOpeningOrder()) {
-            trade1.open(order.getFillPrice());
+        if (ibOrder.isOpeningOrder()) {
+            trade1.open(ibOrder.getFillPrice());
         } else {
-            trade1.close(order.getEventDate(LinEnums.OrderStatus.FILLED), order.getFillPrice());
+            trade1.close(ibOrder.getEventDate(LinEnums.IbOrderStatus.FILLED), ibOrder.getFillPrice());
             strategy.recalculateStats(trade1);
         }
-        databaseDao.updateTrade(trade1, order.getFillPrice());
+        linDao.updateTrade(trade1, ibOrder.getFillPrice());
 
         if (trade2 != null) {
-            trade2.open(order.getFillPrice());
-            databaseDao.updateTrade(trade2, order.getFillPrice());
+            trade2.open(ibOrder.getFillPrice());
+            linDao.updateTrade(trade2, ibOrder.getFillPrice());
         }
 
         strategy.setNumFilledOrders(strategy.getNumFilledOrders() + 1);
-        strategy.setCurrentPosition(order.isBuyOrder() ? strategy.getCurrentPosition() + order.getQuantity() : strategy.getCurrentPosition() - order.getQuantity());
-        databaseDao.updateStrategy(strategy);
+        strategy.setCurrentPosition(ibOrder.isBuyOrder() ? strategy.getCurrentPosition() + ibOrder.getQuantity() : strategy.getCurrentPosition() - ibOrder.getQuantity());
+        linDao.updateStrategy(strategy);
         eventBroker.trigger(LinEnums.DataChangeEvent.STRATEGY_UPDATE);
     }
 
-    public void orderCanceled(Order order, Calendar cal) {
-        order.addEvent(LinEnums.OrderStatus.CANCELED, cal);
-        databaseDao.updateOrder(order);
+    public void orderCanceled(IbOrder ibOrder, Calendar cal) {
+        ibOrder.addEvent(LinEnums.IbOrderStatus.CANCELED, cal, null);
+        linDao.updateIbOrder(ibOrder);
 
-        List<Trade> trades = databaseDao.getTradesByOrder(order);
+        List<Trade> trades = linDao.getTradesByOrder(ibOrder);
         for (Trade t : trades) {
             t.cncClosed();
-            databaseDao.updateTrade(t, null);
+            linDao.updateTrade(t, null);
         }
         eventBroker.trigger(LinEnums.DataChangeEvent.STRATEGY_UPDATE);
     }

@@ -4,6 +4,8 @@ package com.highpowerbear.hpbtrader.linear.definitions;
  * Created by rkolar on 4/23/14.
  */
 public class LinConstants {
+    public static final int ONE_SECOND = 1000; // milliseconds
+
     public static final String IB_TIMEZONE = "EST";
     public static final String IB_DURATION_1_DAY = "1 D";
     public static final String IB_DURATION_2_DAY = "2 D";

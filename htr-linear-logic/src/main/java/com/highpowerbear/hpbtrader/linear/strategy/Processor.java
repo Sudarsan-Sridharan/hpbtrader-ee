@@ -7,8 +7,8 @@ import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
 import com.highpowerbear.hpbtrader.linear.entity.*;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
-import com.highpowerbear.hpbtrader.linear.strategy.model.StrategyLogicContext;
-import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
+import com.highpowerbear.hpbtrader.linear.model.StrategyLogicContext;
+import com.highpowerbear.hpbtrader.linear.persistence.LinDao;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class Processor implements Serializable {
     private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
-    @Inject private DatabaseDao databaseDao;
+    @Inject private LinDao linDao;
     @Inject private IbController ibController;
     @Inject private OrderStateHandler orderStateHandler;
     @Inject private EmailSender emailSender;
@@ -38,8 +38,8 @@ public class Processor implements Serializable {
         l.info("START " + logMessage);
         StrategyLogicContext ctx = new StrategyLogicContext();
         ctx.strategy = strategy;
-        ctx.activeTrade = databaseDao.getActiveTrade(strategy);
-        ctx.bars = databaseDao.getBars(series.getId(), LinSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE);
+        ctx.activeTrade = linDao.getActiveTrade(strategy);
+        ctx.bars = linDao.getBars(series.getId(), LinSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE);
         if (ctx.bars.size() < LinSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE) {
             l.info("END " + logMessage + ", not enough  bars available");
             return;
@@ -60,82 +60,82 @@ public class Processor implements Serializable {
         }
         
         strategyLogic.updateContext(ctx);
-        Order order = strategyLogic.processSignals();
+        IbOrder ibOrder = strategyLogic.processSignals();
         
-        if (order == null) {
+        if (ibOrder == null) {
             if (ctx.activeTrade != null) {
-                databaseDao.updateTrade(ctx.activeTrade, bar.getqClose());
+                linDao.updateTrade(ctx.activeTrade, bar.getqClose());
             }
             l.info("END " + logMessage + ", no new order");
             return;
         }
         
-        databaseDao.addOrder(order);
-        ctx.activeTrade.addTradeOrder(order);
-        databaseDao.updateTrade(ctx.activeTrade, bar.getqClose());
+        linDao.createIbOrder(ibOrder);
+        ctx.activeTrade.addTradeOrder(ibOrder);
+        linDao.updateTrade(ctx.activeTrade, bar.getqClose());
         // needed to get fresh copy of trade and trade orders with set ids to prevent trade order duplication in the next update
-        ctx.activeTrade = databaseDao.getActiveTrade(strategy);
+        ctx.activeTrade = linDao.getActiveTrade(strategy);
         
-        if (order.isClosingOrder()) {
+        if (ibOrder.isClosingOrder()) {
             ctx.activeTrade.initClose();
-            databaseDao.updateTrade(ctx.activeTrade, bar.getqClose());
+            linDao.updateTrade(ctx.activeTrade, bar.getqClose());
         }
-        if (order.isReversalOrder()) {
-            ctx.activeTrade = new Trade().initOpen(order);
+        if (ibOrder.isReversalOrder()) {
+            ctx.activeTrade = new Trade().initOpen(ibOrder);
             strategyLogic.setInitialStopAndTarget();
-            ctx.activeTrade.addTradeOrder(order);
-            databaseDao.updateTrade(ctx.activeTrade, bar.getqClose());
+            ctx.activeTrade.addTradeOrder(ibOrder);
+            linDao.updateTrade(ctx.activeTrade, bar.getqClose());
         }
         
         ctx.strategy.setNumAllOrders(strategy.getNumAllOrders() + 1);
-        databaseDao.updateStrategy(strategy);
+        linDao.updateStrategy(strategy);
         eventBroker.trigger(LinEnums.DataChangeEvent.STRATEGY_UPDATE);
 
         // send email, notifying about new order
-        String subject = order.getDescription();
-        String content = order.getTriggerDesc() + "\n" + bar.printValues();
+        String subject = ibOrder.getDescription();
+        String content = ibOrder.getTriggerDesc() + "\n" + bar.printValues();
         emailSender.sendEmail(subject, content);
 
-        l.info("END " + logMessage + ", new order, trigger=" + order.getTriggerDesc());
+        l.info("END " + logMessage + ", new order, trigger=" + ibOrder.getTriggerDesc());
         
         if (LinEnums.StrategyMode.IB.equals(strategy.getStrategyMode())) {
-            ibController.submitIbOrder(order);
+            ibController.submitIbOrder(ibOrder);
         } else {
-            orderStateHandler.simulateFill(order, bar);
+            orderStateHandler.simulateFill(ibOrder, bar);
         }
     }
 
-    void processManual(Order manualOrder, Trade activeTrade, Bar bar) {
-        Strategy strategy = manualOrder.getStrategy();
+    void processManual(IbOrder manualIbOrder, Trade activeTrade, Bar bar) {
+        Strategy strategy = manualIbOrder.getStrategy();
         Series series = strategy.getSeries();
         String logMessage = "processing " + series.getSymbol() + ", " + series.getCurrency() + ", " + series.getInterval().getDisplayName() + ", " +  strategy.getStrategyType() + " --> manual order";
 
         l.info("START " + logMessage);
-        databaseDao.addOrder(manualOrder);
-        activeTrade.addTradeOrder(manualOrder);
-        databaseDao.updateTrade(activeTrade, bar.getqClose());
+        linDao.createIbOrder(manualIbOrder);
+        activeTrade.addTradeOrder(manualIbOrder);
+        linDao.updateTrade(activeTrade, bar.getqClose());
         // needed to get fresh copy of trade and trade orders with set ids to prevent trade order duplication in the next update
-        activeTrade = databaseDao.getActiveTrade(strategy);
+        activeTrade = linDao.getActiveTrade(strategy);
 
-        if (manualOrder.isClosingOrder()) {
+        if (manualIbOrder.isClosingOrder()) {
             activeTrade.initClose();
-            databaseDao.updateTrade(activeTrade, bar.getqClose());
+            linDao.updateTrade(activeTrade, bar.getqClose());
         }
         strategy.setNumAllOrders(strategy.getNumAllOrders() + 1);
-        databaseDao.updateStrategy(strategy);
+        linDao.updateStrategy(strategy);
         eventBroker.trigger(LinEnums.DataChangeEvent.STRATEGY_UPDATE);
 
         // send email, notifying about new order
-        String subject = manualOrder.getDescription();
-        String content = manualOrder.getTriggerDesc() + "\n" + bar.printValues();
+        String subject = manualIbOrder.getDescription();
+        String content = manualIbOrder.getTriggerDesc() + "\n" + bar.printValues();
         emailSender.sendEmail(subject, content);
 
-        l.info("END " + logMessage + ", new order, trigger=" + manualOrder.getTriggerDesc());
+        l.info("END " + logMessage + ", new order, trigger=" + manualIbOrder.getTriggerDesc());
 
         if (LinEnums.StrategyMode.IB.equals(strategy.getStrategyMode())) {
-            ibController.submitIbOrder(manualOrder);
+            ibController.submitIbOrder(manualIbOrder);
         } else {
-            orderStateHandler.simulateFill(manualOrder, bar);
+            orderStateHandler.simulateFill(manualIbOrder, bar);
         }
     }
 }

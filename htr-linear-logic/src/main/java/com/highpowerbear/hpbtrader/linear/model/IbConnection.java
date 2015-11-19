@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.linear.entity.model;
+package com.highpowerbear.hpbtrader.linear.model;
 
 import com.ib.client.EClientSocket;
 

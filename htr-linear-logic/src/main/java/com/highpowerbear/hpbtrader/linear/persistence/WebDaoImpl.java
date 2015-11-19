@@ -1,12 +1,9 @@
 package com.highpowerbear.hpbtrader.linear.persistence;
 
 import com.highpowerbear.hpbtrader.linear.common.LinData;
-import com.highpowerbear.hpbtrader.linear.entity.Bar;
-import com.highpowerbear.hpbtrader.linear.entity.Order;
-import com.highpowerbear.hpbtrader.linear.entity.Series;
-import com.highpowerbear.hpbtrader.linear.entity.Trade;
-import com.highpowerbear.hpbtrader.linear.mktdata.model.RealtimeData;
-import com.highpowerbear.hpbtrader.linear.persistence.model.SeriesRecord;
+import com.highpowerbear.hpbtrader.linear.entity.*;
+import com.highpowerbear.hpbtrader.linear.model.RealtimeData;
+import com.highpowerbear.hpbtrader.linear.model.SeriesRecord;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,13 +17,13 @@ import java.util.List;
 @Named
 @ApplicationScoped
 public class WebDaoImpl implements Serializable, WebDao {
-    @Inject private DatabaseDao databaseDao;
+    @Inject private LinDao linDao;
     @Inject private LinData linData;
 
     @Override
     public List<SeriesRecord> getSeriesRecords(boolean disabledToo) {
         List<SeriesRecord> seriesRecords = new ArrayList<>();
-        for (Series s : databaseDao.getAllSeries(disabledToo)) {
+        for (Series s : linDao.getAllSeries(disabledToo)) {
             SeriesRecord r = new SeriesRecord();
             r.setId(s.getId());
             r.setSeries(s);
@@ -39,20 +36,20 @@ public class WebDaoImpl implements Serializable, WebDao {
             r.setExchange(s.getExchange().getDisplayName());
             r.setEnabled(s.getEnabled());
             r.setRealtimeDataEnabled(isRealtimeDataEnabled(s));
-            r.setNumBars(databaseDao.getNumBars(s));
+            r.setNumBars(linDao.getNumBars(s));
             r.setNumStrategies(s.getNumStrategies());
-            Bar lastBar = databaseDao.getLastBar(s);
-            r.setLastQuote(lastBar != null ? databaseDao.getLastBar(s).getqClose() : null);
+            Bar lastBar = linDao.getLastBar(s);
+            r.setLastQuote(lastBar != null ? linDao.getLastBar(s).getqClose() : null);
             r.setActiveStrategy(s.getActiveStrategy().getStrategyType().getDisplayName());
             r.setStrategyMode(s.getActiveStrategy().getStrategyMode().name());
             r.setStrategyModeClass(s.getActiveStrategy().getStrategyMode().getColorClass());
             r.setCurrentPosition(s.getActiveStrategy().getCurrentPosition());
-            r.setNumTrades(databaseDao.getNumTrades(s.getActiveStrategy()));
+            r.setNumTrades(linDao.getNumTrades(s.getActiveStrategy()));
             r.setNumAllOrders(s.getActiveStrategy().getNumAllOrders());
             r.setNumFilledOrders(s.getActiveStrategy().getNumFilledOrders());
             r.setCumulativePl(s.getActiveStrategy().getCumulativePl());
             r.setCumulativePlClass(r.getCumulativePl() > 0d ? "col-green" : (r.getCumulativePl() == 0d ? "" : "col-red"));
-            Trade activeTrade = databaseDao.getActiveTrade(s.getActiveStrategy());
+            Trade activeTrade = linDao.getActiveTrade(s.getActiveStrategy());
             r.setTradeType(activeTrade != null ? activeTrade.getTradeType().getDisplayName() : "-");
             r.setTradeTypeClass(activeTrade != null ? activeTrade.getTradeType().getColorClass() : "");
             r.setUnrealizedPl(activeTrade != null ? activeTrade.getUnrealizedPl() : 0d);
@@ -66,13 +63,13 @@ public class WebDaoImpl implements Serializable, WebDao {
 
     @Override
     public Boolean getAllowManual(Series series) {
-        Trade activeTrade = databaseDao.getActiveTrade(series.getActiveStrategy());
-        return (series.getEnabled() && databaseDao.getLastBar(series) != null && (activeTrade == null || activeTrade.isOpen()));
+        Trade activeTrade = linDao.getActiveTrade(series.getActiveStrategy());
+        return (series.getEnabled() && linDao.getLastBar(series) != null && (activeTrade == null || activeTrade.isOpen()));
     }
 
     @Override
-    public Integer getHearbeatCount(Order order) {
-        return linData.getOpenOrderHeartbeatMap().get(order.getId());
+    public Integer getHearbeatCount(IbOrder ibOrder) {
+        return linData.getOpenOrderHeartbeatMap().get(ibOrder.getIbAccount()).get(ibOrder);
     }
 
     @Override

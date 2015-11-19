@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.linear.strategy.logic;
 
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
-import com.highpowerbear.hpbtrader.linear.entity.Order;
+import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
 import com.highpowerbear.hpbtrader.linear.entity.Trade;
 import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Ema;
 import com.highpowerbear.hpbtrader.linear.strategy.AbstractStrategyLogic;
@@ -28,32 +28,32 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
     private Double emaLongValue;
     
     @Override
-    public Order processSignals() {
+    public IbOrder processSignals() {
         createOrder();
         if (ctx.activeTrade != null) {
             setPl();
             setTrailStop(stopPct);
             if (targetMet()) {
-                order.setOrderAction(ctx.activeTrade.isLong() ? LinEnums.OrderAction.STC : LinEnums.OrderAction.BTC);
-                order.setTriggerDesc(getTriggerDesc(TriggerEvent.TARGET));
+                ibOrder.setOrderAction(ctx.activeTrade.isLong() ? LinEnums.OrderAction.STC : LinEnums.OrderAction.BTC);
+                ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.TARGET));
             } else if (stopTriggered()) {
-                order.setOrderAction(ctx.activeTrade.isLong() ? LinEnums.OrderAction.STC : LinEnums.OrderAction.BTC);
-                order.setTriggerDesc(getTriggerDesc(TriggerEvent.STOP));
+                ibOrder.setOrderAction(ctx.activeTrade.isLong() ? LinEnums.OrderAction.STC : LinEnums.OrderAction.BTC);
+                ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.STOP));
             } else if (((ctx.activeTrade.isLong() && crossBelowEma()) || (ctx.activeTrade.isShort() && crossAboveEma())) && isTradeTime()) {
-                order.setOrderAction(ctx.activeTrade.isLong() ? LinEnums.OrderAction.SREV : LinEnums.OrderAction.BREV);
-                order.setTriggerDesc(getTriggerDesc(TriggerEvent.REVERSE));
-                order.setQuantity(order.getQuantity() * 2);
+                ibOrder.setOrderAction(ctx.activeTrade.isLong() ? LinEnums.OrderAction.SREV : LinEnums.OrderAction.BREV);
+                ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.REVERSE));
+                ibOrder.setQuantity(ibOrder.getQuantity() * 2);
             }
         } else if ((crossAboveEma() || crossBelowEma()) && isTradeTime()) {
-            order.setOrderAction(crossAboveEma() ? LinEnums.OrderAction.BTO : LinEnums.OrderAction.STO);
-            order.setTriggerDesc(getTriggerDesc(TriggerEvent.OPEN));
-            ctx.activeTrade = new Trade().initOpen(order);
+            ibOrder.setOrderAction(crossAboveEma() ? LinEnums.OrderAction.BTO : LinEnums.OrderAction.STO);
+            ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.OPEN));
+            ctx.activeTrade = new Trade().initOpen(ibOrder);
             setInitialStopAndTarget();
         }
-        if (order.getOrderAction() == null) {
-            order = null;
+        if (ibOrder.getOrderAction() == null) {
+            ibOrder = null;
         }
-        return order;
+        return ibOrder;
     }
     
     @Override

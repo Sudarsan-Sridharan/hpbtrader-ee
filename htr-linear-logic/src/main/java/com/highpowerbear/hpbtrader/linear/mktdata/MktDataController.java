@@ -7,14 +7,15 @@ import com.highpowerbear.hpbtrader.linear.definitions.LinConstants;
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
 import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
 import com.highpowerbear.hpbtrader.linear.entity.Bar;
+import com.highpowerbear.hpbtrader.linear.entity.IbAccount;
 import com.highpowerbear.hpbtrader.linear.entity.Series;
 import com.highpowerbear.hpbtrader.linear.entity.Strategy;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
-import com.highpowerbear.hpbtrader.linear.mktdata.model.RealtimeData;
+import com.highpowerbear.hpbtrader.linear.model.RealtimeData;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyController;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyLogic;
 import com.highpowerbear.hpbtrader.linear.websocket.WebsocketController;
-import com.highpowerbear.hpbtrader.linear.persistence.DatabaseDao;
+import com.highpowerbear.hpbtrader.linear.persistence.LinDao;
 import com.ib.client.Contract;
 import com.ib.client.TickType;
 import javax.ejb.Asynchronous;
@@ -37,7 +38,7 @@ import java.util.logging.Logger;
 @Singleton
 public class MktDataController {
     private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
-    @Inject private DatabaseDao databaseDao;
+    @Inject private LinDao linDao;
     @Inject private LinData linData;
     @Inject private StrategyController strategyController;
     @Inject private IbController ibController;
@@ -46,14 +47,14 @@ public class MktDataController {
 
     private DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
-    public void requestFiveMinBars() {
+    public void requestFiveMinBars(IbAccount ibAccount) {
         l.info("START requestFiveMinBars");
-        if (!ibController.isConnected()) {
+        if (!ibController.isConnected(ibAccount)) {
             l.info("Not connected");
             l.info("END requestFiveMinBars");
             return;
         }
-        for (Series s : databaseDao.getSeriesByInterval(LinEnums.Interval.INT_5_MIN)) {
+        for (Series s : linDao.getSeriesByInterval(LinEnums.Interval.INT_5_MIN)) {
             if (!s.getEnabled()) {
                 continue;
             }
@@ -63,6 +64,7 @@ public class MktDataController {
             Calendar now = LinUtil.getCalendar();
             int isUseRTH = (LinEnums.SecType.FUT.equals(s.getSecType()) ? LinConstants.IB_ETH_TOO : LinConstants.IB_RTH_ONLY);
             ibController.reqHistoricalData(
+                    s.getIbAccount(),
                     s.getId() * LinSettings.IB_REQUEST_MULT,
                     contract,
                     df.format(now.getTime()) + " " + LinConstants.IB_TIMEZONE,
@@ -75,14 +77,14 @@ public class MktDataController {
         l.info("END requestFiveMinBars");
     }
 
-    public void requestSixtyMinBars() {
+    public void requestSixtyMinBars(IbAccount ibAccount) {
         l.info("START requestSixtyMinBars");
-        if (!ibController.isConnected()) {
+        if (!ibController.isConnected(ibAccount)) {
             l.info("Not connected");
             l.info("END requestSixtyMinBars");
             return;
         }
-        for (Series s : databaseDao.getSeriesByInterval(LinEnums.Interval.INT_60_MIN)) {
+        for (Series s : linDao.getSeriesByInterval(LinEnums.Interval.INT_60_MIN)) {
             if (!s.getEnabled()) {
                 continue;
             }
@@ -92,6 +94,7 @@ public class MktDataController {
             Calendar now = LinUtil.getCalendar();
             int isUseRTH = (LinEnums.SecType.FUT.equals(s.getSecType()) ? LinConstants.IB_ETH_TOO : LinConstants.IB_RTH_ONLY);
             ibController.reqHistoricalData(
+                    s.getIbAccount(),
                     s.getId() * LinSettings.IB_REQUEST_MULT,
                     contract,
                     df.format(now.getTime()) + " " + LinConstants.IB_TIMEZONE,
@@ -110,7 +113,7 @@ public class MktDataController {
             return;
         }
         l.info("START backfillManual, series=" + s.getId() + ", symbol=" + s.getSymbol());
-        if (!ibController.isConnected()) {
+        if (!ibController.isConnected(s.getIbAccount())) {
             l.info("Not connected");
             l.info("END backfillManual, series=" + s.getId() + ", symbol=" + s.getSymbol());
             return;
@@ -122,6 +125,7 @@ public class MktDataController {
         if (LinEnums.Interval.INT_5_MIN.equals(s.getInterval())) {
             linData.getBackfillStatusMap().put(s.getId(), 0);
             ibController.reqHistoricalData(
+                    s.getIbAccount(),
                     s.getId() * LinSettings.IB_REQUEST_MULT,
                     contract,
                     df.format(now.getTime()) + " " + LinConstants.IB_TIMEZONE,
@@ -138,6 +142,7 @@ public class MktDataController {
             his.add(Calendar.MONTH, -3);
             for (int i = 0; i < 4; i++) {
                 ibController.reqHistoricalData(
+                        s.getIbAccount(),
                         reqId--,
                         contract,
                         df.format(his.getTime()) + " " + LinConstants.IB_TIMEZONE,
@@ -150,6 +155,7 @@ public class MktDataController {
                 his.add(Calendar.DAY_OF_MONTH, -3); // some overlap
             }
             ibController.reqHistoricalData(
+                    s.getIbAccount(),
                     reqId,
                     contract,
                     df.format(now.getTime()) + " " + LinConstants.IB_TIMEZONE,
@@ -174,10 +180,10 @@ public class MktDataController {
         Integer backfillStatus = linData.getBackfillStatusMap().get(series.getId());
         l.info("backfillStatus=" + backfillStatus);
         if (backfillStatus == null || backfillStatus == 0) {
-            databaseDao.addBars(barsReceived);
-            Strategy activeStrategy = databaseDao.getActiveStrategy(series);
+            linDao.createBars(barsReceived);
+            Strategy activeStrategy = linDao.getActiveStrategy(series);
             StrategyLogic strategyLogic = linData.getStrategyLogicMap().get(series.getId());
-            if (databaseDao.getNumBars(series) >= LinSettings.BARS_REQUIRED) {
+            if (linDao.getNumBars(series) >= LinSettings.BARS_REQUIRED) {
                 strategyController.process(activeStrategy, strategyLogic);
             }
             eventBroker.trigger(LinEnums.DataChangeEvent.BAR_UPDATE);
@@ -194,14 +200,14 @@ public class MktDataController {
             l.fine("Requesting realtime data for " + rtd.getSeries().getSymbol());
             linData.getRealtimeDataRequestMap().put(rtd.getIbRequestId(), rtd.getSeries().getSymbol());
             linData.getRealtimeDataMap().put(rtd.getSeries().getSymbol(), rtd);
-            boolean requested = ibController.requestRealtimeData(rtd.getIbRequestId(), rtd.getSeries().createIbContract());
+            boolean requested = ibController.requestRealtimeData(series.getIbAccount(), rtd.getIbRequestId(), rtd.getSeries().createIbContract());
             if (!requested) {
                 linData.getRealtimeDataRequestMap().remove(rtd.getIbRequestId());
                 linData.getRealtimeDataMap().remove(rtd.getSeries().getSymbol());
             }
         } else {
             l.fine("Canceling realtime data for " + rtd.getSeries().getSymbol());
-            boolean canceled = ibController.cancelRealtimeData(rtd.getIbRequestId());
+            boolean canceled = ibController.cancelRealtimeData(series.getIbAccount(), rtd.getIbRequestId());
             if (canceled) {
                 linData.getRealtimeDataRequestMap().remove(rtd.getIbRequestId());
                 linData.getRealtimeDataMap().remove(rtd.getSeries().getSymbol());

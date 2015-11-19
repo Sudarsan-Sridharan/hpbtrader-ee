@@ -7,12 +7,17 @@ import java.util.List;
 /**
  * Created by rkolar on 4/14/14.
  */
-public interface DatabaseDao {
-    void addBars(List<Bar> bars);
+public interface LinDao {
+    IbAccount findIbAccount(String accountId);
+    List<IbAccount> getIbAccounts();
+    IbAccount updateIbAccount(IbAccount ibAccount);
+
+    void createBars(List<Bar> bars);
     List<Bar> getBars(Integer seriesId, Integer numBars);
     Bar getLastBar(Series series);
     Long getNumBars(Series series);
-    boolean addSeries(Series series);
+    void addSeries(Series series);
+
     List<Series> getAllSeries(boolean disabledToo);
     List<Series> getSeriesByInterval(LinEnums.Interval interval);
     List<Series> getSeries(String symbol, LinEnums.Interval interval);
@@ -20,23 +25,25 @@ public interface DatabaseDao {
     void updateSeries(Series series);
     Integer getHighestDisplayOrder();
     void deleteSeries(Series series);
-    void addOrder(Order order);
-    void updateOrder(Order order);
-    Order findOrder(Long id);
-    Order getOrderByIbPermId(Integer ibPermId);
-    Order getOrderByIbOrderId(Integer ibOrderId);
-    List<Order> getOrdersByStrategy(Strategy strategy);
-    List<Order> getRecentOrders();
-    List<Order> getNewRetryOrders();
-    List<Order> getIbOpenOrders();
-    void addStrategy(Strategy strategy);
+
+    void createIbOrder(IbOrder ibOrder);
+    void updateIbOrder(IbOrder ibOrder);
+    IbOrder findIbOrder(Long id);
+    IbOrder getIbOrderByIbPermId(IbAccount ibAccount, Integer ibPermId);
+    IbOrder getIbOrderByIbOrderId(IbAccount ibAccount, Integer ibOrderId);
+    List<IbOrder> getIbOrdersByStrategy(Strategy strategy);
+    List<IbOrder> getNewRetryIbOrders(IbAccount ibAccount);
+    List<IbOrder> getOpenIbOrders(IbAccount ibAccount);
+
+    void createStrategy(Strategy strategy);
     Strategy findStrategy(Integer id);
     Strategy getActiveStrategy(Series series);
     void updateStrategy(Strategy strategy);
     void deleteStrategy(Strategy strategy);
     List<StrategyLog> getStrategyLogs(Strategy strategy, boolean ascending);
+
     List<Trade> getTradesByStrategy(Strategy strategy, boolean ascending);
-    List<Trade> getTradesByOrder(Order order);
+    List<Trade> getTradesByOrder(IbOrder ibOrder);
     Long getNumTrades(Strategy strategy);
     Trade getActiveTrade(Strategy strategy);
     Trade getLastTrade(Strategy strategy);

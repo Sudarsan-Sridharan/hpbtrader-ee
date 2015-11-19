@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.linear.strategy.model;
+package com.highpowerbear.hpbtrader.linear.model;
 
 import com.highpowerbear.hpbtrader.linear.entity.Bar;
 import com.highpowerbear.hpbtrader.linear.entity.Strategy;

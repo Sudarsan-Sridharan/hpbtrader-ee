@@ -1,9 +1,10 @@
 package com.highpowerbear.hpbtrader.linear.persistence;
 
-import com.highpowerbear.hpbtrader.linear.entity.Order;
+import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
 import com.highpowerbear.hpbtrader.linear.entity.Series;
-import com.highpowerbear.hpbtrader.linear.persistence.model.SeriesRecord;
-import com.highpowerbear.hpbtrader.linear.mktdata.model.RealtimeData;
+import com.highpowerbear.hpbtrader.linear.model.RealtimeData;
+import com.highpowerbear.hpbtrader.linear.model.SeriesRecord;
+
 import java.util.List;
 
 
@@ -13,7 +14,7 @@ import java.util.List;
 public interface WebDao {
     List<SeriesRecord> getSeriesRecords(boolean disabledToo);
     Boolean getAllowManual(Series series);
-    Integer getHearbeatCount(Order order);
+    Integer getHearbeatCount(IbOrder ibOrder);
     List<RealtimeData> getRealtimeDataList();
     Boolean isRealtimeDataEnabled(Series series);
 }

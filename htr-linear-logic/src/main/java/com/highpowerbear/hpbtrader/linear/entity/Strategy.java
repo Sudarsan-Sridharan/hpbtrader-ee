@@ -1,13 +1,17 @@
 package com.highpowerbear.hpbtrader.linear.entity;
 
 import com.highpowerbear.hpbtrader.linear.definitions.LinEnums;
+
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 
 /**
  *
  * @author robertk
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "lin_strategy")
 public class Strategy implements Serializable {

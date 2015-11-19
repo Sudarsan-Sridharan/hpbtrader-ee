@@ -4,9 +4,7 @@ import com.highpowerbear.hpbtrader.linear.common.SingletonRepo;
 import com.highpowerbear.hpbtrader.linear.definitions.LinSettings;
 import com.highpowerbear.hpbtrader.linear.ibclient.HeartbeatControl;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
-import com.highpowerbear.hpbtrader.linear.ibclient.classifier.DefaultListener;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyController;
-import com.ib.client.EWrapper;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -26,7 +24,6 @@ public class LinLifecycle {
     @Inject private IbController ibController;
     @Inject private StrategyController strategyController;
     @Inject private HeartbeatControl heartbeatControl;
-    @Inject @DefaultListener private EWrapper ibListener;
     @Inject private SingletonRepo singletonRepo;
 
 
@@ -34,7 +31,6 @@ public class LinLifecycle {
     public void startup() {
         l.info("BEGIN OptLinLifecycleLifecycle.startup");
         SingletonRepo.setInstance(singletonRepo);
-        ibController.setIbListener(ibListener); // to prevent circural dependency
         strategyController.init();
         heartbeatControl.init();
         l.info("END LinLifecycle.startup");

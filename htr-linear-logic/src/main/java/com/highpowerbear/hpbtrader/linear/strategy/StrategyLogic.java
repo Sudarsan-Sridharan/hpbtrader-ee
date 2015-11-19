@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.linear.strategy;
 
-import com.highpowerbear.hpbtrader.linear.entity.Order;
-import com.highpowerbear.hpbtrader.linear.strategy.model.StrategyLogicContext;
+import com.highpowerbear.hpbtrader.linear.entity.IbOrder;
+import com.highpowerbear.hpbtrader.linear.model.StrategyLogicContext;
 
 /**
  *
@@ -9,7 +9,7 @@ import com.highpowerbear.hpbtrader.linear.strategy.model.StrategyLogicContext;
  */
 public interface StrategyLogic {
     void updateContext(StrategyLogicContext ctx);
-    Order processSignals();
+    IbOrder processSignals();
     void setInitialStopAndTarget();
     String getName();
 }
