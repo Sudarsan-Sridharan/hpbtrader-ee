@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.entity;
 
-import com.highpowerbear.hpbtrader.shared.model.IbConnection;
+import com.highpowerbear.hpbtrader.shared.ibclient.IbConnection;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name="lin_ibaccount")
+@Table(name="ibaccount")
 public class IbAccount {
     @Id
     private String accountId;

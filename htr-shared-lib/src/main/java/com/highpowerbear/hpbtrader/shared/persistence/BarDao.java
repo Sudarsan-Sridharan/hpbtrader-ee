@@ -8,7 +8,8 @@ import java.util.List;
 /**
  * Created by robertk on 19.11.2015.
  */
-public interface BarDao {void createBars(List<Bar> bars);
+public interface BarDao {
+    void createBars(List<Bar> bars);
     List<Bar> getBars(Integer seriesId, Integer numBars);
     Bar getLastBar(Series series);
     Long getNumBars(Series series);

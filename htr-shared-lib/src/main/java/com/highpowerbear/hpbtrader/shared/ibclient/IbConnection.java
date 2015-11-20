@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.shared.model;
+package com.highpowerbear.hpbtrader.shared.ibclient;
 
 import com.ib.client.EClientSocket;
 

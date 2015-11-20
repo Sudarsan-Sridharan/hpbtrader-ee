@@ -11,13 +11,13 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "lin_tradeorder")
+@Table(name = "tradeorder")
 public class TradeOrder implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="lin_tradeorder", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="tradeorder", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="lin_tradeorder")
+    @GeneratedValue(generator="tradeorder")
     private Long id;
     private Integer quantity;
     @ManyToOne

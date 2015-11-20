@@ -72,7 +72,7 @@ public class Processor implements Serializable {
         
         if (ibOrder == null) {
             if (ctx.activeTrade != null) {
-                tradeDao.updateTrade(ctx.activeTrade, bar.getqClose());
+                tradeDao.updateOrCreateTrade(ctx.activeTrade, bar.getqClose());
             }
             l.info("END " + logMessage + ", no new order");
             return;
@@ -80,19 +80,20 @@ public class Processor implements Serializable {
         
         ibOrderDao.createIbOrder(ibOrder);
         ctx.activeTrade.addTradeOrder(ibOrder);
-        tradeDao.updateTrade(ctx.activeTrade, bar.getqClose());
+        tradeDao.updateOrCreateTrade(ctx.activeTrade, bar.getqClose());
+
         // needed to get fresh copy of trade and trade orders with set ids to prevent trade order duplication in the next update
         ctx.activeTrade = tradeDao.getActiveTrade(strategy);
         
         if (ibOrder.isClosingOrder()) {
             ctx.activeTrade.initClose();
-            tradeDao.updateTrade(ctx.activeTrade, bar.getqClose());
+            tradeDao.updateOrCreateTrade(ctx.activeTrade, bar.getqClose());
         }
         if (ibOrder.isReversalOrder()) {
             ctx.activeTrade = new Trade().initOpen(ibOrder);
             strategyLogic.setInitialStopAndTarget();
             ctx.activeTrade.addTradeOrder(ibOrder);
-            tradeDao.updateTrade(ctx.activeTrade, bar.getqClose());
+            tradeDao.updateOrCreateTrade(ctx.activeTrade, bar.getqClose());
         }
         
         ctx.strategy.setNumAllOrders(strategy.getNumAllOrders() + 1);
@@ -121,13 +122,13 @@ public class Processor implements Serializable {
         l.info("START " + logMessage);
         ibOrderDao.createIbOrder(manualIbOrder);
         activeTrade.addTradeOrder(manualIbOrder);
-        tradeDao.updateTrade(activeTrade, bar.getqClose());
+        tradeDao.updateOrCreateTrade(activeTrade, bar.getqClose());
         // needed to get fresh copy of trade and trade orders with set ids to prevent trade order duplication in the next update
         activeTrade = tradeDao.getActiveTrade(strategy);
 
         if (manualIbOrder.isClosingOrder()) {
             activeTrade.initClose();
-            tradeDao.updateTrade(activeTrade, bar.getqClose());
+            tradeDao.updateOrCreateTrade(activeTrade, bar.getqClose());
         }
         strategy.setNumAllOrders(strategy.getNumAllOrders() + 1);
         strategyDao.updateStrategy(strategy);

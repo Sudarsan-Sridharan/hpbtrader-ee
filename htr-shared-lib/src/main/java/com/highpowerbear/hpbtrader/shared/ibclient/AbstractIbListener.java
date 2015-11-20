@@ -1,6 +1,6 @@
-package com.highpowerbear.hpbtrader.linear.ibclient;
+package com.highpowerbear.hpbtrader.shared.ibclient;
 
-import com.highpowerbear.hpbtrader.linear.common.LinSettings;
+import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
 import com.ib.client.*;
 
 import java.util.logging.Logger;
@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  * @author rkolar
  */
 public abstract class AbstractIbListener implements EWrapper {
-    private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrSettings.LOGGER);
 
     @Override
     public void tickPrice(int tickerId, int field, double price, int canAutoExecute) {

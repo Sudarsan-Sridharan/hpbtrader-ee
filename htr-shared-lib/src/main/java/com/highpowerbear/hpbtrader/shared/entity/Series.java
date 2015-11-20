@@ -17,13 +17,13 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Cacheable(false)
-@Table(name = "lin_series")
+@Table(name = "series")
 public class Series implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @TableGenerator(name="lin_series", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="series", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="lin_series")
+    @GeneratedValue(generator="series")
     private Integer id;
     @XmlTransient
     @ManyToOne

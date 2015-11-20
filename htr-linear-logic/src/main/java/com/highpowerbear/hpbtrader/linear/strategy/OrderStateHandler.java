@@ -72,11 +72,11 @@ public class OrderStateHandler {
             trade1.close(ibOrder.getEventDate(HtrEnums.IbOrderStatus.FILLED), ibOrder.getFillPrice());
             strategy.recalculateStats(trade1);
         }
-        tradeDao.updateTrade(trade1, ibOrder.getFillPrice());
+        tradeDao.updateOrCreateTrade(trade1, ibOrder.getFillPrice());
 
         if (trade2 != null) {
             trade2.open(ibOrder.getFillPrice());
-            tradeDao.updateTrade(trade2, ibOrder.getFillPrice());
+            tradeDao.updateOrCreateTrade(trade2, ibOrder.getFillPrice());
         }
 
         strategy.setNumFilledOrders(strategy.getNumFilledOrders() + 1);
@@ -92,7 +92,7 @@ public class OrderStateHandler {
         List<Trade> trades = tradeDao.getTradesByOrder(ibOrder);
         for (Trade t : trades) {
             t.cncClosed();
-            tradeDao.updateTrade(t, null);
+            tradeDao.updateOrCreateTrade(t, null);
         }
         eventBroker.trigger(HtrEnums.DataChangeEvent.STRATEGY_UPDATE);
     }

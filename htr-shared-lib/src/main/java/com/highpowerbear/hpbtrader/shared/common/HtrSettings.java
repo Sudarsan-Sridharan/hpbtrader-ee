@@ -4,7 +4,7 @@ package com.highpowerbear.hpbtrader.shared.common;
  * Created by robertk on 19.11.2015.
  */
 public class HtrSettings {
-    public static final String LOGGER = "com.highpowerbear.hpbtrader";
+    public static final String LOGGER = "com.highpowerbear.hpbtrader.shared";
     public static final int IB_CONNECT_CLIENT_ID = 7;
     public static final String EMAIL_FROM = "hpbtrader@highpowerbear.com";
     public static final String EMAIL_TO = "info@highpowerbear.com";

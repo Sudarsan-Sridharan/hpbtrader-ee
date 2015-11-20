@@ -14,13 +14,13 @@ import java.util.Calendar;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "lin_orderevent", uniqueConstraints = @UniqueConstraint(columnNames = {"order_id", "orderStatus"}))
+@Table(name = "orderevent", uniqueConstraints = @UniqueConstraint(columnNames = {"order_id", "orderStatus"}))
 public class OrderEvent implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @TableGenerator(name="lin_orderevent", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="orderevent", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="lin_orderevent")
+    @GeneratedValue(generator="orderevent")
     private Long id;
     @Enumerated(EnumType.STRING)
     private HtrEnums.IbOrderStatus status;

@@ -15,13 +15,13 @@ import java.util.Calendar;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
-@Table(name = "lin_quote", uniqueConstraints = @UniqueConstraint(columnNames = {"qDateBarClose", "series_id"}))
+@Table(name = "bar", uniqueConstraints = @UniqueConstraint(columnNames = {"qDateBarClose", "series_id"}))
 public class Bar implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @TableGenerator(name="lin_quote", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="bar", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="lin_quote")
+    @GeneratedValue(generator="bar")
     private Long id;
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar qDateBarClose;

@@ -54,7 +54,7 @@ public class BacktestResult {
         this.strategy.setStrategyMode(HtrEnums.StrategyMode.BTEST);
     }
     
-    public void updateTrade(Trade trade, Bar bar) {
+    public void updateOrCreateTrade(Trade trade, Bar bar) {
         Trade dbTrade = findTrade(trade.getId());
         if (dbTrade == null || !dbTrade.valuesEqual(trade)) {
             TradeLog tradeLog = new TradeLog();

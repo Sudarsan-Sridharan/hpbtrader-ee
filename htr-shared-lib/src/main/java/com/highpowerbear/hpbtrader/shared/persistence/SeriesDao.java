@@ -9,7 +9,7 @@ import java.util.List;
  * Created by robertk on 19.11.2015.
  */
 public interface SeriesDao {
-    void addSeries(Series series);
+    void createSeries(Series series);
     List<Series> getAllSeries(boolean disabledToo);
     List<Series> getSeriesByInterval(HtrEnums.Interval interval);
     List<Series> getSeries(String symbol, HtrEnums.Interval interval);

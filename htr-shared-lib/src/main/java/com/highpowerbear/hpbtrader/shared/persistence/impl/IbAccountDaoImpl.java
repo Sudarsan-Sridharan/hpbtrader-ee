@@ -6,6 +6,7 @@ import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -20,16 +21,17 @@ public class IbAccountDaoImpl implements IbAccountDao {
 
     @Override
     public IbAccount findIbAccount(String accountId) {
-        return null;
+        return em.find(IbAccount.class, accountId);
     }
 
     @Override
     public List<IbAccount> getIbAccounts() {
-        return null;
+        TypedQuery<IbAccount> q = em.createQuery("SELECT ia FROM IbAccount ia ORDER BY ia.port", IbAccount.class);
+        return q.getResultList();
     }
 
     @Override
     public IbAccount updateIbAccount(IbAccount ibAccount) {
-        return null;
+        return em.merge(ibAccount);
     }
 }

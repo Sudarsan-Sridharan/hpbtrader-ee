@@ -8,6 +8,8 @@ import com.highpowerbear.hpbtrader.linear.strategy.OrderStateHandler;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+import com.highpowerbear.hpbtrader.shared.ibclient.AbstractIbListener;
+import com.highpowerbear.hpbtrader.shared.ibclient.IbApiEnums;
 import com.highpowerbear.hpbtrader.shared.entity.Bar;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;

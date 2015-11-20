@@ -13,13 +13,13 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "lin_strategy")
+@Table(name = "strategy")
 public class Strategy implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="lin_strategy", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="strategy", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="lin_strategy")
+    @GeneratedValue(generator="strategy")
     
     // cannot be changed
     private Integer id;

@@ -18,13 +18,13 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
-@Table(name = "lin_trade")
+@Table(name = "trade")
 public class Trade implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="lin_trade", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="trade", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="lin_trade")
+    @GeneratedValue(generator="trade")
     private Long id;
     @ManyToOne
     private Strategy strategy;

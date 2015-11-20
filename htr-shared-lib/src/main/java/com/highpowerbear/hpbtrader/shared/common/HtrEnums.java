@@ -1,5 +1,7 @@
 package com.highpowerbear.hpbtrader.shared.common;
 
+import com.highpowerbear.hpbtrader.shared.ibclient.IbApiEnums;
+
 import java.util.ArrayList;
 import java.util.List;
 

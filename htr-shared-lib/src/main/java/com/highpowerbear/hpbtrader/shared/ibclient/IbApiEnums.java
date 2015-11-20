@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.linear.ibclient;
+package com.highpowerbear.hpbtrader.shared.ibclient;
 
 /**
  *

@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.shared.entity;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.common.IbApiEnums;
+import com.highpowerbear.hpbtrader.shared.ibclient.IbApiEnums;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -18,13 +18,13 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "lin_iborder")
+@Table(name = "iborder")
 public class IbOrder implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @TableGenerator(name="lin_order", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="iborder", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="lin_order")
+    @GeneratedValue(generator="iborder")
     private Long id;
     @XmlTransient
     @ManyToOne

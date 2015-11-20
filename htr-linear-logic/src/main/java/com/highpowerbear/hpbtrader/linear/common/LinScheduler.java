@@ -4,7 +4,7 @@ import com.highpowerbear.hpbtrader.linear.ibclient.HeartbeatControl;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
 import com.highpowerbear.hpbtrader.linear.mktdata.MktDataController;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
-import com.highpowerbear.hpbtrader.shared.model.IbConnection;
+import com.highpowerbear.hpbtrader.shared.ibclient.IbConnection;
 import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
 
 import javax.ejb.Schedule;

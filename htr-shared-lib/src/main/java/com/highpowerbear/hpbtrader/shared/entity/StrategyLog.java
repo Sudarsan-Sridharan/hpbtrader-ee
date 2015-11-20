@@ -14,13 +14,13 @@ import java.util.Calendar;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
-@Table(name = "lin_strategylog")
+@Table(name = "strategylog")
 public class StrategyLog  implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="lin_strategylog", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="strategylog", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="lin_strategylog")
+    @GeneratedValue(generator="strategylog")
     private Long id;
     @ManyToOne
     private Strategy strategy;

@@ -62,7 +62,7 @@ public class Backtester {
             
             if (ibOrder == null) {
                 if (ctx.activeTrade != null) {
-                    backtestResult.updateTrade(ctx.activeTrade, bar);
+                    backtestResult.updateOrCreateTrade(ctx.activeTrade, bar);
                 }
                 continue;
             }
@@ -73,7 +73,7 @@ public class Backtester {
             ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, bar.getqDateBarClose(), null);
             ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, bar.getqDateBarClose(), null);
             ibOrder.setFillPrice(bar.getqClose());
-            backtestResult.updateTrade(ctx.activeTrade, bar);
+            backtestResult.updateOrCreateTrade(ctx.activeTrade, bar);
             
             ctx.strategy.setNumAllOrders(ctx.strategy.getNumAllOrders() + 1);
             ctx.strategy.setNumFilledOrders(ctx.strategy.getNumFilledOrders() + 1);
@@ -83,19 +83,19 @@ public class Backtester {
                 ctx.activeTrade.open(bar.getqClose());
             } else {
                 ctx.activeTrade.initClose();
-                backtestResult.updateTrade(ctx.activeTrade, bar);
+                backtestResult.updateOrCreateTrade(ctx.activeTrade, bar);
                 ctx.activeTrade.close(bar.getqDateBarClose(), bar.getqClose());
                 ctx.strategy.recalculateStats(ctx.activeTrade);
             }
-            backtestResult.updateTrade(ctx.activeTrade, bar);
+            backtestResult.updateOrCreateTrade(ctx.activeTrade, bar);
             
             if (ibOrder.isReversalOrder()) {
                 ctx.activeTrade = new Trade().initOpen(ibOrder);
                 strategyLogic.setInitialStopAndTarget();
                 ctx.activeTrade.addTradeOrder(ibOrder);
-                backtestResult.updateTrade(ctx.activeTrade, bar);
+                backtestResult.updateOrCreateTrade(ctx.activeTrade, bar);
                 ctx.activeTrade.open(bar.getqClose());
-                backtestResult.updateTrade(ctx.activeTrade, bar);
+                backtestResult.updateOrCreateTrade(ctx.activeTrade, bar);
             }
             backtestResult.updateStrategy(ctx.strategy, bar);
         }

@@ -9,7 +9,7 @@ import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
-import com.highpowerbear.hpbtrader.shared.model.IbConnection;
+import com.highpowerbear.hpbtrader.shared.ibclient.IbConnection;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
