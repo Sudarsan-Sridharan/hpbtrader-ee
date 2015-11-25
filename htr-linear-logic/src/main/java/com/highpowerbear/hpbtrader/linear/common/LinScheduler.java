@@ -43,14 +43,4 @@ public class LinScheduler {
             ibController.requestOpenOrders(ibAccount);
         });
     }
-
-    @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*/5", second="1", timezone="US/Eastern", persistent=false)
-    public void requestFiveMinBars() {
-        ibAccountDao.getIbAccounts().forEach(mktDataController::requestFiveMinBars);
-    }
-
-    @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "0", second="11", timezone="US/Eastern", persistent=false)
-    public void requestSixtyMinBars() {
-        ibAccountDao.getIbAccounts().forEach(mktDataController::requestSixtyMinBars);
-    }
 }

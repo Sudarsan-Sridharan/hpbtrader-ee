@@ -1,6 +1,5 @@
 package com.highpowerbear.hpbtrader.linear.common;
 
-import com.highpowerbear.hpbtrader.linear.model.RealtimeData;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyLogic;
 import com.highpowerbear.hpbtrader.shared.entity.Bar;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
@@ -10,7 +9,6 @@ import com.highpowerbear.hpbtrader.shared.ibclient.IbConnection;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,8 +25,6 @@ public class LinData {
     private Map<Integer, List<Bar>> barsReceivedMap = new HashMap<>(); // seriesId --> barList
     private Map<Integer, StrategyLogic> strategyLogicMap = new HashMap<>(); // seriesId --> strategyLogic
     private Map<IbAccount, Map<IbOrder, Integer>> openOrderHeartbeatMap = new ConcurrentHashMap<>(); // ibAccount --> (ibOrder --> number of failed heartbeats left before UNKNOWN)
-    private Map<Integer, String> realtimeDataRequestMap = new HashMap<>(); // ib request id --> contract string
-    private Map<String, RealtimeData> realtimeDataMap = new LinkedHashMap<>(); // contract string --> realtimeData
 
     public Map<IbAccount, IbConnection> getIbConnectionMap() {
         return ibConnectionMap;
@@ -48,13 +44,5 @@ public class LinData {
 
     public Map<IbAccount, Map<IbOrder, Integer>> getOpenOrderHeartbeatMap() {
         return openOrderHeartbeatMap;
-    }
-
-    public Map<Integer, String> getRealtimeDataRequestMap() {
-        return realtimeDataRequestMap;
-    }
-
-    public Map<String, RealtimeData> getRealtimeDataMap() {
-        return realtimeDataMap;
     }
 }

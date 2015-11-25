@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.mktdata.ibclient;
 
 import com.highpowerbear.hpbtrader.mktdata.common.MktDataMaps;
-import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
+import com.highpowerbear.hpbtrader.mktdata.common.MktDataDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrConstants;
 import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
@@ -21,24 +21,14 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class IbController {
-    private static final Logger l = Logger.getLogger(MktDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(MktDataDefinitions.LOGGER);
     @Inject private MktDataMaps mktDataMaps;
-
-    private int nextValidOrderId = 1;
-
-    public void setNextValidOrderId(IbAccount ibAccount, int nextValidOrderId) {
-        this.nextValidOrderId = nextValidOrderId;
-    }
-
-    private Integer getNextValidOrderId() {
-        return this.nextValidOrderId++;
-    }
 
     public void connect(IbAccount ibAccount) {
         IbConnection c = mktDataMaps.getIbConnectionMap().get(ibAccount);
 
         if (c.getClientSocket() == null)  {
-            c.setClientSocket(new EClientSocket(new IbListenerImpl(ibAccount)));
+            c.setClientSocket(new EClientSocket(new IbListenerImpl()));
         }
         if (c.getClientSocket() != null && !c.getClientSocket().isConnected()) {
             c.setAccounts(null);
@@ -68,31 +58,48 @@ public class IbController {
 
     public boolean isConnected(IbAccount ibAccount) {
         IbConnection c = mktDataMaps.getIbConnectionMap().get(ibAccount);
-        return (c.getClientSocket() != null && c.getClientSocket().isConnected());
+        return (c != null && c.getClientSocket() != null && c.getClientSocket().isConnected());
     }
 
-    public void reqHistoricalData(IbAccount ibAccount, int tickerId, Contract contract, String endDateTime, String durationStr, String barSizeSetting, String whatToShow, int useRTH, int formatDate) {
-        IbConnection c = mktDataMaps.getIbConnectionMap().get(ibAccount);
-        c.getClientSocket().reqHistoricalData(tickerId, contract, endDateTime, durationStr, barSizeSetting, whatToShow, useRTH, formatDate, null);
-    }
-
-    public boolean requestRealtimeData(IbAccount ibAccount, int reqId, Contract contract) {
-        if (!isConnected(ibAccount)) {
-            return false;
+    public void reqHistoricalData(int tickerId, Contract contract, String endDateTime, String durationStr, String barSizeSetting, String whatToShow, int useRTH, int formatDate) {
+        // use first connected ib connection
+        IbConnection c = null;
+        for (IbConnection ibc : mktDataMaps.getIbConnectionMap().values()) {
+            if (ibc.isConnected()) {
+                c = ibc;
+            }
         }
-        IbConnection c = mktDataMaps.getIbConnectionMap().get(ibAccount);
-        l.fine("Requested realtime data, reqId=" + reqId + ", contract=" + HtrUtil.printIbContract(contract));
-        c.getClientSocket().reqMktData(reqId, contract, "", false, null);
-        return true;
+        if (c != null) {
+            c.getClientSocket().reqHistoricalData(tickerId, contract, endDateTime, durationStr, barSizeSetting, whatToShow, useRTH, formatDate, null);
+        }
     }
 
-    public boolean cancelRealtimeData(IbAccount ibAccount, int reqId) {
-        if (!isConnected(ibAccount)) {
-            return false;
+    public boolean requestRealtimeData(int reqId, Contract contract) {
+        boolean success = false;
+        // use first connected ib connection
+        IbConnection c = null;
+        for (IbConnection ibc : mktDataMaps.getIbConnectionMap().values()) {
+            if (ibc.isConnected()) {
+                c = ibc;
+            }
         }
-        IbConnection c = mktDataMaps.getIbConnectionMap().get(ibAccount);
-        l.fine("Canceling realtime data for reqId=" + reqId);
-        c.getClientSocket().cancelMktData(reqId);
-        return true;
+        if (c != null) {
+            l.fine("Requested realtime data, reqId=" + reqId + ", contract=" + HtrUtil.printIbContract(contract));
+            c.getClientSocket().reqMktData(reqId, contract, "", false, null);
+            success = true;
+        }
+        return success;
+    }
+
+    public boolean cancelRealtimeData(int reqId) {
+        boolean success = false;
+        for (IbConnection ibConnection : mktDataMaps.getIbConnectionMap().values()) {
+            if (ibConnection.isConnected()) {
+                l.fine("Canceling realtime data for reqId=" + reqId);
+                ibConnection.getClientSocket().cancelMktData(reqId);
+                success = true;
+            }
+        }
+        return success;
     }
 }

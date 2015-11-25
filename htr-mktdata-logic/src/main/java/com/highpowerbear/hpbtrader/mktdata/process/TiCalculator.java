@@ -75,14 +75,10 @@ public class TiCalculator {
                     lowestLow = bars.get(i).getLow();
                 }
             }
-            for (int i = 0; i < smaKPeriod - 1; i++) {
-                kFast[i] = kFast[i + 1];
-            }
+            System.arraycopy(kFast, 1, kFast, 0, smaKPeriod - 1);
             double currentBar = bars.get(currentBarIndex).getqClose();
             kFast[smaKPeriod - 1] =  (currentBar - lowestLow)/(highestHigh - lowestLow) * 100d;
-            for (int i = 0; i < smaDPeriod - 1; i++) {
-                k[i] = k[i + 1];
-            }
+            System.arraycopy(k, 1, k, 0, smaDPeriod - 1);
             k[smaDPeriod - 1] = 0d;
             for (int i = 0; i < smaKPeriod; i++) {
                 k[smaDPeriod - 1] += kFast[i];

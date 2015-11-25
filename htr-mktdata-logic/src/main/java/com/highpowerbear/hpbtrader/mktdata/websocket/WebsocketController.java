@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.mktdata.process;
+package com.highpowerbear.hpbtrader.mktdata.websocket;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -11,6 +11,5 @@ import javax.inject.Named;
 public class WebsocketController {
 
     public void broadcastSeriesMessage(String updateMessage) {
-
     }
 }

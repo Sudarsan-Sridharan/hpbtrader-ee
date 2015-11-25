@@ -1,9 +1,12 @@
 package com.highpowerbear.hpbtrader.mktdata.common;
 
 import com.highpowerbear.hpbtrader.mktdata.ibclient.IbController;
+import com.highpowerbear.hpbtrader.mktdata.message.MqSender;
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
 import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
 import com.highpowerbear.hpbtrader.mktdata.process.TiCalculator;
+import com.highpowerbear.hpbtrader.mktdata.websocket.WebsocketController;
+import com.highpowerbear.hpbtrader.shared.persistence.BarDao;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
 
@@ -32,9 +35,12 @@ public class SingletonRepo {
     @Inject private MktDataMaps mktDataMaps;
     @Inject private IbOrderDao ibOrderDao;
     @Inject private SeriesDao seriesDao;
+    @Inject private BarDao barDao;
+    @Inject private MqSender mqSender;
     @Inject private IbController ibController;
     @Inject private HistDataController histDataController;
     @Inject private RtDataController rtDataController;
+    @Inject private WebsocketController websocketController;
 
     public TiCalculator getTiCalculator() {
         return tiCalculator;
@@ -52,6 +58,14 @@ public class SingletonRepo {
         return seriesDao;
     }
 
+    public BarDao getBarDao() {
+        return barDao;
+    }
+
+    public MqSender getMqSender() {
+        return mqSender;
+    }
+
     public IbController getIbController() {
         return ibController;
     }
@@ -62,5 +76,9 @@ public class SingletonRepo {
 
     public RtDataController getRtDataController() {
         return rtDataController;
+    }
+
+    public WebsocketController getWebsocketController() {
+        return websocketController;
     }
 }
