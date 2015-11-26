@@ -7,6 +7,7 @@ import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.entity.Strategy;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -18,6 +19,7 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 19.11.2015.
  */
+@Stateless
 public class IbOrderDaoImpl implements IbOrderDao {
     private static final Logger l = Logger.getLogger(HtrSettings.LOGGER);
 

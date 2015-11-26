@@ -5,8 +5,10 @@ import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,9 +24,13 @@ import java.util.Set;
 public class HeartbeatControl {
     @Inject private LinData linData;
     @Inject private IbOrderDao ibOrderDao;
+    @Inject private IbAccountDao ibAccountDao;
 
-    public void init(IbAccount ibAccount) {
-        ibOrderDao.getOpenIbOrders(ibAccount).forEach(this::addHeartbeat);
+    @PostConstruct
+    public void init() {
+        for (IbAccount ibAccount : ibAccountDao.getIbAccounts()) {
+            ibOrderDao.getOpenIbOrders(ibAccount).forEach(this::addHeartbeat);
+        }
     }
 
     public void updateHeartbeats(IbAccount ibAccount) {

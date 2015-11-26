@@ -1,10 +1,10 @@
-package com.highpowerbear.hpbtrader.mktdata.process;
+package com.highpowerbear.hpbtrader.shared.techanalysis;
 
-import com.highpowerbear.hpbtrader.mktdata.indicator.Ema;
-import com.highpowerbear.hpbtrader.mktdata.indicator.Macd;
-import com.highpowerbear.hpbtrader.mktdata.indicator.Stochastics;
 import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.entity.Bar;
+import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Ema;
+import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Macd;
+import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Stochastics;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;

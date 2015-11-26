@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.mktdata.indicator;
+package com.highpowerbear.hpbtrader.shared.techanalysis.indicator;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

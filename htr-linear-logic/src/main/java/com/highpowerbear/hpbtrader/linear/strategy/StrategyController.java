@@ -7,10 +7,13 @@ import com.highpowerbear.hpbtrader.linear.strategy.logic.MacdCrossStrategyLogic;
 import com.highpowerbear.hpbtrader.linear.strategy.logic.TestStrategyLogic;
 import com.highpowerbear.hpbtrader.linear.model.BacktestResult;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.entity.*;
+import com.highpowerbear.hpbtrader.shared.persistence.BarDao;
 import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -25,12 +28,14 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class StrategyController implements Serializable {
     private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
+    @Inject private BarDao barDao;
     @Inject private StrategyDao strategyDao;
     @Inject private SeriesDao seriesDao;
     @Inject private LinData linData;
     @Inject private Processor processor;
     @Inject private Backtester backtester;
 
+    @PostConstruct
     public void init() {
         seriesDao.getAllSeries(false).forEach(this::swapStrategyLogic);
     }
@@ -56,8 +61,16 @@ public class StrategyController implements Serializable {
         return strategyLogic;
     }
 
-    public void process(Strategy strategy, StrategyLogic strategyLogic) {
-        processor.process(strategy, strategyLogic);
+    public void process(Series series) {
+        if (!series.getEnabled()) {
+            l.info("Series not enabled, bars won't be processed, seriesId=" + series.getId() + ", symbol=" + series.getSymbol());
+            return;
+        }
+        Strategy activeStrategy = strategyDao.getActiveStrategy(series);
+        StrategyLogic strategyLogic = linData.getStrategyLogicMap().get(series.getId());
+        if (barDao.getNumBars(series) >= HtrSettings.BARS_REQUIRED) {
+            processor.process(activeStrategy, strategyLogic);
+        }
     }
 
     public void processManual(IbOrder manualIbOrder, Trade activeTrade, Bar bar) {

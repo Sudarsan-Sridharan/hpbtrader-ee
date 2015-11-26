@@ -5,6 +5,7 @@ import com.highpowerbear.hpbtrader.shared.entity.Bar;
 import com.highpowerbear.hpbtrader.shared.entity.Series;
 import com.highpowerbear.hpbtrader.shared.persistence.BarDao;
 
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -17,6 +18,7 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 19.11.2015.
  */
+@Stateless
 public class BarDaoImpl implements BarDao {
     private static final Logger l = Logger.getLogger(HtrSettings.LOGGER);
 

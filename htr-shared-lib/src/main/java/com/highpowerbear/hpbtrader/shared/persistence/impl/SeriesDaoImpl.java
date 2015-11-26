@@ -7,6 +7,7 @@ import com.highpowerbear.hpbtrader.shared.entity.Strategy;
 import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,6 +19,7 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 19.11.2015.
  */
+@Stateless
 public class SeriesDaoImpl implements SeriesDao {
     private static final Logger l = Logger.getLogger(HtrSettings.LOGGER);
 

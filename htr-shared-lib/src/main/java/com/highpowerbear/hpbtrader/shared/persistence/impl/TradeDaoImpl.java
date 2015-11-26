@@ -9,6 +9,7 @@ import com.highpowerbear.hpbtrader.shared.entity.Trade;
 import com.highpowerbear.hpbtrader.shared.entity.TradeLog;
 import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
 
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -21,6 +22,7 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 19.11.2015.
  */
+@Stateless
 public class TradeDaoImpl implements TradeDao {
     private static final Logger l = Logger.getLogger(HtrSettings.LOGGER);
 

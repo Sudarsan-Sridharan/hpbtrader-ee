@@ -118,29 +118,4 @@ public class IbController {
         eventBroker.trigger(HtrEnums.DataChangeEvent.STRATEGY_UPDATE);
         l.info("END submit order " + ibOrder.getDescription());
     }
-
-    public void reqHistoricalData(IbAccount ibAccount, int tickerId, Contract contract, String endDateTime, String durationStr, String barSizeSetting, String whatToShow, int useRTH, int formatDate) {
-        IbConnection c = linData.getIbConnectionMap().get(ibAccount);
-        c.getClientSocket().reqHistoricalData(tickerId, contract, endDateTime, durationStr, barSizeSetting, whatToShow, useRTH, formatDate, null);
-    }
-
-    public boolean requestRealtimeData(IbAccount ibAccount, int reqId, com.ib.client.Contract contract) {
-        if (!isConnected(ibAccount)) {
-            return false;
-        }
-        IbConnection c = linData.getIbConnectionMap().get(ibAccount);
-        l.fine("Requested realtime data, reqId=" + reqId + ", contract=" + HtrUtil.printIbContract(contract));
-        c.getClientSocket().reqMktData(reqId, contract, "", false, null);
-        return true;
-    }
-
-    public boolean cancelRealtimeData(IbAccount ibAccount, int reqId) {
-        if (!isConnected(ibAccount)) {
-            return false;
-        }
-        IbConnection c = linData.getIbConnectionMap().get(ibAccount);
-        l.fine("Canceling realtime data for reqId=" + reqId);
-        c.getClientSocket().cancelMktData(reqId);
-        return true;
-    }
 }

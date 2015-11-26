@@ -1,12 +1,12 @@
 package com.highpowerbear.hpbtrader.linear.strategy;
 
 import com.highpowerbear.hpbtrader.linear.common.SingletonRepo;
-import com.highpowerbear.hpbtrader.linear.mktdata.TiCalculator;
 import com.highpowerbear.hpbtrader.linear.model.StrategyLogicContext;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.Bar;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
 
 import java.text.NumberFormat;
 import java.util.Locale;

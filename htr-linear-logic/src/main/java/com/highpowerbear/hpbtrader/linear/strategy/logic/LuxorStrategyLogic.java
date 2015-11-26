@@ -1,10 +1,10 @@
 package com.highpowerbear.hpbtrader.linear.strategy.logic;
 
-import com.highpowerbear.hpbtrader.linear.mktdata.indicator.Ema;
 import com.highpowerbear.hpbtrader.linear.strategy.AbstractStrategyLogic;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.entity.Trade;
+import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Ema;
 
 import java.util.Calendar;
 import java.util.List;

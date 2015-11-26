@@ -21,21 +21,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LinData {
     private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>();
     private Map<IbAccount, Integer> validOrderMap = new HashMap<>();
-    private Map<Integer, Integer> backfillStatusMap = new HashMap<>(); // seriesId --> backfillStatus
-    private Map<Integer, List<Bar>> barsReceivedMap = new HashMap<>(); // seriesId --> barList
     private Map<Integer, StrategyLogic> strategyLogicMap = new HashMap<>(); // seriesId --> strategyLogic
     private Map<IbAccount, Map<IbOrder, Integer>> openOrderHeartbeatMap = new ConcurrentHashMap<>(); // ibAccount --> (ibOrder --> number of failed heartbeats left before UNKNOWN)
 
     public Map<IbAccount, IbConnection> getIbConnectionMap() {
         return ibConnectionMap;
-    }
-
-    public Map<Integer, Integer> getBackfillStatusMap() {
-        return backfillStatusMap;
-    }
-
-    public Map<Integer, List<Bar>> getBarsReceivedMap() {
-        return barsReceivedMap;
     }
 
     public Map<Integer, StrategyLogic> getStrategyLogicMap() {
