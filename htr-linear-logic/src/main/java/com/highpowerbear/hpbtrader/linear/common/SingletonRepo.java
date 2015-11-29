@@ -2,7 +2,7 @@ package com.highpowerbear.hpbtrader.linear.common;
 
 import com.highpowerbear.hpbtrader.linear.ibclient.HeartbeatControl;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
-import com.highpowerbear.hpbtrader.linear.strategy.OrderStateHandler;
+import com.highpowerbear.hpbtrader.linear.process.OrderStateHandler;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;

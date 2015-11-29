@@ -15,7 +15,6 @@ public class LinRsApplication extends Application {
 
     public LinRsApplication(){
         classes.add(LinService.class);
-        classes.add(ChartService.class);
         // singletons.add(new RestService());
     }
 

@@ -1,11 +1,12 @@
-package com.highpowerbear.hpbtrader.linear.strategy;
+package com.highpowerbear.hpbtrader.linear.process;
 
 import com.highpowerbear.hpbtrader.linear.common.LinData;
 import com.highpowerbear.hpbtrader.linear.common.LinSettings;
+import com.highpowerbear.hpbtrader.linear.strategy.BacktestResult;
+import com.highpowerbear.hpbtrader.linear.strategy.StrategyLogic;
 import com.highpowerbear.hpbtrader.linear.strategy.logic.LuxorStrategyLogic;
 import com.highpowerbear.hpbtrader.linear.strategy.logic.MacdCrossStrategyLogic;
 import com.highpowerbear.hpbtrader.linear.strategy.logic.TestStrategyLogic;
-import com.highpowerbear.hpbtrader.linear.model.BacktestResult;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.entity.*;

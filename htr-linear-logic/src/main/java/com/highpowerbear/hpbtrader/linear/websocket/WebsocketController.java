@@ -19,13 +19,13 @@ import java.util.logging.Logger;
 public class WebsocketController implements Serializable {
     private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
 
-    private Set<Session> seriesSessions = new HashSet<>();
+    private Set<Session> sessions = new HashSet<>();
 
-    public Set<Session> getSeriesSessions() {
-        return seriesSessions;
+    public Set<Session> getSessions() {
+        return sessions;
     }
 
-    public void sendSeriesMessage(Session s, String message) {
+    public void sendMessage(Session s, String message) {
         try {
             s.getBasicRemote().sendText(message);
         } catch (Throwable ioe) {
@@ -34,7 +34,7 @@ public class WebsocketController implements Serializable {
     }
 
     public void broadcastSeriesMessage(String message) {
-        //l.l().debug("Sending websocket message=" + message + ", clients=" + seriesSessions.size());
-        seriesSessions.stream().filter(Session::isOpen).forEach(s -> sendSeriesMessage(s, message));
+        //l.l().debug("Sending websocket message=" + message + ", clients=" + sessions.size());
+        sessions.stream().filter(Session::isOpen).forEach(s -> sendMessage(s, message));
     }
 }

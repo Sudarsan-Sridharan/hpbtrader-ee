@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.mktdata.ibclient;
 
-import com.highpowerbear.hpbtrader.mktdata.common.MktDataDefinitions;
+import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
 import com.highpowerbear.hpbtrader.mktdata.common.SingletonRepo;
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
 import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
@@ -19,7 +19,7 @@ public class IbListenerImpl extends AbstractIbListener {
     public void historicalData(int reqId, String date, double open, double high, double low, double close, int volume, int count, double WAP, boolean hasGaps) {
         //super.historicalData(reqId, date, open, high, low, close, volume, count, WAP, hasGaps);
 
-        if (date.startsWith(MktDataDefinitions.FINISH)) {
+        if (date.startsWith(MktDefinitions.FINISH)) {
             histDataController.reqFinished(reqId);
         } else {
             Bar bar = new Bar();

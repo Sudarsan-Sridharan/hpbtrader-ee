@@ -9,12 +9,12 @@ import java.util.Set;
  * Created by robertk on 19.11.2015.
  */
 @ApplicationPath("rest")
-public class MktDataRsApplication extends Application {
+public class MktRsApplication extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         // register root resources/providers
-        classes.add(MktDataService.class);
+        classes.add(MktService.class);
         return classes;
     }
 }

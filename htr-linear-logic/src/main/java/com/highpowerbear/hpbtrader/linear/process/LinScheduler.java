@@ -1,5 +1,6 @@
-package com.highpowerbear.hpbtrader.linear.common;
+package com.highpowerbear.hpbtrader.linear.process;
 
+import com.highpowerbear.hpbtrader.linear.common.LinData;
 import com.highpowerbear.hpbtrader.linear.ibclient.HeartbeatControl;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;

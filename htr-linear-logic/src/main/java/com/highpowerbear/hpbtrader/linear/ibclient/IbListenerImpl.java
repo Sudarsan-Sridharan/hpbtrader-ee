@@ -2,7 +2,7 @@ package com.highpowerbear.hpbtrader.linear.ibclient;
 
 import com.highpowerbear.hpbtrader.linear.common.EventBroker;
 import com.highpowerbear.hpbtrader.linear.common.SingletonRepo;
-import com.highpowerbear.hpbtrader.linear.strategy.OrderStateHandler;
+import com.highpowerbear.hpbtrader.linear.process.OrderStateHandler;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;

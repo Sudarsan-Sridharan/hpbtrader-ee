@@ -19,7 +19,7 @@ import java.util.List;
  */
 @ApplicationScoped
 @Path("mktdata")
-public class MktDataService {
+public class MktService {
 
     @Inject private TiCalculator tiCalculator;
     @Inject private BarDao barDao;

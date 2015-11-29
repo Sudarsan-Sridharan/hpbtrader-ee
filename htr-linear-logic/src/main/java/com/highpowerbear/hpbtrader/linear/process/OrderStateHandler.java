@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.linear.strategy;
+package com.highpowerbear.hpbtrader.linear.process;
 
 import com.highpowerbear.hpbtrader.linear.common.EventBroker;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;

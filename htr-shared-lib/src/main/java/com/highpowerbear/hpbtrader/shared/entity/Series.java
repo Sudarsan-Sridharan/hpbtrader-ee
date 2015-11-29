@@ -25,9 +25,6 @@ public class Series implements Serializable {
     @Id
     @GeneratedValue(generator="series")
     private Integer id;
-    @XmlTransient
-    @ManyToOne
-    private IbAccount ibAccount;
     private String symbol;
     private String underlying;
     @Enumerated(EnumType.STRING)
@@ -93,14 +90,6 @@ public class Series implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public IbAccount getIbAccount() {
-        return ibAccount;
-    }
-
-    public void setIbAccount(IbAccount ibAccount) {
-        this.ibAccount = ibAccount;
     }
 
     public String getSymbol() {

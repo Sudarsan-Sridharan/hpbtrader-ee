@@ -1,6 +1,6 @@
-package com.highpowerbear.hpbtrader.linear.websocket;
+package com.highpowerbear.hpbtrader.mktdata.websocket;
 
-import com.highpowerbear.hpbtrader.linear.common.LinSettings;
+import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
 
 import javax.inject.Inject;
 import javax.websocket.*;
@@ -9,12 +9,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by rkolar on 5/12/14.
+ * Created by robertk on 25.11.2015.
  */
-@ServerEndpoint("/websocket/series")
-public class SeriesEndpoint {
-    private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
-    @Inject private WebsocketController websocketController;
+@ServerEndpoint("/websocket/mktdata")
+public class MktEndpoint {
+    private static final Logger l = Logger.getLogger(MktDefinitions.LOGGER);
+    @Inject
+    private WebsocketController websocketController;
 
     @OnOpen
     public void addSesssion(Session session) {

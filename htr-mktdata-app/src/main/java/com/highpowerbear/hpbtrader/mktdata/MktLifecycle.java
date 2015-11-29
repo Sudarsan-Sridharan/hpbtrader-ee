@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.mktdata;
 
-import com.highpowerbear.hpbtrader.mktdata.common.MktDataDefinitions;
+import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
 import com.highpowerbear.hpbtrader.mktdata.common.SingletonRepo;
 
 import javax.annotation.PostConstruct;
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 @Singleton
 @Startup
 public class MktLifecycle {
-    private static final Logger l = Logger.getLogger(MktDataDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(MktDefinitions.LOGGER);
 
     @Inject private SingletonRepo singletonRepo;
 

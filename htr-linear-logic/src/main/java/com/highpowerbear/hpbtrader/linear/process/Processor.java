@@ -1,9 +1,10 @@
-package com.highpowerbear.hpbtrader.linear.strategy;
+package com.highpowerbear.hpbtrader.linear.process;
 
 import com.highpowerbear.hpbtrader.linear.common.EventBroker;
 import com.highpowerbear.hpbtrader.linear.common.LinSettings;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
-import com.highpowerbear.hpbtrader.linear.model.StrategyLogicContext;
+import com.highpowerbear.hpbtrader.linear.strategy.StrategyLogic;
+import com.highpowerbear.hpbtrader.linear.strategy.StrategyLogicContext;
 import com.highpowerbear.hpbtrader.shared.common.EmailSender;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrSettings;

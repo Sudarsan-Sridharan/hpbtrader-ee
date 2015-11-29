@@ -1,13 +1,13 @@
 package com.highpowerbear.hpbtrader.linear.rest;
 
-import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
+import com.highpowerbear.hpbtrader.shared.entity.*;
+import com.highpowerbear.hpbtrader.shared.persistence.BarDao;
 
 import javax.ejb.Singleton;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.inject.Inject;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 /**
  * Created by robertk on 11/14/2015.
@@ -15,11 +15,47 @@ import javax.ws.rs.core.MediaType;
 @Singleton
 @Path("linear")
 public class LinService {
+    @Inject private BarDao barDao;
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Path("ibaccounts/{accountId}/connect/{connect}")
     public IbAccount connecIbAccount(@PathParam("accountId") String accountId, @PathParam("connect") Boolean connect) {
+        return null;
+    }
+
+    @GET
+    @Path("bars/{seriesId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Bar> getBars(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
+        return barDao.getBars(seriesId, numBars);
+    }
+
+    @GET
+    @Path("strategylogs")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<StrategyLog> getStrategyLogs() {
+        return null;
+    }
+
+    @GET
+    @Path("trades")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Trade> getTrades() {
+        return null;
+    }
+
+    @GET
+    @Path("tradelogs")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TradeLog> getTradeLogs() {
+        return null;
+    }
+
+    @GET
+    @Path("lasttradelogs")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<TradeLog> getLastTradeLogs() {
         return null;
     }
 

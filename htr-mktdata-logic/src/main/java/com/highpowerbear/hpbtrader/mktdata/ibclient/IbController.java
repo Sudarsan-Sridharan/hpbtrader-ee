@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.mktdata.ibclient;
 
-import com.highpowerbear.hpbtrader.mktdata.common.MktDataDefinitions;
+import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrConstants;
 import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class IbController {
-    private static final Logger l = Logger.getLogger(MktDataDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(MktDefinitions.LOGGER);
 
     @Inject IbAccountDao ibAccountDao;
     private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>(); // ibAccount --> ibConnection
@@ -71,19 +71,27 @@ public class IbController {
         IbConnection c = ibConnectionMap.get(ibAccount);
         boolean connected = c.getClientSocket() != null && c.getClientSocket().isConnected();
         if (!connected) {
-            l.info("Not connected");
+            l.info("Not connected " + ibAccount.print());
         }
         return connected;
     }
 
-    public void reqHistoricalData(int tickerId, Contract contract, String endDateTime, String durationStr, String barSizeSetting, String whatToShow, int useRTH, int formatDate) {
-        // use first connected ib connection
+    public IbConnection getActiveConnection() {
         IbConnection c = null;
         for (IbConnection ibc : ibConnectionMap.values()) {
             if (ibc.isConnected()) {
                 c = ibc;
             }
         }
+        return c;
+    }
+
+    public boolean isActiveConnection() {
+        return getActiveConnection() != null;
+    }
+
+    public void reqHistoricalData(int tickerId, Contract contract, String endDateTime, String durationStr, String barSizeSetting, String whatToShow, int useRTH, int formatDate) {
+        IbConnection c = getActiveConnection();
         if (c != null) {
             c.getClientSocket().reqHistoricalData(tickerId, contract, endDateTime, durationStr, barSizeSetting, whatToShow, useRTH, formatDate, null);
         }
@@ -91,13 +99,7 @@ public class IbController {
 
     public boolean requestRealtimeData(int reqId, Contract contract) {
         boolean success = false;
-        // use first connected ib connection
-        IbConnection c = null;
-        for (IbConnection ibc : ibConnectionMap.values()) {
-            if (ibc.isConnected()) {
-                c = ibc;
-            }
-        }
+        IbConnection c = getActiveConnection();
         if (c != null) {
             l.info("Requested realtime data, reqId=" + reqId + ", contract=" + HtrUtil.printIbContract(contract));
             c.getClientSocket().reqMktData(reqId, contract, "", false, null);

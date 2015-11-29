@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.mktdata.process;
 
-import com.highpowerbear.hpbtrader.mktdata.common.MktDataDefinitions;
+import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
 import com.highpowerbear.hpbtrader.mktdata.ibclient.IbController;
 import com.highpowerbear.hpbtrader.mktdata.model.RealtimeData;
 import com.highpowerbear.hpbtrader.mktdata.websocket.WebsocketController;
@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class RtDataController {
-    private static final Logger l = Logger.getLogger(MktDataDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(MktDefinitions.LOGGER);
 
     @Inject private IbController ibController;
     @Inject private WebsocketController websocketController;
@@ -34,10 +34,10 @@ public class RtDataController {
         }
         String updateMessage = rtd.createUpdateMessage(field, price);
         if (updateMessage != null) {
-            websocketController.broadcastSeriesMessage(updateMessage);
+            websocketController.broadcastMessage(updateMessage);
             if (field == TickType.LAST || (field == TickType.ASK && HtrEnums.SecType.CASH.equals(rtd.getSeries().getSecType()))) {
                 String updateMessageChangePct = rtd.createChangePctUpdateMsg();
-                websocketController.broadcastSeriesMessage(updateMessageChangePct);
+                websocketController.broadcastMessage(updateMessageChangePct);
             }
         }
     }
@@ -49,7 +49,7 @@ public class RtDataController {
         }
         String updateMessage = rtd.createUpdateMessage(field, size);
         if (updateMessage != null) {
-            websocketController.broadcastSeriesMessage(updateMessage);
+            websocketController.broadcastMessage(updateMessage);
         }
     }
 
@@ -60,7 +60,7 @@ public class RtDataController {
         }
         String updateMessage = rtd.createUpdateMessage(tickType, value);
         if (updateMessage != null) {
-            websocketController.broadcastSeriesMessage(updateMessage);
+            websocketController.broadcastMessage(updateMessage);
         }
     }
 
