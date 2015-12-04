@@ -28,15 +28,14 @@ public class HeartbeatControl {
 
     @PostConstruct
     public void init() {
-        for (IbAccount ibAccount : ibAccountDao.getIbAccounts()) {
-            ibOrderDao.getOpenIbOrders(ibAccount).forEach(this::addHeartbeat);
-        }
+        ibAccountDao.getIbAccounts().stream()
+                .flatMap(ibAccount -> ibOrderDao.getOpenIbOrders(ibAccount).stream())
+                .forEach(this::addHeartbeat);
     }
 
     public void updateHeartbeats(IbAccount ibAccount) {
         Map<IbOrder, Integer> hm = linData.getOpenOrderHeartbeatMap().get(ibAccount);
-        Set<IbOrder> keyset = new HashSet<>(hm.keySet());
-        for (IbOrder ibOrder : keyset) {
+        new HashSet<>(hm.keySet()).forEach(ibOrder -> {
             Integer failedHeartbeatsLeft = hm.get(ibOrder);
             if (failedHeartbeatsLeft <= 0) {
                 if (!HtrEnums.IbOrderStatus.UNKNOWN.equals(ibOrder.getStatus())) {
@@ -47,11 +46,11 @@ public class HeartbeatControl {
             } else {
                 hm.put(ibOrder, failedHeartbeatsLeft - 1);
             }
-        }
+        });
     }
 
     public void heartbeatReceived(IbOrder ibOrder) {
-        Map<IbOrder, Integer> hm = linData.getOpenOrderHeartbeatMap().get(ibOrder.getIbAccount());
+        Map<IbOrder, Integer> hm = linData.getOpenOrderHeartbeatMap().get(ibOrder.getStrategy().getIbAccount());
         Integer failedHeartbeatsLeft = hm.get(ibOrder);
         if (failedHeartbeatsLeft != null) {
             hm.put(ibOrder, (failedHeartbeatsLeft < HtrSettings.MAX_ORDER_HEARTBEAT_FAILS ? failedHeartbeatsLeft + 1 : failedHeartbeatsLeft));
@@ -59,11 +58,11 @@ public class HeartbeatControl {
     }
 
     public void addHeartbeat(IbOrder ibOrder) {
-        linData.getOpenOrderHeartbeatMap().get(ibOrder.getIbAccount()).put(ibOrder, HtrSettings.MAX_ORDER_HEARTBEAT_FAILS);
+        linData.getOpenOrderHeartbeatMap().get(ibOrder.getStrategy().getIbAccount()).put(ibOrder, HtrSettings.MAX_ORDER_HEARTBEAT_FAILS);
     }
 
     public void removeHeartbeat(IbOrder ibOrder) {
-        Map<IbOrder, Integer> hm = linData.getOpenOrderHeartbeatMap().get(ibOrder.getIbAccount());
+        Map<IbOrder, Integer> hm = linData.getOpenOrderHeartbeatMap().get(ibOrder.getStrategy().getIbAccount());
         Integer failedHeartbeatsLeft = hm.get(ibOrder);
         if (failedHeartbeatsLeft != null) {
             hm.remove(ibOrder);

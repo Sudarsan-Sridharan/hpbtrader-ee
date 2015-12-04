@@ -48,7 +48,7 @@ public class Processor implements Serializable {
         StrategyLogicContext ctx = new StrategyLogicContext();
         ctx.strategy = strategy;
         ctx.activeTrade = tradeDao.getActiveTrade(strategy);
-        ctx.bars = barDao.getBars(series.getId(), HtrSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE);
+        ctx.bars = barDao.getBars(series, HtrSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE);
         if (ctx.bars.size() < HtrSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE) {
             l.info("END " + logMessage + ", not enough  bars available");
             return;
@@ -103,7 +103,7 @@ public class Processor implements Serializable {
 
         // send email, notifying about new order
         String subject = ibOrder.getDescription();
-        String content = ibOrder.getTriggerDesc() + "\n" + bar.printValues();
+        String content = ibOrder.getTriggerDesc() + "\n" + bar.print();
         emailSender.sendEmail(subject, content);
 
         l.info("END " + logMessage + ", new order, trigger=" + ibOrder.getTriggerDesc());
@@ -137,7 +137,7 @@ public class Processor implements Serializable {
 
         // send email, notifying about new order
         String subject = manualIbOrder.getDescription();
-        String content = manualIbOrder.getTriggerDesc() + "\n" + bar.printValues();
+        String content = manualIbOrder.getTriggerDesc() + "\n" + bar.print();
         emailSender.sendEmail(subject, content);
 
         l.info("END " + logMessage + ", new order, trigger=" + manualIbOrder.getTriggerDesc());

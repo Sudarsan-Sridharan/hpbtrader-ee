@@ -25,11 +25,13 @@ public class Strategy implements Serializable {
     private Integer id;
     @ManyToOne
     private Series series;
+    @ManyToOne
+    private IbAccount ibAccount;
     @Enumerated(EnumType.STRING)
     private HtrEnums.StrategyType strategyType = HtrEnums.StrategyType.values()[0];
     
     // can be changed
-    private Boolean isActive = false;
+    private Boolean active = false;
     @Enumerated(EnumType.STRING)
     private HtrEnums.StrategyMode strategyMode = HtrEnums.StrategyMode.SIM;
     private String params = HtrEnums.StrategyType.values()[0].getDefaultParams();
@@ -65,7 +67,7 @@ public class Strategy implements Serializable {
         if (sl == null) {
             return null;
         }
-        sl.setIsActive(isActive);
+        sl.setIsActive(active);
         sl.setStrategyMode(strategyMode);
         sl.setTradingQuantity(tradingQuantity);
         sl.setParams(getParams());
@@ -87,7 +89,7 @@ public class Strategy implements Serializable {
         otherStrategy.setId(id);
         otherStrategy.setSeries(series);
         otherStrategy.setStrategyType(strategyType);
-        otherStrategy.setActive(isActive);
+        otherStrategy.setActive(active);
         otherStrategy.setStrategyMode(strategyMode);
         otherStrategy.setTradingQuantity(tradingQuantity);
         otherStrategy.setParams(getParams());
@@ -117,7 +119,7 @@ public class Strategy implements Serializable {
         if (otherStrategy == null) {
             return false;
         }
-        if (    isActive.equals(otherStrategy.getActive()) &&
+        if (    active.equals(otherStrategy.getActive()) &&
                 strategyMode.equals(otherStrategy.getStrategyMode()) &&
                 tradingQuantity.equals(otherStrategy.getTradingQuantity()) &&
                 params.equals(otherStrategy.getParams()) &&
@@ -168,6 +170,14 @@ public class Strategy implements Serializable {
         this.series = series;
     }
 
+    public IbAccount getIbAccount() {
+        return ibAccount;
+    }
+
+    public void setIbAccount(IbAccount ibAccount) {
+        this.ibAccount = ibAccount;
+    }
+
     public HtrEnums.StrategyType getStrategyType() {
         return strategyType;
     }
@@ -177,11 +187,11 @@ public class Strategy implements Serializable {
     }
 
     public Boolean getActive() {
-        return isActive;
+        return active;
     }
 
     public void setActive(Boolean active) {
-        isActive = active;
+        this.active = active;
     }
 
     public HtrEnums.StrategyMode getStrategyMode() {

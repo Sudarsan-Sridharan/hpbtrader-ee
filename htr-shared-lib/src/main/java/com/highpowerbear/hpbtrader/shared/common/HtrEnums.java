@@ -3,6 +3,7 @@ package com.highpowerbear.hpbtrader.shared.common;
 import com.highpowerbear.hpbtrader.shared.ibclient.IbApiEnums;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -255,32 +256,14 @@ public class HtrEnums {
             this.multiplier = multiplier;
         }
         public static Integer getMultiplierBySymbol(String futSymbol) {
-            Integer mult = 1;
-            if (futSymbol != null) {
-                for (FutureMultiplier fm : FutureMultiplier.values()) {
-                    if (futSymbol.startsWith(fm.toString())) {
-                        mult = fm.multiplier;
-                        break;
-                    }
-                }
-            }
-            return mult;
+            return (futSymbol != null ? Arrays.asList(FutureMultiplier.values()).stream().filter(fm -> futSymbol.startsWith(fm.toString())).findAny().get().multiplier : 1);
         }
     }
     
     public enum MiniOption {
         AMZN7, AAPL7, GOOG7,  GLD7, SPY7;
         public static boolean isMiniOption(String optionSymbol) {
-            boolean isMiniOption = false;
-            if (optionSymbol != null) {
-                for (MiniOption mo : MiniOption.values()) {
-                    if (optionSymbol.startsWith(mo.toString())) {
-                        isMiniOption = true;
-                        break;
-                    }
-                }
-            }
-            return isMiniOption;
+            return optionSymbol != null && Arrays.asList(MiniOption.values()).stream().filter(mo -> optionSymbol.startsWith(mo.name())).findAny().isPresent();
         }
     }
 

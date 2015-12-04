@@ -2,6 +2,7 @@ package com.highpowerbear.hpbtrader.linear.rest;
 
 import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.shared.persistence.BarDao;
+import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
 
 import javax.ejb.Singleton;
 import javax.inject.Inject;
@@ -15,6 +16,7 @@ import java.util.List;
 @Singleton
 @Path("linear")
 public class LinService {
+    @Inject private SeriesDao seriesDao;
     @Inject private BarDao barDao;
 
     @PUT
@@ -28,7 +30,11 @@ public class LinService {
     @Path("bars/{seriesId}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Bar> getBars(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
-        return barDao.getBars(seriesId, numBars);
+        Series series = seriesDao.findSeries(seriesId);
+        if (series == null) {
+            return null;
+        }
+        return barDao.getBars(series, numBars);
     }
 
     @GET

@@ -65,26 +65,20 @@ public class RtDataController {
     }
 
     public void toggleRealtimeData(Series series) {
-        RealtimeData rtd = null;
-        for (RealtimeData realtimeData : realtimeDataMap.values()) {
-            if (realtimeData.getSeries().equals(series)) {
-                rtd = realtimeData;
-            }
+        if (!ibController.isAnyActiveConnection()) {
+            return;
         }
+        RealtimeData rtd = realtimeDataMap.values().stream().filter(r -> r.getSeries().equals(series)).findAny().get();
         if (rtd == null) {
             rtd = new RealtimeData(series);
             l.info("Requesting realtime data for " + rtd.getSeries().getSymbol());
             realtimeDataMap.put(rtd.getIbRequestId(), rtd);
-            boolean requested = ibController.requestRealtimeData(rtd.getIbRequestId(), rtd.getSeries().createIbContract());
-            if (!requested) {
-                realtimeDataMap.remove(rtd.getIbRequestId());
-            }
+            ibController.requestRealtimeData(rtd.getIbRequestId(), rtd.getSeries().createIbContract());
+            realtimeDataMap.remove(rtd.getIbRequestId());
         } else {
             l.info("Canceling realtime data for " + rtd.getSeries().getSymbol());
-            boolean requested = ibController.cancelRealtimeData(rtd.getIbRequestId());
-            if (requested) {
-                realtimeDataMap.remove(rtd.getIbRequestId());
-            }
+            ibController.cancelRealtimeData(rtd.getIbRequestId());
+            realtimeDataMap.remove(rtd.getIbRequestId());
         }
     }
 }

@@ -54,14 +54,7 @@ public class Series implements Serializable {
     }
     
     public Strategy getActiveStrategy() {
-        Strategy activeStrategy = null;
-        for (Strategy s : strategies) {
-            if (s.getActive()) {
-                activeStrategy = s;
-                break;
-            }
-        }
-        return activeStrategy;
+        return strategies.stream().filter(Strategy::getActive).findAny().orElse(null);
     }
     
     public Integer getNumStrategies() {

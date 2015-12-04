@@ -26,42 +26,42 @@ public class BarDaoImpl implements BarDao {
     private EntityManager em;
 
     @Override
-    public void createBars(List<Bar> bars) {
+    public void createBars(Series series, List<Bar> bars) {
         if (bars == null || bars.isEmpty()) {
             return;
         }
-        String symbol = bars.iterator().next().getSeries().getSymbol();
-        l.fine("START createBars, symbol=" + symbol);
-        int added = 0;
-        int modified = 0;
-        for (Bar q : bars) {
-            TypedQuery<Bar> query = em.createQuery("SELECT q FROM Bar q WHERE q.series = :series AND q.qDateBarClose = :qDateBarClose", Bar.class);
-            query.setParameter("series", q.getSeries());
-            query.setParameter("qDateBarClose", q.getqDateBarClose());
-            List<Bar> ql = query.getResultList();
-            Bar dbBar = (ql != null && !ql.isEmpty() ? ql.get(0) : null);
+        l.fine("START createBars, symbol=" + series.getSymbol());
+        int created = 0;
+        int updated = 0;
+        for (Bar bar : bars) {
+            if (!series.equals(bar.getSeries())) {
+                continue;
+            }
+            TypedQuery<Bar> query = em.createQuery("SELECT b FROM Bar b WHERE b.series = :series AND b.qDateBarClose = :qDateBarClose", Bar.class);
+            query.setParameter("series", series);
+            query.setParameter("qDateBarClose", bar.getqDateBarClose());
+            List<Bar> bl = query.getResultList();
+            Bar dbBar = (bl != null && !bl.isEmpty() ? bl.get(0) : null);
             if (dbBar == null) {
                 // insert
-                l.fine("Adding " + q.printValues());
-                added++;
-                em.persist(q);
+                l.fine("Adding " + bar.print());
+                created++;
+                em.persist(bar);
             } else {
                 // update
-                if (!dbBar.valuesEqual(q)) {
-                    l.fine(dbBar.printValues() + " --> " + q.printValues());
-                    dbBar.copyValuesFrom(q);
-                    modified++;
-                    em.merge(dbBar);
-                }
+                l.fine(dbBar.print() + " --> " + bar.print());
+                updated++;
+                dbBar.mergeFrom(bar);
+                em.merge(dbBar);
             }
         }
-        l.fine("END createBars, symbol=" + symbol + ", added=" + added + ", modified=" + modified);
+        l.fine("END createBars, symbol=" + series.getSymbol() + ", added=" + created + ", updated=" + updated);
     }
 
     @Override
-    public List<Bar> getBars(Integer seriesId, Integer numBars) {
-        TypedQuery<Bar> query = em.createQuery("SELECT q FROM Bar q WHERE q.series.id = :seriesId ORDER BY q.qDateBarClose DESC", Bar.class);
-        query.setParameter("seriesId", seriesId);
+    public List<Bar> getBars(Series series, Integer numBars) {
+        TypedQuery<Bar> query = em.createQuery("SELECT b FROM Bar b WHERE b.series = :series ORDER BY b.qDateBarClose ASC", Bar.class);
+        query.setParameter("series", series);
         if (numBars != null && numBars > 0) {
             query.setMaxResults(numBars);
         }
@@ -69,13 +69,17 @@ public class BarDaoImpl implements BarDao {
         if (bars == null) {
             bars = new ArrayList<>();
         }
-        Collections.reverse(bars);
         return bars;
     }
 
     @Override
+    public List<Bar> getPagedBars(Series series, Integer start, Integer limit) {
+        return null;
+    }
+
+    @Override
     public Bar getLastBar(Series series) {
-        TypedQuery<Bar> query = em.createQuery("SELECT q FROM Bar q WHERE q.series = :series ORDER BY q.qDateBarClose DESC", Bar.class);
+        TypedQuery<Bar> query = em.createQuery("SELECT b FROM Bar b WHERE b.series = :series ORDER BY b.qDateBarClose DESC", Bar.class);
         query.setParameter("series", series);
         query.setMaxResults(1);
         List<Bar> bars = query.getResultList();
@@ -84,8 +88,8 @@ public class BarDaoImpl implements BarDao {
 
     @Override
     public Long getNumBars(Series series) {
-        Query query = em.createQuery("SELECT COUNT(q) FROM Bar q WHERE q.series.id = :seriesId");
-        query.setParameter("seriesId", series.getId());
+        Query query = em.createQuery("SELECT COUNT(b) FROM Bar b WHERE b.series = :series");
+        query.setParameter("series", series);
         return (Long) query.getSingleResult();
     }
 }

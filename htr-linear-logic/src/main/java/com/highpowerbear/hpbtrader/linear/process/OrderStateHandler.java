@@ -90,10 +90,10 @@ public class OrderStateHandler {
         ibOrderDao.updateIbOrder(ibOrder);
 
         List<Trade> trades = tradeDao.getTradesByOrder(ibOrder);
-        for (Trade t : trades) {
+        trades.forEach(t -> {
             t.cncClosed();
             tradeDao.updateOrCreateTrade(t, null);
-        }
+        });
         eventBroker.trigger(HtrEnums.DataChangeEvent.STRATEGY_UPDATE);
     }
 }

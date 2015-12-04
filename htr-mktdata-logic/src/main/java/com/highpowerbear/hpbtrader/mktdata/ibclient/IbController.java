@@ -15,8 +15,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Created by rkolar on 4/10/14.
@@ -29,11 +31,13 @@ public class IbController {
     @Inject IbAccountDao ibAccountDao;
     private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>(); // ibAccount --> ibConnection
 
+    public Map<IbAccount, IbConnection> getIbConnectionMap() {
+        return ibConnectionMap;
+    }
+
     @PostConstruct
     public void init() {
-        for (IbAccount ibAccount : ibAccountDao.getIbAccounts()) {
-            ibConnectionMap.put(ibAccount, new IbConnection());
-        }
+        ibAccountDao.getIbAccounts().stream().forEach(ibAccount -> ibConnectionMap.put(ibAccount, new IbConnection()));
     }
 
     public void connect(IbAccount ibAccount) {
@@ -77,16 +81,14 @@ public class IbController {
     }
 
     public IbConnection getActiveConnection() {
-        IbConnection c = null;
-        for (IbConnection ibc : ibConnectionMap.values()) {
-            if (ibc.isConnected()) {
-                c = ibc;
-            }
-        }
-        return c;
+        return ibConnectionMap.values().stream().filter(IbConnection::isConnected).findFirst().orElse(null);
     }
 
-    public boolean isActiveConnection() {
+    public List<IbConnection> getActiveConnections() {
+        return ibConnectionMap.values().stream().filter(IbConnection::isConnected).collect(Collectors.toList());
+    }
+
+    public boolean isAnyActiveConnection() {
         return getActiveConnection() != null;
     }
 
@@ -97,26 +99,18 @@ public class IbController {
         }
     }
 
-    public boolean requestRealtimeData(int reqId, Contract contract) {
-        boolean success = false;
+    public void requestRealtimeData(int reqId, Contract contract) {
         IbConnection c = getActiveConnection();
         if (c != null) {
             l.info("Requested realtime data, reqId=" + reqId + ", contract=" + HtrUtil.printIbContract(contract));
             c.getClientSocket().reqMktData(reqId, contract, "", false, null);
-            success = true;
         }
-        return success;
     }
 
-    public boolean cancelRealtimeData(int reqId) {
-        boolean success = false;
-        for (IbConnection ibConnection : ibConnectionMap.values()) {
-            if (ibConnection.isConnected()) {
-                l.info("Canceling realtime data for reqId=" + reqId);
-                ibConnection.getClientSocket().cancelMktData(reqId);
-                success = true;
-            }
-        }
-        return success;
+    public void cancelRealtimeData(int reqId) {
+        getActiveConnections().forEach(c -> {
+            l.info("Canceling realtime data for reqId=" + reqId);
+            c.getClientSocket().cancelMktData(reqId);
+        });
     }
 }

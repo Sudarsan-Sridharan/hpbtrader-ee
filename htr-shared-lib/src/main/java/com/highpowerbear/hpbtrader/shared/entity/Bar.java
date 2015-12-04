@@ -23,6 +23,8 @@ public class Bar implements Serializable {
     @Id
     @GeneratedValue(generator="bar")
     private Long id;
+    @ManyToOne
+    private Series series;
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar qDateBarClose;
     @XmlElement
@@ -38,12 +40,25 @@ public class Bar implements Serializable {
     private Integer count;
     private Double wap;
     private Boolean hasGaps;
-    @ManyToOne
-    private Series series;
-    
+
     @XmlElement
     public long getTimeInMillisBarClose() {
         return qDateBarClose.getTimeInMillis();
+    }
+
+    public String print() {
+        return series.getSymbol() + ": " + HtrUtil.getFormattedDate(qDateBarClose) + ", " + qOpen + ", " + high + ", " + low + ", " + qClose + ", " + volume + ", " + count + ", " + hasGaps;
+    }
+
+    public void mergeFrom(Bar from) {
+        this.qOpen = from.getqOpen();
+        this.high = from.getHigh();
+        this.low = from.getLow();
+        this.qClose = from.getqClose();
+        this.volume = from.getVolume();
+        this.count = from.getCount();
+        this.wap = from.getWap();
+        this.hasGaps = from.getHasGaps();
     }
 
     @Override
@@ -148,42 +163,5 @@ public class Bar implements Serializable {
 
     public void setWap(Double wap) {
         this.wap = wap;
-    }
-    
-    public boolean valuesEqual(Bar otherBar) {
-        if (otherBar == null) {
-            return false;
-        }
-        if (    this.qOpen.equals(otherBar.getqOpen()) &&
-                this.high.equals(otherBar.getHigh()) &&
-                this.low.equals(otherBar.getLow()) &&
-                this.qClose.equals(otherBar.getqClose()) &&
-                this.volume.equals(otherBar.getVolume()) &&
-                this.count.equals(otherBar.getCount()) &&
-                this.wap.equals(otherBar.getWap()) &&
-                this.hasGaps.equals(otherBar.getHasGaps())
-           )
-        {
-            return true;
-        }
-        return false;
-    }
-    
-    public void copyValuesFrom(Bar otherBar) {
-        if (otherBar == null) {
-            return;
-        }
-        this.qOpen = otherBar.getqOpen();
-        this.high = otherBar.getHigh();
-        this.low = otherBar.getLow();
-        this.qClose = otherBar.getqClose();
-        this.volume = otherBar.getVolume();
-        this.count = otherBar.getCount();
-        this.wap = otherBar.getWap();
-        this.hasGaps = otherBar.getHasGaps();
-    }
-    
-    public String printValues() {
-        return series.getSymbol() + ": " + HtrUtil.getFormattedDate(qDateBarClose) + ", " + qOpen + ", " + high + ", " + low + ", " + qClose + ", " + volume + ", " + count + ", " + hasGaps;
     }
 }

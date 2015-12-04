@@ -16,4 +16,7 @@ public class HtrSettings {
 
     public static final Integer MAX_ORDER_HEARTBEAT_FAILS = 5;
     public static final Integer IB_REQUEST_MULT = 100;
+
+    public static final Integer WEBSOCKET_ASYNC_SEND_TIMEOUT = 5 * 1000; // milliseconds
+    public static final int JPA_MAX_RESULTS = 1000;
 }

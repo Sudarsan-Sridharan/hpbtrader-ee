@@ -3,7 +3,6 @@ package com.highpowerbear.hpbtrader.linear.process;
 import com.highpowerbear.hpbtrader.linear.common.LinData;
 import com.highpowerbear.hpbtrader.linear.ibclient.HeartbeatControl;
 import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
-import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.ibclient.IbConnection;
 import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
 
@@ -24,15 +23,12 @@ public class LinScheduler {
 
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="21", timezone="US/Eastern", persistent=false)
     public void reconnect() {
-        for (IbAccount ibAccount : ibAccountDao.getIbAccounts()) {
-            IbConnection c = linData.getIbConnectionMap().get(ibAccount);
-            if (c == null) { // can happen at application startup when not fully initialized yet
-                return;
-            }
-            if (c.getClientSocket() != null) {
+        ibAccountDao.getIbAccounts().forEach(ibAccount -> {
+            IbConnection c = ibController.getIbConnectionMap().get(ibAccount);
+            if (c != null && c.getClientSocket() != null) {
                 ibController.connect(ibAccount);
             }
-        }
+        });
     }
 
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="31", timezone="US/Eastern", persistent=false)

@@ -1,9 +1,11 @@
 package com.highpowerbear.hpbtrader.mktdata.websocket;
 
 import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
+import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,9 +28,11 @@ public class WebsocketController {
 
     public void sendMessage(Session s, String message) {
         try {
-            s.getBasicRemote().sendText(message);
-        } catch (Throwable ioe) {
-            l.log(Level.SEVERE, "Error sending websocket message " + message, ioe);
+            RemoteEndpoint.Async remote = s.getAsyncRemote();
+            remote.setSendTimeout(HtrSettings.WEBSOCKET_ASYNC_SEND_TIMEOUT);
+            remote.sendText(message);
+        } catch (Throwable t) {
+            l.log(Level.SEVERE, "Error sending websocket message " + message, t);
         }
     }
 

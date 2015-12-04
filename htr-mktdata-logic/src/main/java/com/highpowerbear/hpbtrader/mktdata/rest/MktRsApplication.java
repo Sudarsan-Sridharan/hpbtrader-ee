@@ -14,7 +14,10 @@ public class MktRsApplication extends Application {
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         // register root resources/providers
-        classes.add(MktService.class);
+        classes.add(IbAccountService.class);
+        classes.add(SeriesService.class);
+        classes.add(BarService.class);
+        classes.add(IndicatorService.class);
         return classes;
     }
 }

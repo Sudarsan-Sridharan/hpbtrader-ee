@@ -10,13 +10,17 @@ import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.ibclient.IbConnection;
+import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -30,8 +34,18 @@ public class IbController {
     @Inject private IbOrderDao ibOrderDao;
     @Inject private HeartbeatControl heartbeatControl;
     @Inject private EventBroker eventBroker;
-
+    @Inject private IbAccountDao ibAccountDao;
+    private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>(); // ibAccount --> ibConnection
     private int nextValidOrderId = 1;
+
+    @PostConstruct
+    public void init() {
+        ibAccountDao.getIbAccounts().stream().forEach(ibAccount -> ibConnectionMap.put(ibAccount, new IbConnection()));
+    }
+
+    public Map<IbAccount, IbConnection> getIbConnectionMap() {
+        return ibConnectionMap;
+    }
 
     public void setNextValidOrderId(IbAccount ibAccount, int nextValidOrderId) {
         this.nextValidOrderId = nextValidOrderId;
@@ -42,7 +56,7 @@ public class IbController {
     }
 
     public void connect(IbAccount ibAccount) {
-        IbConnection c = linData.getIbConnectionMap().get(ibAccount);
+        IbConnection c = ibConnectionMap.get(ibAccount);
 
         if (c.getClientSocket() == null)  {
             c.setClientSocket(new EClientSocket(new IbListenerImpl(ibAccount)));
@@ -63,7 +77,7 @@ public class IbController {
     }
 
     public void disconnect(IbAccount ibAccount) {
-        IbConnection c = linData.getIbConnectionMap().get(ibAccount);
+        IbConnection c = ibConnectionMap.get(ibAccount);
         if (c.getClientSocket() != null && c.getClientSocket().isConnected()) {
             l.info("Disconnecting ibAccount " + ibAccount.print());
             c.getClientSocket().eDisconnect();
@@ -76,13 +90,13 @@ public class IbController {
     }
 
     public boolean isConnected(IbAccount ibAccount) {
-        IbConnection c = linData.getIbConnectionMap().get(ibAccount);
+        IbConnection c = ibConnectionMap.get(ibAccount);
         return (c.getClientSocket() != null && c.getClientSocket().isConnected());
     }
 
     public void requestOpenOrders(IbAccount ibAccount) {
         l.info("Requesting open orders for ibAccount " + ibAccount.print());
-        IbConnection c = linData.getIbConnectionMap().get(ibAccount);
+        IbConnection c = ibConnectionMap.get(ibAccount);
         c.getClientSocket().reqOpenOrders();
         c.getClientSocket().reqAllOpenOrders();
         c.getClientSocket().reqAutoOpenOrders(true);
@@ -90,7 +104,7 @@ public class IbController {
 
     private void requestAccounts(IbAccount ibAccount) {
         l.info("Requesting account for ibAccount " + ibAccount.print());
-        linData.getIbConnectionMap().get(ibAccount).getClientSocket().reqManagedAccts();
+        ibConnectionMap.get(ibAccount).getClientSocket().reqManagedAccts();
     }
 
     private void retrySubmit(IbAccount ibAccount) {
@@ -99,9 +113,9 @@ public class IbController {
 
     public void submitIbOrder(IbOrder ibOrder) {
         l.info("START submit order " + ibOrder.getDescription());
-        IbConnection c = linData.getIbConnectionMap().get(ibOrder.getIbAccount());
+        IbConnection c = ibConnectionMap.get(ibOrder.getStrategy().getIbAccount());
         heartbeatControl.addHeartbeat(ibOrder);
-        if (!isConnected(ibOrder.getIbAccount())) {
+        if (!isConnected(ibOrder.getStrategy().getIbAccount())) {
             if (!HtrEnums.IbOrderStatus.NEW_RETRY.equals(ibOrder.getStatus())) {
                 ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW_RETRY, HtrUtil.getCalendar(), null);
                 ibOrderDao.updateIbOrder(ibOrder);

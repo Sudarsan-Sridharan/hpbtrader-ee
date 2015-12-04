@@ -83,14 +83,7 @@ public class BacktestResult {
         if (tradeId == null) {
             return null;
         }
-        Trade foundTrade = null;
-        for (Trade t : trades) {
-            if (t.getId().equals(tradeId)) {
-                foundTrade = t;
-                break;
-            }
-        }
-        return foundTrade;
+        return trades.stream().filter(t -> (t.getId().equals(tradeId))).findAny().get();
     }
     
     public Strategy getStrategy() {

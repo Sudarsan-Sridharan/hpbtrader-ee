@@ -26,9 +26,6 @@ public class IbOrder implements Serializable {
     @Id
     @GeneratedValue(generator="iborder")
     private Long id;
-    @XmlTransient
-    @ManyToOne
-    private IbAccount ibAccount;
     private Integer ibPermId; // not null only for IB order
     private Integer ibOrderId; // not null only for IB orders
     @ManyToOne
@@ -68,14 +65,8 @@ public class IbOrder implements Serializable {
     }
 
     public Calendar getEventDate(HtrEnums.IbOrderStatus ibOrderStatus) {
-        Calendar eventDate = null;
-        for (OrderEvent oe : events) {
-            if (ibOrderStatus.equals(oe.getStatus())) {
-                eventDate = oe.getEventDate();
-                break;
-            }
-        }
-        return eventDate;
+        OrderEvent orderEvent = events.stream().filter(oe -> ibOrderStatus.equals(oe.getStatus())).findAny().orElse(null);
+        return (orderEvent != null ? orderEvent.getEventDate() : null);
     }
 
     public boolean isOpeningOrder() {
@@ -139,14 +130,6 @@ public class IbOrder implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public IbAccount getIbAccount() {
-        return ibAccount;
-    }
-
-    public void setIbAccount(IbAccount ibAccount) {
-        this.ibAccount = ibAccount;
     }
 
     public Integer getIbPermId() {

@@ -1,6 +1,5 @@
 package com.highpowerbear.hpbtrader.mktdata.process;
 
-import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
 
 import javax.ejb.Schedule;
@@ -18,15 +17,11 @@ public class MktScheduler {
 
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*/5", second="1", timezone="US/Eastern", persistent=false)
     public void requestFiveMinBars() {
-        for (IbAccount ibAccount : ibAccountDao.getIbAccounts()) {
-            histDataController.requestFiveMinBars(ibAccount);
-        }
+        ibAccountDao.getIbAccounts().forEach(histDataController::requestFiveMinBars);
     }
 
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "0", second="11", timezone="US/Eastern", persistent=false)
     public void requestSixtyMinBars() {
-        for (IbAccount ibAccount : ibAccountDao.getIbAccounts()) {
-            histDataController.requestSixtyMinBars(ibAccount);
-        }
+        ibAccountDao.getIbAccounts().forEach(histDataController::requestSixtyMinBars);
     }
 }

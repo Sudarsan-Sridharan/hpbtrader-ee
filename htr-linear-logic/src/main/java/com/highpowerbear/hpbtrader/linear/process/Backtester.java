@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -37,7 +38,7 @@ public class Backtester {
     
     BacktestResult backtest(Strategy dbStrategy, StrategyLogic strategyLogic, Calendar startDate, Calendar endDate) {
         String logMessage = "backtesting strategy, " + dbStrategy.getStrategyType().toString() + " --> " + strategyLogic.getName();
-        List<Bar> bars = barDao.getBars(dbStrategy.getSeries().getId(), null);
+        List<Bar> bars = barDao.getBars(dbStrategy.getSeries(), null);
         bars = filterBars(bars, startDate, endDate);
         int numIterations = bars.size() - HtrSettings.BARS_REQUIRED - INDICATORS_LIST_SIZE;
         l.info("START " + logMessage + ", iterations=" + numIterations);
@@ -46,7 +47,7 @@ public class Backtester {
             l.info("END " + logMessage + ", not enough  bars available");
             return backtestResult;
         }
-        
+
         for (int i = HtrSettings.BARS_REQUIRED + INDICATORS_LIST_SIZE; i < bars.size(); i++) {
             Strategy strategy = new Strategy();
             backtestResult.getStrategy().deepCopy(strategy);
@@ -57,10 +58,10 @@ public class Backtester {
             ctx.strategy = strategy;
             ctx.activeTrade = backtestResult.getActiveTrade();
             ctx.isBacktest = true;
-            
+
             strategyLogic.updateContext(ctx);
             IbOrder ibOrder = strategyLogic.processSignals();
-            
+
             if (ibOrder == null) {
                 if (ctx.activeTrade != null) {
                     backtestResult.updateOrCreateTrade(ctx.activeTrade, bar);
@@ -75,11 +76,11 @@ public class Backtester {
             ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, bar.getqDateBarClose(), null);
             ibOrder.setFillPrice(bar.getqClose());
             backtestResult.updateOrCreateTrade(ctx.activeTrade, bar);
-            
+
             ctx.strategy.setNumAllOrders(ctx.strategy.getNumAllOrders() + 1);
             ctx.strategy.setNumFilledOrders(ctx.strategy.getNumFilledOrders() + 1);
             ctx.strategy.setCurrentPosition(ibOrder.isBuyOrder() ? ctx.strategy.getCurrentPosition() + ibOrder.getQuantity() : ctx.strategy.getCurrentPosition() - ibOrder.getQuantity());
-            
+
             if (ibOrder.isOpeningOrder()) {
                 ctx.activeTrade.open(bar.getqClose());
             } else {
@@ -89,7 +90,7 @@ public class Backtester {
                 ctx.strategy.recalculateStats(ctx.activeTrade);
             }
             backtestResult.updateOrCreateTrade(ctx.activeTrade, bar);
-            
+
             if (ibOrder.isReversalOrder()) {
                 ctx.activeTrade = new Trade().initOpen(ibOrder);
                 strategyLogic.setInitialStopAndTarget();
@@ -108,12 +109,8 @@ public class Backtester {
         if (startDate == null || endDate == null || !startDate.before(endDate)) {
             return bars;
         }
-        List<Bar> filteredBars = new ArrayList<>();
-        for (Bar q : bars) {
-            if (q.getTimeInMillisBarClose() >= startDate.getTimeInMillis() && q.getTimeInMillisBarClose() <= endDate.getTimeInMillis()) {
-                filteredBars.add(q);
-            }
-        }
-        return filteredBars;
+        return bars.stream()
+                .filter(q -> q.getTimeInMillisBarClose() >= startDate.getTimeInMillis() && q.getTimeInMillisBarClose() <= endDate.getTimeInMillis())
+                .collect(Collectors.toList());
     }
 }

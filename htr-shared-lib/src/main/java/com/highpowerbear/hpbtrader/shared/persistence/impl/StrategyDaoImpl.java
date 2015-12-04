@@ -40,9 +40,9 @@ public class StrategyDaoImpl implements StrategyDao {
 
     @Override
     public Strategy getActiveStrategy(Series series) {
-        TypedQuery<Strategy> query = em.createQuery("SELECT str FROM Strategy str WHERE str.series = :series AND str.isActive = :isActive", Strategy.class);
+        TypedQuery<Strategy> query = em.createQuery("SELECT str FROM Strategy str WHERE str.series = :series AND str.active = :active", Strategy.class);
         query.setParameter("series", series);
-        query.setParameter("isActive", Boolean.TRUE);
+        query.setParameter("active", Boolean.TRUE);
         List<Strategy> strategyList = query.getResultList();
         return strategyList.get(0);
     }

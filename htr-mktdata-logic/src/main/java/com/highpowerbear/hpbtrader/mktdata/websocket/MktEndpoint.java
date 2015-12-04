@@ -14,8 +14,8 @@ import java.util.logging.Logger;
 @ServerEndpoint("/websocket/mktdata")
 public class MktEndpoint {
     private static final Logger l = Logger.getLogger(MktDefinitions.LOGGER);
-    @Inject
-    private WebsocketController websocketController;
+
+    @Inject private WebsocketController websocketController;
 
     @OnOpen
     public void addSesssion(Session session) {
