@@ -1,10 +1,11 @@
 package com.highpowerbear.hpbtrader.options.data;
 
 import com.highpowerbear.hpbtrader.options.common.OptDefinitions;
-import com.highpowerbear.hpbtrader.options.entity.Order;
 import com.highpowerbear.hpbtrader.options.model.ContractProperties;
 import com.highpowerbear.hpbtrader.options.model.MarketData;
 import com.highpowerbear.hpbtrader.options.model.UnderlyingData;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public class OptData {
         return (underlyingDataMap.keySet().contains(underlying));
     }
     
-    public Integer getHeartbeat(Order order) {
+    public Integer getHeartbeat(IbOrder order) {
         return openOrderHeartbeatMap.get(order.getId());
     }
 }

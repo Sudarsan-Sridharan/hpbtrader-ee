@@ -1,9 +1,12 @@
 package com.highpowerbear.hpbtrader.shared.common;
 
+import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.logging.Level;
 
 /*
  * To change this template, choose Tools | Templates
@@ -68,5 +71,15 @@ public class HtrUtil {
 
     public static String removeDot(String source) {
         return source.replaceAll("[\\s.]", "");
+    }
+
+    public static Calendar getNowCalendar() {
+        return Calendar.getInstance(TimeZone.getTimeZone(HtrSettings.TIMEZONE));
+    }
+
+    public static Calendar getYesterdayCalendar() {
+        Calendar cal = getNowCalendar();
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        return cal;
     }
 }

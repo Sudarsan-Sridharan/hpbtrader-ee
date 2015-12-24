@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.persistence;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.Series;
 
 import java.util.List;

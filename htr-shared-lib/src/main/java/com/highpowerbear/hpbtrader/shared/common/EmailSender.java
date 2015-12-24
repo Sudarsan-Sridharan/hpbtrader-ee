@@ -1,5 +1,7 @@
 package com.highpowerbear.hpbtrader.shared.common;
 
+import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
+
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;

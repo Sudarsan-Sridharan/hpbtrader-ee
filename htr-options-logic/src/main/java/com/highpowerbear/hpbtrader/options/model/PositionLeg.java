@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.options.model;
 
-import com.highpowerbear.hpbtrader.options.entity.OptionContract;
+import com.highpowerbear.hpbtrader.shared.entity.OptionContract;
 
 /**
  * Created by robertk on 29.9.2015.

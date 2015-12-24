@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.mktdata.rest;
 
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
-import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.entity.Bar;
 import com.highpowerbear.hpbtrader.shared.entity.Series;
 import com.highpowerbear.hpbtrader.shared.model.RestList;

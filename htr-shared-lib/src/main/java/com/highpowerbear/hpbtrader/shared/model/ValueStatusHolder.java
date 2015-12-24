@@ -1,6 +1,6 @@
-package com.highpowerbear.hpbtrader.options.model;
+package com.highpowerbear.hpbtrader.shared.model;
 
-import com.highpowerbear.hpbtrader.options.common.OptEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
 
 /**
  *
@@ -8,9 +8,9 @@ import com.highpowerbear.hpbtrader.options.common.OptEnums;
  */
 public class ValueStatusHolder<T> {
     private T value;
-    private OptEnums.ValueStatus valueStatus;
+    private HtrEnums.ValueStatus valueStatus;
 
-    public ValueStatusHolder(T value, OptEnums.ValueStatus valueStatus) {
+    public ValueStatusHolder(T value, HtrEnums.ValueStatus valueStatus) {
         this.value = value;
         this.valueStatus = valueStatus;
     }
@@ -23,11 +23,11 @@ public class ValueStatusHolder<T> {
         this.value = value;
     }
 
-    public OptEnums.ValueStatus getValueStatus() {
+    public HtrEnums.ValueStatus getValueStatus() {
         return valueStatus;
     }
 
-    public void setValueStatus(OptEnums.ValueStatus valueStatus) {
+    public void setValueStatus(HtrEnums.ValueStatus valueStatus) {
         this.valueStatus = valueStatus;
     }
     

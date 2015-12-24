@@ -5,22 +5,6 @@ package com.highpowerbear.hpbtrader.options.common;
  * @author rkolar
  */
 public class OptEnums {
-
-    public enum Underlying {
-        IWM("IWM"),
-        SPY("IWM");
-
-        private String label;
-
-        Underlying(String label) {
-            this.label = label;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-    }
-
     public enum ParamType {
         SENTIMENT_DELTA_MULT("sentimentDeltaMult"),
         DELTA_TRIGGER_STEP("deltaTriggerStep"),
@@ -88,78 +72,6 @@ public class OptEnums {
         OPT_CONTRACT
     }
 
-    public enum CssColor {
-        MAGENTA("Magenta"),
-        BLUE("Blue"),
-        DARK_BLUE("DarkBlue"),
-        DARK_GREEN("DarkGreen"),
-        RED("Red"),
-        DARK_RED("DarkRed"),
-        ORANGE("Orange"),
-        DARK_ORANGE("DarkOrange"),
-        DARK_CYAN("DarkCyan");
-
-        private String name;
-
-        CssColor(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
-
-    public enum OrderStatus {
-        NEW("New", CssColor.MAGENTA.getName()),
-        NEW_RETRY("NewRetry", CssColor.MAGENTA.getName()),
-        SUBMIT_REQ("SubmitReq", CssColor.BLUE.getName()),
-        SUBMITTED("Submitted", CssColor.DARK_BLUE.getName()),
-        FILLED("Filled", CssColor.DARK_GREEN.getName()),
-        EXT_CANCELED("ExtCanceled", CssColor.DARK_RED.getName()),
-        UNKNOWN("Unknown", CssColor.RED.getName());
-        
-        private String label;
-        private String colorName;
-        
-        OrderStatus(String label, String colorName) {
-            this.label = label;
-            this.colorName = colorName;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public String getColorName() {
-            return colorName;
-        }
-    }
-
-    public enum TradeStatus {
-        INIT_OPEN("InitOpen", CssColor.BLUE.getName()),
-        OPEN("Open", CssColor.DARK_GREEN.getName()),
-        INIT_CLOSE("InitClose", CssColor.ORANGE.getName()),
-        CLOSED("Closed", CssColor.DARK_ORANGE.getName()),
-        INVALID("Invalid", CssColor.RED.getName());
-
-        private String label;
-        private String colorName;
-
-        TradeStatus(String label, String colorName) {
-            this.label = label;
-            this.colorName = colorName;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public String getColorName() {
-            return colorName;
-        }
-    }
-
     public enum SentimentOrigin {
         HTR_LINEAR("htr_linear"),
         MANUAL("manual");
@@ -173,12 +85,6 @@ public class OptEnums {
         public String getLabel() {
             return label;
         }
-    }
-    
-    public enum ValueStatus {
-        UPTICK,
-        DOWNTICK,
-        UNCHANGED
     }
     
     public enum ExpiryDistance {

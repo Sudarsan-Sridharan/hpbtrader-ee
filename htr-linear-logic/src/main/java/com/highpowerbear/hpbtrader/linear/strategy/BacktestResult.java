@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.linear.strategy;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.*;
 
 import java.util.ArrayList;

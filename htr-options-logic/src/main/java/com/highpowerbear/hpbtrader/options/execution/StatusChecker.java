@@ -1,9 +1,10 @@
 package com.highpowerbear.hpbtrader.options.execution;
 
 import com.highpowerbear.hpbtrader.options.data.OptData;
-import com.highpowerbear.hpbtrader.options.entity.Trade;
-import com.highpowerbear.hpbtrader.options.ibclient.IbApiEnums;
 import com.highpowerbear.hpbtrader.options.model.*;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.entity.Trade;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -71,8 +72,8 @@ public class StatusChecker {
         return rs;
     }
     
-    public ConstraintsStatus getConstraintsStatus(Trade trade, ReadinessStatus rs) {
-        MarketData mdSnapshot = (IbApiEnums.OptionType.CALL.equals(trade.getOptionType()) ? rs.getActiveCallMarketDataSnapshot() : rs.getActivePutMarketDataSnapshot());
+    public ConstraintsStatus getConstraintsStatus(HtrEnums.OptionType optionType, Trade trade, ReadinessStatus rs) {
+        MarketData mdSnapshot = (HtrEnums.OptionType.CALL.equals(optionType) ? rs.getActiveCallMarketDataSnapshot() : rs.getActivePutMarketDataSnapshot());
         ConstraintsStatus cs = new ConstraintsStatus(mdSnapshot.getSymbol());
         ContractProperties cp = optData.getContractPropertiesMap().get(mdSnapshot.getUnderlying());
         Double bas = mdSnapshot.getBidAskSpread();
@@ -92,7 +93,7 @@ public class StatusChecker {
             cs.setDescription(mdSnapshot.getSymbol() + " volume: " + vol + " < " + cp.getMinVolume());
             return cs;
         }
-        Integer oi = (IbApiEnums.OptionType.CALL.equals(trade.getOptionType()) ? mdSnapshot.getCallOpenInterest().getValue() : mdSnapshot.getPutOpenInterest().getValue());
+        Integer oi = (HtrEnums.OptionType.CALL.equals(optionType) ? mdSnapshot.getCallOpenInterest().getValue() : mdSnapshot.getPutOpenInterest().getValue());
         if (isValidSize(oi) && oi < cp.getMinOpenInterest()) {
             cs.setMatch(false);
             cs.setDescription(mdSnapshot.getSymbol() + " open interest: " + oi + " < " + cp.getMinOpenInterest());

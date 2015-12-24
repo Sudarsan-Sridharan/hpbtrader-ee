@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.techanalysis;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.entity.Bar;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Ema;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Macd;

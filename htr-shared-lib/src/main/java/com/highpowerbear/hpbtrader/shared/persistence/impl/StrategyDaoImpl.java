@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.persistence.impl;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;

@@ -1,10 +1,10 @@
 package com.highpowerbear.hpbtrader.options.data;
 
 import com.highpowerbear.hpbtrader.options.common.*;
-import com.highpowerbear.hpbtrader.options.ibclient.IbApiEnums;
-import com.highpowerbear.hpbtrader.options.ibclient.IbController;
 import com.highpowerbear.hpbtrader.options.model.MarketData;
 import com.highpowerbear.hpbtrader.options.model.UnderlyingData;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
 import com.ib.client.TickType;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 public class DataRetriever {
     private static final Logger l = Logger.getLogger(OptDefinitions.LOGGER);
 
-    @Inject private IbController ibController;
     @Inject private OptData optData;
     @Inject private ChainsRetriever chainsRetriever;
     @Inject private EventBroker eventBroker;
@@ -31,25 +30,27 @@ public class DataRetriever {
             optData.getUnderlyingDataMap().get(underlying).setIbRequestIdBase(OptDefinitions.REQUEST_ID_MULTIPLIER * i++);
         }
         chainsRetriever.reloadOptionChains();
-        OptUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS * 4);
+        HtrUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS * 4);
         requestRtDataForUnderlyings();
     }
 
     public void stop() {
         for (Integer reqId : optData.getMarketDataRequestMap().keySet()) {
-            ibController.cancelRealtimeData(reqId);
-            OptUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS / 2);
+            //ibController.cancelRealtimeData(reqId);
+            // TODO
+            HtrUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS / 2);
         }
     }
     
     private void requestRtDataForUnderlyings() {
         for (String underlying : optData.getUnderlyingDataMap().keySet()) {
-            OptUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS);
-            optData.getMarketDataMap().put(underlying, new MarketData(underlying, IbApiEnums.SecType.STK, underlying));
+            HtrUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS);
+            optData.getMarketDataMap().put(underlying, new MarketData(underlying, HtrEnums.SecType.STK, underlying));
             com.ib.client.Contract ibContract = OptUtil.constructIbContract(underlying);
             int reqId = optData.getUnderlyingDataMap().get(underlying).getIbRequestIdBase() + OptEnums.RequestIdOffset.MKTDATA_UNDERLYING.getValue();
             optData.getMarketDataRequestMap().put(reqId, underlying);
-            ibController.requestRealtimeData(reqId, ibContract);
+            //ibController.requestRealtimeData(reqId, ibContract);
+            // TODO
         }
     }
     

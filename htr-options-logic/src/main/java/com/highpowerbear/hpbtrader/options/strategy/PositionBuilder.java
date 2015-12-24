@@ -15,13 +15,13 @@ import java.util.List;
 @ApplicationScoped
 public class PositionBuilder {
 
-    public List<PositionLeg> buildFull(OptEnums.Underlying underlying, Double delta, Double otmPoints, Double timeValuePct) {
+    public List<PositionLeg> buildFull(String underlying, Double delta, Double otmPoints, Double timeValuePct) {
         List<PositionLeg> legs = new ArrayList<>();
         // TODO full builder logic
         return legs;
     }
 
-    public List<PositionLeg> buildPartial(OptEnums.Underlying underlying, Double delta, Double otmPoints, Double timeValuePct, List<PositionLeg> existingLegs) {
+    public List<PositionLeg> buildPartial(String underlying, Double delta, Double otmPoints, Double timeValuePct, List<PositionLeg> existingLegs) {
         List<PositionLeg> legs = new ArrayList<>();
         // TODO partial builder logic
         return legs;

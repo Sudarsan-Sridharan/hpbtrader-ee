@@ -1,6 +1,7 @@
-package com.highpowerbear.hpbtrader.linear.common;
+package com.highpowerbear.hpbtrader.exec.common;
 
-import com.highpowerbear.hpbtrader.linear.process.OrderStateHandler;
+import com.highpowerbear.hpbtrader.exec.ibclient.HeartbeatControl;
+import com.highpowerbear.hpbtrader.exec.ibclient.IbController;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
@@ -26,16 +27,11 @@ public class SingletonRepo {
         return srepo;
     }
 
-    @Inject private LinData linData;
     @Inject private IbOrderDao ibOrderDao;
     @Inject private SeriesDao seriesDao;
-    @Inject private OrderStateHandler orderStateHandler;
-    @Inject private EventBroker eventBroker;
+    @Inject private IbController ibController;
+    @Inject private HeartbeatControl heartbeatControl;
     @Inject private TiCalculator tiCalculator;
-
-    public LinData getLinData() {
-        return linData;
-    }
 
     public IbOrderDao getIbOrderDao() {
         return ibOrderDao;
@@ -45,12 +41,12 @@ public class SingletonRepo {
         return seriesDao;
     }
 
-    public OrderStateHandler getOrderStateHandler() {
-        return orderStateHandler;
+    public IbController getIbController() {
+        return ibController;
     }
 
-    public EventBroker getEventBroker() {
-        return eventBroker;
+    public HeartbeatControl getHeartbeatControl() {
+        return heartbeatControl;
     }
 
     public TiCalculator getTiCalculator() {

@@ -11,8 +11,6 @@ public class OptDefinitions {
     public static final Integer IB_CLIENT_ID = 5;
     public static final Boolean PROCESS_ENABLED = true;
     public static final Boolean CONSTRAINTS_ENABLED = true;
-    public static final String TIMEZONE = "America/New_York";
-    public static final String TIMEZONE_IB = "EST";
     public static final Integer REQUEST_ID_MULTIPLIER = 1000;
     public static final Integer JPA_MAX_RESULTS = 1000;
     public static final Integer MAX_ORDER_HEARTBEAT_FAILS = 5;

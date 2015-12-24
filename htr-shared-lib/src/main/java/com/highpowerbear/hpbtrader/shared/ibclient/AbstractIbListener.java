@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.ibclient;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
 import com.ib.client.*;
 
 import java.util.logging.Logger;

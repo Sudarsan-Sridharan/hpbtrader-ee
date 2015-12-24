@@ -14,8 +14,8 @@
     <dependencies>
         <dependency>
             <groupId>com.highpowerbear</groupId>
-            <artifactId>htr-ibapi-lib</artifactId>
-            <version>9.71</version>
+            <artifactId>htr-shared-lib</artifactId>
+            <version>3.0</version>
         </dependency>
     </dependencies>
 </project>

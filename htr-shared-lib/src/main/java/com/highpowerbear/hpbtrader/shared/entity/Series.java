@@ -1,11 +1,10 @@
 package com.highpowerbear.hpbtrader.shared.entity;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +46,7 @@ public class Series implements Serializable {
         com.ib.client.Contract contract = new com.ib.client.Contract();
         contract.m_symbol = this.underlying;
         contract.m_localSymbol = this.symbol;
-        contract.m_secType = HtrEnums.SecType.getIbSecType(secType);
+        contract.m_secType = secType.name();
         contract.m_exchange = this.exchange.toString();
         contract.m_currency = this.currency.toString();
         return contract;

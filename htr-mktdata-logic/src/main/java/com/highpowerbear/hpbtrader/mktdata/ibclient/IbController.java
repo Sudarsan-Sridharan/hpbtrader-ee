@@ -1,8 +1,8 @@
 package com.highpowerbear.hpbtrader.mktdata.ibclient;
 
 import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
-import com.highpowerbear.hpbtrader.shared.common.HtrConstants;
-import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrConstants;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.ibclient.IbConnection;

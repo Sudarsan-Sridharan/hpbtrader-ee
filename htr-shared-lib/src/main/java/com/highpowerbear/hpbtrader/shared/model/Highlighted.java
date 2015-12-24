@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.options.model;
+package com.highpowerbear.hpbtrader.shared.model;
 
 /**
  *

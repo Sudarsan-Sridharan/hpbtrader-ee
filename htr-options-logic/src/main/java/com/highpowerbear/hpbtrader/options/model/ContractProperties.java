@@ -2,6 +2,9 @@ package com.highpowerbear.hpbtrader.options.model;
 
 import com.highpowerbear.hpbtrader.options.common.OptUtil;
 import com.highpowerbear.hpbtrader.options.common.OptDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -204,7 +207,7 @@ public class ContractProperties implements Comparable<ContractProperties> {
         Calendar stopTimeToday = OptUtil.getTodayMidnightCalendar();
         stopTimeToday.set(Calendar.HOUR_OF_DAY, Integer.valueOf(tradingStopTime.split(":")[0]));
         stopTimeToday.set(Calendar.MINUTE, Integer.valueOf(tradingStopTime.split(":")[1]));
-        Calendar now = OptUtil.getNowCalendar();
+        Calendar now = HtrUtil.getNowCalendar();
         return (now.getTimeInMillis() >= startTimeToday.getTimeInMillis() && now.getTimeInMillis() <= stopTimeToday.getTimeInMillis());
     }
     

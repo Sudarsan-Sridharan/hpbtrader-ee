@@ -2,12 +2,11 @@ package com.highpowerbear.hpbtrader.linear.process;
 
 import com.highpowerbear.hpbtrader.linear.common.EventBroker;
 import com.highpowerbear.hpbtrader.linear.common.LinSettings;
-import com.highpowerbear.hpbtrader.linear.ibclient.IbController;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyLogic;
 import com.highpowerbear.hpbtrader.linear.strategy.StrategyLogicContext;
 import com.highpowerbear.hpbtrader.shared.common.EmailSender;
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.shared.persistence.BarDao;
@@ -33,7 +32,6 @@ public class Processor implements Serializable {
     @Inject private TradeDao tradeDao;
     @Inject private IbOrderDao ibOrderDao;
     @Inject private StrategyDao strategyDao;
-    @Inject private IbController ibController;
     @Inject private OrderStateHandler orderStateHandler;
     @Inject private EmailSender emailSender;
     @Inject private EventBroker eventBroker;
@@ -109,7 +107,8 @@ public class Processor implements Serializable {
         l.info("END " + logMessage + ", new order, trigger=" + ibOrder.getTriggerDesc());
         
         if (HtrEnums.StrategyMode.IB.equals(strategy.getStrategyMode())) {
-            ibController.submitIbOrder(ibOrder);
+            //ibController.submitIbOrder(ibOrder);
+            // TODO
         } else {
             orderStateHandler.simulateFill(ibOrder, bar);
         }
@@ -143,7 +142,8 @@ public class Processor implements Serializable {
         l.info("END " + logMessage + ", new order, trigger=" + manualIbOrder.getTriggerDesc());
 
         if (HtrEnums.StrategyMode.IB.equals(strategy.getStrategyMode())) {
-            ibController.submitIbOrder(manualIbOrder);
+            //ibController.submitIbOrder(manualIbOrder);
+            // TODO
         } else {
             orderStateHandler.simulateFill(manualIbOrder, bar);
         }

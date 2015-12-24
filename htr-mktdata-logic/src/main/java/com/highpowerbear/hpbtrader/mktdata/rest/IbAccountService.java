@@ -2,7 +2,7 @@ package com.highpowerbear.hpbtrader.mktdata.rest;
 
 import com.highpowerbear.hpbtrader.mktdata.ibclient.IbController;
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
-import com.highpowerbear.hpbtrader.shared.common.HtrConstants;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrConstants;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.model.RestList;
@@ -16,9 +16,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by robertk on 25.11.2015.

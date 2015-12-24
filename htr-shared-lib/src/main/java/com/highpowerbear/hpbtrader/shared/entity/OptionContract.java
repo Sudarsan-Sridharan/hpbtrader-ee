@@ -1,7 +1,6 @@
-package com.highpowerbear.hpbtrader.options.entity;
+package com.highpowerbear.hpbtrader.shared.entity;
 
-import com.highpowerbear.hpbtrader.options.common.OptEnums;
-import com.highpowerbear.hpbtrader.options.ibclient.IbApiEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -12,20 +11,19 @@ import java.util.Calendar;
  * @author robertk
  */
 @Entity
-@Table(name = "opt_optioncontract")
+@Table(name = "optioncontract")
 public class OptionContract implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @TableGenerator(name="opt_optioncontract")
+    @TableGenerator(name="optioncontract")
     @Id
-    @GeneratedValue(generator="opt_optioncontract")
+    @GeneratedValue(generator="optioncontract")
     private String optionSymbol;
-    @Enumerated(EnumType.STRING)
-    private OptEnums.Underlying underlying;
+    private String underlying;
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar expiry;
     @Enumerated(EnumType.STRING)
-    private IbApiEnums.OptionType optionType;
+    private HtrEnums.OptionType optionType;
     private Double strike;
 
     @Override
@@ -52,11 +50,11 @@ public class OptionContract implements Serializable {
         this.optionSymbol = optionSymbol;
     }
 
-    public OptEnums.Underlying getUnderlying() {
+    public String getUnderlying() {
         return underlying;
     }
 
-    public void setUnderlying(OptEnums.Underlying underlying) {
+    public void setUnderlying(String underlying) {
         this.underlying = underlying;
     }
 
@@ -68,11 +66,11 @@ public class OptionContract implements Serializable {
         this.expiry = expiry;
     }
 
-    public IbApiEnums.OptionType getOptionType() {
+    public HtrEnums.OptionType getOptionType() {
         return optionType;
     }
 
-    public void setOptionType(IbApiEnums.OptionType optionType) {
+    public void setOptionType(HtrEnums.OptionType optionType) {
         this.optionType = optionType;
     }
 

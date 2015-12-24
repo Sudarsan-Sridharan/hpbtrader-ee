@@ -1,12 +1,10 @@
 package com.highpowerbear.hpbtrader.shared.entity;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.ibclient.IbApiEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -99,12 +97,12 @@ public class IbOrder implements Serializable {
 
     public com.ib.client.Order createIbOrder() {
         com.ib.client.Order ibOrder = new com.ib.client.Order();
-        ibOrder.m_action = (this.isBuyOrder() ? IbApiEnums.Action.BUY.getName() : IbApiEnums.Action.SELL.getName());
-        ibOrder.m_orderType = HtrEnums.OrderType.getIbOrderType(this.getOrderType());
+        ibOrder.m_action = (this.isBuyOrder() ? HtrEnums.Action.BUY.name() : HtrEnums.Action.SELL.name());
+        ibOrder.m_orderType = getOrderType().name();
         ibOrder.m_auxPrice = (this.stopPrice != null ? this.stopPrice : 0d);
         ibOrder.m_lmtPrice = (this.limitPrice!= null ? this.limitPrice : 0d);
         ibOrder.m_totalQuantity = this.quantity;
-        ibOrder.m_tif = IbApiEnums.Tif.GTC.getName();
+        ibOrder.m_tif = HtrEnums.Tif.GTC.name();
         return ibOrder;
     }
 

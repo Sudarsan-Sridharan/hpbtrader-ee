@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.linear.common;
 
 import com.highpowerbear.hpbtrader.linear.websocket.WebsocketController;
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
 
 import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;

@@ -1,9 +1,9 @@
 package com.highpowerbear.hpbtrader.options.model;
 
-import com.highpowerbear.hpbtrader.options.common.OptEnums;
-import com.highpowerbear.hpbtrader.options.common.OptUtil;
 import com.highpowerbear.hpbtrader.options.common.OptDefinitions;
-import com.highpowerbear.hpbtrader.options.ibclient.IbApiEnums;
+import com.highpowerbear.hpbtrader.options.common.OptUtil;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.model.ValueStatusHolder;
 import com.ib.client.TickType;
 
 /**
@@ -12,24 +12,24 @@ import com.ib.client.TickType;
  */
 public class MarketData implements Comparable<MarketData> {
     private String underlying;
-    private IbApiEnums.SecType secType;
+    private HtrEnums.SecType secType;
     private String symbol;
     
     // price fields
-    private ValueStatusHolder<Double> bid = new ValueStatusHolder<>(OptDefinitions.INVALID_PRICE, OptEnums.ValueStatus.UNCHANGED);
-    private ValueStatusHolder<Double> ask = new ValueStatusHolder<>(OptDefinitions.INVALID_PRICE, OptEnums.ValueStatus.UNCHANGED);
-    private ValueStatusHolder<Double> last = new ValueStatusHolder<>(OptDefinitions.INVALID_PRICE, OptEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Double> bid = new ValueStatusHolder<>(OptDefinitions.INVALID_PRICE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Double> ask = new ValueStatusHolder<>(OptDefinitions.INVALID_PRICE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Double> last = new ValueStatusHolder<>(OptDefinitions.INVALID_PRICE, HtrEnums.ValueStatus.UNCHANGED);
     
     // size fields
-    private ValueStatusHolder<Integer> bidSize = new ValueStatusHolder<>(OptDefinitions.INVALID_SIZE, OptEnums.ValueStatus.UNCHANGED);
-    private ValueStatusHolder<Integer> askSize = new ValueStatusHolder<>(OptDefinitions.INVALID_SIZE, OptEnums.ValueStatus.UNCHANGED);
-    private ValueStatusHolder<Integer> lastSize = new ValueStatusHolder<>(OptDefinitions.INVALID_SIZE, OptEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Integer> bidSize = new ValueStatusHolder<>(OptDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Integer> askSize = new ValueStatusHolder<>(OptDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Integer> lastSize = new ValueStatusHolder<>(OptDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
     
-    private ValueStatusHolder<Integer> volume = new ValueStatusHolder<>(OptDefinitions.INVALID_SIZE, OptEnums.ValueStatus.UNCHANGED);
-    private ValueStatusHolder<Integer> callOpenInterest = new ValueStatusHolder<>(OptDefinitions.INVALID_SIZE, OptEnums.ValueStatus.UNCHANGED);
-    private ValueStatusHolder<Integer> putOpenInterest = new ValueStatusHolder<>(OptDefinitions.INVALID_SIZE, OptEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Integer> volume = new ValueStatusHolder<>(OptDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Integer> callOpenInterest = new ValueStatusHolder<>(OptDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Integer> putOpenInterest = new ValueStatusHolder<>(OptDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
 
-    public MarketData(String underlying, IbApiEnums.SecType secType, String symbol) {
+    public MarketData(String underlying, HtrEnums.SecType secType, String symbol) {
         this.underlying = underlying;
         this.secType = secType;
         this.symbol = symbol;
@@ -75,12 +75,12 @@ public class MarketData implements Comparable<MarketData> {
     }
     
     private void setValueStatus(ValueStatusHolder<Double> v, Double price) {
-        v.setValueStatus(price > v.getValue() ? OptEnums.ValueStatus.UPTICK : (price < v.getValue() ? OptEnums.ValueStatus.DOWNTICK : OptEnums.ValueStatus.UNCHANGED));
+        v.setValueStatus(price > v.getValue() ? HtrEnums.ValueStatus.UPTICK : (price < v.getValue() ? HtrEnums.ValueStatus.DOWNTICK : HtrEnums.ValueStatus.UNCHANGED));
         v.setValue(price);
     }
     
     private void setValueStatus(ValueStatusHolder<Integer> v, Integer size) {
-        v.setValueStatus(size > v.getValue() ? OptEnums.ValueStatus.UPTICK : (size < v.getValue() ? OptEnums.ValueStatus.DOWNTICK : OptEnums.ValueStatus.UNCHANGED));
+        v.setValueStatus(size > v.getValue() ? HtrEnums.ValueStatus.UPTICK : (size < v.getValue() ? HtrEnums.ValueStatus.DOWNTICK : HtrEnums.ValueStatus.UNCHANGED));
         v.setValue(size);
     }
     
@@ -114,7 +114,7 @@ public class MarketData implements Comparable<MarketData> {
         return underlying;
     }
 
-    public IbApiEnums.SecType getSecType() {
+    public HtrEnums.SecType getSecType() {
         return secType;
     }
 

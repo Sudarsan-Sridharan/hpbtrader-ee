@@ -1,6 +1,4 @@
-package com.highpowerbear.hpbtrader.shared.common;
-
-import com.highpowerbear.hpbtrader.shared.ibclient.IbApiEnums;
+package com.highpowerbear.hpbtrader.shared.defintions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +9,87 @@ import java.util.List;
  * @author rkolar
  */
 public class HtrEnums {
+    public enum Action {
+        BUY,
+        SELL,
+        SSHORT
+    }
+
+    public enum OrderStatus {
+        PENDINGSUBMIT("PendingSubmit", Css.DODGER_BLUE_BG),
+        PENDINGCANCEL("PendingCancel", Css.ORANGE_BG),
+        PRESUBMITTED("PreSubmitted", Css.DODGER_BLUE_BG),
+        SUBMITTED("Submitted", Css.BLUE_BG),
+        CANCELLED("Cancelled", Css.RED_BG),
+        FILLED("Filled", Css.GREEN_BG),
+        INACTIVE("Inactive", Css.BROWN_BG);
+
+        private String displayName;
+        private Css css;
+
+        OrderStatus(String displayName, Css css) {
+            this.displayName = displayName;
+            this.css = css;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+        public String getCssClass() {
+            return css.getCssClass();
+        }
+    }
+
+    public enum OrderType {
+        MKT,
+        MKTCLS,
+        LMT,
+        LMTCLS,
+        PEGMKT,
+        SCALE,
+        STP,
+        STPLMT,
+        TRAIL,
+        REL,
+        VWAP,
+        TRAILLIMIT
+    }
+
+    public enum Tif {
+        DAY,
+        GTC,
+        IOC,
+        GTD
+    }
+
+    public enum OptionType {
+        CALL("C"),
+        PUT("P");
+
+        private String code;
+
+        OptionType(String code) {
+            this.code = code;
+        }
+        public String getCode() {
+            return code;
+        }
+    }
+
+    public enum Multiplier {
+        M_100("100");
+
+        String value;
+
+        Multiplier(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
     public enum Interval {
         INT_5_MIN(300000, "5"),
         INT_60_MIN(3600000, "60");
@@ -60,18 +139,6 @@ public class HtrEnums {
         public String getIbBarType() {
             return ibBarType;
         }
-
-        public static String getIbSecType(SecType secType) {
-            String ibSecType = null;
-            switch (secType) {
-                case STK: ibSecType = IbApiEnums.SecType.STK.getName(); break;
-                case OPT: ibSecType = IbApiEnums.SecType.OPT.getName(); break;
-                case FUT: ibSecType = IbApiEnums.SecType.FUT.getName(); break;
-                case FOP: ibSecType = IbApiEnums.SecType.FOP.getName(); break;
-                case CASH: ibSecType = IbApiEnums.SecType.CASH.getName(); break;
-            }
-            return ibSecType;
-        }
     }
     
     public enum Currency {
@@ -93,44 +160,28 @@ public class HtrEnums {
         SREV
     }
     
-    public enum OrderType {
-        MKT,
-        LMT,
-        STP;
-        
-        public static String getIbOrderType(OrderType orderType) {
-            String ibOrderType = null;
-            switch (orderType) {
-                case MKT: ibOrderType = IbApiEnums.OrderType.MKT.getName(); break;
-                case LMT: ibOrderType = IbApiEnums.OrderType.LMT.getName(); break;
-                case STP: ibOrderType = IbApiEnums.OrderType.STP.getName(); break;
-            }
-            return ibOrderType;
-        }
-    }
-    
     public enum IbOrderStatus {
-        NEW("new", "col-magenta-bck"),
-        NEW_RETRY("newRetry", "col-magenta-bck"),
-        SUBMIT_REQ("submitReq", "col-dodgerblue-bck"),
-        SUBMITTED("submitted", "col-blue-bck"),
-        FILLED("filled", "col-green-bck"),
-        CANCEL_REQ("cancelReq", "col-magenta-bck"),
-        CANCELED("canceled", "col-red-bck"),
-        UNKNOWN("unknown", "col-brown-bck");
+        NEW("new", Css.MAGENTA_BG),
+        NEW_RETRY("newRetry", Css.MAGENTA_BG),
+        SUBMIT_REQ("submitReq", Css.DODGER_BLUE_BG),
+        SUBMITTED("submitted", Css.BLUE_BG),
+        FILLED("filled", Css.GREEN_BG),
+        CANCEL_REQ("cancelReq", Css.MAGENTA_BG),
+        CANCELED("canceled", Css.RED_BG),
+        UNKNOWN("unknown", Css.BROWN_BG);
         
         private String displayName;
-        private String colorClass;
+        private Css css;
         
-        IbOrderStatus(String displayName, String colorClass) {
+        IbOrderStatus(String displayName, Css css) {
             this.displayName = displayName;
-            this.colorClass = colorClass;
+            this.css = css;
         }
         public String getDisplayName() {
             return displayName;
         }
-        public String getColorClass() {
-            return colorClass;
+        public String getCssClass() {
+            return css.getCssClass();
         }
     }
     
@@ -170,17 +221,17 @@ public class HtrEnums {
     }
     
     public enum StrategyMode {
-        IB("col-orange-bck"),
-        SIM(""),
-        BTEST("");
+        IB(Css.ORANGE_BG),
+        SIM(null),
+        BTEST(null);
 
-        private String colorClass;
+        private Css css;
 
-        StrategyMode(String colorClass) {
-            this.colorClass = colorClass;
+        StrategyMode(Css css) {
+            this.css = css;
         }
-        public String getColorClass() {
-            return colorClass;
+        public String getCssClass() {
+            return (css != null ? css.getCssClass() : "");
         }
     }
     
@@ -191,44 +242,44 @@ public class HtrEnums {
     }
     
     public enum TradeType {
-        LONG("L", "col-blue-bck"),
-        SHORT("S", "col-brown-bck");
+        LONG("L", Css.BLUE_BG),
+        SHORT("S", Css.BROWN_BG);
 
         private String displayName;
-        private String colorClass;
+        private Css css;
 
-        TradeType(String displayName, String colorClass) {
+        TradeType(String displayName, Css css) {
             this.displayName = displayName;
-            this.colorClass = colorClass;
+            this.css = css;
         }
         public String getDisplayName() {
             return displayName;
         }
-        public String getColorClass() {
-            return colorClass;
+        public String getCssClass() {
+            return css.getCssClass();
         }
     }
     
     public enum TradeStatus {
-        INIT_OPEN("initOpen", "col-blue-bck"),
-        OPEN("open", "col-green-bck"),
-        INIT_CLOSE("initClose", "col-orange-bck"),
-        CLOSED("closed", "col-brown-bck"),
-        CNC_CLOSED("cncClosed", "col-red-bck"),
-        ERR_CLOSED("errClosed", "col-red-bck");
+        INIT_OPEN("initOpen", Css.BLUE_BG),
+        OPEN("open", Css.GREEN_BG),
+        INIT_CLOSE("initClose", Css.ORANGE_BG),
+        CLOSED("closed", Css.BROWN_BG),
+        CNC_CLOSED("cncClosed", Css.RED_BG),
+        ERR_CLOSED("errClosed", Css.RED_BG);
         
         private String displayName;
-        private String colorClass;
+        private Css css;
         
-        TradeStatus(String displayName, String colorClass) {
+        TradeStatus(String displayName, Css css) {
             this.displayName = displayName;
-            this.colorClass = colorClass;
+            this.css = css;
         }
         public String getDisplayName() {
             return displayName;
         }
-        public String getColorClass() {
-            return colorClass;
+        public String getCssClass() {
+            return css.getCssClass();
         }
     }
     
@@ -273,37 +324,75 @@ public class HtrEnums {
     }
 
     public enum RealtimeStatus {
-        UPTICK("col-lime"),
-        DOWNTICK("col-orange"),
-        UNCHANGED("col-yellow"),
-        POSITIVE("col-blue-bck"),
-        NEGATIVE("col-red-bck");
+        UPTICK(Css.LIME),
+        DOWNTICK(Css.ORANGE),
+        UNCHANGED(Css.YELLOW),
+        POSITIVE(Css.BLUE),
+        NEGATIVE(Css.RED);
 
-        private String colorClass;
+        private Css css;
 
-        RealtimeStatus(String colorClass) {
-            this.colorClass = colorClass;
+        RealtimeStatus(Css css) {
+            this.css = css;
         }
 
-        public String getColorClass() {
-            return colorClass;
+        public String getCssClass() {
+            return css.getCssClass();
         }
     }
 
     public enum Exchange {
-        SMART("smart"),
-        IDEALPRO("idealpro"),
-        GLOBEX("globex"),
-        ECBOT("ecbot"),
-        NYMEX("nymex");
+        SMART,
+        IDEALPRO,
+        GLOBEX,
+        ECBOT,
+        NYMEX
+    }
 
-        private String displayName;
+    public enum ValueStatus {
+        UPTICK,
+        DOWNTICK,
+        UNCHANGED
+    }
 
-        Exchange(String displayName) {
-            this.displayName = displayName;
+    public enum Css {
+        MAGENTA("htr-magenta"),
+        MAGENTA_BG("htr-magenta-bg"),
+        BLUE("htr-blue"),
+        BLUE_BG("htr-blue-bg"),
+        DARK_BLUE("htr-dark-blue"),
+        DARK_BLUE_BG("htr-dark-blue-bg"),
+        GREEN("htr-green"),
+        GREEN_BG("htr-green-bg"),
+        DARK_GREEN("htr-dark-green"),
+        DARK_GREEN_BG("htr-dark-green-bg"),
+        RED("htr-red"),
+        RED_BG("htr-red-bg"),
+        DARK_RED("htr-dark-red"),
+        DARK_RED_BG("htr-dark-red-bg"),
+        ORANGE("htr-orange"),
+        ORANGE_BG("htr-orange-bg"),
+        DARK_ORANGE("htr-dark-orange"),
+        DARK_ORANGE_BG("htr-dark-orange-bg"),
+        DARK_CYAN("htr-dark-cyan"),
+        DARK_CYAN_BG("htr-dark-cyan-bg"),
+        LIME("htr-lime"),
+        LIME_BG("htr-lime-bg"),
+        YELLOW("htr-yellow"),
+        YELLOW_BG("htr-yellow-bg"),
+        BROWN("htr-brown"),
+        BROWN_BG("htr-brown-bg"),
+        DODGER_BLUE("htr-dodger-blue"),
+        DODGER_BLUE_BG("htr-dodger-blue-bg");
+
+        private String cssClass;
+
+        Css(String cssClass) {
+            this.cssClass = cssClass;
         }
-        public String getDisplayName() {
-            return displayName;
+
+        public String getCssClass() {
+            return cssClass;
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.shared.common;
+package com.highpowerbear.hpbtrader.shared.defintions;
 
 /**
  * Created by robertk on 19.11.2015.

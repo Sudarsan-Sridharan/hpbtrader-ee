@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.mktdata.websocket;
 
 import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
-import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;

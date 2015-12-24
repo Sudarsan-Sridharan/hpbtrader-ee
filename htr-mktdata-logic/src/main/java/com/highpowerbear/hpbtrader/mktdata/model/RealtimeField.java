@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.mktdata.model;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
 
 /**
  * Created by rkolar on 5/23/14.

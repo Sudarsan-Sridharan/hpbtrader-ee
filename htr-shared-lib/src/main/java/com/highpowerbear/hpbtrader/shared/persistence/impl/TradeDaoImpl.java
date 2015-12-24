@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.shared.persistence.impl;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.entity.Strategy;

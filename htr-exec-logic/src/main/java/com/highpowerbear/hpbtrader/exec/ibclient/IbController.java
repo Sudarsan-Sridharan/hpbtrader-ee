@@ -1,18 +1,15 @@
-package com.highpowerbear.hpbtrader.linear.ibclient;
+package com.highpowerbear.hpbtrader.exec.ibclient;
 
-import com.highpowerbear.hpbtrader.linear.common.EventBroker;
-import com.highpowerbear.hpbtrader.linear.common.LinData;
-import com.highpowerbear.hpbtrader.linear.common.LinSettings;
-import com.highpowerbear.hpbtrader.shared.common.HtrConstants;
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.exec.common.ExecDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrConstants;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.ibclient.IbConnection;
 import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
-import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
 
 import javax.annotation.PostConstruct;
@@ -29,11 +26,10 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class IbController {
-    private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
-    @Inject private LinData linData;
+    private static final Logger l = Logger.getLogger(ExecDefinitions.LOGGER);
+
     @Inject private IbOrderDao ibOrderDao;
     @Inject private HeartbeatControl heartbeatControl;
-    @Inject private EventBroker eventBroker;
     @Inject private IbAccountDao ibAccountDao;
     private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>(); // ibAccount --> ibConnection
     private int nextValidOrderId = 1;
@@ -119,7 +115,6 @@ public class IbController {
             if (!HtrEnums.IbOrderStatus.NEW_RETRY.equals(ibOrder.getStatus())) {
                 ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW_RETRY, HtrUtil.getCalendar(), null);
                 ibOrderDao.updateIbOrder(ibOrder);
-                eventBroker.trigger(HtrEnums.DataChangeEvent.STRATEGY_UPDATE);
             }
             l.info("Not connected to IB, cannot submit order " + ibOrder.getDescription());
             return;
@@ -129,7 +124,6 @@ public class IbController {
         ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, HtrUtil.getCalendar(), null);
         ibOrder.setIbOrderId(ibOrderId);
         ibOrderDao.updateIbOrder(ibOrder);
-        eventBroker.trigger(HtrEnums.DataChangeEvent.STRATEGY_UPDATE);
         l.info("END submit order " + ibOrder.getDescription());
     }
 }

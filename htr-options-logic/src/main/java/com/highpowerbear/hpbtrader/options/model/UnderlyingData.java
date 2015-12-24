@@ -1,9 +1,9 @@
 package com.highpowerbear.hpbtrader.options.model;
 
-import com.highpowerbear.hpbtrader.options.common.OptEnums;
-import com.highpowerbear.hpbtrader.options.common.OptUtil;
 import com.highpowerbear.hpbtrader.options.common.OptDefinitions;
-import com.highpowerbear.hpbtrader.options.entity.Trade;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+import com.highpowerbear.hpbtrader.shared.entity.Trade;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -46,18 +46,18 @@ public class UnderlyingData {
         return (callContractChangeTriggerPrice != null && putContractChangeTriggerPrice != null);
     }
     
-    public void purchaseMade(Trade activeTrade) {
-        if (getActiveCallSymbol() != null && activeTrade.getOptionSymbol().equals(getActiveCallSymbol())) {
+    public void purchaseMade(String optionSymbol, Trade activeTrade) {
+        if (getActiveCallSymbol() != null && optionSymbol.equals(getActiveCallSymbol())) {
             isActiveCallSymbolPurchased = Boolean.TRUE;
-        } else if (getActivePutSymbol() != null && activeTrade.getOptionSymbol().equals(getActivePutSymbol())) {
+        } else if (getActivePutSymbol() != null && optionSymbol.equals(getActivePutSymbol())) {
             isActivePutSymbolPurchased = Boolean.TRUE;
         }
     }
     
-    public void purchaseReleased(Trade activeTrade) {
-        if (getActiveCallSymbol() != null && activeTrade.getOptionSymbol().equals(getActiveCallSymbol())) {
+    public void purchaseReleased(String optionSymbol, Trade activeTrade) {
+        if (getActiveCallSymbol() != null && optionSymbol.equals(getActiveCallSymbol())) {
             isActiveCallSymbolPurchased = Boolean.FALSE;
-        } else if (getActivePutSymbol() != null && activeTrade.getOptionSymbol().equals(getActivePutSymbol())) {
+        } else if (getActivePutSymbol() != null && optionSymbol.equals(getActivePutSymbol())) {
             isActivePutSymbolPurchased = Boolean.FALSE;
         }
     }
@@ -185,7 +185,7 @@ public class UnderlyingData {
     }
     
     public void callContractChanged() {
-        lastCallContractChangeDate = OptUtil.getNowCalendar();
+        lastCallContractChangeDate = HtrUtil.getNowCalendar();
     }
     
     public boolean isCallContractChangeTimoutElapsed() {
@@ -211,7 +211,7 @@ public class UnderlyingData {
     }
     
     public void putContractChanged() {
-        lastPutContractChangeDate = OptUtil.getNowCalendar();
+        lastPutContractChangeDate = HtrUtil.getNowCalendar();
     }
     
     public boolean isPutContractChangeTimoutElapsed() {

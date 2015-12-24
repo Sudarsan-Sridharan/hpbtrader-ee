@@ -1,18 +1,13 @@
 package com.highpowerbear.hpbtrader.options.common;
 
-import com.highpowerbear.hpbtrader.options.entity.Trade;
-import com.highpowerbear.hpbtrader.options.ibclient.IbApiEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
 
-import java.awt.*;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.List;
-import java.util.logging.Level;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Logger;
 
 /**
@@ -25,52 +20,11 @@ public class OptUtil {
     private static DateFormat expiryFormatFull = new SimpleDateFormat("yyyyMMdd");
     private static DateFormat expiryFormatShort = new SimpleDateFormat("yyyyMM");
     
-    public static Calendar getNowCalendar() {
-        return Calendar.getInstance(TimeZone.getTimeZone(OptDefinitions.TIMEZONE));
-    }
-    
-    public static Calendar getYesterdayCalendar() {
-        Calendar cal = getNowCalendar();
-        cal.add(Calendar.DAY_OF_MONTH, -1);
-        return cal;
-    }
-    
-    public static String getLocalIp() {
-        String ip = "localhost";
-        try {
-            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            while (interfaces.hasMoreElements()) {
-                NetworkInterface iface = interfaces.nextElement();
-                // filters out 127.0.0.1 and inactive interfaces
-                if (iface.isLoopback() || !iface.isUp())
-                    continue;
-
-                Enumeration<InetAddress> addresses = iface.getInetAddresses();
-                while(addresses.hasMoreElements()) {
-                    InetAddress addr = addresses.nextElement();
-                    ip = addr.getHostAddress();
-                    //Repository.getInstance().getLogger().info(iface.getDisplayName() + " " + ip);
-                }
-            }
-        } catch (SocketException e) {
-            //Repository.getInstance().getLogger().error(e.getMessage());
-        }
-        return ip;
-    }
-    
     public static String printIbContract(com.ib.client.Contract contract) {
         return  contract.m_localSymbol + ", " + contract.m_symbol + ", " + contract.m_secType + ", " + contract.m_expiry + ", " + contract.m_right + ", " + 
                 contract.m_exchange + ", " + contract.m_currency + ", " + contract.m_multiplier + ", " +  contract.m_includeExpired;
     }
-    
-    public static void waitMilliseconds(int milliseconds) {
-        try {
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            l.log(Level.SEVERE, "Error", e);
-        }
-    }
-    
+
     public static Double roundDownToHalf(Double d) {
         return Math.floor(d * 2) / 2;
     }
@@ -109,7 +63,7 @@ public class OptUtil {
     }
     
     public static Calendar expiryFullToCalendar(String expiry) {
-        Calendar cal = getNowCalendar();
+        Calendar cal = HtrUtil.getNowCalendar();
         try {
             Date date = expiryFormatFull.parse(expiry);
             cal.setTime(date);
@@ -120,7 +74,7 @@ public class OptUtil {
     }
     
     public static Calendar getTodayMidnightCalendar() {
-        Calendar cal = getNowCalendar();
+        Calendar cal = HtrUtil.getNowCalendar();
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
@@ -136,24 +90,13 @@ public class OptUtil {
         return expiryFormatShort.format(expiry.getTime());
     }
     
-    public static Color toDarkerColor(Color color) {
-        if (color == null) {
-            return null;
-        }
-        int r = color.getRed();
-        int g = color.getGreen();
-        int b = color.getBlue();
-        int x = 10;
-        return new Color((r >= x ? r - x : 0), (g >= x ? g - x : 0), (b >= 3*x ? b - 3*x : 0));
-    }
-    
      public static com.ib.client.Contract constructIbContract(String localSymbol) {
         com.ib.client.Contract ibContract = new com.ib.client.Contract();
         ibContract.m_localSymbol = localSymbol;
         ibContract.m_symbol = (isOptionSymbol(localSymbol) ? null : localSymbol);
-        ibContract.m_secType = (isOptionSymbol(localSymbol) ? IbApiEnums.SecType.OPT.getName() : IbApiEnums.SecType.STK.getName());
-        ibContract.m_exchange = IbApiEnums.Exchange.SMART.getName();
-        ibContract.m_currency = IbApiEnums.Currency.USD.getName();
+        ibContract.m_secType = (isOptionSymbol(localSymbol) ? HtrEnums.SecType.OPT.name() : HtrEnums.SecType.STK.name());
+        ibContract.m_exchange = HtrEnums.Exchange.SMART.name();
+        ibContract.m_currency = HtrEnums.Currency.USD.name();
         return ibContract;
      }
      
@@ -168,19 +111,5 @@ public class OptUtil {
     
     public static Double abs (Double number) {
         return (number != null ? Math.abs(number) : null);
-    }
-    
-    public static String printTrades(List<Trade> trades) {
-        if (trades == null || trades.isEmpty()) {
-            return "active trade=" + OptDefinitions.NONE;
-        }
-        StringBuilder sb = new StringBuilder();
-        for (Trade t : trades) {
-            sb.append("active trade=").append(t.print()).append(",");
-        }
-        if (sb.lastIndexOf(",") > 0 ) {
-            sb.deleteCharAt(sb.lastIndexOf(","));
-        }
-        return sb.toString();
     }
 }

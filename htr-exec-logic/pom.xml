@@ -11,4 +11,11 @@
 
     <artifactId>htr-exec-logic</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.highpowerbear</groupId>
+            <artifactId>htr-shared-lib</artifactId>
+            <version>3.0</version>
+        </dependency>
+    </dependencies>
 </project>

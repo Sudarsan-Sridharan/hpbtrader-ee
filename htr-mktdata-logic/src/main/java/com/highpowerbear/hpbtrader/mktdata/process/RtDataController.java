@@ -4,7 +4,7 @@ import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
 import com.highpowerbear.hpbtrader.mktdata.ibclient.IbController;
 import com.highpowerbear.hpbtrader.mktdata.model.RealtimeData;
 import com.highpowerbear.hpbtrader.mktdata.websocket.WebsocketController;
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.Series;
 import com.ib.client.TickType;
 

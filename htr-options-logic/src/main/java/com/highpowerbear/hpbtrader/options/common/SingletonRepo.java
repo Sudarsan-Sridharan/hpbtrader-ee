@@ -1,9 +1,9 @@
 package com.highpowerbear.hpbtrader.options.common;
 
 import com.highpowerbear.hpbtrader.options.data.OptData;
-import com.highpowerbear.hpbtrader.options.persistence.OptDao;
 import com.highpowerbear.hpbtrader.options.data.DataRetriever;
 import com.highpowerbear.hpbtrader.options.execution.SignalProcessor;
+import com.highpowerbear.hpbtrader.shared.persistence.OptionDao;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -27,14 +27,14 @@ public class SingletonRepo {
         return srepo;
     }
 
-    @Inject private OptDao optDao;
+    @Inject private OptionDao optionDao;
     @Inject private SignalProcessor signalProcessor;
     @Inject private DataRetriever dataRetriever;
     @Inject private OptData optData;
     @Inject private EventBroker eventBroker;
 
-    public OptDao getOptDao() {
-        return optDao;
+    public OptionDao getOptionDao() {
+        return optionDao;
     }
 
     public SignalProcessor getSignalProcessor() {

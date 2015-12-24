@@ -22,7 +22,7 @@ public class LinService {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Path("ibaccounts/{accountId}/connect/{connect}")
-    public IbAccount connecIbAccount(@PathParam("accountId") String accountId, @PathParam("connect") Boolean connect) {
+    public IbAccount connectIbAccount(@PathParam("accountId") String accountId, @PathParam("connect") Boolean connect) {
         return null;
     }
 

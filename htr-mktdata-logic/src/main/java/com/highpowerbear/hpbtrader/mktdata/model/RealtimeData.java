@@ -1,8 +1,8 @@
 package com.highpowerbear.hpbtrader.mktdata.model;
 
 import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.common.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.Series;
 import com.ib.client.TickType;
@@ -53,19 +53,19 @@ public class RealtimeData {
         switch(field) {
             case TickType.BID:
                 setValueStatus(bid, price);
-                message += contractClassName + "," + bid.getFieldName() + "," + bid.getValue() + "," + bid.getStatus().getColorClass();
+                message += contractClassName + "," + bid.getFieldName() + "," + bid.getValue() + "," + bid.getStatus().getCssClass();
                 break;
             case TickType.ASK:
                 setValueStatus(ask, price);
-                message += contractClassName + "," + ask.getFieldName() + "," + ask.getValue() + "," + ask.getStatus().getColorClass();
+                message += contractClassName + "," + ask.getFieldName() + "," + ask.getValue() + "," + ask.getStatus().getCssClass();
                 break;
             case TickType.LAST:
                 setValueStatus(last, price);
-                message += contractClassName + "," + last.getFieldName() + "," + last.getValue() + "," + last.getStatus().getColorClass();
+                message += contractClassName + "," + last.getFieldName() + "," + last.getValue() + "," + last.getStatus().getCssClass();
                 break;
             case TickType.CLOSE:
                 setValueStatus(close, price);
-                message += contractClassName + "," + close.getFieldName() + "," + close.getValue() + "," + close.getStatus().getColorClass();
+                message += contractClassName + "," + close.getFieldName() + "," + close.getValue() + "," + close.getStatus().getCssClass();
                 break;
         }
         return (message.equals("rt,") ? null : message);
@@ -76,19 +76,19 @@ public class RealtimeData {
         switch(field) {
             case TickType.BID_SIZE:
                 setValueStatus(bidSize, size);
-                message += contractClassName + "," + bidSize.getFieldName() + "," + bidSize.getValue() + "," + bidSize.getStatus().getColorClass();
+                message += contractClassName + "," + bidSize.getFieldName() + "," + bidSize.getValue() + "," + bidSize.getStatus().getCssClass();
                 break;
             case TickType.ASK_SIZE:
                 setValueStatus(askSize, size);
-                message += contractClassName + "," + askSize.getFieldName() + "," + askSize.getValue() + "," + askSize.getStatus().getColorClass();
+                message += contractClassName + "," + askSize.getFieldName() + "," + askSize.getValue() + "," + askSize.getStatus().getCssClass();
                 break;
             case TickType.LAST_SIZE:
                 setValueStatus(lastSize, size);
-                message += contractClassName + "," + lastSize.getFieldName() + "," + lastSize.getValue() + "," + lastSize.getStatus().getColorClass();
+                message += contractClassName + "," + lastSize.getFieldName() + "," + lastSize.getValue() + "," + lastSize.getStatus().getCssClass();
                 break;
             case TickType.VOLUME:
                 setValueStatus(volume, size);
-                message += contractClassName + "," + volume.getFieldName() + "," + volume.getValue() + "," + volume.getStatus().getColorClass();
+                message += contractClassName + "," + volume.getFieldName() + "," + volume.getValue() + "," + volume.getStatus().getCssClass();
                 break;
         }
         return (message.equals("rt,") ? null : message);
@@ -103,7 +103,7 @@ public class RealtimeData {
             double price = ((ask.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
         }
-        message += contractClassName + "," + changePct.getFieldName() + "," + getChangePctStr() + "," + changePct.getStatus().getColorClass();
+        message += contractClassName + "," + changePct.getFieldName() + "," + getChangePctStr() + "," + changePct.getStatus().getCssClass();
         return message;
     }
 
