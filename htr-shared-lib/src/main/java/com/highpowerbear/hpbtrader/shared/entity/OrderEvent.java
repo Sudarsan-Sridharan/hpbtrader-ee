@@ -38,7 +38,6 @@ public class OrderEvent implements Serializable {
         OrderEvent that = (OrderEvent) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
-
     }
 
     @Override

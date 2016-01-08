@@ -68,7 +68,6 @@ public class Series implements Serializable {
         Series series = (Series) o;
 
         return !(id != null ? !id.equals(series.id) : series.id != null);
-
     }
 
     @Override

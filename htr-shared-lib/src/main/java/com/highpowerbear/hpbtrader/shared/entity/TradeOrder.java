@@ -33,7 +33,6 @@ public class TradeOrder implements Serializable {
         TradeOrder that = (TradeOrder) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
-
     }
 
     @Override

@@ -146,7 +146,6 @@ public class Strategy implements Serializable {
         Strategy strategy = (Strategy) o;
 
         return !(id != null ? !id.equals(strategy.id) : strategy.id != null);
-
     }
 
     @Override

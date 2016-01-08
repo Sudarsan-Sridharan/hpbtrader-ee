@@ -52,7 +52,6 @@ public class TradeLog implements Serializable {
         TradeLog tradeLog = (TradeLog) o;
 
         return !(id != null ? !id.equals(tradeLog.id) : tradeLog.id != null);
-
     }
 
     @Override

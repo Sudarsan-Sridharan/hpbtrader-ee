@@ -185,7 +185,6 @@ public class Trade implements Serializable {
         Trade trade = (Trade) o;
 
         return !(id != null ? !id.equals(trade.id) : trade.id != null);
-
     }
 
     @Override

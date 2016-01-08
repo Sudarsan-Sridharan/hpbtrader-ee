@@ -114,7 +114,6 @@ public class IbOrder implements Serializable {
         IbOrder ibOrder = (IbOrder) o;
 
         return !(id != null ? !id.equals(ibOrder.id) : ibOrder.id != null);
-
     }
 
     @Override

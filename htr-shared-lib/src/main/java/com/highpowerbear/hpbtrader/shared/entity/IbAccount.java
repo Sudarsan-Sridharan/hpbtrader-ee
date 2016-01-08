@@ -35,7 +35,6 @@ public class IbAccount {
         IbAccount ibAccount = (IbAccount) o;
 
         return !(accountId != null ? !accountId.equals(ibAccount.accountId) : ibAccount.accountId != null);
-
     }
 
     @Override

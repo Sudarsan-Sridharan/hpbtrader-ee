@@ -69,7 +69,6 @@ public class Bar implements Serializable {
         Bar bar = (Bar) o;
 
         return !(id != null ? !id.equals(bar.id) : bar.id != null);
-
     }
 
     @Override

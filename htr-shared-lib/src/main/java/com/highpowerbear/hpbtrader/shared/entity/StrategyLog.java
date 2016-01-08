@@ -55,7 +55,6 @@ public class StrategyLog  implements Serializable {
         StrategyLog that = (StrategyLog) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
-
     }
 
     @Override

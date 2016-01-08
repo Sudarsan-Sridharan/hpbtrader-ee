@@ -34,7 +34,6 @@ public class OptionContract implements Serializable {
         OptionContract that = (OptionContract) o;
 
         return !(optionSymbol != null ? !optionSymbol.equals(that.optionSymbol) : that.optionSymbol != null);
-
     }
 
     @Override
