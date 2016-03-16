@@ -1,12 +1,11 @@
 package com.highpowerbear.hpbtrader.mktdata.rest;
 
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
-import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
-import com.highpowerbear.hpbtrader.shared.entity.Bar;
-import com.highpowerbear.hpbtrader.shared.entity.Series;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.entity.DataBar;
+import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 import com.highpowerbear.hpbtrader.shared.model.RestList;
-import com.highpowerbear.hpbtrader.shared.persistence.BarDao;
-import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
+import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -23,18 +22,17 @@ import java.util.List;
 public class BarService {
 
     @Inject private HistDataController histDataController;
-    @Inject private SeriesDao seriesDao;
-    @Inject private BarDao barDao;
+    @Inject private DataSeriesDao dataSeriesDao;
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Path("series/{seriesId}/backfill")
     public Response backfillBars(@PathParam("seriesId") Integer seriesId) {
-        Series series = seriesDao.findSeries(seriesId);
-        if (series == null) {
+        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
+        if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        histDataController.backfill(series);
+        histDataController.backfill(dataSeries);
         return Response.ok().build();
     }
 
@@ -42,25 +40,25 @@ public class BarService {
     @Path("series/{seriesId}/bars")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBars(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
-        Series series = seriesDao.findSeries(seriesId);
-        if (series == null) {
+        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
+        if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        List<Bar> bars = barDao.getBars(series, numBars);
-        return Response.ok(new RestList<>(barDao.getBars(series, numBars), (long) bars.size())).build();
+        List<DataBar> dataBars = dataSeriesDao.getBars(dataSeries, numBars);
+        return Response.ok(new RestList<>(dataSeriesDao.getBars(dataSeries, numBars), (long) dataBars.size())).build();
     }
 
     @GET
     @Path("series/{seriesId}/pagedbars")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPagedBars(@PathParam("seriesId") Integer seriesId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        Series series = seriesDao.findSeries(seriesId);
-        if (series == null) {
+        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
+        if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         start = (start == null ? 0 : start);
-        limit = (limit == null ? HtrSettings.JPA_MAX_RESULTS : limit);
-        return Response.ok(new RestList<>(barDao.getPagedBars(series, start, limit), barDao.getNumBars(series))).build();
+        limit = (limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit);
+        return Response.ok(new RestList<>(dataSeriesDao.getPagedBars(dataSeries, start, limit), dataSeriesDao.getNumBars(dataSeries))).build();
     }
 
 }

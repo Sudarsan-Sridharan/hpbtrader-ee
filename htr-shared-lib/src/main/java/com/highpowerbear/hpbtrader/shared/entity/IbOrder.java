@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.entity;
 
-import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -91,8 +91,8 @@ public class IbOrder implements Serializable {
     }
 
     public String getDescription() {
-        Series series = strategy.getSeries();
-        return series.getSymbol() + ", " + series.getInterval().getDisplayName() + ", " +  strategy.getStrategyType().getDisplayName() + ": " + orderAction.toString();
+        DataSeries dataSeries = strategy.getDataSeries();
+        return dataSeries.getSymbol() + ", " + dataSeries.getInterval().getDisplayName() + ", " +  strategy.getStrategyType().getDisplayName() + ": " + orderAction.toString();
     }
 
     public com.ib.client.Order createIbOrder() {

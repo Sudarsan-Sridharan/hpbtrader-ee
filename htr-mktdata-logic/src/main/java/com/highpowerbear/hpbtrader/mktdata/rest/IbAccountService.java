@@ -2,13 +2,12 @@ package com.highpowerbear.hpbtrader.mktdata.rest;
 
 import com.highpowerbear.hpbtrader.mktdata.ibclient.IbController;
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
-import com.highpowerbear.hpbtrader.shared.defintions.HtrConstants;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.model.RestList;
-import com.highpowerbear.hpbtrader.shared.persistence.BarDao;
 import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
-import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
+import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -26,8 +25,7 @@ import java.util.List;
 public class IbAccountService {
 
     @Inject private TiCalculator tiCalculator;
-    @Inject private SeriesDao seriesDao;
-    @Inject private BarDao barDao;
+    @Inject private DataSeriesDao dataSeriesDao;
     @Inject private IbAccountDao ibAccountDao;
     @Inject private IbController ibController;
     @Inject private HistDataController histDataController;
@@ -65,7 +63,7 @@ public class IbAccountService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         ibController.connect(ibAccount);
-        HtrUtil.waitMilliseconds(HtrConstants.ONE_SECOND);
+        HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND);
         ibAccount.setIbConnection(ibController.getIbConnectionMap().get(ibAccount));
         ibAccount.getIbConnection().setIsConnected(ibController.isConnected(ibAccount));
         return Response.ok(ibAccount).build();
@@ -80,7 +78,7 @@ public class IbAccountService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         ibController.disconnect(ibAccount);
-        HtrUtil.waitMilliseconds(HtrConstants.ONE_SECOND);
+        HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND);
         ibAccount.setIbConnection(ibController.getIbConnectionMap().get(ibAccount));
         ibAccount.getIbConnection().setIsConnected(ibController.isConnected(ibAccount));
         return Response.ok(ibAccount).build();

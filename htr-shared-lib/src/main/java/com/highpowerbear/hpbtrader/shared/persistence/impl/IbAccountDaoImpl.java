@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.persistence.impl;
 
-import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
 
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  */
 @Stateless
 public class IbAccountDaoImpl implements IbAccountDao {
-    private static final Logger l = Logger.getLogger(HtrSettings.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @PersistenceContext
     private EntityManager em;

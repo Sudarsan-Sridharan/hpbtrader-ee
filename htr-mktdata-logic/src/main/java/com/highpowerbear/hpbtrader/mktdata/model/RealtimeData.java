@@ -1,17 +1,17 @@
 package com.highpowerbear.hpbtrader.mktdata.model;
 
 import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
-import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
-import com.highpowerbear.hpbtrader.shared.entity.Series;
+import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 import com.ib.client.TickType;
 
 /**
  * Created by rkolar on 5/23/14.
  */
 public class RealtimeData {
-    private Series series;
+    private DataSeries dataSeries;
     private String contractClassName;
     private int ibRequestId;
 
@@ -29,10 +29,10 @@ public class RealtimeData {
 
     private RealtimeField<Integer> volume;
 
-    public RealtimeData(Series series) {
-        this.series = series;
-        this.contractClassName = (HtrUtil.removeDot(series.getSymbol()) + "-" + series.getCurrency()).toLowerCase();
-        this.ibRequestId = series.getId() * HtrSettings.IB_REQUEST_MULT + 10;
+    public RealtimeData(DataSeries dataSeries) {
+        this.dataSeries = dataSeries;
+        this.contractClassName = (HtrUtil.removeDot(dataSeries.getSymbol()) + "-" + dataSeries.getCurrency()).toLowerCase();
+        this.ibRequestId = dataSeries.getId() * HtrDefinitions.IB_REQUEST_MULT + 10;
         initFields();
     }
 
@@ -96,10 +96,10 @@ public class RealtimeData {
 
     public String createChangePctUpdateMsg() {
         String message = "rt,";
-        if (!HtrEnums.SecType.CASH.equals(series.getSecType()) && !MktDefinitions.INVALID_PRICE.equals(last.getValue()) && !MktDefinitions.INVALID_PRICE.equals(close.getValue())) {
+        if (!HtrEnums.SecType.CASH.equals(dataSeries.getSecType()) && !MktDefinitions.INVALID_PRICE.equals(last.getValue()) && !MktDefinitions.INVALID_PRICE.equals(close.getValue())) {
             double price = ((last.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
-        } else if (HtrEnums.SecType.CASH.equals(series.getSecType()) && !MktDefinitions.INVALID_PRICE.equals(ask.getValue()) && !MktDefinitions.INVALID_PRICE.equals(close.getValue())) {
+        } else if (HtrEnums.SecType.CASH.equals(dataSeries.getSecType()) && !MktDefinitions.INVALID_PRICE.equals(ask.getValue()) && !MktDefinitions.INVALID_PRICE.equals(close.getValue())) {
             double price = ((ask.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
         }
@@ -122,8 +122,8 @@ public class RealtimeData {
         v.setValue(price);
     }
 
-    public Series getSeries() {
-        return series;
+    public DataSeries getDataSeries() {
+        return dataSeries;
     }
 
     public String getContractClassName() {

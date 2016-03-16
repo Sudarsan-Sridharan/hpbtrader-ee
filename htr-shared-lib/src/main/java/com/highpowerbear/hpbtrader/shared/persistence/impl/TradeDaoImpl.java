@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.shared.persistence.impl;
 
-import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.entity.Strategy;
@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  */
 @Stateless
 public class TradeDaoImpl implements TradeDao {
-    private static final Logger l = Logger.getLogger(HtrSettings.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @PersistenceContext
     private EntityManager em;
