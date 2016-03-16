@@ -1,8 +1,8 @@
 package com.highpowerbear.hpbtrader.shared.persistence.impl;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
-import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.OptionContract;
 import com.highpowerbear.hpbtrader.shared.persistence.OptionContractDao;
 
@@ -15,9 +15,9 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 /**
- * Created by robertk on 24.12.2015.
+ * Created by robertk on 16.3.2016.
  */
-public class Option1ContractDaoImpl implements OptionContractDao {
+public class OptionContractDaoImpl implements OptionContractDao {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @PersistenceContext
