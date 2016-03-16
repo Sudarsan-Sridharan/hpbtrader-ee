@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.entity;
 
-import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,7 +24,7 @@ public class Strategy implements Serializable {
     // cannot be changed
     private Integer id;
     @ManyToOne
-    private Series series;
+    private DataSeries dataSeries;
     @ManyToOne
     private IbAccount ibAccount;
     @Enumerated(EnumType.STRING)
@@ -87,7 +87,7 @@ public class Strategy implements Serializable {
             return null;
         }
         otherStrategy.setId(id);
-        otherStrategy.setSeries(series);
+        otherStrategy.setDataSeries(dataSeries);
         otherStrategy.setStrategyType(strategyType);
         otherStrategy.setActive(active);
         otherStrategy.setStrategyMode(strategyMode);
@@ -161,12 +161,12 @@ public class Strategy implements Serializable {
         this.id = id;
     }
 
-    public Series getSeries() {
-        return series;
+    public DataSeries getDataSeries() {
+        return dataSeries;
     }
 
-    public void setSeries(Series series) {
-        this.series = series;
+    public void setDataSeries(DataSeries dataSeries) {
+        this.dataSeries = dataSeries;
     }
 
     public IbAccount getIbAccount() {

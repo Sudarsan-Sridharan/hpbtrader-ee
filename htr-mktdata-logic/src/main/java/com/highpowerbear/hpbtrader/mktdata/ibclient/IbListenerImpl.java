@@ -4,7 +4,7 @@ import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
 import com.highpowerbear.hpbtrader.mktdata.common.SingletonRepo;
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
 import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
-import com.highpowerbear.hpbtrader.shared.entity.Bar;
+import com.highpowerbear.hpbtrader.shared.entity.DataBar;
 import com.highpowerbear.hpbtrader.shared.ibclient.AbstractIbListener;
 
 /**
@@ -22,16 +22,16 @@ public class IbListenerImpl extends AbstractIbListener {
         if (date.startsWith(MktDefinitions.FINISH)) {
             histDataController.reqFinished(reqId);
         } else {
-            Bar bar = new Bar();
-            bar.setqOpen(open);
-            bar.setHigh(high);
-            bar.setLow(low);
-            bar.setqClose(close);
-            bar.setVolume(volume == -1 ? 0 : volume);
-            bar.setCount(count);
-            bar.setWap(WAP);
-            bar.setHasGaps(hasGaps);
-            histDataController.barReceived(reqId, date, bar);
+            DataBar dataBar = new DataBar();
+            dataBar.setqOpen(open);
+            dataBar.setHigh(high);
+            dataBar.setLow(low);
+            dataBar.setqClose(close);
+            dataBar.setVolume(volume == -1 ? 0 : volume);
+            dataBar.setCount(count);
+            dataBar.setWap(WAP);
+            dataBar.setHasGaps(hasGaps);
+            histDataController.barReceived(reqId, date, dataBar);
         }
     }
 

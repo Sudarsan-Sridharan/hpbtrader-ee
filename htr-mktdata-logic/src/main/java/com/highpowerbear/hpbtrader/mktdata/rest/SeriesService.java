@@ -1,8 +1,8 @@
 package com.highpowerbear.hpbtrader.mktdata.rest;
 
-import com.highpowerbear.hpbtrader.shared.entity.Series;
+import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 import com.highpowerbear.hpbtrader.shared.model.RestList;
-import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
+import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -20,14 +20,14 @@ import java.util.List;
 @Path("series")
 public class SeriesService {
 
-    @Inject private SeriesDao seriesDao;
+    @Inject private DataSeriesDao dataSeriesDao;
 
     @GET
     @Path("series")
     @Produces(MediaType.APPLICATION_JSON)
-    public RestList<Series> getSeries(@QueryParam("disabledToo") boolean disabledToo) {
-        List<Series> seriesList = seriesDao.getAllSeries(disabledToo);
-        return new RestList<>(seriesList, (long) seriesList.size());
+    public RestList<DataSeries> getSeries(@QueryParam("disabledToo") boolean disabledToo) {
+        List<DataSeries> dataSeriesList = dataSeriesDao.getAllSeries(disabledToo);
+        return new RestList<>(dataSeriesList, (long) dataSeriesList.size());
     }
 
     // TODO add series, remove series, move series up/down

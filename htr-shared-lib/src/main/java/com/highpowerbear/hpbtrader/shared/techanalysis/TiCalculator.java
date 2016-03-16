@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.shared.techanalysis;
 
-import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
-import com.highpowerbear.hpbtrader.shared.entity.Bar;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.entity.DataBar;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Ema;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Macd;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Stochastics;
@@ -18,65 +18,65 @@ import java.util.List;
 @Named
 @ApplicationScoped
 public class TiCalculator {
-    public List<Ema> calculateEma(List<Bar> bars, Integer emaPeriod) {
-        if (bars.size() < HtrSettings.BARS_REQUIRED || emaPeriod > HtrSettings.MAX_EMA_PERIOD) {
+    public List<Ema> calculateEma(List<DataBar> dataBars, Integer emaPeriod) {
+        if (dataBars.size() < HtrDefinitions.BARS_REQUIRED || emaPeriod > HtrDefinitions.MAX_EMA_PERIOD) {
             return null;
         }
-        return doCalculateEma(bars, emaPeriod);
+        return doCalculateEma(dataBars, emaPeriod);
     }
     
-    public List<Stochastics> calculateStoch(List<Bar> bars) {
-        if (bars.size() < HtrSettings.BARS_REQUIRED) {
+    public List<Stochastics> calculateStoch(List<DataBar> dataBars) {
+        if (dataBars.size() < HtrDefinitions.BARS_REQUIRED) {
             return null;
         }
-        return doCalculateStoch(bars, 14, 3, 3);
+        return doCalculateStoch(dataBars, 14, 3, 3);
     }
     
-    public List<Macd> calculateMacd(List<Bar> bars) {
-        if (bars.size() < HtrSettings.BARS_REQUIRED) {
+    public List<Macd> calculateMacd(List<DataBar> dataBars) {
+        if (dataBars.size() < HtrDefinitions.BARS_REQUIRED) {
             return null;
         }
-        return doCalculateMacd(bars, 12, 26, 9);
+        return doCalculateMacd(dataBars, 12, 26, 9);
     }
     
-    private List<Ema> doCalculateEma(List<Bar> bars, int period) {
+    private List<Ema> doCalculateEma(List<DataBar> dataBars, int period) {
         List<Ema> emaList = new ArrayList<>();
         double sma = 0d;
         for (int i = 0; i < period; i++) {
-            sma += bars.get(i).getqClose();
+            sma += dataBars.get(i).getqClose();
         }
         sma = sma/(double) period;
         double ema = sma;
         double mult = 2d/((double) period +  1d);
-        for (int i = period; i < bars.size(); i++) {
-            ema = (bars.get(i).getqClose() - ema) * mult + ema;
-            if (i >= HtrSettings.BARS_REQUIRED) {
-                Long timeInMillis = bars.get(i).getTimeInMillisBarClose();
+        for (int i = period; i < dataBars.size(); i++) {
+            ema = (dataBars.get(i).getqClose() - ema) * mult + ema;
+            if (i >= HtrDefinitions.BARS_REQUIRED) {
+                Long timeInMillis = dataBars.get(i).getTimeInMillisBarClose();
                 emaList.add(new Ema(timeInMillis, ema));
             }
         }
         return emaList;
     }
     
-    private List<Stochastics> doCalculateStoch(List<Bar> bars, int lookbackPeriod, int smaKPeriod, int smaDPeriod) {
+    private List<Stochastics> doCalculateStoch(List<DataBar> dataBars, int lookbackPeriod, int smaKPeriod, int smaDPeriod) {
         List<Stochastics> stochList = new ArrayList<>();
         double[] kFast = new double[smaKPeriod];
         double[] k = new double[smaDPeriod];
         double d;
         int currentBarIndex = lookbackPeriod - 1;
-        while (currentBarIndex < bars.size()) {
-            double highestHigh = bars.get(currentBarIndex).getHigh();
-            double lowestLow = bars.get(currentBarIndex).getLow();
+        while (currentBarIndex < dataBars.size()) {
+            double highestHigh = dataBars.get(currentBarIndex).getHigh();
+            double lowestLow = dataBars.get(currentBarIndex).getLow();
             for (int i = currentBarIndex; i >= currentBarIndex - lookbackPeriod + 1; i--) {
-                if (bars.get(i).getHigh() > highestHigh) {
-                    highestHigh = bars.get(i).getHigh();
+                if (dataBars.get(i).getHigh() > highestHigh) {
+                    highestHigh = dataBars.get(i).getHigh();
                 }
-                if (bars.get(i).getLow() < lowestLow) {
-                    lowestLow = bars.get(i).getLow();
+                if (dataBars.get(i).getLow() < lowestLow) {
+                    lowestLow = dataBars.get(i).getLow();
                 }
             }
             System.arraycopy(kFast, 1, kFast, 0, smaKPeriod - 1);
-            double currentBar = bars.get(currentBarIndex).getqClose();
+            double currentBar = dataBars.get(currentBarIndex).getqClose();
             kFast[smaKPeriod - 1] =  (currentBar - lowestLow)/(highestHigh - lowestLow) * 100d;
             System.arraycopy(k, 1, k, 0, smaDPeriod - 1);
             k[smaDPeriod - 1] = 0d;
@@ -89,8 +89,8 @@ public class TiCalculator {
                 d += k[i];
             }
             d = d/(double) smaDPeriod;
-            if (currentBarIndex >= HtrSettings.BARS_REQUIRED) {
-                Long timeInMillis = bars.get(currentBarIndex).getTimeInMillisBarClose();
+            if (currentBarIndex >= HtrDefinitions.BARS_REQUIRED) {
+                Long timeInMillis = dataBars.get(currentBarIndex).getTimeInMillisBarClose();
                 stochList.add(new Stochastics(timeInMillis, k[smaDPeriod - 1], d));
             }
             currentBarIndex++;
@@ -98,7 +98,7 @@ public class TiCalculator {
         return stochList;
     }
     
-    private List<Macd> doCalculateMacd(List<Bar> bars, int p1, int p2, int p3) {
+    private List<Macd> doCalculateMacd(List<DataBar> dataBars, int p1, int p2, int p3) {
         List<Macd> macdList = new ArrayList<>();
         double macdEma1 = 0d, macdEma2 = 0d;
         double macdL, macdSl = 0d, macdH;
@@ -106,31 +106,31 @@ public class TiCalculator {
         double m2 = 2d/((double) p2 +  1d);
         double m3 = 2d/((double) p3 +  1d);
         for (int i = 0; i < p1; i++) {
-            macdEma1 += bars.get(i).getqClose();
+            macdEma1 += dataBars.get(i).getqClose();
         }
         macdEma1 = macdEma1/(double) p1;
         for (int i = p1; i < p2; i++) {
-            macdEma1 = (bars.get(i).getqClose() - macdEma1) * m1 + macdEma1;
+            macdEma1 = (dataBars.get(i).getqClose() - macdEma1) * m1 + macdEma1;
         }
         for (int i = 0; i < p2; i++) {
-            macdEma2 += bars.get(i).getqClose();
+            macdEma2 += dataBars.get(i).getqClose();
         }
         macdEma2 = macdEma2/(double) p2;
         for (int i = p2; i < p2 + p3; i++) {
-            macdEma1 = (bars.get(i).getqClose() - macdEma1) * m1 + macdEma1;
-            macdEma2 = (bars.get(i).getqClose() - macdEma2) * m2 + macdEma2;
+            macdEma1 = (dataBars.get(i).getqClose() - macdEma1) * m1 + macdEma1;
+            macdEma2 = (dataBars.get(i).getqClose() - macdEma2) * m2 + macdEma2;
             macdL = macdEma1 - macdEma2;
             macdSl += macdL;
         }
         macdSl = macdSl/(double) p3;
-        for (int i = p3; i < bars.size(); i ++) {
-            macdEma1 = (bars.get(i).getqClose() - macdEma1) * m1 + macdEma1;
-            macdEma2 = (bars.get(i).getqClose() - macdEma2) * m2 + macdEma2;
+        for (int i = p3; i < dataBars.size(); i ++) {
+            macdEma1 = (dataBars.get(i).getqClose() - macdEma1) * m1 + macdEma1;
+            macdEma2 = (dataBars.get(i).getqClose() - macdEma2) * m2 + macdEma2;
             macdL = macdEma1 - macdEma2;
             macdSl = (macdL - macdSl) * m3 + macdSl;
             macdH = macdL - macdSl;
-            if (i >= HtrSettings.BARS_REQUIRED) {
-                Long timeInMillis = bars.get(i).getTimeInMillisBarClose();
+            if (i >= HtrDefinitions.BARS_REQUIRED) {
+                Long timeInMillis = dataBars.get(i).getTimeInMillisBarClose();
                 macdList.add(new Macd(timeInMillis, macdL, macdSl,macdH));
             }
         }

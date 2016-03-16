@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.exec.ibclient;
 
 import com.highpowerbear.hpbtrader.exec.common.SingletonRepo;
-import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.ibclient.AbstractIbListener;

@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.persistence.impl;
 
-import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  */
 @Stateless
 public class StrategyDaoImpl implements StrategyDao {
-    private static final Logger l = Logger.getLogger(HtrSettings.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @PersistenceContext
     private EntityManager em;
@@ -39,9 +39,9 @@ public class StrategyDaoImpl implements StrategyDao {
     }
 
     @Override
-    public Strategy getActiveStrategy(Series series) {
+    public Strategy getActiveStrategy(DataSeries dataSeries) {
         TypedQuery<Strategy> query = em.createQuery("SELECT str FROM Strategy str WHERE str.series = :series AND str.active = :active", Strategy.class);
-        query.setParameter("series", series);
+        query.setParameter("series", dataSeries);
         query.setParameter("active", Boolean.TRUE);
         List<Strategy> strategyList = query.getResultList();
         return strategyList.get(0);
@@ -63,7 +63,7 @@ public class StrategyDaoImpl implements StrategyDao {
 
     @Override
     public void deleteStrategy(Strategy strategy) {
-        l.info("START deleteStrategy " + strategy.getSeries().getSymbol() + ", " + strategy.getSeries().getInterval().getDisplayName() + ", " + strategy.getStrategyType().getDisplayName());
+        l.info("START deleteStrategy " + strategy.getDataSeries().getSymbol() + ", " + strategy.getDataSeries().getInterval().getDisplayName() + ", " + strategy.getStrategyType().getDisplayName());
         strategy = em.find(Strategy.class, strategy.getId());
         Query q;
         for (Trade trade : tradeDao.getTradesByStrategy(strategy, true)) {
@@ -81,7 +81,7 @@ public class StrategyDaoImpl implements StrategyDao {
             em.remove(ibOrder);
         }
         em.remove(strategy);
-        l.info("END deleteStrategy " + strategy.getSeries().getSymbol() + ", " + strategy.getSeries().getInterval().getDisplayName() + ", " + strategy.getStrategyType().getDisplayName());
+        l.info("END deleteStrategy " + strategy.getDataSeries().getSymbol() + ", " + strategy.getDataSeries().getInterval().getDisplayName() + ", " + strategy.getStrategyType().getDisplayName());
     }
 
     @Override

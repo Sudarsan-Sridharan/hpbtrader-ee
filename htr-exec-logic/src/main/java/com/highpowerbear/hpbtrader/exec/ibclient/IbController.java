@@ -2,9 +2,8 @@ package com.highpowerbear.hpbtrader.exec.ibclient;
 
 import com.highpowerbear.hpbtrader.exec.common.ExecDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
-import com.highpowerbear.hpbtrader.shared.defintions.HtrConstants;
-import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.ibclient.IbConnection;
@@ -61,8 +60,8 @@ public class IbController {
             c.setAccounts(null);
             c.setIsConnected(false);
             l.info("Connecting ibAccount " + ibAccount.print());
-            c.getClientSocket().eConnect(ibAccount.getHost(), ibAccount.getPort(), HtrSettings.IB_CONNECT_CLIENT_ID);
-            HtrUtil.waitMilliseconds(HtrConstants.ONE_SECOND);
+            c.getClientSocket().eConnect(ibAccount.getHost(), ibAccount.getPort(), HtrDefinitions.IB_CONNECT_CLIENT_ID);
+            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND);
             if (isConnected(ibAccount)) {
                 c.setIsConnected(true);
                 l.info("Sucessfully connected ibAccount " + ibAccount.print());
@@ -77,7 +76,7 @@ public class IbController {
         if (c.getClientSocket() != null && c.getClientSocket().isConnected()) {
             l.info("Disconnecting ibAccount " + ibAccount.print());
             c.getClientSocket().eDisconnect();
-            HtrUtil.waitMilliseconds(HtrConstants.ONE_SECOND);
+            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND);
             if (!isConnected(ibAccount)) {
                 l.info("Successfully disconnected ibAccount " + ibAccount.print());
                 c.clear();
@@ -120,7 +119,7 @@ public class IbController {
             return;
         }
         Integer ibOrderId = getNextValidOrderId();
-        c.getClientSocket().placeOrder(ibOrderId, ibOrder.getStrategy().getSeries().createIbContract(), ibOrder.createIbOrder());
+        c.getClientSocket().placeOrder(ibOrderId, ibOrder.getStrategy().getDataSeries().createIbContract(), ibOrder.createIbOrder());
         ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, HtrUtil.getCalendar(), null);
         ibOrder.setIbOrderId(ibOrderId);
         ibOrderDao.updateIbOrder(ibOrder);

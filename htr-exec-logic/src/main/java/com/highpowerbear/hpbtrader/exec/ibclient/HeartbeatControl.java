@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.exec.ibclient;
 
-import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
@@ -53,12 +53,12 @@ public class HeartbeatControl {
         Map<IbOrder, Integer> hm = openOrderHeartbeatMap.get(ibOrder.getStrategy().getIbAccount());
         Integer failedHeartbeatsLeft = hm.get(ibOrder);
         if (failedHeartbeatsLeft != null) {
-            hm.put(ibOrder, (failedHeartbeatsLeft < HtrSettings.MAX_ORDER_HEARTBEAT_FAILS ? failedHeartbeatsLeft + 1 : failedHeartbeatsLeft));
+            hm.put(ibOrder, (failedHeartbeatsLeft < HtrDefinitions.MAX_ORDER_HEARTBEAT_FAILS ? failedHeartbeatsLeft + 1 : failedHeartbeatsLeft));
         }
     }
 
     public void addHeartbeat(IbOrder ibOrder) {
-        openOrderHeartbeatMap.get(ibOrder.getStrategy().getIbAccount()).put(ibOrder, HtrSettings.MAX_ORDER_HEARTBEAT_FAILS);
+        openOrderHeartbeatMap.get(ibOrder.getStrategy().getIbAccount()).put(ibOrder, HtrDefinitions.MAX_ORDER_HEARTBEAT_FAILS);
     }
 
     public void removeHeartbeat(IbOrder ibOrder) {

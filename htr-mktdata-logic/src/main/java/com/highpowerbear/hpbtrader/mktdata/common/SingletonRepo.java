@@ -5,9 +5,8 @@ import com.highpowerbear.hpbtrader.mktdata.message.MqSender;
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
 import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
 import com.highpowerbear.hpbtrader.mktdata.websocket.WebsocketController;
-import com.highpowerbear.hpbtrader.shared.persistence.BarDao;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
-import com.highpowerbear.hpbtrader.shared.persistence.SeriesDao;
+import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -31,8 +30,7 @@ public class SingletonRepo {
     }
 
     @Inject private IbOrderDao ibOrderDao;
-    @Inject private SeriesDao seriesDao;
-    @Inject private BarDao barDao;
+    @Inject private DataSeriesDao dataSeriesDao;
     @Inject private MqSender mqSender;
     @Inject private IbController ibController;
     @Inject private HistDataController histDataController;
@@ -43,12 +41,8 @@ public class SingletonRepo {
         return ibOrderDao;
     }
 
-    public SeriesDao getSeriesDao() {
-        return seriesDao;
-    }
-
-    public BarDao getBarDao() {
-        return barDao;
+    public DataSeriesDao getDataSeriesDao() {
+        return dataSeriesDao;
     }
 
     public MqSender getMqSender() {

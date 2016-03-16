@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.model;
 
-import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 
 /**
  *

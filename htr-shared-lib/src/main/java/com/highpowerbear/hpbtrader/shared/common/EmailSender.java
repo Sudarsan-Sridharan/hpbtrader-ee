@@ -1,7 +1,5 @@
 package com.highpowerbear.hpbtrader.shared.common;
 
-import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
-
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
@@ -21,7 +19,7 @@ import java.util.logging.Logger;
 @Named
 @Singleton
 public class EmailSender {
-    private static final Logger l = Logger.getLogger(HtrSettings.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Resource(name = "java:/mail/ses")
     private Session mailSession;
@@ -30,11 +28,11 @@ public class EmailSender {
     public void sendEmail(String subject, String content) {
         Message msg = new MimeMessage(mailSession);
         try {
-            msg.setFrom(new InternetAddress(HtrSettings.EMAIL_FROM));
-            msg.setRecipient(Message.RecipientType.TO, new InternetAddress(HtrSettings.EMAIL_TO));
+            msg.setFrom(new InternetAddress(HtrDefinitions.EMAIL_FROM));
+            msg.setRecipient(Message.RecipientType.TO, new InternetAddress(HtrDefinitions.EMAIL_TO));
             msg.setSubject(subject);
             msg.setText(content);
-            l.info("Sending email, from=" + HtrSettings.EMAIL_FROM + ", to=" + HtrSettings.EMAIL_TO + ", subject=" + subject);
+            l.info("Sending email, from=" + HtrDefinitions.EMAIL_FROM + ", to=" + HtrDefinitions.EMAIL_TO + ", subject=" + subject);
             Transport.send(msg);
         } catch (Exception e) {
             l.log(Level.SEVERE, "Error sending email", e);

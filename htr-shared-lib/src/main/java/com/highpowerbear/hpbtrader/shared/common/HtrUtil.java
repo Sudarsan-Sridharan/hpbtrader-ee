@@ -1,12 +1,9 @@
 package com.highpowerbear.hpbtrader.shared.common;
 
-import com.highpowerbear.hpbtrader.shared.defintions.HtrSettings;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
-import java.util.logging.Level;
 
 /*
  * To change this template, choose Tools | Templates
@@ -51,11 +48,11 @@ public class HtrUtil {
     }
     
     public static Calendar getCalendar() {
-        return Calendar.getInstance(TimeZone.getTimeZone(HtrSettings.TIMEZONE));
+        return Calendar.getInstance(TimeZone.getTimeZone(HtrDefinitions.TIMEZONE));
     }
     
     public static Calendar getCalendarMonthsOffset(int offset) {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(HtrSettings.TIMEZONE));
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(HtrDefinitions.TIMEZONE));
         cal.add(Calendar.MONTH, offset);
         return cal;
     }
@@ -74,7 +71,7 @@ public class HtrUtil {
     }
 
     public static Calendar getNowCalendar() {
-        return Calendar.getInstance(TimeZone.getTimeZone(HtrSettings.TIMEZONE));
+        return Calendar.getInstance(TimeZone.getTimeZone(HtrDefinitions.TIMEZONE));
     }
 
     public static Calendar getYesterdayCalendar() {

@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.entity;
 
-import com.highpowerbear.hpbtrader.shared.defintions.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 
 import javax.persistence.*;
@@ -87,11 +87,11 @@ public class Trade implements Serializable {
         this.closePrice = closePrice;
         this.dateClosed = date;
         this.realizedPl = (isLong() ? HtrUtil.round5((this.closePrice - this.openPrice) * quantity) : HtrUtil.round5((this.openPrice - this.closePrice) * quantity));
-        if (HtrEnums.SecType.FUT.equals(this.strategy.getSeries().getSecType())) {
-            this.realizedPl *= HtrEnums.FutureMultiplier.getMultiplierBySymbol(this.strategy.getSeries().getSymbol());
+        if (HtrEnums.SecType.FUT.equals(this.strategy.getDataSeries().getSecType())) {
+            this.realizedPl *= HtrEnums.FutureMultiplier.getMultiplierBySymbol(this.strategy.getDataSeries().getSymbol());
         }
-        if (HtrEnums.SecType.OPT.equals(this.strategy.getSeries().getSecType())) {
-            this.realizedPl *= (HtrEnums.MiniOption.isMiniOption(this.strategy.getSeries().getSymbol()) ? 10 : 100);
+        if (HtrEnums.SecType.OPT.equals(this.strategy.getDataSeries().getSecType())) {
+            this.realizedPl *= (HtrEnums.MiniOption.isMiniOption(this.strategy.getDataSeries().getSymbol()) ? 10 : 100);
         }
         this.unrealizedPl = 0d;
     }
