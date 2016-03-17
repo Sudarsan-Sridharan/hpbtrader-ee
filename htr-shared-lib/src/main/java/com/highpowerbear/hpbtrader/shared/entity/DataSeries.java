@@ -6,8 +6,6 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -16,49 +14,20 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Cacheable(false)
-@Table(name = "series")
+@Table(name = "dataseries")
 public class DataSeries implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @TableGenerator(name="series", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="series")
     private Integer id;
-    private String symbol;
-    private String underlying;
+    @ManyToOne
+    private Instrument instrument;
     @Enumerated(EnumType.STRING)
-    @Column(name = "s_interval")
+    @Column(name = "sinterval")
     private HtrEnums.Interval interval;
     private Integer displayOrder;
-    @Enumerated(EnumType.STRING)
-    private HtrEnums.SecType secType;
-    @Enumerated(EnumType.STRING)
-    private HtrEnums.Currency currency;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "s_exchange")
-    private HtrEnums.Exchange exchange;
-    private Boolean isEnabled = Boolean.TRUE;
-    @OneToMany(mappedBy = "series", fetch = FetchType.EAGER)
-    @OrderBy("strategyType")
-    private List<Strategy> strategies = new ArrayList<>();
-    
-    public com.ib.client.Contract createIbContract() {
-        com.ib.client.Contract contract = new com.ib.client.Contract();
-        contract.m_symbol = this.underlying;
-        contract.m_localSymbol = this.symbol;
-        contract.m_secType = secType.name();
-        contract.m_exchange = this.exchange.toString();
-        contract.m_currency = this.currency.toString();
-        return contract;
-    }
-    
-    public Strategy getActiveStrategy() {
-        return strategies.stream().filter(Strategy::getActive).findAny().orElse(null);
-    }
-    
-    public Integer getNumStrategies() {
-        return strategies.size();
-    }
+    private Boolean active;
+    private String alias; // symbol_currency_exchange_interval
 
     @Override
     public boolean equals(Object o) {
@@ -83,20 +52,12 @@ public class DataSeries implements Serializable {
         this.id = id;
     }
 
-    public String getSymbol() {
-        return symbol;
+    public Instrument getInstrument() {
+        return instrument;
     }
 
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
-    public String getUnderlying() {
-        return underlying;
-    }
-
-    public void setUnderlying(String underlying) {
-        this.underlying = underlying;
+    public void setInstrument(Instrument instrument) {
+        this.instrument = instrument;
     }
 
     public HtrEnums.Interval getInterval() {
@@ -115,43 +76,19 @@ public class DataSeries implements Serializable {
         this.displayOrder = displayOrder;
     }
 
-    public HtrEnums.SecType getSecType() {
-        return secType;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setSecType(HtrEnums.SecType secType) {
-        this.secType = secType;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
-    public HtrEnums.Currency getCurrency() {
-        return currency;
+    public String getAlias() {
+        return alias;
     }
 
-    public void setCurrency(HtrEnums.Currency currency) {
-        this.currency = currency;
-    }
-
-    public HtrEnums.Exchange getExchange() {
-        return exchange;
-    }
-
-    public void setExchange(HtrEnums.Exchange exchange) {
-        this.exchange = exchange;
-    }
-
-    public Boolean getEnabled() {
-        return isEnabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        isEnabled = enabled;
-    }
-
-    public List<Strategy> getStrategies() {
-        return strategies;
-    }
-
-    public void setStrategies(List<Strategy> strategies) {
-        this.strategies = strategies;
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 }

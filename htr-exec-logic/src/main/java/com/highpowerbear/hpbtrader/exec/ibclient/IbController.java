@@ -119,7 +119,7 @@ public class IbController {
             return;
         }
         Integer ibOrderId = getNextValidOrderId();
-        c.getClientSocket().placeOrder(ibOrderId, ibOrder.getStrategy().getDataSeries().createIbContract(), ibOrder.createIbOrder());
+        c.getClientSocket().placeOrder(ibOrderId, ibOrder.getStrategy().getTradeInstrument().createIbContract(), ibOrder.createIbOrder());
         ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, HtrUtil.getCalendar(), null);
         ibOrder.setIbOrderId(ibOrderId);
         ibOrderDao.updateIbOrder(ibOrder);

@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.strategy.websocket;
 
-import com.highpowerbear.hpbtrader.strategy.common.LinSettings;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
 
 import javax.inject.Inject;
 import javax.websocket.*;
@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  */
 @ServerEndpoint("/websocket/series")
 public class SeriesEndpoint {
-    private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
+    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
     @Inject private WebsocketController websocketController;
 
     @OnOpen

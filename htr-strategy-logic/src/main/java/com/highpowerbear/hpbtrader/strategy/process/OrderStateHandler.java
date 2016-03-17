@@ -48,7 +48,7 @@ public class OrderStateHandler {
         if (t3.getTimeInMillis() <= t2.getTimeInMillis()) {
             t3.setTimeInMillis(t2.getTimeInMillis() + 1);
         }
-        orderFilled(ibOrder, t3, dataBar.getqClose());
+        orderFilled(ibOrder, t3, dataBar.getbClose());
     }
 
     public void orderSubmitted(IbOrder ibOrder, Calendar cal) {

@@ -35,7 +35,7 @@ public class RtDataController {
         String updateMessage = rtd.createUpdateMessage(field, price);
         if (updateMessage != null) {
             websocketController.broadcastMessage(updateMessage);
-            if (field == TickType.LAST || (field == TickType.ASK && HtrEnums.SecType.CASH.equals(rtd.getDataSeries().getSecType()))) {
+            if (field == TickType.LAST || (field == TickType.ASK && HtrEnums.SecType.CASH.equals(rtd.getDataSeries().getInstrument().getSecType()))) {
                 String updateMessageChangePct = rtd.createChangePctUpdateMsg();
                 websocketController.broadcastMessage(updateMessageChangePct);
             }
@@ -71,12 +71,12 @@ public class RtDataController {
         RealtimeData rtd = realtimeDataMap.values().stream().filter(r -> r.getDataSeries().equals(dataSeries)).findAny().get();
         if (rtd == null) {
             rtd = new RealtimeData(dataSeries);
-            l.info("Requesting realtime data for " + rtd.getDataSeries().getSymbol());
+            l.info("Requesting realtime data for " + rtd.getDataSeries().getInstrument().getSymbol());
             realtimeDataMap.put(rtd.getIbRequestId(), rtd);
-            ibController.requestRealtimeData(rtd.getIbRequestId(), rtd.getDataSeries().createIbContract());
+            ibController.requestRealtimeData(rtd.getIbRequestId(), rtd.getDataSeries().getInstrument().createIbContract());
             realtimeDataMap.remove(rtd.getIbRequestId());
         } else {
-            l.info("Canceling realtime data for " + rtd.getDataSeries().getSymbol());
+            l.info("Canceling realtime data for " + rtd.getDataSeries().getInstrument().getSymbol());
             ibController.cancelRealtimeData(rtd.getIbRequestId());
             realtimeDataMap.remove(rtd.getIbRequestId());
         }

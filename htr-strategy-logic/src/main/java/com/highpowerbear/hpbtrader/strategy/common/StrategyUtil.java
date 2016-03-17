@@ -14,8 +14,8 @@ import java.util.logging.Logger;
  *
  * @author rkolar
  */
-public class OptUtil {
-    private static final Logger l = Logger.getLogger(OptDefinitions.LOGGER);
+public class StrategyUtil {
+    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
 
     private static DateFormat expiryFormatFull = new SimpleDateFormat("yyyyMMdd");
     private static DateFormat expiryFormatShort = new SimpleDateFormat("yyyyMM");

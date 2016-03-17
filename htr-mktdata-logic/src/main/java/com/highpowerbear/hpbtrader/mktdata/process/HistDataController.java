@@ -41,7 +41,7 @@ public class HistDataController {
         }
         Calendar c = HtrUtil.getCalendar();
         c.setTimeInMillis(Long.valueOf(date) * 1000 + dataSeries.getInterval().getMillis()); // date-time stamp of the end of the bar
-        if (HtrEnums.Interval.INT_60_MIN.equals(dataSeries.getInterval())) {
+        if (HtrEnums.Interval.MIN60.equals(dataSeries.getInterval())) {
             c.set(Calendar.MINUTE, 0); // needed in case of bars started at 9:30 (END 10:00 not 10:30) or 17:15 (END 18:00 not 18:15)
         }
         dataBar.setqDateBarClose(c);
@@ -72,17 +72,17 @@ public class HistDataController {
         if (!ibController.isConnected(ibAccount)) {
             return;
         }
-        dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.INT_5_MIN).stream().filter(DataSeries::getEnabled).forEach(s -> {
-            Contract contract = s.createIbContract();
+        dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.MIN5).stream().filter(DataSeries::getActive).forEach(s -> {
+            Contract contract = s.getInstrument().createIbContract();
             Calendar now = HtrUtil.getCalendar();
-            int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getSecType()) ? MktDefinitions.IB_ETH_TOO : MktDefinitions.IB_RTH_ONLY);
+            int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? MktDefinitions.IB_ETH_TOO : MktDefinitions.IB_RTH_ONLY);
             ibController.reqHistoricalData(
                     s.getId() * HtrDefinitions.IB_REQUEST_MULT,
                     contract,
                     df.format(now.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
-                    (HtrEnums.SecType.CASH.equals(s.getSecType()) ? MktDefinitions.IB_DURATION_1_DAY : MktDefinitions.IB_DURATION_2_DAY),
+                    (HtrEnums.SecType.CASH.equals(s.getInstrument().getSecType()) ? MktDefinitions.IB_DURATION_1_DAY : MktDefinitions.IB_DURATION_2_DAY),
                     MktDefinitions.IB_BAR_5_MIN,
-                    s.getSecType().getIbBarType(),
+                    s.getInstrument().getSecType().getIbBarType(),
                     isUseRTH,
                     MktDefinitions.IB_FORMAT_DATE_MILLIS);
         });
@@ -94,17 +94,17 @@ public class HistDataController {
         if (!ibController.isConnected(ibAccount)) {
             return;
         }
-        dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.INT_60_MIN).stream().filter(DataSeries::getEnabled).forEach(s -> {
-            Contract contract = s.createIbContract();
+        dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.MIN60).stream().filter(DataSeries::getActive).forEach(s -> {
+            Contract contract = s.getInstrument().createIbContract();
             Calendar now = HtrUtil.getCalendar();
-            int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getSecType()) ? MktDefinitions.IB_ETH_TOO : MktDefinitions.IB_RTH_ONLY);
+            int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? MktDefinitions.IB_ETH_TOO : MktDefinitions.IB_RTH_ONLY);
             ibController.reqHistoricalData(
                     s.getId() * HtrDefinitions.IB_REQUEST_MULT,
                     contract,
                     df.format(now.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
                     MktDefinitions.IB_DURATION_1_WEEK,
                     MktDefinitions.IB_BAR_1_HOUR,
-                    s.getSecType().getIbBarType(),
+                    s.getInstrument().getSecType().getIbBarType(),
                     isUseRTH,
                     MktDefinitions.IB_FORMAT_DATE_MILLIS);
         });
@@ -112,28 +112,28 @@ public class HistDataController {
     }
 
     public void backfill(DataSeries dataSeries) {
-        if (!dataSeries.getEnabled()) {
-            l.info("Series not enabled, backfill won't be performed, seriesId=" + dataSeries.getId() + ", symbol=" + dataSeries.getSymbol());
+        if (!dataSeries.getActive()) {
+            l.info("Series not enabled, backfill won't be performed, seriesId=" + dataSeries.getId() + ", symbol=" + dataSeries.getInstrument().getSymbol());
             return;
         }
-        l.info("START backfillManual, series=" + dataSeries.getId() + ", symbol=" + dataSeries.getSymbol());
+        l.info("START backfillManual, series=" + dataSeries.getId() + ", symbol=" + dataSeries.getInstrument().getSymbol());
         if (!ibController.isAnyActiveConnection()) {
             return;
         }
-        Contract contract = dataSeries.createIbContract();
+        Contract contract = dataSeries.getInstrument().createIbContract();
         Calendar now = HtrUtil.getCalendar();
-        int isUseRTH = (HtrEnums.SecType.FUT.equals(dataSeries.getSecType()) ? MktDefinitions.IB_ETH_TOO : MktDefinitions.IB_RTH_ONLY);
-        if (HtrEnums.Interval.INT_5_MIN.equals(dataSeries.getInterval())) {
+        int isUseRTH = (HtrEnums.SecType.FUT.equals(dataSeries.getInstrument().getSecType()) ? MktDefinitions.IB_ETH_TOO : MktDefinitions.IB_RTH_ONLY);
+        if (HtrEnums.Interval.MIN5.equals(dataSeries.getInterval())) {
             ibController.reqHistoricalData(
                     dataSeries.getId() * HtrDefinitions.IB_REQUEST_MULT,
                     contract,
                     df.format(now.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
                     MktDefinitions.IB_DURATION_10_DAY,
                     MktDefinitions.IB_BAR_5_MIN,
-                    dataSeries.getSecType().getIbBarType(),
+                    dataSeries.getInstrument().getSecType().getIbBarType(),
                     isUseRTH,
                     MktDefinitions.IB_FORMAT_DATE_MILLIS);
-        } else if (HtrEnums.Interval.INT_60_MIN.equals(dataSeries.getInterval())) {
+        } else if (HtrEnums.Interval.MIN60.equals(dataSeries.getInterval())) {
             int reqId = (dataSeries.getId() * HtrDefinitions.IB_REQUEST_MULT) + 4;
             Calendar his = HtrUtil.getCalendar();
             his.add(Calendar.MONTH, -3);
@@ -144,7 +144,7 @@ public class HistDataController {
                         df.format(his.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
                         MktDefinitions.IB_DURATION_1_MONTH,
                         MktDefinitions.IB_BAR_1_HOUR,
-                        dataSeries.getSecType().getIbBarType(),
+                        dataSeries.getInstrument().getSecType().getIbBarType(),
                         isUseRTH,
                         MktDefinitions.IB_FORMAT_DATE_MILLIS);
                 his.add(Calendar.MONTH, 1);
@@ -156,10 +156,10 @@ public class HistDataController {
                     df.format(now.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
                     MktDefinitions.IB_DURATION_1_MONTH,
                     MktDefinitions.IB_BAR_1_HOUR,
-                    dataSeries.getSecType().getIbBarType(),
+                    dataSeries.getInstrument().getSecType().getIbBarType(),
                     isUseRTH,
                     MktDefinitions.IB_FORMAT_DATE_MILLIS);
         }
-        l.info("END backfillManual, series=" + dataSeries.getId() + ", symbol=" + dataSeries.getSymbol());
+        l.info("END backfillManual, series=" + dataSeries.getId() + ", symbol=" + dataSeries.getInstrument().getSymbol());
     }
 }

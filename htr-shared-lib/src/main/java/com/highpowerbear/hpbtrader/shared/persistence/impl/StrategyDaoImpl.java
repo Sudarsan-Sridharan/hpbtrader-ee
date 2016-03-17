@@ -34,14 +34,27 @@ public class StrategyDaoImpl implements StrategyDao {
     }
 
     @Override
+    public List<Strategy> getAllStrategies(boolean inactiveToo) {
+        TypedQuery<Strategy> q;
+        if (inactiveToo) {
+            q = em.createQuery("SELECT s from Strategy s ORDER BY s.displayOrder ASC", Strategy.class);
+        } else {
+            q = em.createQuery("SELECT s from Strategy s WHERE s.active = :active ORDER BY s.displayOrder ASC", Strategy.class);
+            q.setParameter("active", Boolean.TRUE);
+        }
+        return q.getResultList();
+    }
+
+    @Override
     public Strategy findStrategy(Integer id) {
         return em.find(Strategy.class, id);
     }
 
     @Override
-    public Strategy getActiveStrategy(DataSeries dataSeries) {
-        TypedQuery<Strategy> query = em.createQuery("SELECT str FROM Strategy str WHERE str.series = :series AND str.active = :active", Strategy.class);
-        query.setParameter("series", dataSeries);
+    public Strategy getActiveStrategy(Instrument tradeInstrument, IbAccount ibAccount) {
+        TypedQuery<Strategy> query = em.createQuery("SELECT str FROM Strategy str WHERE str.tradeInstrument = :tradeInstrument AND str.ibAccount = :ibAccount AND str.active = :active", Strategy.class);
+        query.setParameter("tradeInstrument", tradeInstrument);
+        query.setParameter("ibAccount", ibAccount);
         query.setParameter("active", Boolean.TRUE);
         List<Strategy> strategyList = query.getResultList();
         return strategyList.get(0);
@@ -63,7 +76,7 @@ public class StrategyDaoImpl implements StrategyDao {
 
     @Override
     public void deleteStrategy(Strategy strategy) {
-        l.info("START deleteStrategy " + strategy.getDataSeries().getSymbol() + ", " + strategy.getDataSeries().getInterval().getDisplayName() + ", " + strategy.getStrategyType().getDisplayName());
+        l.info("START deleteStrategy " + strategy.getTradeInstrument().getSymbol() + ", " + strategy.getStrategyType().getDisplayName());
         strategy = em.find(Strategy.class, strategy.getId());
         Query q;
         for (Trade trade : tradeDao.getTradesByStrategy(strategy, true)) {
@@ -81,7 +94,7 @@ public class StrategyDaoImpl implements StrategyDao {
             em.remove(ibOrder);
         }
         em.remove(strategy);
-        l.info("END deleteStrategy " + strategy.getDataSeries().getSymbol() + ", " + strategy.getDataSeries().getInterval().getDisplayName() + ", " + strategy.getStrategyType().getDisplayName());
+        l.info("END deleteStrategy " + strategy.getTradeInstrument().getSymbol() + ", " + strategy.getStrategyType().getDisplayName());
     }
 
     @Override

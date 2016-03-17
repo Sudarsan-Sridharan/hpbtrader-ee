@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.strategy.websocket;
 
-import com.highpowerbear.hpbtrader.strategy.common.LinSettings;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class WebsocketController implements Serializable {
-    private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
+    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
 
     private Set<Session> sessions = new HashSet<>();
 

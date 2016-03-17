@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.strategy.rest;
 
-import com.highpowerbear.hpbtrader.strategy.common.OptDefinitions;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.GET;
@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 @ApplicationScoped
 @Path("options")
 public class OptService {
-    private static final Logger l = Logger.getLogger(OptDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
     
     @GET
     @Produces(MediaType.TEXT_PLAIN)

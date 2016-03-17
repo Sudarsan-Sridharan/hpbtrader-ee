@@ -44,7 +44,7 @@ public class IbOrder implements Serializable {
     @Enumerated(EnumType.STRING)
     private HtrEnums.IbOrderStatus status;
     @Temporal(TemporalType.TIMESTAMP)
-    private Calendar dateCreated;
+    private Calendar createdDate;
     @OneToMany(mappedBy = "ibOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("eventDate ASC")
     private List<OrderEvent> events = new ArrayList<>();
@@ -58,7 +58,7 @@ public class IbOrder implements Serializable {
         event.setFillPrice(fillPrice);
         events.add(event);
         if (HtrEnums.IbOrderStatus.NEW.equals(event.getStatus())) {
-            this.setDateCreated(event.getEventDate());
+            this.setCreatedDate(event.getEventDate());
         }
     }
 
@@ -91,8 +91,7 @@ public class IbOrder implements Serializable {
     }
 
     public String getDescription() {
-        DataSeries dataSeries = strategy.getDataSeries();
-        return dataSeries.getSymbol() + ", " + dataSeries.getInterval().getDisplayName() + ", " +  strategy.getStrategyType().getDisplayName() + ": " + orderAction.toString();
+        return strategy.getTradeInstrument().getSymbol() + ", " +  strategy.getStrategyType().getDisplayName() + ": " + orderAction.toString();
     }
 
     public com.ib.client.Order createIbOrder() {
@@ -233,12 +232,12 @@ public class IbOrder implements Serializable {
         this.status = ibOrderStatus;
     }
 
-    public Calendar getDateCreated() {
-        return dateCreated;
+    public Calendar getCreatedDate() {
+        return createdDate;
     }
 
-    public void setDateCreated(Calendar dateCreated) {
-        this.dateCreated = dateCreated;
+    public void setCreatedDate(Calendar dateCreated) {
+        this.createdDate = dateCreated;
     }
 
     public List<OrderEvent> getEvents() {

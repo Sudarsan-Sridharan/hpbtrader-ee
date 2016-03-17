@@ -52,7 +52,7 @@ public class IbOrderDaoImpl implements IbOrderDao {
 
     @Override
     public IbOrder getIbOrderByIbOrderId(IbAccount ibAccount, Integer ibOrderId) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibAccount = :ibAccount AND o.ibOrderId = :ibOrderId ORDER BY o.dateCreated DESC", IbOrder.class);
+        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibAccount = :ibAccount AND o.ibOrderId = :ibOrderId ORDER BY o.createdDate DESC", IbOrder.class);
         query.setParameter("ibAccount", ibAccount);
         query.setParameter("ibOrderId", ibOrderId);
         List<IbOrder> ibOrders = query.getResultList();
@@ -61,7 +61,7 @@ public class IbOrderDaoImpl implements IbOrderDao {
 
     @Override
     public List<IbOrder> getIbOrdersByStrategy(Strategy strategy) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy = :strategy ORDER BY o.dateCreated DESC", IbOrder.class);
+        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy = :strategy ORDER BY o.createdDate DESC", IbOrder.class);
         query.setParameter("strategy", strategy);
         return query.getResultList();
     }

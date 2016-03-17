@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.strategy.options.model;
 
-import com.highpowerbear.hpbtrader.strategy.common.OptDefinitions;
-import com.highpowerbear.hpbtrader.strategy.common.OptUtil;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyUtil;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 
 import java.text.DateFormat;
@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * @author robertk
  */
 public class ContractProperties implements Comparable<ContractProperties> {
-    private static final Logger l = Logger.getLogger(OptDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
     private final DateFormat timeFormat = new SimpleDateFormat("HH:mm");
     
     private final Double DEF_maxSpread = 0.01;
@@ -74,7 +74,7 @@ public class ContractProperties implements Comparable<ContractProperties> {
     }
 
     public void setMaxSpread(Double maxSpread) {
-        this.maxSpread = (maxSpread != null && maxSpread >= OptDefinitions.MIN_maxSpread ? OptUtil.round5(maxSpread) : this.maxSpread);
+        this.maxSpread = (maxSpread != null && maxSpread >= StrategyDefinitions.MIN_maxSpread ? StrategyUtil.round5(maxSpread) : this.maxSpread);
     }
 
     public Double getMaxValidSpread() {
@@ -82,7 +82,7 @@ public class ContractProperties implements Comparable<ContractProperties> {
     }
 
     public void setMaxValidSpread(Double maxValidSpread) {
-        this.maxValidSpread = (maxValidSpread != null && maxValidSpread >= OptDefinitions.MIN_maxValidSpread ? OptUtil.round5(maxValidSpread) : this.maxValidSpread);
+        this.maxValidSpread = (maxValidSpread != null && maxValidSpread >= StrategyDefinitions.MIN_maxValidSpread ? StrategyUtil.round5(maxValidSpread) : this.maxValidSpread);
     }
 
     public Integer getMinVolume() {
@@ -90,7 +90,7 @@ public class ContractProperties implements Comparable<ContractProperties> {
     }
 
     public void setMinVolume(Integer minVolume) {
-        this.minVolume = (minVolume != null && minVolume >= OptDefinitions.MIN_minVolume ? minVolume : this.minVolume);
+        this.minVolume = (minVolume != null && minVolume >= StrategyDefinitions.MIN_minVolume ? minVolume : this.minVolume);
     }
 
     public Integer getMinOpenInterest() {
@@ -98,7 +98,7 @@ public class ContractProperties implements Comparable<ContractProperties> {
     }
 
     public void setMinOpenInterest(Integer minOpenInterest) {
-        this.minOpenInterest = (minOpenInterest != null && minOpenInterest >= OptDefinitions.MIN_minOpenInterest ? minOpenInterest : this.minOpenInterest);
+        this.minOpenInterest = (minOpenInterest != null && minOpenInterest >= StrategyDefinitions.MIN_minOpenInterest ? minOpenInterest : this.minOpenInterest);
     }
 
     public Double getCallStrikeDiff() {
@@ -106,7 +106,7 @@ public class ContractProperties implements Comparable<ContractProperties> {
     }
 
     public void setCallStrikeDiff(Double callStrikeDiff) {
-        this.callStrikeDiff = (callStrikeDiff != null && callStrikeDiff >= OptDefinitions.MIN_callStrikeDiff ? OptUtil.round5(callStrikeDiff) : this.callStrikeDiff);
+        this.callStrikeDiff = (callStrikeDiff != null && callStrikeDiff >= StrategyDefinitions.MIN_callStrikeDiff ? StrategyUtil.round5(callStrikeDiff) : this.callStrikeDiff);
     }
 
     public Double getPutStrikeDiff() {
@@ -114,7 +114,7 @@ public class ContractProperties implements Comparable<ContractProperties> {
     }
 
     public void setPutStrikeDiff(Double putStrikeDiff) {
-        this.putStrikeDiff = (putStrikeDiff != null && putStrikeDiff >= OptDefinitions.MIN_putStrikeDiff ? OptUtil.round5(putStrikeDiff) : this.putStrikeDiff);
+        this.putStrikeDiff = (putStrikeDiff != null && putStrikeDiff >= StrategyDefinitions.MIN_putStrikeDiff ? StrategyUtil.round5(putStrikeDiff) : this.putStrikeDiff);
     }
 
     public Boolean getAutoLimit() {
@@ -130,7 +130,7 @@ public class ContractProperties implements Comparable<ContractProperties> {
     }
 
     public void setBidPriceOffsetBuy(Double bidPriceOffsetBuy) {
-        this.bidPriceOffsetBuy = (bidPriceOffsetBuy != null && OptUtil.abs(bidPriceOffsetBuy) <= OptDefinitions.MAX_ABS_bidPriceOffset ? OptUtil.round5(bidPriceOffsetBuy) : this.bidPriceOffsetBuy);
+        this.bidPriceOffsetBuy = (bidPriceOffsetBuy != null && StrategyUtil.abs(bidPriceOffsetBuy) <= StrategyDefinitions.MAX_ABS_bidPriceOffset ? StrategyUtil.round5(bidPriceOffsetBuy) : this.bidPriceOffsetBuy);
     }
 
     public Double getBidPriceOffsetSell() {
@@ -138,7 +138,7 @@ public class ContractProperties implements Comparable<ContractProperties> {
     }
 
     public void setBidPriceOffsetSell(Double bidPriceOffsetSell) {
-        this.bidPriceOffsetSell = (bidPriceOffsetSell != null && OptUtil.abs(bidPriceOffsetSell) <= OptDefinitions.MAX_ABS_bidPriceOffset ? OptUtil.round5(bidPriceOffsetSell) : this.bidPriceOffsetSell);
+        this.bidPriceOffsetSell = (bidPriceOffsetSell != null && StrategyUtil.abs(bidPriceOffsetSell) <= StrategyDefinitions.MAX_ABS_bidPriceOffset ? StrategyUtil.round5(bidPriceOffsetSell) : this.bidPriceOffsetSell);
     }
 
     public Integer getTradingQuantCall() {
@@ -146,7 +146,7 @@ public class ContractProperties implements Comparable<ContractProperties> {
     }
 
     public void setTradingQuantCall(Integer tradingQuantCall) {
-        this.tradingQuantCall = (tradingQuantCall != null && tradingQuantCall > 0 && tradingQuantCall <= OptDefinitions.MAX_tradingQuantCall ? tradingQuantCall : this.tradingQuantCall);
+        this.tradingQuantCall = (tradingQuantCall != null && tradingQuantCall > 0 && tradingQuantCall <= StrategyDefinitions.MAX_tradingQuantCall ? tradingQuantCall : this.tradingQuantCall);
     }
 
     public Integer getTradingQuantPut() {
@@ -154,7 +154,7 @@ public class ContractProperties implements Comparable<ContractProperties> {
     }
 
     public void setTradingQuantPut(Integer tradingQuantPut) {
-        this.tradingQuantPut = (tradingQuantPut != null && tradingQuantPut > 0 && tradingQuantPut <= OptDefinitions.MAX_tradingQuantPut ? tradingQuantPut : this.tradingQuantPut);
+        this.tradingQuantPut = (tradingQuantPut != null && tradingQuantPut > 0 && tradingQuantPut <= StrategyDefinitions.MAX_tradingQuantPut ? tradingQuantPut : this.tradingQuantPut);
     }
 
     public String getTradingStartTime() {
@@ -190,20 +190,20 @@ public class ContractProperties implements Comparable<ContractProperties> {
     }
     
     private boolean checkStartBeforeStopTime() {
-        Calendar startTimeToday = OptUtil.getTodayMidnightCalendar();
+        Calendar startTimeToday = StrategyUtil.getTodayMidnightCalendar();
         startTimeToday.set(Calendar.HOUR_OF_DAY, Integer.valueOf(tradingStartTime.split(":")[0]));
         startTimeToday.set(Calendar.MINUTE, Integer.valueOf(tradingStartTime.split(":")[1]));
-        Calendar stopTimeToday = OptUtil.getTodayMidnightCalendar();
+        Calendar stopTimeToday = StrategyUtil.getTodayMidnightCalendar();
         stopTimeToday.set(Calendar.HOUR_OF_DAY, Integer.valueOf(tradingStopTime.split(":")[0]));
         stopTimeToday.set(Calendar.MINUTE, Integer.valueOf(tradingStopTime.split(":")[1]));
         return (startTimeToday.getTimeInMillis() <= stopTimeToday.getTimeInMillis());
     }
     
     public boolean isTradingTime() {
-        Calendar startTimeToday = OptUtil.getTodayMidnightCalendar();
+        Calendar startTimeToday = StrategyUtil.getTodayMidnightCalendar();
         startTimeToday.set(Calendar.HOUR_OF_DAY, Integer.valueOf(tradingStartTime.split(":")[0]));
         startTimeToday.set(Calendar.MINUTE, Integer.valueOf(tradingStartTime.split(":")[1]));
-        Calendar stopTimeToday = OptUtil.getTodayMidnightCalendar();
+        Calendar stopTimeToday = StrategyUtil.getTodayMidnightCalendar();
         stopTimeToday.set(Calendar.HOUR_OF_DAY, Integer.valueOf(tradingStopTime.split(":")[0]));
         stopTimeToday.set(Calendar.MINUTE, Integer.valueOf(tradingStopTime.split(":")[1]));
         Calendar now = HtrUtil.getNowCalendar();

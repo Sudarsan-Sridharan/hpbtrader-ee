@@ -31,9 +31,9 @@ public class Trade implements Serializable {
     private Integer quantity;
     private Integer tradePosition = 0;
     @Temporal(value=TemporalType.TIMESTAMP)
-    private Calendar dateInitOpen;
+    private Calendar initOpenDate;
     @Temporal(value=TemporalType.TIMESTAMP)
-    private Calendar dateClosed;
+    private Calendar closeDate;
     private Double openPrice;
     private Double closePrice;
     private Double initialStop;
@@ -52,7 +52,7 @@ public class Trade implements Serializable {
     
     @XmlElement
     public long getTimeInMillis() {
-        return (dateClosed != null ? dateClosed.getTimeInMillis() : HtrUtil.getCalendar().getTimeInMillis());
+        return (closeDate != null ? closeDate.getTimeInMillis() : HtrUtil.getCalendar().getTimeInMillis());
     }
     
     public void addTradeOrder(IbOrder ibOrder) {
@@ -65,7 +65,7 @@ public class Trade implements Serializable {
     
     public Trade initOpen(IbOrder ibOrder) {
         this.strategy = ibOrder.getStrategy();
-        this.dateInitOpen = ibOrder.getDateCreated();
+        this.initOpenDate = ibOrder.getCreatedDate();
         this.tradeStatus = HtrEnums.TradeStatus.INIT_OPEN;
         this.tradeType = (ibOrder.isBuyOrder() ? HtrEnums.TradeType.LONG : HtrEnums.TradeType.SHORT);
         this.quantity = strategy.getTradingQuantity();
@@ -85,24 +85,24 @@ public class Trade implements Serializable {
     public void close(Calendar date, Double closePrice) {
         this.tradeStatus = HtrEnums.TradeStatus.CLOSED;
         this.closePrice = closePrice;
-        this.dateClosed = date;
+        this.closeDate = date;
         this.realizedPl = (isLong() ? HtrUtil.round5((this.closePrice - this.openPrice) * quantity) : HtrUtil.round5((this.openPrice - this.closePrice) * quantity));
-        if (HtrEnums.SecType.FUT.equals(this.strategy.getDataSeries().getSecType())) {
-            this.realizedPl *= HtrEnums.FutureMultiplier.getMultiplierBySymbol(this.strategy.getDataSeries().getSymbol());
+        if (HtrEnums.SecType.FUT.equals(this.strategy.getTradeInstrument().getSecType())) {
+            this.realizedPl *= HtrEnums.FutureMultiplier.getMultiplierBySymbol(this.strategy.getTradeInstrument().getSymbol());
         }
-        if (HtrEnums.SecType.OPT.equals(this.strategy.getDataSeries().getSecType())) {
-            this.realizedPl *= (HtrEnums.MiniOption.isMiniOption(this.strategy.getDataSeries().getSymbol()) ? 10 : 100);
+        if (HtrEnums.SecType.OPT.equals(this.strategy.getTradeInstrument().getSecType())) {
+            this.realizedPl *= (HtrEnums.MiniOption.isMiniOption(this.strategy.getTradeInstrument().getSymbol()) ? 10 : 100);
         }
         this.unrealizedPl = 0d;
     }
 
     public void errClose() {
-        this.dateClosed = HtrUtil.getCalendar();
+        this.closeDate = HtrUtil.getCalendar();
         this.tradeStatus = HtrEnums.TradeStatus.ERR_CLOSED;
     }
 
     public void cncClosed() {
-        this.dateClosed = HtrUtil.getCalendar();
+        this.closeDate = HtrUtil.getCalendar();
         this.tradeStatus = HtrEnums.TradeStatus.CNC_CLOSED;
     }
 
@@ -144,8 +144,8 @@ public class Trade implements Serializable {
         otherTrade.setStrategy(strategy);
         otherTrade.setQuantity(quantity);
         otherTrade.setTradePosition(tradePosition);
-        otherTrade.setDateInitOpen(dateInitOpen);
-        otherTrade.setDateClosed(dateClosed);
+        otherTrade.setInitOpenDate(initOpenDate);
+        otherTrade.setCloseDate(closeDate);
         otherTrade.setOpenPrice(openPrice);
         otherTrade.setClosePrice(closePrice);
         otherTrade.setInitialStop(initialStop);
@@ -224,20 +224,20 @@ public class Trade implements Serializable {
         this.tradePosition = tradePosition;
     }
 
-    public Calendar getDateInitOpen() {
-        return dateInitOpen;
+    public Calendar getInitOpenDate() {
+        return initOpenDate;
     }
 
-    public void setDateInitOpen(Calendar dateInitOpen) {
-        this.dateInitOpen = dateInitOpen;
+    public void setInitOpenDate(Calendar dateInitOpen) {
+        this.initOpenDate = dateInitOpen;
     }
 
-    public Calendar getDateClosed() {
-        return dateClosed;
+    public Calendar getCloseDate() {
+        return closeDate;
     }
 
-    public void setDateClosed(Calendar dateClosed) {
-        this.dateClosed = dateClosed;
+    public void setCloseDate(Calendar dateClosed) {
+        this.closeDate = dateClosed;
     }
 
     public Double getOpenPrice() {

@@ -91,23 +91,15 @@ public class HtrEnums {
     }
 
     public enum Interval {
-        INT_5_MIN(300000, "5"),
-        INT_60_MIN(3600000, "60");
+        MIN5(300000),
+        MIN60(3600000);
         
         private long millis;
-        private String displayName;
-        Interval(long millis, String displayName) {
+        Interval(long millis) {
             this.millis = millis;
-            this.displayName = displayName;
         }
         public long getMillis() {
             return millis;
-        }
-        public String getDisplayName() {
-            return displayName;
-        }
-        public static Interval getByDisplayName(String displayName) {
-            return ("5".equals(displayName) ? INT_5_MIN : ("60".equals(displayName) ? INT_60_MIN : null));
         }
     }
     

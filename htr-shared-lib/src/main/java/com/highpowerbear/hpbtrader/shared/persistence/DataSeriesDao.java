@@ -3,6 +3,7 @@ package com.highpowerbear.hpbtrader.shared.persistence;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.DataBar;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
+import com.highpowerbear.hpbtrader.shared.entity.Instrument;
 
 import java.util.List;
 
@@ -11,9 +12,10 @@ import java.util.List;
  */
 public interface DataSeriesDao {
     void createSeries(DataSeries dataSeries);
-    List<DataSeries> getAllSeries(boolean disabledToo);
+    List<DataSeries> getAllSeries(boolean inactiveToo);
     List<DataSeries> getSeriesByInterval(HtrEnums.Interval interval);
-    List<DataSeries> getSeries(String symbol, HtrEnums.Interval interval);
+    List<DataSeries> getSeries(Instrument instrument, HtrEnums.Interval interval);
+    DataSeries getSeriesByAlias(String alias);
     DataSeries findSeries(Integer id);
     void updateSeries(DataSeries dataSeries);
     Integer getHighestDisplayOrder();

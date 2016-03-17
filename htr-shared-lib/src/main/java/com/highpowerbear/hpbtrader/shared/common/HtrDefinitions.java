@@ -11,7 +11,7 @@ public class HtrDefinitions {
     public static final String IB_TIMEZONE = "EST";
 
     // settings
-    public static final String LOGGER = "com.highpowerbear.hpbtrader.shared";
+    public static final String LOGGER = "com.highpowerbear.hpbtrader";
 
     public static final int IB_CONNECT_CLIENT_ID = 7;
     public static final String EMAIL_FROM = "hpbtrader@highpowerbear.com";

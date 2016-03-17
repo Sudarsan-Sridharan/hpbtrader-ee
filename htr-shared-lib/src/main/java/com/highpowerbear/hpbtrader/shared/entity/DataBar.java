@@ -15,26 +15,26 @@ import java.util.Calendar;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
-@Table(name = "bar", uniqueConstraints = @UniqueConstraint(columnNames = {"qDateBarClose", "series_id"}))
+@Table(name = "databar", uniqueConstraints = @UniqueConstraint(columnNames = {"qDateBarClose", "series_id"}))
 public class DataBar implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @TableGenerator(name="bar", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="databar", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="bar")
+    @GeneratedValue(generator="databar")
     private Long id;
     @ManyToOne
     private DataSeries dataSeries;
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar qDateBarClose;
     @XmlElement
-    private Double qOpen;
+    private Double bOpen;
     @XmlElement
     private Double high;
     @XmlElement
     private Double low;
     @XmlElement
-    private Double qClose;
+    private Double bClose;
     @XmlElement
     private Integer volume;
     private Integer count;
@@ -47,14 +47,14 @@ public class DataBar implements Serializable {
     }
 
     public String print() {
-        return dataSeries.getSymbol() + ": " + HtrUtil.getFormattedDate(qDateBarClose) + ", " + qOpen + ", " + high + ", " + low + ", " + qClose + ", " + volume + ", " + count + ", " + hasGaps;
+        return dataSeries.getInstrument().getSymbol() + ": " + HtrUtil.getFormattedDate(qDateBarClose) + ", " + bOpen + ", " + high + ", " + low + ", " + bClose + ", " + volume + ", " + count + ", " + hasGaps;
     }
 
     public void mergeFrom(DataBar from) {
-        this.qOpen = from.getqOpen();
+        this.bOpen = from.getbOpen();
         this.high = from.getHigh();
         this.low = from.getLow();
-        this.qClose = from.getqClose();
+        this.bClose = from.getbClose();
         this.volume = from.getVolume();
         this.count = from.getCount();
         this.wap = from.getWap();
@@ -76,20 +76,36 @@ public class DataBar implements Serializable {
         return id != null ? id.hashCode() : 0;
     }
 
-    public Integer getCount() {
-        return count;
+    public Long getId() {
+        return id;
     }
 
-    public void setCount(Integer count) {
-        this.count = count;
-    }
-    
-    public Boolean getHasGaps() {
-        return hasGaps;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setHasGaps(Boolean hasGaps) {
-        this.hasGaps = hasGaps;
+    public DataSeries getDataSeries() {
+        return dataSeries;
+    }
+
+    public void setDataSeries(DataSeries dataSeries) {
+        this.dataSeries = dataSeries;
+    }
+
+    public Calendar getqDateBarClose() {
+        return qDateBarClose;
+    }
+
+    public void setqDateBarClose(Calendar qDateBarClose) {
+        this.qDateBarClose = qDateBarClose;
+    }
+
+    public Double getbOpen() {
+        return bOpen;
+    }
+
+    public void setbOpen(Double bOpen) {
+        this.bOpen = bOpen;
     }
 
     public Double getHigh() {
@@ -99,15 +115,7 @@ public class DataBar implements Serializable {
     public void setHigh(Double high) {
         this.high = high;
     }
-    
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
     public Double getLow() {
         return low;
     }
@@ -116,38 +124,14 @@ public class DataBar implements Serializable {
         this.low = low;
     }
 
-    public Double getqClose() {
-        return qClose;
+    public Double getbClose() {
+        return bClose;
     }
 
-    public void setqClose(Double qClose) {
-        this.qClose = qClose;
-    }
-    
-    public Calendar getqDateBarClose() {
-        return qDateBarClose;
+    public void setbClose(Double bClose) {
+        this.bClose = bClose;
     }
 
-    public void setqDateBarClose(Calendar qDateBarClose) {
-        this.qDateBarClose = qDateBarClose;
-    }
-    
-    public Double getqOpen() {
-        return qOpen;
-    }
-
-    public void setqOpen(Double qOpen) {
-        this.qOpen = qOpen;
-    }
-    
-    public DataSeries getDataSeries() {
-        return dataSeries;
-    }
-
-    public void setDataSeries(DataSeries dataSeries) {
-        this.dataSeries = dataSeries;
-    }
-    
     public Integer getVolume() {
         return volume;
     }
@@ -155,12 +139,28 @@ public class DataBar implements Serializable {
     public void setVolume(Integer volume) {
         this.volume = volume;
     }
-    
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
     public Double getWap() {
         return wap;
     }
 
     public void setWap(Double wap) {
         this.wap = wap;
+    }
+
+    public Boolean getHasGaps() {
+        return hasGaps;
+    }
+
+    public void setHasGaps(Boolean hasGaps) {
+        this.hasGaps = hasGaps;
     }
 }

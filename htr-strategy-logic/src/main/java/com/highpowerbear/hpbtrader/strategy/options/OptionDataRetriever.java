@@ -1,11 +1,10 @@
 package com.highpowerbear.hpbtrader.strategy.options;
 
-import com.highpowerbear.hpbtrader.strategy.common.OptDefinitions;
-import com.highpowerbear.hpbtrader.strategy.common.OptEnums;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyEnums;
 import com.highpowerbear.hpbtrader.strategy.options.model.MarketData;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
-import com.highpowerbear.hpbtrader.shared.persistence.OptionContractDao;
 
 import javax.ejb.Singleton;
 import javax.inject.Inject;
@@ -20,10 +19,8 @@ import java.util.logging.Logger;
 @Named
 @Singleton
 public class OptionDataRetriever {
-    private static final Logger l = Logger.getLogger(OptDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
 
-    @Inject
-    OptionContractDao optionContractDao;
     @Inject private OptData optData;
     
     private void cancelRtData(int reqId) {
@@ -34,7 +31,7 @@ public class OptionDataRetriever {
             optData.getMarketDataRequestMap().remove(reqId);
             optData.getMarketDataMap().remove(currentOptionSymbol);
         }
-        HtrUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS / 5);
+        HtrUtil.waitMilliseconds(StrategyDefinitions.ONE_SECOND_MILLIS / 5);
     }
     
     private void requestRtData(int reqId, String underlying, String optionSymbol) {
@@ -48,12 +45,12 @@ public class OptionDataRetriever {
                 optData.getMarketDataMap().remove(currentOptionSymbol);
             }
         }
-        HtrUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS / 2);
+        HtrUtil.waitMilliseconds(StrategyDefinitions.ONE_SECOND_MILLIS / 2);
         optData.getMarketDataMap().put(optionSymbol, new MarketData(underlying, HtrEnums.SecType.OPT, optionSymbol));
         optData.getMarketDataRequestMap().put(reqId, optionSymbol);
         //ibController.requestRealtimeData(reqId, OptUtil.constructIbContract(optionSymbol));
         // TODO
-        HtrUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS / 5);
+        HtrUtil.waitMilliseconds(StrategyDefinitions.ONE_SECOND_MILLIS / 5);
     }
     
     private com.ib.client.Contract cloneIbOptionContract(com.ib.client.Contract contract) {
@@ -69,7 +66,7 @@ public class OptionDataRetriever {
         return clonedContract;
     }
     
-    private Calendar calculateExpirationFriday(OptEnums.ExpiryDistance expiryDistance) { // 0 means front week
+    private Calendar calculateExpirationFriday(StrategyEnums.OptExpiryDistance expiryDistance) { // 0 means front week
         Calendar cal = HtrUtil.getNowCalendar();
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);

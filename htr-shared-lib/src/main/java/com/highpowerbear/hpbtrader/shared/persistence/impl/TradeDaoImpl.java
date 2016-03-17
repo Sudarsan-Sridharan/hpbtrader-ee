@@ -60,14 +60,14 @@ public class TradeDaoImpl implements TradeDao {
 
     @Override
     public List<Trade> getTradesByStrategy(Strategy strategy, boolean ascending) {
-        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy ORDER BY t.dateInitOpen " + (ascending ? "ASC" : "DESC"), Trade.class);
+        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy ORDER BY t.initOpenDate " + (ascending ? "ASC" : "DESC"), Trade.class);
         query.setParameter("strategy", strategy);
         return query.getResultList();
     }
 
     @Override
     public List<Trade> getTradesByOrder(IbOrder ibOrder) {
-        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t, TradeOrder to WHERE to.ibOrder = :ibOrder AND to.trade = t ORDER BY t.dateInitOpen ASC", Trade.class);
+        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t, TradeOrder to WHERE to.ibOrder = :ibOrder AND to.trade = t ORDER BY t.initOpenDate ASC", Trade.class);
         query.setParameter("ibOrder", ibOrder);
         return query.getResultList();
     }
@@ -81,7 +81,7 @@ public class TradeDaoImpl implements TradeDao {
 
     @Override
     public Trade getActiveTrade(Strategy strategy) {
-        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy AND t.tradeStatus IN :statuses ORDER BY t.dateInitOpen DESC", Trade.class);
+        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy AND t.tradeStatus IN :statuses ORDER BY t.initOpenDate DESC", Trade.class);
         query.setParameter("strategy", strategy);
         Set<HtrEnums.TradeStatus> statuses = new HashSet<>();
         statuses.add(HtrEnums.TradeStatus.INIT_OPEN);
@@ -94,7 +94,7 @@ public class TradeDaoImpl implements TradeDao {
 
     @Override
     public Trade getLastTrade(Strategy strategy) {
-        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy ORDER BY t.dateInitOpen DESC", Trade.class);
+        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy ORDER BY t.initOpenDate DESC", Trade.class);
         query.setParameter("strategy", strategy);
         List<Trade> trades = query.getResultList();
         return (trades != null && !trades.isEmpty() ? trades.get(0) : null);

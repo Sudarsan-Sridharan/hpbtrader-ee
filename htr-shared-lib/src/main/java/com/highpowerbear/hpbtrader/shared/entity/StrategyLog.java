@@ -27,7 +27,7 @@ public class StrategyLog  implements Serializable {
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar logDate;
     
-    private Boolean isActive;
+    private Boolean active;
     @Enumerated(EnumType.STRING)
     private HtrEnums.StrategyMode strategyMode;
     private Integer tradingQuantity;
@@ -94,12 +94,12 @@ public class StrategyLog  implements Serializable {
         this.logDate = logDate;
     }
 
-    public Boolean getIsActive() {
-        return isActive;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public Integer getTradingQuantity() {

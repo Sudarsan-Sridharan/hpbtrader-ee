@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.strategy.process;
 
 import com.highpowerbear.hpbtrader.strategy.common.LinData;
-import com.highpowerbear.hpbtrader.strategy.common.LinSettings;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
 import com.highpowerbear.hpbtrader.strategy.linear.BacktestResult;
 import com.highpowerbear.hpbtrader.strategy.linear.StrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.linear.logic.LuxorStrategyLogic;
@@ -19,6 +19,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -27,7 +29,7 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class StrategyController implements Serializable {
-    private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
+    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
 
     @Inject private StrategyDao strategyDao;
     @Inject private DataSeriesDao dataSeriesDao;
@@ -35,17 +37,18 @@ public class StrategyController implements Serializable {
     @Inject private Processor processor;
     @Inject private Backtester backtester;
 
+    private Map<Strategy, StrategyLogic> strategyLogicMap = new HashMap<>();
+
     @PostConstruct
     public void init() {
-        dataSeriesDao.getAllSeries(false).forEach(this::swapStrategyLogic);
+        strategyDao.getAllStrategies(false).forEach(this::swapStrategyLogic);
     }
 
-    public void swapStrategyLogic(DataSeries dataSeries) {
-        if (dataSeries.getEnabled()) {
-            Strategy activeStrategy = strategyDao.getActiveStrategy(dataSeries);
-            linData.getStrategyLogicMap().put(dataSeries.getId(), createStrategyLogic(activeStrategy));
+    public void swapStrategyLogic(Strategy strategy) {
+        if (strategy.getActive()) {
+            strategyLogicMap.put(strategy, createStrategyLogic(strategy));
         } else {
-            linData.getStrategyLogicMap().remove(dataSeries.getId());
+            strategyLogicMap.remove(strategy);
         }
     }
 
@@ -61,15 +64,11 @@ public class StrategyController implements Serializable {
         return strategyLogic;
     }
 
-    public void process(DataSeries dataSeries) {
-        if (!dataSeries.getEnabled()) {
-            l.info("Series not enabled, bars won't be processed, seriesId=" + dataSeries.getId() + ", symbol=" + dataSeries.getSymbol());
-            return;
-        }
-        Strategy activeStrategy = strategyDao.getActiveStrategy(dataSeries);
-        StrategyLogic strategyLogic = linData.getStrategyLogicMap().get(dataSeries.getId());
+    public void process(Strategy strategy) {
+        StrategyLogic strategyLogic = strategyLogicMap.get(strategy);
+        DataSeries dataSeries = dataSeriesDao.getSeriesByAlias(strategy.getDefaultInputSeriesAlias());
         if (dataSeriesDao.getNumBars(dataSeries) >= HtrDefinitions.BARS_REQUIRED) {
-            processor.process(activeStrategy, strategyLogic);
+            processor.process(strategy, strategyLogic);
         }
     }
 

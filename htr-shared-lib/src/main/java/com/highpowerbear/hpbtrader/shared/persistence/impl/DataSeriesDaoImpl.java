@@ -4,6 +4,7 @@ import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.DataBar;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
+import com.highpowerbear.hpbtrader.shared.entity.Instrument;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 
@@ -34,13 +35,13 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
     }
 
     @Override
-    public List<DataSeries> getAllSeries(boolean disabledToo) {
+    public List<DataSeries> getAllSeries(boolean inactiveToo) {
         TypedQuery<DataSeries> q;
-        if (disabledToo) {
+        if (inactiveToo) {
             q = em.createQuery("SELECT s from DataSeries s ORDER BY s.displayOrder ASC", DataSeries.class);
         } else {
-            q = em.createQuery("SELECT s from DataSeries s WHERE s.isEnabled = :isEnabled ORDER BY s.displayOrder ASC", DataSeries.class);
-            q.setParameter("isEnabled", Boolean.TRUE);
+            q = em.createQuery("SELECT s from DataSeries s WHERE s.active = :active ORDER BY s.displayOrder ASC", DataSeries.class);
+            q.setParameter("active", Boolean.TRUE);
         }
         return q.getResultList();
     }
@@ -53,11 +54,18 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
     }
 
     @Override
-    public List<DataSeries> getSeries(String symbol, HtrEnums.Interval interval) {
-        TypedQuery<DataSeries> query = em.createQuery("SELECT s FROM DataSeries s WHERE s.symbol = :symbol AND s.interval = :interval", DataSeries.class);
-        query.setParameter("symbol", symbol);
+    public List<DataSeries> getSeries(Instrument instrument, HtrEnums.Interval interval) {
+        TypedQuery<DataSeries> query = em.createQuery("SELECT s FROM DataSeries s WHERE s.instrument = :instrument AND s.interval = :interval", DataSeries.class);
+        query.setParameter("instrument", instrument);
         query.setParameter("interval", interval);
         return query.getResultList();
+    }
+
+    @Override
+    public DataSeries getSeriesByAlias(String alias) {
+        TypedQuery<DataSeries> query = em.createQuery("SELECT s FROM DataSeries s WHERE s.alias = :alias", DataSeries.class);
+        query.setParameter("alias", alias);
+        return query.getResultList().get(0);
     }
 
     @Override
@@ -78,30 +86,29 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
 
     @Override
     public void deleteSeries(DataSeries dataSeries) {
-        l.info("START deleteSeries " + dataSeries.getSymbol());
+        l.info("START deleteSeries " + dataSeries.getInstrument().getSymbol() + ", " + dataSeries.getInterval().name());
         dataSeries = em.find(DataSeries.class, dataSeries.getId()); // make sure it is managed by entitymanager
-        dataSeries.getStrategies().forEach(strategyDao::deleteStrategy);
-        Query q = em.createQuery("DELETE FROM DataBar q WHERE q.series = :series");
-        q.setParameter("series", dataSeries);
+        Query q = em.createQuery("DELETE FROM DataBar d WHERE d.dataSeries = :dataSeries");
+        q.setParameter("dataSeries", dataSeries);
         q.executeUpdate();
         em.remove(dataSeries);
-        l.info("END deleteSeries " + dataSeries.getSymbol());
-    }
+        l.info("END deleteSeries " + dataSeries.getInstrument().getSymbol() + ", " + dataSeries.getInterval().name());
+}
 
     @Override
     public void createBars(DataSeries dataSeries, List<DataBar> dataBars) {
         if (dataBars == null || dataBars.isEmpty()) {
             return;
         }
-        l.fine("START createBars, symbol=" + dataSeries.getSymbol());
+        l.fine("START createBars, symbol=" + dataSeries.getInstrument().getSymbol());
         int created = 0;
         int updated = 0;
         for (DataBar dataBar : dataBars) {
             if (!dataSeries.equals(dataBar.getDataSeries())) {
                 continue;
             }
-            TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.series = :series AND b.qDateBarClose = :qDateBarClose", DataBar.class);
-            query.setParameter("series", dataSeries);
+            TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries AND b.qDateBarClose = :qDateBarClose", DataBar.class);
+            query.setParameter("dataSeries", dataSeries);
             query.setParameter("qDateBarClose", dataBar.getqDateBarClose());
             List<DataBar> bl = query.getResultList();
             DataBar dbDataBar = (bl != null && !bl.isEmpty() ? bl.get(0) : null);
@@ -118,13 +125,13 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
                 em.merge(dbDataBar);
             }
         }
-        l.fine("END createBars, symbol=" + dataSeries.getSymbol() + ", added=" + created + ", updated=" + updated);
+        l.fine("END createBars, symbol=" + dataSeries.getInstrument().getSymbol() + ", added=" + created + ", updated=" + updated);
     }
 
     @Override
     public List<DataBar> getBars(DataSeries dataSeries, Integer numBars) {
-        TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.series = :series ORDER BY b.qDateBarClose ASC", DataBar.class);
-        query.setParameter("series", dataSeries);
+        TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries ORDER BY b.qDateBarClose ASC", DataBar.class);
+        query.setParameter("dataSeries", dataSeries);
         if (numBars != null && numBars > 0) {
             query.setMaxResults(numBars);
         }
@@ -142,8 +149,8 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
 
     @Override
     public DataBar getLastBar(DataSeries dataSeries) {
-        TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.series = :series ORDER BY b.qDateBarClose DESC", DataBar.class);
-        query.setParameter("series", dataSeries);
+        TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries ORDER BY b.qDateBarClose DESC", DataBar.class);
+        query.setParameter("dataSeries", dataSeries);
         query.setMaxResults(1);
         List<DataBar> dataBars = query.getResultList();
         return (dataBars == null || dataBars.isEmpty() ? null : dataBars.get(0));
@@ -151,8 +158,8 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
 
     @Override
     public Long getNumBars(DataSeries dataSeries) {
-        Query query = em.createQuery("SELECT COUNT(b) FROM DataBar b WHERE b.series = :series");
-        query.setParameter("series", dataSeries);
+        Query query = em.createQuery("SELECT COUNT(b) FROM DataBar b WHERE b.dataSeries = :dataSeries");
+        query.setParameter("dataSeries", dataSeries);
         return (Long) query.getSingleResult();
     }
 }

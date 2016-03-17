@@ -6,6 +6,8 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -16,22 +18,21 @@ import java.io.Serializable;
 @Table(name = "strategy")
 public class Strategy implements Serializable {
     private static final long serialVersionUID = 1L;
-    
-    @TableGenerator(name="strategy", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+
     @Id
-    @GeneratedValue(generator="strategy")
-    
     // cannot be changed
     private Integer id;
     @ManyToOne
-    private DataSeries dataSeries;
+    private Instrument tradeInstrument;
     @ManyToOne
     private IbAccount ibAccount;
+    private String inputSeriesAliases; // csv
     @Enumerated(EnumType.STRING)
-    private HtrEnums.StrategyType strategyType = HtrEnums.StrategyType.values()[0];
+    private HtrEnums.StrategyType strategyType;
     
     // can be changed
-    private Boolean active = false;
+    private Boolean active;
+    private Integer displayOrder;
     @Enumerated(EnumType.STRING)
     private HtrEnums.StrategyMode strategyMode = HtrEnums.StrategyMode.SIM;
     private String params = HtrEnums.StrategyType.values()[0].getDefaultParams();
@@ -44,7 +45,11 @@ public class Strategy implements Serializable {
     private Integer numLongs = 0;
     private Integer numWinners = 0;
     private Integer numLosers = 0;
-    
+
+    public String getDefaultInputSeriesAlias() {
+        return this.inputSeriesAliases.split(",")[0];
+    }
+
     public void recalculateStats(Trade closedTrade) {
         if (closedTrade.isLong()) {
             numLongs++;
@@ -67,7 +72,7 @@ public class Strategy implements Serializable {
         if (sl == null) {
             return null;
         }
-        sl.setIsActive(active);
+        sl.setActive(active);
         sl.setStrategyMode(strategyMode);
         sl.setTradingQuantity(tradingQuantity);
         sl.setParams(getParams());
@@ -87,7 +92,7 @@ public class Strategy implements Serializable {
             return null;
         }
         otherStrategy.setId(id);
-        otherStrategy.setDataSeries(dataSeries);
+        otherStrategy.setTradeInstrument(tradeInstrument);
         otherStrategy.setStrategyType(strategyType);
         otherStrategy.setActive(active);
         otherStrategy.setStrategyMode(strategyMode);
@@ -161,16 +166,24 @@ public class Strategy implements Serializable {
         this.id = id;
     }
 
-    public DataSeries getDataSeries() {
-        return dataSeries;
+    public Instrument getTradeInstrument() {
+        return tradeInstrument;
     }
 
-    public void setDataSeries(DataSeries dataSeries) {
-        this.dataSeries = dataSeries;
+    public void setTradeInstrument(Instrument tradeInstrument) {
+        this.tradeInstrument = tradeInstrument;
     }
 
     public IbAccount getIbAccount() {
         return ibAccount;
+    }
+
+    public String getInputSeriesAliases() {
+        return inputSeriesAliases;
+    }
+
+    public void setInputSeriesAliases(String inputSeriesAliases) {
+        this.inputSeriesAliases = inputSeriesAliases;
     }
 
     public void setIbAccount(IbAccount ibAccount) {
@@ -191,6 +204,14 @@ public class Strategy implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 
     public HtrEnums.StrategyMode getStrategyMode() {

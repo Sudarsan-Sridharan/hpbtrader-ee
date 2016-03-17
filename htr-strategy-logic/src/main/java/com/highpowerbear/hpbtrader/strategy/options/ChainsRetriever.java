@@ -1,8 +1,8 @@
 package com.highpowerbear.hpbtrader.strategy.options;
 
-import com.highpowerbear.hpbtrader.strategy.common.OptDefinitions;
-import com.highpowerbear.hpbtrader.strategy.common.OptEnums;
-import com.highpowerbear.hpbtrader.strategy.common.OptUtil;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyEnums;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyUtil;
 import com.highpowerbear.hpbtrader.strategy.options.model.UnderlyingData;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class ChainsRetriever {
-    private static final Logger l = Logger.getLogger(OptDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
 
     @Inject private OptData optData;
 
@@ -31,12 +31,12 @@ public class ChainsRetriever {
         l.info("START request for loading option chains for underlying=" + underlying);
         UnderlyingData ud = optData.getUnderlyingDataMap().get(underlying);
         Calendar cal = HtrUtil.getNowCalendar();
-        String thisMonth = OptUtil.toExpiryStringShort(cal);
+        String thisMonth = StrategyUtil.toExpiryStringShort(cal);
         cal.add(Calendar.MONTH, +1);
-        String nextMonth = OptUtil.toExpiryStringShort(cal);
+        String nextMonth = StrategyUtil.toExpiryStringShort(cal);
 
         // call contracts, this month
-        HtrUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS);
+        HtrUtil.waitMilliseconds(StrategyDefinitions.ONE_SECOND_MILLIS);
         com.ib.client.Contract ibContract = new com.ib.client.Contract();
         ibContract.m_symbol = underlying;
         ibContract.m_secType = HtrEnums.SecType.OPT.name();
@@ -46,7 +46,7 @@ public class ChainsRetriever {
         ibContract.m_currency = HtrEnums.Currency.USD.name();
         ibContract.m_multiplier = HtrEnums.Multiplier.M_100.getValue();
         ibContract.m_includeExpired = false;
-        int reqId = ud.getIbRequestIdBase() + OptEnums.RequestIdOffset.CHAIN_CALL_THIS_MONTH.getValue();
+        int reqId = ud.getIbRequestIdBase() + StrategyEnums.OptRequestIdOffset.CHAIN_CALL_THIS_MONTH.getValue();
         if (optData.getOptionChainRequestMap().get(reqId) == null) {
             optData.getOptionChainRequestMap().put(reqId, underlying);
             //ibController.requestOptionChain(reqId, ibContract);
@@ -54,10 +54,10 @@ public class ChainsRetriever {
         }
 
         // call contracts, next month
-        HtrUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS);
+        HtrUtil.waitMilliseconds(StrategyDefinitions.ONE_SECOND_MILLIS);
         ibContract = cloneIbOptionContract(ibContract);
         ibContract.m_expiry = nextMonth;
-        reqId = ud.getIbRequestIdBase() + OptEnums.RequestIdOffset.CHAIN_CALL_NEXT_MONTH.getValue();
+        reqId = ud.getIbRequestIdBase() + StrategyEnums.OptRequestIdOffset.CHAIN_CALL_NEXT_MONTH.getValue();
         if (optData.getOptionChainRequestMap().get(reqId) == null) {
             optData.getOptionChainRequestMap().put(reqId, underlying);
             //ibController.requestOptionChain(reqId, ibContract);
@@ -65,11 +65,11 @@ public class ChainsRetriever {
         }
 
         // put contracts, this month
-        HtrUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS);
+        HtrUtil.waitMilliseconds(StrategyDefinitions.ONE_SECOND_MILLIS);
         ibContract = cloneIbOptionContract(ibContract);
         ibContract.m_expiry = thisMonth;
         ibContract.m_right = HtrEnums.OptionType.PUT.name();
-        reqId = ud.getIbRequestIdBase() + OptEnums.RequestIdOffset.CHAIN_PUT_THIS_MONTH.getValue();
+        reqId = ud.getIbRequestIdBase() + StrategyEnums.OptRequestIdOffset.CHAIN_PUT_THIS_MONTH.getValue();
         if (optData.getOptionChainRequestMap().get(reqId) == null) {
             optData.getOptionChainRequestMap().put(reqId, underlying);
             //ibController.requestOptionChain(reqId, ibContract);
@@ -77,10 +77,10 @@ public class ChainsRetriever {
         }
 
         // put contracts, next month
-        HtrUtil.waitMilliseconds(OptDefinitions.ONE_SECOND_MILLIS);
+        HtrUtil.waitMilliseconds(StrategyDefinitions.ONE_SECOND_MILLIS);
         ibContract = cloneIbOptionContract(ibContract);
         ibContract.m_expiry = nextMonth;
-        reqId = ud.getIbRequestIdBase() + OptEnums.RequestIdOffset.CHAIN_PUT_NEXT_MONTH.getValue();
+        reqId = ud.getIbRequestIdBase() + StrategyEnums.OptRequestIdOffset.CHAIN_PUT_NEXT_MONTH.getValue();
         if (optData.getOptionChainRequestMap().get(reqId) == null) {
             optData.getOptionChainRequestMap().put(reqId, underlying);
             //ibController.requestOptionChain(reqId, ibContract);

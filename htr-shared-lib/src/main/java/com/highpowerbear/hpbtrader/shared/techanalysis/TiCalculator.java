@@ -43,13 +43,13 @@ public class TiCalculator {
         List<Ema> emaList = new ArrayList<>();
         double sma = 0d;
         for (int i = 0; i < period; i++) {
-            sma += dataBars.get(i).getqClose();
+            sma += dataBars.get(i).getbClose();
         }
         sma = sma/(double) period;
         double ema = sma;
         double mult = 2d/((double) period +  1d);
         for (int i = period; i < dataBars.size(); i++) {
-            ema = (dataBars.get(i).getqClose() - ema) * mult + ema;
+            ema = (dataBars.get(i).getbClose() - ema) * mult + ema;
             if (i >= HtrDefinitions.BARS_REQUIRED) {
                 Long timeInMillis = dataBars.get(i).getTimeInMillisBarClose();
                 emaList.add(new Ema(timeInMillis, ema));
@@ -76,7 +76,7 @@ public class TiCalculator {
                 }
             }
             System.arraycopy(kFast, 1, kFast, 0, smaKPeriod - 1);
-            double currentBar = dataBars.get(currentBarIndex).getqClose();
+            double currentBar = dataBars.get(currentBarIndex).getbClose();
             kFast[smaKPeriod - 1] =  (currentBar - lowestLow)/(highestHigh - lowestLow) * 100d;
             System.arraycopy(k, 1, k, 0, smaDPeriod - 1);
             k[smaDPeriod - 1] = 0d;
@@ -106,26 +106,26 @@ public class TiCalculator {
         double m2 = 2d/((double) p2 +  1d);
         double m3 = 2d/((double) p3 +  1d);
         for (int i = 0; i < p1; i++) {
-            macdEma1 += dataBars.get(i).getqClose();
+            macdEma1 += dataBars.get(i).getbClose();
         }
         macdEma1 = macdEma1/(double) p1;
         for (int i = p1; i < p2; i++) {
-            macdEma1 = (dataBars.get(i).getqClose() - macdEma1) * m1 + macdEma1;
+            macdEma1 = (dataBars.get(i).getbClose() - macdEma1) * m1 + macdEma1;
         }
         for (int i = 0; i < p2; i++) {
-            macdEma2 += dataBars.get(i).getqClose();
+            macdEma2 += dataBars.get(i).getbClose();
         }
         macdEma2 = macdEma2/(double) p2;
         for (int i = p2; i < p2 + p3; i++) {
-            macdEma1 = (dataBars.get(i).getqClose() - macdEma1) * m1 + macdEma1;
-            macdEma2 = (dataBars.get(i).getqClose() - macdEma2) * m2 + macdEma2;
+            macdEma1 = (dataBars.get(i).getbClose() - macdEma1) * m1 + macdEma1;
+            macdEma2 = (dataBars.get(i).getbClose() - macdEma2) * m2 + macdEma2;
             macdL = macdEma1 - macdEma2;
             macdSl += macdL;
         }
         macdSl = macdSl/(double) p3;
         for (int i = p3; i < dataBars.size(); i ++) {
-            macdEma1 = (dataBars.get(i).getqClose() - macdEma1) * m1 + macdEma1;
-            macdEma2 = (dataBars.get(i).getqClose() - macdEma2) * m2 + macdEma2;
+            macdEma1 = (dataBars.get(i).getbClose() - macdEma1) * m1 + macdEma1;
+            macdEma2 = (dataBars.get(i).getbClose() - macdEma2) * m2 + macdEma2;
             macdL = macdEma1 - macdEma2;
             macdSl = (macdL - macdSl) * m3 + macdSl;
             macdH = macdL - macdSl;

@@ -1,8 +1,8 @@
 package com.highpowerbear.hpbtrader.strategy.options.model;
 
-import com.highpowerbear.hpbtrader.strategy.common.OptDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.Trade;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * @author robertk
  */
 public class UnderlyingData {
-    private static final Logger l = Logger.getLogger(OptDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
 
     private String underlying;
     private Integer ibRequestIdBase;
@@ -38,8 +38,8 @@ public class UnderlyingData {
     }
     
     public void markChainsReady() {
-        setCallContractChangeTriggerPrice(OptDefinitions.INVALID_PRICE);
-        setPutContractChangeTriggerPrice(OptDefinitions.INVALID_PRICE);
+        setCallContractChangeTriggerPrice(StrategyDefinitions.INVALID_PRICE);
+        setPutContractChangeTriggerPrice(StrategyDefinitions.INVALID_PRICE);
     }
     
     public boolean isChainsReady() {
@@ -192,7 +192,7 @@ public class UnderlyingData {
         if (lastCallContractChangeDate == null) {
             return true;
         }
-        return ((System.currentTimeMillis() - lastCallContractChangeDate.getTimeInMillis()) > OptDefinitions.ONE_SECOND_MILLIS * OptDefinitions.CONTRACT_CHANGE_MIN_INTERVAL);
+        return ((System.currentTimeMillis() - lastCallContractChangeDate.getTimeInMillis()) > StrategyDefinitions.ONE_SECOND_MILLIS * StrategyDefinitions.CONTRACT_CHANGE_MIN_INTERVAL);
     }
 
     public synchronized boolean lockPutContract() {
@@ -218,6 +218,6 @@ public class UnderlyingData {
         if (lastPutContractChangeDate == null) {
             return true;
         }
-        return ((System.currentTimeMillis() - lastPutContractChangeDate.getTimeInMillis()) > OptDefinitions.ONE_SECOND_MILLIS * OptDefinitions.CONTRACT_CHANGE_MIN_INTERVAL);
+        return ((System.currentTimeMillis() - lastPutContractChangeDate.getTimeInMillis()) > StrategyDefinitions.ONE_SECOND_MILLIS * StrategyDefinitions.CONTRACT_CHANGE_MIN_INTERVAL);
     }
 }

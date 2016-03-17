@@ -1,11 +1,11 @@
 package com.highpowerbear.hpbtrader.strategy.linear;
 
-import com.highpowerbear.hpbtrader.strategy.common.SingletonRepo;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.DataBar;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
+import com.highpowerbear.hpbtrader.strategy.common.SingletonRepo;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -47,7 +47,7 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     public String getName() {
         return this.getClass().getSimpleName();
     }
-    
+
     protected abstract void calculateIndicators();
     protected abstract void reloadParameters();
     
@@ -64,28 +64,28 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     }
     
     protected Double getPrice() {
-        return dataBar.getqClose();
+        return dataBar.getbClose();
     }
     
     protected boolean targetMet() {
         if (ctx.activeTrade == null || ctx.activeTrade.getProfitTarget() == null) {
             return false;
         }
-        return (ctx.activeTrade.isLong() ? (dataBar.getqClose() >= ctx.activeTrade.getProfitTarget()) : (dataBar.getqClose() <= ctx.activeTrade.getProfitTarget()));
+        return (ctx.activeTrade.isLong() ? (dataBar.getbClose() >= ctx.activeTrade.getProfitTarget()) : (dataBar.getbClose() <= ctx.activeTrade.getProfitTarget()));
     }
     
     protected boolean stopTriggered() {
         if (ctx.activeTrade == null || ctx.activeTrade.getStopLoss() == null) {
             return false;
         }
-        return (ctx.activeTrade.isLong() ? (dataBar.getqClose() <= ctx.activeTrade.getStopLoss()) : (dataBar.getqClose() >= ctx.activeTrade.getStopLoss()));
+        return (ctx.activeTrade.isLong() ? (dataBar.getbClose() <= ctx.activeTrade.getStopLoss()) : (dataBar.getbClose() >= ctx.activeTrade.getStopLoss()));
     }
     
     protected void setInitialStop(Double stopPct) {
         if (ctx.activeTrade == null) {
             return;
         }
-        Double stop = (ctx.activeTrade.isLong() ? HtrUtil.round5(dataBar.getqClose() - (stopPct / 100.0) * dataBar.getqClose()) : HtrUtil.round5(dataBar.getqClose() + (stopPct / 100.0) * dataBar.getqClose()));
+        Double stop = (ctx.activeTrade.isLong() ? HtrUtil.round5(dataBar.getbClose() - (stopPct / 100.0) * dataBar.getbClose()) : HtrUtil.round5(dataBar.getbClose() + (stopPct / 100.0) * dataBar.getbClose()));
         ctx.activeTrade.setStopLoss(stop);
         ctx.activeTrade.setInitialStop(stop);
     }
@@ -95,15 +95,15 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
             return;
         }
         if (ctx.activeTrade.isLong()) {
-            if (dataBar.getqClose() > prevDataBar.getqClose()) {
-                Double newStop = HtrUtil.round5(dataBar.getqClose() - (stopPct / 100.0) * dataBar.getqClose());
+            if (dataBar.getbClose() > prevDataBar.getbClose()) {
+                Double newStop = HtrUtil.round5(dataBar.getbClose() - (stopPct / 100.0) * dataBar.getbClose());
                 if (newStop > ctx.activeTrade.getStopLoss()) {
                     ctx.activeTrade.setStopLoss(newStop);
                 }
             }
         } else {
-            if (dataBar.getqClose() < prevDataBar.getqClose()) {
-                Double newStop = HtrUtil.round5(dataBar.getqClose() + (stopPct / 100.0) * dataBar.getqClose());
+            if (dataBar.getbClose() < prevDataBar.getbClose()) {
+                Double newStop = HtrUtil.round5(dataBar.getbClose() + (stopPct / 100.0) * dataBar.getbClose());
                 if (newStop < ctx.activeTrade.getStopLoss()) {
                     ctx.activeTrade.setStopLoss(newStop);
                 }
@@ -115,19 +115,19 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
         if (ctx.activeTrade == null) {
             return;
         }
-        ctx.activeTrade.setProfitTarget(ctx.activeTrade.isLong() ? HtrUtil.round5(dataBar.getqClose() + (targetPct / 100.0) * dataBar.getqClose()) : HtrUtil.round5(dataBar.getqClose() - (targetPct / 100.0) * dataBar.getqClose()));
+        ctx.activeTrade.setProfitTarget(ctx.activeTrade.isLong() ? HtrUtil.round5(dataBar.getbClose() + (targetPct / 100.0) * dataBar.getbClose()) : HtrUtil.round5(dataBar.getbClose() - (targetPct / 100.0) * dataBar.getbClose()));
     }
     
     protected void setPl() {
         if (ctx.activeTrade == null || ctx.activeTrade.getOpenPrice() == null) {
             return;
         }
-        Double unrealizedPl = (ctx.activeTrade.isLong() ? HtrUtil.round5((dataBar.getqClose() - ctx.activeTrade.getOpenPrice()) * ctx.strategy.getTradingQuantity()) : HtrUtil.round5((ctx.activeTrade.getOpenPrice() - dataBar.getqClose()) * ctx.strategy.getTradingQuantity()));
-        if (HtrEnums.SecType.FUT.equals(ctx.strategy.getDataSeries().getSecType())) {
-            unrealizedPl *= HtrEnums.FutureMultiplier.getMultiplierBySymbol(ctx.strategy.getDataSeries().getSymbol());
+        Double unrealizedPl = (ctx.activeTrade.isLong() ? HtrUtil.round5((dataBar.getbClose() - ctx.activeTrade.getOpenPrice()) * ctx.strategy.getTradingQuantity()) : HtrUtil.round5((ctx.activeTrade.getOpenPrice() - dataBar.getbClose()) * ctx.strategy.getTradingQuantity()));
+        if (HtrEnums.SecType.FUT.equals(ctx.strategy.getTradeInstrument().getSecType())) {
+            unrealizedPl *= HtrEnums.FutureMultiplier.getMultiplierBySymbol(ctx.strategy.getTradeInstrument().getSymbol());
         }
-        if (HtrEnums.SecType.OPT.equals(ctx.strategy.getDataSeries().getSecType())) {
-            unrealizedPl *= (HtrEnums.MiniOption.isMiniOption(ctx.strategy.getDataSeries().getSymbol()) ? 10 : 100);
+        if (HtrEnums.SecType.OPT.equals(ctx.strategy.getTradeInstrument().getSecType())) {
+            unrealizedPl *= (HtrEnums.MiniOption.isMiniOption(ctx.strategy.getTradeInstrument().getSymbol()) ? 10 : 100);
         }
         ctx.activeTrade.setUnrealizedPl(unrealizedPl);
     }

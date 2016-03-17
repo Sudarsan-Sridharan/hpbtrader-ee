@@ -31,7 +31,7 @@ public class RealtimeData {
 
     public RealtimeData(DataSeries dataSeries) {
         this.dataSeries = dataSeries;
-        this.contractClassName = (HtrUtil.removeDot(dataSeries.getSymbol()) + "-" + dataSeries.getCurrency()).toLowerCase();
+        this.contractClassName = (HtrUtil.removeDot(dataSeries.getInstrument().getSymbol()) + "-" + dataSeries.getInstrument().getCurrency()).toLowerCase();
         this.ibRequestId = dataSeries.getId() * HtrDefinitions.IB_REQUEST_MULT + 10;
         initFields();
     }
@@ -96,10 +96,10 @@ public class RealtimeData {
 
     public String createChangePctUpdateMsg() {
         String message = "rt,";
-        if (!HtrEnums.SecType.CASH.equals(dataSeries.getSecType()) && !MktDefinitions.INVALID_PRICE.equals(last.getValue()) && !MktDefinitions.INVALID_PRICE.equals(close.getValue())) {
+        if (!HtrEnums.SecType.CASH.equals(dataSeries.getInstrument().getSecType()) && !MktDefinitions.INVALID_PRICE.equals(last.getValue()) && !MktDefinitions.INVALID_PRICE.equals(close.getValue())) {
             double price = ((last.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
-        } else if (HtrEnums.SecType.CASH.equals(dataSeries.getSecType()) && !MktDefinitions.INVALID_PRICE.equals(ask.getValue()) && !MktDefinitions.INVALID_PRICE.equals(close.getValue())) {
+        } else if (HtrEnums.SecType.CASH.equals(dataSeries.getInstrument().getSecType()) && !MktDefinitions.INVALID_PRICE.equals(ask.getValue()) && !MktDefinitions.INVALID_PRICE.equals(close.getValue())) {
             double price = ((ask.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
         }

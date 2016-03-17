@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.linear;
 
-import com.highpowerbear.hpbtrader.strategy.common.LinSettings;
 import com.highpowerbear.hpbtrader.strategy.common.SingletonRepo;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 @Singleton
 @Startup
 public class StrategyLifecycle {
-    private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
+    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
 
     @Inject private SingletonRepo singletonRepo;
 

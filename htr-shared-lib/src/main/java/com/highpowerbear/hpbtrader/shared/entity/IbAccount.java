@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import java.io.Serializable;
 
 /**
  * Created by robertk on 11/14/2015.
@@ -15,16 +16,20 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name="ibaccount")
-public class IbAccount {
+public class IbAccount implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Id
     private String accountId;
     private String host;
     private Integer port;
+    private Integer clientId;
+
     @Transient
     private IbConnection ibConnection;
 
     public String print() {
-        return accountId + ", " + host + ":" + port;
+        return accountId + ", " + host + ":" + port + ", " + clientId;
     }
 
     @Override
@@ -64,6 +69,14 @@ public class IbAccount {
 
     public void setPort(Integer port) {
         this.port = port;
+    }
+
+    public Integer getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Integer clientId) {
+        this.clientId = clientId;
     }
 
     public IbConnection getIbConnection() {

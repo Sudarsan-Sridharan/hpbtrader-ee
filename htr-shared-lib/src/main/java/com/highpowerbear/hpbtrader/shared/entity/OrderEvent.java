@@ -28,7 +28,7 @@ public class OrderEvent implements Serializable {
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar eventDate;
     @ManyToOne
-    IbOrder ibOrder;
+    private IbOrder ibOrder;
 
     @Override
     public boolean equals(Object o) {

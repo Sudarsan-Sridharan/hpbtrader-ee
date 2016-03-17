@@ -62,7 +62,7 @@ public class BacktestResult {
             tradeLog.setTrade(trade);
             tradeLog.setLogDate(dataBar.getqDateBarClose());
             trade.copyValues(tradeLog);
-            tradeLog.setPrice(dataBar.getqClose());
+            tradeLog.setPrice(dataBar.getbClose());
             tradeLogs.add(tradeLog);
         }
         if (dbTrade == null) {

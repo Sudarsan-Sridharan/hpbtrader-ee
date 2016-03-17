@@ -1,15 +1,12 @@
 package com.highpowerbear.hpbtrader.strategy.process;
 
-import com.highpowerbear.hpbtrader.strategy.common.LinSettings;
+import com.highpowerbear.hpbtrader.shared.entity.*;
+import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
 import com.highpowerbear.hpbtrader.strategy.linear.BacktestResult;
 import com.highpowerbear.hpbtrader.strategy.linear.StrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.linear.StrategyLogicContext;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.entity.DataBar;
-import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
-import com.highpowerbear.hpbtrader.shared.entity.Strategy;
-import com.highpowerbear.hpbtrader.shared.entity.Trade;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,7 +26,7 @@ import java.util.stream.Collectors;
 @Named
 @ApplicationScoped
 public class Backtester {
-    private static final Logger l = Logger.getLogger(LinSettings.LOGGER);
+    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
     @Inject private DataSeriesDao dataSeriesDao;
 
     private DateFormat df = new SimpleDateFormat("yy/MM/dd HH:mm");
@@ -37,7 +34,8 @@ public class Backtester {
     
     BacktestResult backtest(Strategy dbStrategy, StrategyLogic strategyLogic, Calendar startDate, Calendar endDate) {
         String logMessage = "backtesting strategy, " + dbStrategy.getStrategyType().toString() + " --> " + strategyLogic.getName();
-        List<DataBar> dataBars = dataSeriesDao.getBars(dbStrategy.getDataSeries(), null);
+        DataSeries dataSeries = dataSeriesDao.getSeriesByAlias(dbStrategy.getDefaultInputSeriesAlias());
+        List<DataBar> dataBars = dataSeriesDao.getBars(dataSeries, null);
         dataBars = filterBars(dataBars, startDate, endDate);
         int numIterations = dataBars.size() - HtrDefinitions.BARS_REQUIRED - INDICATORS_LIST_SIZE;
         l.info("START " + logMessage + ", iterations=" + numIterations);
@@ -73,7 +71,7 @@ public class Backtester {
             ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, dataBar.getqDateBarClose(), null);
             ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, dataBar.getqDateBarClose(), null);
             ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, dataBar.getqDateBarClose(), null);
-            ibOrder.setFillPrice(dataBar.getqClose());
+            ibOrder.setFillPrice(dataBar.getbClose());
             backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
 
             ctx.strategy.setNumAllOrders(ctx.strategy.getNumAllOrders() + 1);
@@ -81,11 +79,11 @@ public class Backtester {
             ctx.strategy.setCurrentPosition(ibOrder.isBuyOrder() ? ctx.strategy.getCurrentPosition() + ibOrder.getQuantity() : ctx.strategy.getCurrentPosition() - ibOrder.getQuantity());
 
             if (ibOrder.isOpeningOrder()) {
-                ctx.activeTrade.open(dataBar.getqClose());
+                ctx.activeTrade.open(dataBar.getbClose());
             } else {
                 ctx.activeTrade.initClose();
                 backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
-                ctx.activeTrade.close(dataBar.getqDateBarClose(), dataBar.getqClose());
+                ctx.activeTrade.close(dataBar.getqDateBarClose(), dataBar.getbClose());
                 ctx.strategy.recalculateStats(ctx.activeTrade);
             }
             backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
@@ -95,7 +93,7 @@ public class Backtester {
                 strategyLogic.setInitialStopAndTarget();
                 ctx.activeTrade.addTradeOrder(ibOrder);
                 backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
-                ctx.activeTrade.open(dataBar.getqClose());
+                ctx.activeTrade.open(dataBar.getbClose());
                 backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
             }
             backtestResult.updateStrategy(ctx.strategy, dataBar);
