@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Singleton
 @Path("linear")
-public class LinService {
+public class StrategyService {
     @Inject private DataSeriesDao dataSeriesDao;
 
     @PUT

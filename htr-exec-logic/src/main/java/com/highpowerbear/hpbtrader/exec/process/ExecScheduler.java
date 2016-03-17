@@ -14,7 +14,7 @@ import javax.inject.Inject;
  */
 
 @Singleton
-public class LinScheduler {
+public class ExecScheduler {
     @Inject private IbController ibController;
     @Inject private HeartbeatControl heartbeatControl;
     @Inject private IbAccountDao ibAccountDao;

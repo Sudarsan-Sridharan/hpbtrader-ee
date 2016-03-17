@@ -1,17 +1,16 @@
 package com.highpowerbear.hpbtrader.strategy.process;
 
-import com.highpowerbear.hpbtrader.strategy.common.LinData;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.entity.*;
+import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
+import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
 import com.highpowerbear.hpbtrader.strategy.linear.BacktestResult;
 import com.highpowerbear.hpbtrader.strategy.linear.StrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.linear.logic.LuxorStrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.linear.logic.MacdCrossStrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.linear.logic.TestStrategyLogic;
-import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.entity.*;
-import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
-import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -33,7 +32,6 @@ public class StrategyController implements Serializable {
 
     @Inject private StrategyDao strategyDao;
     @Inject private DataSeriesDao dataSeriesDao;
-    @Inject private LinData linData;
     @Inject private Processor processor;
     @Inject private Backtester backtester;
 

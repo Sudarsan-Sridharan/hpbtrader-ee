@@ -18,11 +18,19 @@ import java.util.List;
  * Created by robertk on 2.12.2015.
  */
 @ApplicationScoped
-@Path("bar")
-public class BarService {
+@Path("series")
+public class DataSeriesService {
 
-    @Inject private HistDataController histDataController;
     @Inject private DataSeriesDao dataSeriesDao;
+    @Inject private HistDataController histDataController;
+
+    @GET
+    @Path("series")
+    @Produces(MediaType.APPLICATION_JSON)
+    public RestList<DataSeries> getSeries(@QueryParam("disabledToo") boolean disabledToo) {
+        List<DataSeries> dataSeriesList = dataSeriesDao.getAllSeries(disabledToo);
+        return new RestList<>(dataSeriesList, (long) dataSeriesList.size());
+    }
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
@@ -60,5 +68,4 @@ public class BarService {
         limit = (limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit);
         return Response.ok(new RestList<>(dataSeriesDao.getPagedBars(dataSeries, start, limit), dataSeriesDao.getNumBars(dataSeries))).build();
     }
-
 }

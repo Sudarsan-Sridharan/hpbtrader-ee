@@ -14,8 +14,7 @@ public class LinRsApplication extends Application {
     private Set<Class<?>> classes = new HashSet<>();
 
     public LinRsApplication(){
-        classes.add(LinService.class);
-        classes.add(OptService.class);
+        classes.add(StrategyService.class);
         // singletons.add(new RestService());
     }
 

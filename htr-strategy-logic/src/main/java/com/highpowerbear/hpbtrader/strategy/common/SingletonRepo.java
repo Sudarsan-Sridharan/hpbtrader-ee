@@ -26,16 +26,11 @@ public class SingletonRepo {
         return srepo;
     }
 
-    @Inject private LinData linData;
     @Inject private IbOrderDao ibOrderDao;
     @Inject private DataSeriesDao dataSeriesDao;
     @Inject private OrderStateHandler orderStateHandler;
     @Inject private EventBroker eventBroker;
     @Inject private TiCalculator tiCalculator;
-
-    public LinData getLinData() {
-        return linData;
-    }
 
     public IbOrderDao getIbOrderDao() {
         return ibOrderDao;
