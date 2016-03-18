@@ -24,14 +24,14 @@ public class ExecScheduler {
         ibAccountDao.getIbAccounts().forEach(ibAccount -> {
             IbConnection c = ibController.getIbConnectionMap().get(ibAccount);
             if (c != null && c.getClientSocket() != null) {
-                ibController.connect(ibAccount);
+                ibController.connectExec(ibAccount);
             }
         });
     }
 
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="31", timezone="US/Eastern", persistent=false)
     private void requestOpenOrders() {
-        ibAccountDao.getIbAccounts().stream().filter(ibController::isConnected).forEach(ibAccount -> {
+        ibAccountDao.getIbAccounts().stream().filter(ibController::isConnectedExec).forEach(ibAccount -> {
             heartbeatControl.updateHeartbeats(ibAccount);
             ibController.requestOpenOrders(ibAccount);
         });

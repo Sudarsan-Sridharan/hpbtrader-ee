@@ -1,7 +1,6 @@
 package com.highpowerbear.hpbtrader.strategy.process;
 
 import com.highpowerbear.hpbtrader.shared.entity.*;
-import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
 import com.highpowerbear.hpbtrader.strategy.linear.BacktestResult;
 import com.highpowerbear.hpbtrader.strategy.linear.StrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.linear.StrategyLogicContext;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
 @Named
 @ApplicationScoped
 public class Backtester {
-    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
     @Inject private DataSeriesDao dataSeriesDao;
 
     private DateFormat df = new SimpleDateFormat("yy/MM/dd HH:mm");

@@ -1,6 +1,5 @@
 package com.highpowerbear.hpbtrader.mktdata.model;
 
-import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
@@ -37,15 +36,15 @@ public class RealtimeData {
     }
 
     private void initFields() {
-        bid = new RealtimeField<>(MktDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "bid", "col-gray-bck");
-        ask = new RealtimeField<>(MktDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "ask", "col-gray-bck");
-        last = new RealtimeField<>(MktDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "last", "col-gray-bck");
-        close = new RealtimeField<>(MktDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "close", "col-gray-bck");
+        bid = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "bid", "col-gray-bck");
+        ask = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "ask", "col-gray-bck");
+        last = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "last", "col-gray-bck");
+        close = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "close", "col-gray-bck");
         changePct = new RealtimeField<>(null, HtrEnums.RealtimeStatus.POSITIVE, "changePct", "");
-        bidSize = new RealtimeField<>(MktDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "bid_size", "col-gray-bck");
-        askSize = new RealtimeField<>(MktDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "ask_size", "col-gray-bck");
-        lastSize = new RealtimeField<>(MktDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "last_size", "col-gray-bck");
-        volume = new RealtimeField<>(MktDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "volume", "col-gray-bck");
+        bidSize = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "bid_size", "col-gray-bck");
+        askSize = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "ask_size", "col-gray-bck");
+        lastSize = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "last_size", "col-gray-bck");
+        volume = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "volume", "col-gray-bck");
     }
 
     public String createUpdateMessage(int field, double price) {
@@ -96,10 +95,10 @@ public class RealtimeData {
 
     public String createChangePctUpdateMsg() {
         String message = "rt,";
-        if (!HtrEnums.SecType.CASH.equals(dataSeries.getInstrument().getSecType()) && !MktDefinitions.INVALID_PRICE.equals(last.getValue()) && !MktDefinitions.INVALID_PRICE.equals(close.getValue())) {
+        if (!HtrEnums.SecType.CASH.equals(dataSeries.getInstrument().getSecType()) && !HtrDefinitions.INVALID_PRICE.equals(last.getValue()) && !HtrDefinitions.INVALID_PRICE.equals(close.getValue())) {
             double price = ((last.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
-        } else if (HtrEnums.SecType.CASH.equals(dataSeries.getInstrument().getSecType()) && !MktDefinitions.INVALID_PRICE.equals(ask.getValue()) && !MktDefinitions.INVALID_PRICE.equals(close.getValue())) {
+        } else if (HtrEnums.SecType.CASH.equals(dataSeries.getInstrument().getSecType()) && !HtrDefinitions.INVALID_PRICE.equals(ask.getValue()) && !HtrDefinitions.INVALID_PRICE.equals(close.getValue())) {
             double price = ((ask.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
         }

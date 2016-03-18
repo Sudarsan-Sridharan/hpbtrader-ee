@@ -9,11 +9,11 @@ import java.util.Set;
  * @author rkolar
  */
 @javax.ws.rs.ApplicationPath("rest")
-public class LinRsApplication extends Application {
+public class StrategyRsApplication extends Application {
     private Set<Object> singletons = new HashSet<>();
     private Set<Class<?>> classes = new HashSet<>();
 
-    public LinRsApplication(){
+    public StrategyRsApplication(){
         classes.add(StrategyService.class);
         // singletons.add(new RestService());
     }

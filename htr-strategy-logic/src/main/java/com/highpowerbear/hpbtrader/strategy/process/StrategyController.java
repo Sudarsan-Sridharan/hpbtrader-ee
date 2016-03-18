@@ -5,7 +5,6 @@ import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
-import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
 import com.highpowerbear.hpbtrader.strategy.linear.BacktestResult;
 import com.highpowerbear.hpbtrader.strategy.linear.StrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.linear.logic.LuxorStrategyLogic;
@@ -28,7 +27,7 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class StrategyController implements Serializable {
-    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject private StrategyDao strategyDao;
     @Inject private DataSeriesDao dataSeriesDao;

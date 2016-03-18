@@ -1,6 +1,5 @@
 package com.highpowerbear.hpbtrader.exec.ibclient;
 
-import com.highpowerbear.hpbtrader.exec.common.ExecDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
@@ -25,7 +24,7 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class IbController {
-    private static final Logger l = Logger.getLogger(ExecDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject private IbOrderDao ibOrderDao;
     @Inject private HeartbeatControl heartbeatControl;
@@ -50,7 +49,7 @@ public class IbController {
         return this.nextValidOrderId++;
     }
 
-    public void connect(IbAccount ibAccount) {
+    public void connectExec(IbAccount ibAccount) {
         IbConnection c = ibConnectionMap.get(ibAccount);
 
         if (c.getClientSocket() == null)  {
@@ -60,9 +59,9 @@ public class IbController {
             c.setAccounts(null);
             c.setIsConnected(false);
             l.info("Connecting ibAccount " + ibAccount.print());
-            c.getClientSocket().eConnect(ibAccount.getHost(), ibAccount.getPort(), HtrDefinitions.IB_CONNECT_CLIENT_ID);
-            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND);
-            if (isConnected(ibAccount)) {
+            c.getClientSocket().eConnect(ibAccount.getHost(), ibAccount.getPort(), ibAccount.getExecClientId());
+            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
+            if (isConnectedExec(ibAccount)) {
                 c.setIsConnected(true);
                 l.info("Sucessfully connected ibAccount " + ibAccount.print());
                 requestOpenOrders(ibAccount);
@@ -71,20 +70,20 @@ public class IbController {
         }
     }
 
-    public void disconnect(IbAccount ibAccount) {
+    public void disconnectExec(IbAccount ibAccount) {
         IbConnection c = ibConnectionMap.get(ibAccount);
         if (c.getClientSocket() != null && c.getClientSocket().isConnected()) {
             l.info("Disconnecting ibAccount " + ibAccount.print());
             c.getClientSocket().eDisconnect();
-            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND);
-            if (!isConnected(ibAccount)) {
+            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
+            if (!isConnectedExec(ibAccount)) {
                 l.info("Successfully disconnected ibAccount " + ibAccount.print());
                 c.clear();
             }
         }
     }
 
-    public boolean isConnected(IbAccount ibAccount) {
+    public boolean isConnectedExec(IbAccount ibAccount) {
         IbConnection c = ibConnectionMap.get(ibAccount);
         return (c.getClientSocket() != null && c.getClientSocket().isConnected());
     }
@@ -110,7 +109,7 @@ public class IbController {
         l.info("START submit order " + ibOrder.getDescription());
         IbConnection c = ibConnectionMap.get(ibOrder.getStrategy().getIbAccount());
         heartbeatControl.addHeartbeat(ibOrder);
-        if (!isConnected(ibOrder.getStrategy().getIbAccount())) {
+        if (!isConnectedExec(ibOrder.getStrategy().getIbAccount())) {
             if (!HtrEnums.IbOrderStatus.NEW_RETRY.equals(ibOrder.getStatus())) {
                 ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW_RETRY, HtrUtil.getCalendar(), null);
                 ibOrderDao.updateIbOrder(ibOrder);

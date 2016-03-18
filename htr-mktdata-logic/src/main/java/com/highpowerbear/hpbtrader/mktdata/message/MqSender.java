@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.mktdata.message;
 
-import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 
 import javax.ejb.Stateless;
@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  */
 @Stateless
 public class MqSender {
-    private static final Logger l = Logger.getLogger(MktDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
     // TODO
     public void notifyBarsAdded(DataSeries dataSeries) {
     }

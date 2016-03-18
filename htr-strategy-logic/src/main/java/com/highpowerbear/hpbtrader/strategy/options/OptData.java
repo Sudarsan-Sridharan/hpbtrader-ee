@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.strategy.options;
 
-import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.strategy.options.model.ContractProperties;
 import com.highpowerbear.hpbtrader.strategy.options.model.MarketData;
 import com.highpowerbear.hpbtrader.strategy.options.model.UnderlyingData;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Named
 @ApplicationScoped
 public class OptData {
-    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     // if a map can be modified from two different threads at the same time, use ConcurrentHashMap
     

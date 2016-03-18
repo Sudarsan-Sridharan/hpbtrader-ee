@@ -25,9 +25,9 @@ public class EventBroker {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void trigger(HtrEnums.DataChangeEvent dataChangeEvent) {
         if (HtrEnums.DataChangeEvent.BAR_UPDATE.equals(dataChangeEvent)) {
-            websocketController.broadcastSeriesMessage("qu=" + ++numBarUpdates);
+            websocketController.broadcastMessage("qu=" + ++numBarUpdates);
         }  else if (HtrEnums.DataChangeEvent.STRATEGY_UPDATE.equals(dataChangeEvent)) {
-            websocketController.broadcastSeriesMessage("su=" + ++numStrategyUpdates);
+            websocketController.broadcastMessage("su=" + ++numStrategyUpdates);
         }
     }
 }

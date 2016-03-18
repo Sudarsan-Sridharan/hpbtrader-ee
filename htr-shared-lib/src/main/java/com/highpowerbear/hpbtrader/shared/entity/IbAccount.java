@@ -23,13 +23,16 @@ public class IbAccount implements Serializable {
     private String accountId;
     private String host;
     private Integer port;
-    private Integer clientId;
+    private Integer mktDataClientId;
+    private Integer execClientId;
 
     @Transient
-    private IbConnection ibConnection;
+    private IbConnection mktDataConnection;
+    @Transient
+    private IbConnection execConnection;
 
     public String print() {
-        return accountId + ", " + host + ":" + port + ", " + clientId;
+        return accountId + ", " + host + ":" + port + ", d=" + mktDataClientId + ", e=" + execClientId;
     }
 
     @Override
@@ -71,19 +74,35 @@ public class IbAccount implements Serializable {
         this.port = port;
     }
 
-    public Integer getClientId() {
-        return clientId;
+    public Integer getMktDataClientId() {
+        return mktDataClientId;
     }
 
-    public void setClientId(Integer clientId) {
-        this.clientId = clientId;
+    public void setMktDataClientId(Integer mktDataClientId) {
+        this.mktDataClientId = mktDataClientId;
     }
 
-    public IbConnection getIbConnection() {
-        return ibConnection;
+    public Integer getExecClientId() {
+        return execClientId;
     }
 
-    public void setIbConnection(IbConnection ibConnection) {
-        this.ibConnection = ibConnection;
+    public void setExecClientId(Integer execClientId) {
+        this.execClientId = execClientId;
+    }
+
+    public IbConnection getMktDataConnection() {
+        return mktDataConnection;
+    }
+
+    public void setMktDataConnection(IbConnection mktDataConnection) {
+        this.mktDataConnection = mktDataConnection;
+    }
+
+    public IbConnection getExecConnection() {
+        return execConnection;
+    }
+
+    public void setExecConnection(IbConnection execConnection) {
+        this.execConnection = execConnection;
     }
 }

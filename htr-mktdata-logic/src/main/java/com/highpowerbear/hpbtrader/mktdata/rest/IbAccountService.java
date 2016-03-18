@@ -36,8 +36,8 @@ public class IbAccountService {
     public RestList<IbAccount> getIbAccounts() {
         List<IbAccount> ibAccounts = ibAccountDao.getIbAccounts();
         ibAccounts.forEach(ibAccount -> {
-            ibAccount.setIbConnection(ibController.getIbConnectionMap().get(ibAccount));
-            ibAccount.getIbConnection().setIsConnected(ibController.isConnected(ibAccount));
+            ibAccount.setMktDataConnection(ibController.getIbConnectionMap().get(ibAccount));
+            ibAccount.getMktDataConnection().setIsConnected(ibController.isConnectedMktData(ibAccount));
         });
         return new RestList<>(ibAccounts, (long) ibAccounts.size());
     }
@@ -62,10 +62,10 @@ public class IbAccountService {
         if (ibAccount == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        ibController.connect(ibAccount);
-        HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND);
-        ibAccount.setIbConnection(ibController.getIbConnectionMap().get(ibAccount));
-        ibAccount.getIbConnection().setIsConnected(ibController.isConnected(ibAccount));
+        ibController.connectMktData(ibAccount);
+        HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
+        ibAccount.setMktDataConnection(ibController.getIbConnectionMap().get(ibAccount));
+        ibAccount.getMktDataConnection().setIsConnected(ibController.isConnectedMktData(ibAccount));
         return Response.ok(ibAccount).build();
     }
 
@@ -77,10 +77,10 @@ public class IbAccountService {
         if (ibAccount == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        ibController.disconnect(ibAccount);
-        HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND);
-        ibAccount.setIbConnection(ibController.getIbConnectionMap().get(ibAccount));
-        ibAccount.getIbConnection().setIsConnected(ibController.isConnected(ibAccount));
+        ibController.disconnectMktData(ibAccount);
+        HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
+        ibAccount.setMktDataConnection(ibController.getIbConnectionMap().get(ibAccount));
+        ibAccount.getMktDataConnection().setIsConnected(ibController.isConnectedMktData(ibAccount));
         return Response.ok(ibAccount).build();
     }
 }

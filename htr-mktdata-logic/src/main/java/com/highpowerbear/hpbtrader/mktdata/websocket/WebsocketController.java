@@ -1,6 +1,5 @@
 package com.highpowerbear.hpbtrader.mktdata.websocket;
 
-import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,7 +17,7 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class WebsocketController {
-    private static final Logger l = Logger.getLogger(MktDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     private Set<Session> sessions = new HashSet<>();
 

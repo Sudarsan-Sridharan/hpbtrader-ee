@@ -1,6 +1,6 @@
 package com.highpowerbear.hpbtrader.strategy.websocket;
 
-import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class WebsocketController implements Serializable {
-    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     private Set<Session> sessions = new HashSet<>();
 
@@ -33,7 +33,7 @@ public class WebsocketController implements Serializable {
         }
     }
 
-    public void broadcastSeriesMessage(String message) {
+    public void broadcastMessage(String message) {
         //l.l().debug("Sending websocket message=" + message + ", clients=" + sessions.size());
         sessions.stream().filter(Session::isOpen).forEach(s -> sendMessage(s, message));
     }

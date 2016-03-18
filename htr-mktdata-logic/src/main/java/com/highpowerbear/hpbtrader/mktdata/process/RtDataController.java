@@ -1,9 +1,9 @@
 package com.highpowerbear.hpbtrader.mktdata.process;
 
-import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
 import com.highpowerbear.hpbtrader.mktdata.ibclient.IbController;
 import com.highpowerbear.hpbtrader.mktdata.model.RealtimeData;
 import com.highpowerbear.hpbtrader.mktdata.websocket.WebsocketController;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 import com.ib.client.TickType;
@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class RtDataController {
-    private static final Logger l = Logger.getLogger(MktDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject private IbController ibController;
     @Inject private WebsocketController websocketController;

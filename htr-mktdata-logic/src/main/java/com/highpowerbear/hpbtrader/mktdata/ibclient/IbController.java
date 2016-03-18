@@ -1,6 +1,5 @@
 package com.highpowerbear.hpbtrader.mktdata.ibclient;
 
-import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 @Named
 @ApplicationScoped
 public class IbController {
-    private static final Logger l = Logger.getLogger(MktDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject IbAccountDao ibAccountDao;
     private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>(); // ibAccount --> ibConnection
@@ -39,7 +38,7 @@ public class IbController {
         ibAccountDao.getIbAccounts().stream().forEach(ibAccount -> ibConnectionMap.put(ibAccount, new IbConnection()));
     }
 
-    public void connect(IbAccount ibAccount) {
+    public void connectMktData(IbAccount ibAccount) {
         IbConnection c = ibConnectionMap.get(ibAccount);
         if (c.getClientSocket() == null)  {
             c.setClientSocket(new EClientSocket(new IbListenerImpl()));
@@ -48,29 +47,29 @@ public class IbController {
             c.setAccounts(null);
             c.setIsConnected(false);
             l.info("Connecting ibAccount " + ibAccount.print());
-            c.getClientSocket().eConnect(ibAccount.getHost(), ibAccount.getPort(), HtrDefinitions.IB_CONNECT_CLIENT_ID);
-            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND);
-            if (isConnected(ibAccount)) {
+            c.getClientSocket().eConnect(ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId());
+            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
+            if (isConnectedMktData(ibAccount)) {
                 c.setIsConnected(true);
                 l.info("Sucessfully connected ibAccount " + ibAccount.print());
             }
         }
     }
 
-    public void disconnect(IbAccount ibAccount) {
+    public void disconnectMktData(IbAccount ibAccount) {
         IbConnection c = ibConnectionMap.get(ibAccount);
         if (c.getClientSocket() != null && c.getClientSocket().isConnected()) {
             l.info("Disconnecting ibAccount " + ibAccount.print());
             c.getClientSocket().eDisconnect();
-            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND);
-            if (!isConnected(ibAccount)) {
+            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
+            if (!isConnectedMktData(ibAccount)) {
                 l.info("Successfully disconnected ibAccount " + ibAccount.print());
                 c.clear();
             }
         }
     }
 
-    public boolean isConnected(IbAccount ibAccount) {
+    public boolean isConnectedMktData(IbAccount ibAccount) {
         IbConnection c = ibConnectionMap.get(ibAccount);
         boolean connected = c.getClientSocket() != null && c.getClientSocket().isConnected();
         if (!connected) {
@@ -79,27 +78,27 @@ public class IbController {
         return connected;
     }
 
-    public IbConnection getActiveConnection() {
+    public IbConnection getActiveMktDataConnection() {
         return ibConnectionMap.values().stream().filter(IbConnection::isConnected).findFirst().orElse(null);
     }
 
-    public List<IbConnection> getActiveConnections() {
+    public List<IbConnection> getActiveMktDataConnections() {
         return ibConnectionMap.values().stream().filter(IbConnection::isConnected).collect(Collectors.toList());
     }
 
     public boolean isAnyActiveConnection() {
-        return getActiveConnection() != null;
+        return getActiveMktDataConnection() != null;
     }
 
     public void reqHistoricalData(int tickerId, Contract contract, String endDateTime, String durationStr, String barSizeSetting, String whatToShow, int useRTH, int formatDate) {
-        IbConnection c = getActiveConnection();
+        IbConnection c = getActiveMktDataConnection();
         if (c != null) {
             c.getClientSocket().reqHistoricalData(tickerId, contract, endDateTime, durationStr, barSizeSetting, whatToShow, useRTH, formatDate, null);
         }
     }
 
     public void requestRealtimeData(int reqId, Contract contract) {
-        IbConnection c = getActiveConnection();
+        IbConnection c = getActiveMktDataConnection();
         if (c != null) {
             l.info("Requested realtime data, reqId=" + reqId + ", contract=" + HtrUtil.printIbContract(contract));
             c.getClientSocket().reqMktData(reqId, contract, "", false, null);
@@ -107,7 +106,7 @@ public class IbController {
     }
 
     public void cancelRealtimeData(int reqId) {
-        getActiveConnections().forEach(c -> {
+        getActiveMktDataConnections().forEach(c -> {
             l.info("Canceling realtime data for reqId=" + reqId);
             c.getClientSocket().cancelMktData(reqId);
         });

@@ -1,8 +1,6 @@
 package com.highpowerbear.hpbtrader.strategy.options;
 
-import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
-import com.highpowerbear.hpbtrader.strategy.common.StrategyEnums;
-import com.highpowerbear.hpbtrader.strategy.common.StrategyUtil;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.strategy.options.model.MarketData;
 import com.highpowerbear.hpbtrader.strategy.options.model.UnderlyingData;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
@@ -21,7 +19,7 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class DataRetriever {
-    private static final Logger l = Logger.getLogger(StrategyDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject private OptData optData;
     @Inject private ChainsRetriever chainsRetriever;
@@ -29,10 +27,10 @@ public class DataRetriever {
     public void start() throws Exception {
         int i = 1;
         for (String underlying : optData.getUnderlyingDataMap().keySet()) {
-            optData.getUnderlyingDataMap().get(underlying).setIbRequestIdBase(StrategyDefinitions.REQUEST_ID_MULTIPLIER * i++);
+            optData.getUnderlyingDataMap().get(underlying).setIbRequestIdBase(HtrDefinitions.REQUEST_ID_MULTIPLIER * i++);
         }
         chainsRetriever.reloadOptionChains();
-        HtrUtil.waitMilliseconds(StrategyDefinitions.ONE_SECOND_MILLIS * 4);
+        HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS * 4);
         requestRtDataForUnderlyings();
     }
 
@@ -40,16 +38,16 @@ public class DataRetriever {
         for (Integer reqId : optData.getMarketDataRequestMap().keySet()) {
             //ibController.cancelRealtimeData(reqId);
             // TODO
-            HtrUtil.waitMilliseconds(StrategyDefinitions.ONE_SECOND_MILLIS / 2);
+            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS / 2);
         }
     }
     
     private void requestRtDataForUnderlyings() {
         for (String underlying : optData.getUnderlyingDataMap().keySet()) {
-            HtrUtil.waitMilliseconds(StrategyDefinitions.ONE_SECOND_MILLIS);
+            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
             optData.getMarketDataMap().put(underlying, new MarketData(underlying, HtrEnums.SecType.STK, underlying));
-            com.ib.client.Contract ibContract = StrategyUtil.constructIbContract(underlying);
-            int reqId = optData.getUnderlyingDataMap().get(underlying).getIbRequestIdBase() + StrategyEnums.OptRequestIdOffset.MKTDATA_UNDERLYING.getValue();
+            com.ib.client.Contract ibContract = HtrUtil.constructIbContract(underlying);
+            int reqId = optData.getUnderlyingDataMap().get(underlying).getIbRequestIdBase() + HtrEnums.OptRequestIdOffset.MKTDATA_UNDERLYING.getValue();
             optData.getMarketDataRequestMap().put(reqId, underlying);
             //ibController.requestRealtimeData(reqId, ibContract);
             // TODO
@@ -66,7 +64,7 @@ public class DataRetriever {
             return;
         }
         marketData.setField(field, price);
-        if (TickType.LAST != field || StrategyUtil.isOptionSymbol(symbol)) {
+        if (TickType.LAST != field || HtrUtil.isOptionSymbol(symbol)) {
             return;
         }
         UnderlyingData ud = optData.getUnderlyingDataMap().get(symbol);
@@ -98,9 +96,9 @@ public class DataRetriever {
     }
     
     private boolean triggerContractChange(Double currentPrice, Double lastContractChangeTriggerPrice) {
-        if (StrategyDefinitions.INVALID_PRICE.equals(lastContractChangeTriggerPrice)) {
+        if (HtrDefinitions.INVALID_PRICE.equals(lastContractChangeTriggerPrice)) {
             return true;
-        } else if (!StrategyUtil.roundDownToHalf(currentPrice).equals(StrategyUtil.roundDownToHalf(lastContractChangeTriggerPrice))) {
+        } else if (!HtrUtil.roundDownToHalf(currentPrice).equals(HtrUtil.roundDownToHalf(lastContractChangeTriggerPrice))) {
             return true;
         }
         return false;

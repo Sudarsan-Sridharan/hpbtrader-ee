@@ -1,8 +1,8 @@
 package com.highpowerbear.hpbtrader.strategy.options.model;
 
-import com.highpowerbear.hpbtrader.strategy.common.StrategyDefinitions;
-import com.highpowerbear.hpbtrader.strategy.common.StrategyUtil;
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.model.ValueStatusHolder;
 import com.ib.client.TickType;
 
@@ -16,18 +16,18 @@ public class MarketData implements Comparable<MarketData> {
     private String symbol;
     
     // price fields
-    private ValueStatusHolder<Double> bid = new ValueStatusHolder<>(StrategyDefinitions.INVALID_PRICE, HtrEnums.ValueStatus.UNCHANGED);
-    private ValueStatusHolder<Double> ask = new ValueStatusHolder<>(StrategyDefinitions.INVALID_PRICE, HtrEnums.ValueStatus.UNCHANGED);
-    private ValueStatusHolder<Double> last = new ValueStatusHolder<>(StrategyDefinitions.INVALID_PRICE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Double> bid = new ValueStatusHolder<>(HtrDefinitions.INVALID_PRICE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Double> ask = new ValueStatusHolder<>(HtrDefinitions.INVALID_PRICE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Double> last = new ValueStatusHolder<>(HtrDefinitions.INVALID_PRICE, HtrEnums.ValueStatus.UNCHANGED);
     
     // size fields
-    private ValueStatusHolder<Integer> bidSize = new ValueStatusHolder<>(StrategyDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
-    private ValueStatusHolder<Integer> askSize = new ValueStatusHolder<>(StrategyDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
-    private ValueStatusHolder<Integer> lastSize = new ValueStatusHolder<>(StrategyDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Integer> bidSize = new ValueStatusHolder<>(HtrDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Integer> askSize = new ValueStatusHolder<>(HtrDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Integer> lastSize = new ValueStatusHolder<>(HtrDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
     
-    private ValueStatusHolder<Integer> volume = new ValueStatusHolder<>(StrategyDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
-    private ValueStatusHolder<Integer> callOpenInterest = new ValueStatusHolder<>(StrategyDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
-    private ValueStatusHolder<Integer> putOpenInterest = new ValueStatusHolder<>(StrategyDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Integer> volume = new ValueStatusHolder<>(HtrDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Integer> callOpenInterest = new ValueStatusHolder<>(HtrDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
+    private ValueStatusHolder<Integer> putOpenInterest = new ValueStatusHolder<>(HtrDefinitions.INVALID_SIZE, HtrEnums.ValueStatus.UNCHANGED);
 
     public MarketData(String underlying, HtrEnums.SecType secType, String symbol) {
         this.underlying = underlying;
@@ -41,18 +41,18 @@ public class MarketData implements Comparable<MarketData> {
     }
     
     public void invalidatePrices() {
-        bid.setValue(StrategyDefinitions.INVALID_PRICE);
-        ask.setValue(StrategyDefinitions.INVALID_PRICE);
-        last.setValue(StrategyDefinitions.INVALID_PRICE);
+        bid.setValue(HtrDefinitions.INVALID_PRICE);
+        ask.setValue(HtrDefinitions.INVALID_PRICE);
+        last.setValue(HtrDefinitions.INVALID_PRICE);
     }
     
     public void invalidateSizes() {
-        bidSize.setValue(StrategyDefinitions.INVALID_SIZE);
-        askSize.setValue(StrategyDefinitions.INVALID_SIZE);
-        lastSize.setValue(StrategyDefinitions.INVALID_SIZE);
-        volume.setValue(StrategyDefinitions.INVALID_SIZE);
-        callOpenInterest.setValue(StrategyDefinitions.INVALID_SIZE);
-        putOpenInterest.setValue(StrategyDefinitions.INVALID_SIZE);
+        bidSize.setValue(HtrDefinitions.INVALID_SIZE);
+        askSize.setValue(HtrDefinitions.INVALID_SIZE);
+        lastSize.setValue(HtrDefinitions.INVALID_SIZE);
+        volume.setValue(HtrDefinitions.INVALID_SIZE);
+        callOpenInterest.setValue(HtrDefinitions.INVALID_SIZE);
+        putOpenInterest.setValue(HtrDefinitions.INVALID_SIZE);
     }
     
     public void setField(int field, double price) {
@@ -89,7 +89,7 @@ public class MarketData implements Comparable<MarketData> {
     }
     
     public Double getBidAskSpread() {
-        return StrategyUtil.round5(ask.getValue() - bid.getValue());
+        return HtrUtil.round5(ask.getValue() - bid.getValue());
     }
     
     public Double getAutoLimitBuy() {

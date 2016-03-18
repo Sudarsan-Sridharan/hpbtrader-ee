@@ -1,13 +1,11 @@
 package com.highpowerbear.hpbtrader.mktdata.process;
 
-import com.highpowerbear.hpbtrader.mktdata.common.MktDefinitions;
 import com.highpowerbear.hpbtrader.mktdata.ibclient.IbController;
 import com.highpowerbear.hpbtrader.mktdata.message.MqSender;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.DataBar;
-import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.ib.client.Contract;
@@ -26,7 +24,8 @@ import java.util.logging.Logger;
 @Named
 @ApplicationScoped
 public class HistDataController {
-    private static final Logger l = Logger.getLogger(MktDefinitions.LOGGER);
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
+
     @Inject private DataSeriesDao dataSeriesDao;
     @Inject private IbController ibController;
     @Inject private MqSender mqSender;
@@ -67,46 +66,40 @@ public class HistDataController {
         barsReceivedMap.remove(dataSeries);
     }
 
-    public void requestFiveMinBars(IbAccount ibAccount) {
+    public void requestFiveMinBars() {
         l.info("START requestFiveMinBars");
-        if (!ibController.isConnected(ibAccount)) {
-            return;
-        }
         dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.MIN5).stream().filter(DataSeries::getActive).forEach(s -> {
             Contract contract = s.getInstrument().createIbContract();
             Calendar now = HtrUtil.getCalendar();
-            int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? MktDefinitions.IB_ETH_TOO : MktDefinitions.IB_RTH_ONLY);
+            int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);
             ibController.reqHistoricalData(
                     s.getId() * HtrDefinitions.IB_REQUEST_MULT,
                     contract,
                     df.format(now.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
-                    (HtrEnums.SecType.CASH.equals(s.getInstrument().getSecType()) ? MktDefinitions.IB_DURATION_1_DAY : MktDefinitions.IB_DURATION_2_DAY),
-                    MktDefinitions.IB_BAR_5_MIN,
+                    (HtrEnums.SecType.CASH.equals(s.getInstrument().getSecType()) ? HtrDefinitions.IB_DURATION_1_DAY : HtrDefinitions.IB_DURATION_2_DAY),
+                    HtrDefinitions.IB_BAR_5_MIN,
                     s.getInstrument().getSecType().getIbBarType(),
                     isUseRTH,
-                    MktDefinitions.IB_FORMAT_DATE_MILLIS);
+                    HtrDefinitions.IB_FORMAT_DATE_MILLIS);
         });
         l.info("END requestFiveMinBars");
     }
 
-    public void requestSixtyMinBars(IbAccount ibAccount) {
+    public void requestSixtyMinBars() {
         l.info("START requestSixtyMinBars");
-        if (!ibController.isConnected(ibAccount)) {
-            return;
-        }
         dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.MIN60).stream().filter(DataSeries::getActive).forEach(s -> {
             Contract contract = s.getInstrument().createIbContract();
             Calendar now = HtrUtil.getCalendar();
-            int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? MktDefinitions.IB_ETH_TOO : MktDefinitions.IB_RTH_ONLY);
+            int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);
             ibController.reqHistoricalData(
                     s.getId() * HtrDefinitions.IB_REQUEST_MULT,
                     contract,
                     df.format(now.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
-                    MktDefinitions.IB_DURATION_1_WEEK,
-                    MktDefinitions.IB_BAR_1_HOUR,
+                    HtrDefinitions.IB_DURATION_1_WEEK,
+                    HtrDefinitions.IB_BAR_1_HOUR,
                     s.getInstrument().getSecType().getIbBarType(),
                     isUseRTH,
-                    MktDefinitions.IB_FORMAT_DATE_MILLIS);
+                    HtrDefinitions.IB_FORMAT_DATE_MILLIS);
         });
         l.info("END requestSixtyMinBars");
     }
@@ -122,17 +115,17 @@ public class HistDataController {
         }
         Contract contract = dataSeries.getInstrument().createIbContract();
         Calendar now = HtrUtil.getCalendar();
-        int isUseRTH = (HtrEnums.SecType.FUT.equals(dataSeries.getInstrument().getSecType()) ? MktDefinitions.IB_ETH_TOO : MktDefinitions.IB_RTH_ONLY);
+        int isUseRTH = (HtrEnums.SecType.FUT.equals(dataSeries.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);
         if (HtrEnums.Interval.MIN5.equals(dataSeries.getInterval())) {
             ibController.reqHistoricalData(
                     dataSeries.getId() * HtrDefinitions.IB_REQUEST_MULT,
                     contract,
                     df.format(now.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
-                    MktDefinitions.IB_DURATION_10_DAY,
-                    MktDefinitions.IB_BAR_5_MIN,
+                    HtrDefinitions.IB_DURATION_10_DAY,
+                    HtrDefinitions.IB_BAR_5_MIN,
                     dataSeries.getInstrument().getSecType().getIbBarType(),
                     isUseRTH,
-                    MktDefinitions.IB_FORMAT_DATE_MILLIS);
+                    HtrDefinitions.IB_FORMAT_DATE_MILLIS);
         } else if (HtrEnums.Interval.MIN60.equals(dataSeries.getInterval())) {
             int reqId = (dataSeries.getId() * HtrDefinitions.IB_REQUEST_MULT) + 4;
             Calendar his = HtrUtil.getCalendar();
@@ -142,11 +135,11 @@ public class HistDataController {
                         reqId--,
                         contract,
                         df.format(his.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
-                        MktDefinitions.IB_DURATION_1_MONTH,
-                        MktDefinitions.IB_BAR_1_HOUR,
+                        HtrDefinitions.IB_DURATION_1_MONTH,
+                        HtrDefinitions.IB_BAR_1_HOUR,
                         dataSeries.getInstrument().getSecType().getIbBarType(),
                         isUseRTH,
-                        MktDefinitions.IB_FORMAT_DATE_MILLIS);
+                        HtrDefinitions.IB_FORMAT_DATE_MILLIS);
                 his.add(Calendar.MONTH, 1);
                 his.add(Calendar.DAY_OF_MONTH, -3); // some overlap
             }
@@ -154,11 +147,11 @@ public class HistDataController {
                     reqId,
                     contract,
                     df.format(now.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
-                    MktDefinitions.IB_DURATION_1_MONTH,
-                    MktDefinitions.IB_BAR_1_HOUR,
+                    HtrDefinitions.IB_DURATION_1_MONTH,
+                    HtrDefinitions.IB_BAR_1_HOUR,
                     dataSeries.getInstrument().getSecType().getIbBarType(),
                     isUseRTH,
-                    MktDefinitions.IB_FORMAT_DATE_MILLIS);
+                    HtrDefinitions.IB_FORMAT_DATE_MILLIS);
         }
         l.info("END backfillManual, series=" + dataSeries.getId() + ", symbol=" + dataSeries.getInstrument().getSymbol());
     }
