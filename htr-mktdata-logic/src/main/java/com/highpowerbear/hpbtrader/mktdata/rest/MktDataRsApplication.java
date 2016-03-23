@@ -16,7 +16,7 @@ public class MktDataRsApplication extends Application {
         // register root resources/providers
         classes.add(IbAccountService.class);
         classes.add(DataSeriesService.class);
-        classes.add(IndicatorService.class);
+        classes.add(TechAnalysisService.class);
         return classes;
     }
 }

@@ -110,7 +110,7 @@ public class HistDataController {
             return;
         }
         l.info("START backfillManual, series=" + dataSeries.getId() + ", symbol=" + dataSeries.getInstrument().getSymbol());
-        if (!ibController.isAnyActiveConnection()) {
+        if (!ibController.isAnyActiveMktDataConnection()) {
             return;
         }
         Contract contract = dataSeries.getInstrument().createIbContract();

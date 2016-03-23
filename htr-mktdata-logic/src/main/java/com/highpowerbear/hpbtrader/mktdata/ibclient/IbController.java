@@ -46,12 +46,12 @@ public class IbController {
         if (c.getClientSocket() != null && !c.getClientSocket().isConnected()) {
             c.setAccounts(null);
             c.setIsConnected(false);
-            l.info("Connecting ibAccount " + ibAccount.print());
+            l.info("Connecting mkt data " + ibAccount.print());
             c.getClientSocket().eConnect(ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId());
             HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
             if (isConnectedMktData(ibAccount)) {
                 c.setIsConnected(true);
-                l.info("Sucessfully connected ibAccount " + ibAccount.print());
+                l.info("Sucessfully connected mkt data " + ibAccount.print());
             }
         }
     }
@@ -59,11 +59,11 @@ public class IbController {
     public void disconnectMktData(IbAccount ibAccount) {
         IbConnection c = ibConnectionMap.get(ibAccount);
         if (c.getClientSocket() != null && c.getClientSocket().isConnected()) {
-            l.info("Disconnecting ibAccount " + ibAccount.print());
+            l.info("Disconnecting mkt data " + ibAccount.print());
             c.getClientSocket().eDisconnect();
             HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
             if (!isConnectedMktData(ibAccount)) {
-                l.info("Successfully disconnected ibAccount " + ibAccount.print());
+                l.info("Successfully disconnected mkt data " + ibAccount.print());
                 c.clear();
             }
         }
@@ -73,7 +73,7 @@ public class IbController {
         IbConnection c = ibConnectionMap.get(ibAccount);
         boolean connected = c.getClientSocket() != null && c.getClientSocket().isConnected();
         if (!connected) {
-            l.info("Not connected " + ibAccount.print());
+            l.info("Not connected mkt data " + ibAccount.print());
         }
         return connected;
     }
@@ -86,7 +86,7 @@ public class IbController {
         return ibConnectionMap.values().stream().filter(IbConnection::isConnected).collect(Collectors.toList());
     }
 
-    public boolean isAnyActiveConnection() {
+    public boolean isAnyActiveMktDataConnection() {
         return getActiveMktDataConnection() != null;
     }
 

@@ -18,7 +18,7 @@ import java.util.List;
  */
 @ApplicationScoped
 @Path("indicator")
-public class IndicatorService {
+public class TechAnalysisService {
 
     @Inject private DataSeriesDao dataSeriesDao;
     @Inject private TiCalculator tiCalculator;

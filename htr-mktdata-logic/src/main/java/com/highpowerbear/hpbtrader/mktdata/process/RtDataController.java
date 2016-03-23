@@ -65,7 +65,7 @@ public class RtDataController {
     }
 
     public void toggleRealtimeData(DataSeries dataSeries) {
-        if (!ibController.isAnyActiveConnection()) {
+        if (!ibController.isAnyActiveMktDataConnection()) {
             return;
         }
         RealtimeData rtd = realtimeDataMap.values().stream().filter(r -> r.getDataSeries().equals(dataSeries)).findAny().get();
