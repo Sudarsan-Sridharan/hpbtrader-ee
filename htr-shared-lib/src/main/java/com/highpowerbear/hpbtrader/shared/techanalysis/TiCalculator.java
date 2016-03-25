@@ -51,7 +51,7 @@ public class TiCalculator {
         for (int i = period; i < dataBars.size(); i++) {
             ema = (dataBars.get(i).getbClose() - ema) * mult + ema;
             if (i >= HtrDefinitions.BARS_REQUIRED) {
-                Long timeInMillis = dataBars.get(i).getTimeInMillisBarClose();
+                Long timeInMillis = dataBars.get(i).getbCloseDateMillis();
                 emaList.add(new Ema(timeInMillis, ema));
             }
         }
@@ -65,14 +65,14 @@ public class TiCalculator {
         double d;
         int currentBarIndex = lookbackPeriod - 1;
         while (currentBarIndex < dataBars.size()) {
-            double highestHigh = dataBars.get(currentBarIndex).getHigh();
-            double lowestLow = dataBars.get(currentBarIndex).getLow();
+            double highestHigh = dataBars.get(currentBarIndex).getbHigh();
+            double lowestLow = dataBars.get(currentBarIndex).getbLow();
             for (int i = currentBarIndex; i >= currentBarIndex - lookbackPeriod + 1; i--) {
-                if (dataBars.get(i).getHigh() > highestHigh) {
-                    highestHigh = dataBars.get(i).getHigh();
+                if (dataBars.get(i).getbHigh() > highestHigh) {
+                    highestHigh = dataBars.get(i).getbHigh();
                 }
-                if (dataBars.get(i).getLow() < lowestLow) {
-                    lowestLow = dataBars.get(i).getLow();
+                if (dataBars.get(i).getbLow() < lowestLow) {
+                    lowestLow = dataBars.get(i).getbLow();
                 }
             }
             System.arraycopy(kFast, 1, kFast, 0, smaKPeriod - 1);
@@ -90,7 +90,7 @@ public class TiCalculator {
             }
             d = d/(double) smaDPeriod;
             if (currentBarIndex >= HtrDefinitions.BARS_REQUIRED) {
-                Long timeInMillis = dataBars.get(currentBarIndex).getTimeInMillisBarClose();
+                Long timeInMillis = dataBars.get(currentBarIndex).getbCloseDateMillis();
                 stochList.add(new Stochastics(timeInMillis, k[smaDPeriod - 1], d));
             }
             currentBarIndex++;
@@ -130,7 +130,7 @@ public class TiCalculator {
             macdSl = (macdL - macdSl) * m3 + macdSl;
             macdH = macdL - macdSl;
             if (i >= HtrDefinitions.BARS_REQUIRED) {
-                Long timeInMillis = dataBars.get(i).getTimeInMillisBarClose();
+                Long timeInMillis = dataBars.get(i).getbCloseDateMillis();
                 macdList.add(new Macd(timeInMillis, macdL, macdSl,macdH));
             }
         }

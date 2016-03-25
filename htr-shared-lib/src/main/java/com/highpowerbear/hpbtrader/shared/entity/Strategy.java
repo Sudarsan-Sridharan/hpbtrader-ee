@@ -37,14 +37,14 @@ public class Strategy implements Serializable {
     private HtrEnums.StrategyMode strategyMode = HtrEnums.StrategyMode.SIM;
     private String params = HtrEnums.StrategyType.values()[0].getDefaultParams();
     private Integer tradingQuantity = 100;
-    private Integer numAllOrders = 0;
-    private Integer numFilledOrders = 0;
+    private Long numAllOrders = 0L;
+    private Long numFilledOrders = 0L;
     private Integer currentPosition = 0;
     private Double cumulativePl = 0d;
-    private Integer numShorts = 0;
-    private Integer numLongs = 0;
-    private Integer numWinners = 0;
-    private Integer numLosers = 0;
+    private Long numShorts = 0L;
+    private Long numLongs = 0L;
+    private Long numWinners = 0L;
+    private Long numLosers = 0L;
 
     public String getDefaultInputSeriesAlias() {
         return this.inputSeriesAliases.split(",")[0];
@@ -64,7 +64,7 @@ public class Strategy implements Serializable {
         cumulativePl += closedTrade.getRealizedPl();
     }
     
-    public Integer getNumClosedTrades() {
+    public Long getNumClosedTrades() {
         return numShorts + numLongs;
     }
     
@@ -110,14 +110,14 @@ public class Strategy implements Serializable {
     }
     
     public void resetStatistics() {
-        setNumAllOrders(0);
-        setNumFilledOrders(0);
+        setNumAllOrders(0L);
+        setNumFilledOrders(0L);
         setCurrentPosition(0);
         setCumulativePl(0d);
-        setNumShorts(0);
-        setNumLongs(0);
-        setNumWinners(0);
-        setNumLosers(0);
+        setNumShorts(0L);
+        setNumLongs(0L);
+        setNumWinners(0L);
+        setNumLosers(0L);
     }
     
     public boolean valuesEqual(Strategy otherStrategy) {
@@ -238,19 +238,19 @@ public class Strategy implements Serializable {
         this.tradingQuantity = tradingQuantity;
     }
 
-    public Integer getNumAllOrders() {
+    public Long getNumAllOrders() {
         return numAllOrders;
     }
 
-    public void setNumAllOrders(Integer numAllOrders) {
+    public void setNumAllOrders(Long numAllOrders) {
         this.numAllOrders = numAllOrders;
     }
 
-    public Integer getNumFilledOrders() {
+    public Long getNumFilledOrders() {
         return numFilledOrders;
     }
 
-    public void setNumFilledOrders(Integer numFilledOrders) {
+    public void setNumFilledOrders(Long numFilledOrders) {
         this.numFilledOrders = numFilledOrders;
     }
 
@@ -270,35 +270,35 @@ public class Strategy implements Serializable {
         this.cumulativePl = cumulativePl;
     }
 
-    public Integer getNumShorts() {
+    public Long getNumShorts() {
         return numShorts;
     }
 
-    public void setNumShorts(Integer numShorts) {
+    public void setNumShorts(Long numShorts) {
         this.numShorts = numShorts;
     }
 
-    public Integer getNumLongs() {
+    public Long getNumLongs() {
         return numLongs;
     }
 
-    public void setNumLongs(Integer numLongs) {
+    public void setNumLongs(Long numLongs) {
         this.numLongs = numLongs;
     }
 
-    public Integer getNumWinners() {
+    public Long getNumWinners() {
         return numWinners;
     }
 
-    public void setNumWinners(Integer numWinners) {
+    public void setNumWinners(Long numWinners) {
         this.numWinners = numWinners;
     }
 
-    public Integer getNumLosers() {
+    public Long getNumLosers() {
         return numLosers;
     }
 
-    public void setNumLosers(Integer numLosers) {
+    public void setNumLosers(Long numLosers) {
         this.numLosers = numLosers;
     }
 }

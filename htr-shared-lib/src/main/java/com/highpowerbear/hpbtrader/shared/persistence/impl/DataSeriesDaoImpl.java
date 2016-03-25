@@ -107,9 +107,9 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
             if (!dataSeries.equals(dataBar.getDataSeries())) {
                 continue;
             }
-            TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries AND b.qDateBarClose = :qDateBarClose", DataBar.class);
+            TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries AND b.bCloseDate = :bCloseDate", DataBar.class);
             query.setParameter("dataSeries", dataSeries);
-            query.setParameter("qDateBarClose", dataBar.getqDateBarClose());
+            query.setParameter("bCloseDate", dataBar.getbCloseDate());
             List<DataBar> bl = query.getResultList();
             DataBar dbDataBar = (bl != null && !bl.isEmpty() ? bl.get(0) : null);
             if (dbDataBar == null) {
@@ -130,7 +130,7 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
 
     @Override
     public List<DataBar> getBars(DataSeries dataSeries, Integer numBars) {
-        TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries ORDER BY b.qDateBarClose ASC", DataBar.class);
+        TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries ORDER BY b.bCloseDate ASC", DataBar.class);
         query.setParameter("dataSeries", dataSeries);
         if (numBars != null && numBars > 0) {
             query.setMaxResults(numBars);
@@ -149,7 +149,7 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
 
     @Override
     public DataBar getLastBar(DataSeries dataSeries) {
-        TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries ORDER BY b.qDateBarClose DESC", DataBar.class);
+        TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries ORDER BY b.bCloseDate DESC", DataBar.class);
         query.setParameter("dataSeries", dataSeries);
         query.setMaxResults(1);
         List<DataBar> dataBars = query.getResultList();

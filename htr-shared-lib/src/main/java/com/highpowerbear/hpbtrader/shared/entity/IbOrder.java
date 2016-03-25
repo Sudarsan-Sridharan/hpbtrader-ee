@@ -24,14 +24,15 @@ public class IbOrder implements Serializable {
     @Id
     @GeneratedValue(generator="iborder")
     private Long id;
-    private Integer ibPermId; // not null only for IB order
-    private Integer ibOrderId; // not null only for IB orders
+    private Integer ibPermId;
+    private Integer ibOrderId;
     @ManyToOne
     private Strategy strategy;
     @Enumerated(EnumType.STRING)
     // must be present in trade order, since it can change during the existence of strategy
     private HtrEnums.StrategyMode strategyMode;
     private String triggerDesc;
+    @Enumerated(EnumType.STRING)
     private HtrEnums.SubmitType submitType;
     @Enumerated(EnumType.STRING)
     private HtrEnums.OrderAction orderAction;

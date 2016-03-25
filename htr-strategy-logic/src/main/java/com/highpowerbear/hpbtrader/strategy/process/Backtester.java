@@ -64,12 +64,12 @@ public class Backtester {
                 }
                 continue;
             }
-            l.fine("Backtest iteration=" + i + ", new order, trigger=" + ibOrder.getTriggerDesc() + ", date=" + df.format(dataBar.getqDateBarClose().getTime()));
+            l.fine("Backtest iteration=" + i + ", new order, trigger=" + ibOrder.getTriggerDesc() + ", date=" + df.format(dataBar.getbCloseDate().getTime()));
             backtestResult.addOrder(ibOrder);
             ctx.activeTrade.addTradeOrder(ibOrder);
-            ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, dataBar.getqDateBarClose(), null);
-            ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, dataBar.getqDateBarClose(), null);
-            ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, dataBar.getqDateBarClose(), null);
+            ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, dataBar.getbCloseDate(), null);
+            ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, dataBar.getbCloseDate(), null);
+            ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, dataBar.getbCloseDate(), null);
             ibOrder.setFillPrice(dataBar.getbClose());
             backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
 
@@ -82,7 +82,7 @@ public class Backtester {
             } else {
                 ctx.activeTrade.initClose();
                 backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
-                ctx.activeTrade.close(dataBar.getqDateBarClose(), dataBar.getbClose());
+                ctx.activeTrade.close(dataBar.getbCloseDate(), dataBar.getbClose());
                 ctx.strategy.recalculateStats(ctx.activeTrade);
             }
             backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
@@ -106,7 +106,7 @@ public class Backtester {
             return dataBars;
         }
         return dataBars.stream()
-                .filter(q -> q.getTimeInMillisBarClose() >= startDate.getTimeInMillis() && q.getTimeInMillisBarClose() <= endDate.getTimeInMillis())
+                .filter(q -> q.getbCloseDateMillis() >= startDate.getTimeInMillis() && q.getbCloseDateMillis() <= endDate.getTimeInMillis())
                 .collect(Collectors.toList());
     }
 }

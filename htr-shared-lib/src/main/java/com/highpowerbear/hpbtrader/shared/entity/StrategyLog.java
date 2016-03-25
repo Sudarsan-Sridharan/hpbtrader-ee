@@ -32,15 +32,15 @@ public class StrategyLog  implements Serializable {
     private HtrEnums.StrategyMode strategyMode;
     private Integer tradingQuantity;
     private String params;
-    private Integer numAllOrders;
-    private Integer numFilledOrders;
+    private Long numAllOrders;
+    private Long numFilledOrders;
     private Integer currentPosition;
     @XmlElement
     private Double cumulativePl;
-    private Integer numShorts;
-    private Integer numLongs;
-    private Integer numWinners;
-    private Integer numLosers;
+    private Long numShorts;
+    private Long numLongs;
+    private Long numWinners;
+    private Long numLosers;
     
     @XmlElement
     public long getTimeInMillis() {
@@ -118,19 +118,19 @@ public class StrategyLog  implements Serializable {
         this.params = params;
     }
 
-    public Integer getNumAllOrders() {
+    public Long getNumAllOrders() {
         return numAllOrders;
     }
 
-    public void setNumAllOrders(Integer numAllOrders) {
+    public void setNumAllOrders(Long numAllOrders) {
         this.numAllOrders = numAllOrders;
     }
 
-    public Integer getNumFilledOrders() {
+    public Long getNumFilledOrders() {
         return numFilledOrders;
     }
 
-    public void setNumFilledOrders(Integer numFilledOrders) {
+    public void setNumFilledOrders(Long numFilledOrders) {
         this.numFilledOrders = numFilledOrders;
     }
 
@@ -150,35 +150,35 @@ public class StrategyLog  implements Serializable {
         this.cumulativePl = cumulativePl;
     }
 
-    public Integer getNumShorts() {
+    public Long getNumShorts() {
         return numShorts;
     }
 
-    public void setNumShorts(Integer numShorts) {
+    public void setNumShorts(Long numShorts) {
         this.numShorts = numShorts;
     }
 
-    public Integer getNumLongs() {
+    public Long getNumLongs() {
         return numLongs;
     }
 
-    public void setNumLongs(Integer numLongs) {
+    public void setNumLongs(Long numLongs) {
         this.numLongs = numLongs;
     }
 
-    public Integer getNumWinners() {
+    public Long getNumWinners() {
         return numWinners;
     }
 
-    public void setNumWinners(Integer numWinners) {
+    public void setNumWinners(Long numWinners) {
         this.numWinners = numWinners;
     }
 
-    public Integer getNumLosers() {
+    public Long getNumLosers() {
         return numLosers;
     }
 
-    public void setNumLosers(Integer numLosers) {
+    public void setNumLosers(Long numLosers) {
         this.numLosers = numLosers;
     }
 }

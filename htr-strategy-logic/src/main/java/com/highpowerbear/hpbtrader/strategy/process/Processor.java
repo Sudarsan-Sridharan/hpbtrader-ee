@@ -54,7 +54,7 @@ public class Processor implements Serializable {
         
         long intervalMillis = dataSeries.getInterval().getMillis();
         long nowMillis = HtrUtil.getCalendar().getTimeInMillis();
-        boolean isCurrentBar = ((dataBar.getTimeInMillisBarClose() + intervalMillis) > nowMillis);
+        boolean isCurrentBar = ((dataBar.getbCloseDateMillis() + intervalMillis) > nowMillis);
         if (!isCurrentBar) {
             l.info("END " + logMessage + ", not current bar");
             return;

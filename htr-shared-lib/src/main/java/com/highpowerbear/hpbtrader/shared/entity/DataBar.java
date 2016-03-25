@@ -26,13 +26,13 @@ public class DataBar implements Serializable {
     @ManyToOne
     private DataSeries dataSeries;
     @Temporal(value=TemporalType.TIMESTAMP)
-    private Calendar qDateBarClose;
+    private Calendar bCloseDate;
     @XmlElement
     private Double bOpen;
     @XmlElement
-    private Double high;
+    private Double bHigh;
     @XmlElement
-    private Double low;
+    private Double bLow;
     @XmlElement
     private Double bClose;
     @XmlElement
@@ -42,18 +42,18 @@ public class DataBar implements Serializable {
     private Boolean hasGaps;
 
     @XmlElement
-    public long getTimeInMillisBarClose() {
-        return qDateBarClose.getTimeInMillis();
+    public long getbCloseDateMillis() {
+        return bCloseDate.getTimeInMillis();
     }
 
     public String print() {
-        return dataSeries.getInstrument().getSymbol() + ": " + HtrUtil.getFormattedDate(qDateBarClose) + ", " + bOpen + ", " + high + ", " + low + ", " + bClose + ", " + volume + ", " + count + ", " + hasGaps;
+        return dataSeries.getInstrument().getSymbol() + ": " + HtrUtil.getFormattedDate(bCloseDate) + ", " + bOpen + ", " + bHigh + ", " + bLow + ", " + bClose + ", " + volume + ", " + count + ", " + hasGaps;
     }
 
     public void mergeFrom(DataBar from) {
         this.bOpen = from.getbOpen();
-        this.high = from.getHigh();
-        this.low = from.getLow();
+        this.bHigh = from.getbHigh();
+        this.bLow = from.getbLow();
         this.bClose = from.getbClose();
         this.volume = from.getVolume();
         this.count = from.getCount();
@@ -92,12 +92,12 @@ public class DataBar implements Serializable {
         this.dataSeries = dataSeries;
     }
 
-    public Calendar getqDateBarClose() {
-        return qDateBarClose;
+    public Calendar getbCloseDate() {
+        return bCloseDate;
     }
 
-    public void setqDateBarClose(Calendar qDateBarClose) {
-        this.qDateBarClose = qDateBarClose;
+    public void setbCloseDate(Calendar bCloseDate) {
+        this.bCloseDate = bCloseDate;
     }
 
     public Double getbOpen() {
@@ -108,20 +108,20 @@ public class DataBar implements Serializable {
         this.bOpen = bOpen;
     }
 
-    public Double getHigh() {
-        return high;
+    public Double getbHigh() {
+        return bHigh;
     }
 
-    public void setHigh(Double high) {
-        this.high = high;
+    public void setbHigh(Double bHigh) {
+        this.bHigh = bHigh;
     }
 
-    public Double getLow() {
-        return low;
+    public Double getbLow() {
+        return bLow;
     }
 
-    public void setLow(Double low) {
-        this.low = low;
+    public void setbLow(Double bLow) {
+        this.bLow = bLow;
     }
 
     public Double getbClose() {

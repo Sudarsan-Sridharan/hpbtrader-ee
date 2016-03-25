@@ -24,8 +24,8 @@ public class IbListenerImpl extends AbstractIbListener {
         } else {
             DataBar dataBar = new DataBar();
             dataBar.setbOpen(open);
-            dataBar.setHigh(high);
-            dataBar.setLow(low);
+            dataBar.setbHigh(high);
+            dataBar.setbLow(low);
             dataBar.setbClose(close);
             dataBar.setVolume(volume == -1 ? 0 : volume);
             dataBar.setCount(count);
