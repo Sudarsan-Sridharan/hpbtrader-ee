@@ -12,7 +12,6 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "instrument")
 public class Instrument implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -25,7 +24,6 @@ public class Instrument implements Serializable {
     @Enumerated(EnumType.STRING)
     private HtrEnums.Currency currency;
     @Enumerated(EnumType.STRING)
-    @Column(name = "iexchange")
     private HtrEnums.Exchange exchange;
 
     public com.ib.client.Contract createIbContract() {

@@ -1,6 +1,5 @@
 package com.highpowerbear.hpbtrader.shared.persistence.impl;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
@@ -17,19 +16,17 @@ import javax.persistence.TypedQuery;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * Created by robertk on 19.11.2015.
  */
 @Stateless
 public class TradeDaoImpl implements TradeDao {
-    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @PersistenceContext
     private EntityManager em;
 
-    public void createTrade(Trade trade, Double price) {
+    private void createTrade(Trade trade, Double price) {
         em.persist(trade); // trade orders get persisted too
         TradeLog tradeLog = new TradeLog();
         tradeLog.setTrade(trade);

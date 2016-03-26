@@ -18,7 +18,6 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
-@Table(name = "trade")
 public class Trade implements Serializable {
     private static final long serialVersionUID = 1L;
     

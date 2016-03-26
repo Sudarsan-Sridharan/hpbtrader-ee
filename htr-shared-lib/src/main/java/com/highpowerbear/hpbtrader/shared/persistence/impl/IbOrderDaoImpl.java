@@ -1,6 +1,5 @@
 package com.highpowerbear.hpbtrader.shared.persistence.impl;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
@@ -14,14 +13,12 @@ import javax.persistence.TypedQuery;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * Created by robertk on 19.11.2015.
  */
 @Stateless
 public class IbOrderDaoImpl implements IbOrderDao {
-    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @PersistenceContext
     private EntityManager em;
@@ -43,7 +40,7 @@ public class IbOrderDaoImpl implements IbOrderDao {
 
     @Override
     public IbOrder getIbOrderByIbPermId(IbAccount ibAccount, Integer ibPermId) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibAccount = :ibAccount AND o.ibPermId = :ibPermId", IbOrder.class);
+        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy.ibAccount = :ibAccount AND o.ibPermId = :ibPermId", IbOrder.class);
         query.setParameter("ibAccount", ibAccount);
         query.setParameter("ibPermId", ibPermId);
         List<IbOrder> ibOrders = query.getResultList();
@@ -52,7 +49,7 @@ public class IbOrderDaoImpl implements IbOrderDao {
 
     @Override
     public IbOrder getIbOrderByIbOrderId(IbAccount ibAccount, Integer ibOrderId) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibAccount = :ibAccount AND o.ibOrderId = :ibOrderId ORDER BY o.createdDate DESC", IbOrder.class);
+        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy.ibAccount = :ibAccount AND o.ibOrderId = :ibOrderId ORDER BY o.createdDate DESC", IbOrder.class);
         query.setParameter("ibAccount", ibAccount);
         query.setParameter("ibOrderId", ibOrderId);
         List<IbOrder> ibOrders = query.getResultList();
@@ -68,7 +65,7 @@ public class IbOrderDaoImpl implements IbOrderDao {
 
     @Override
     public List<IbOrder> getNewRetryIbOrders(IbAccount ibAccount) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o, OrderEvent e WHERE o.ibAccount = :ibAccount AND o = e.ibOrder AND o.status = e.status AND o.status IN :statuses ORDER BY e.eventDate ASC", IbOrder.class);
+        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o, OrderEvent e WHERE o.strategy.ibAccount = :ibAccount AND o = e.ibOrder AND o.status = e.status AND o.status IN :statuses ORDER BY e.eventDate ASC", IbOrder.class);
         Set<HtrEnums.IbOrderStatus> statuses = new HashSet<>();
         statuses.add(HtrEnums.IbOrderStatus.NEW_RETRY);
         query.setParameter("ibAccount", ibAccount);
@@ -78,7 +75,7 @@ public class IbOrderDaoImpl implements IbOrderDao {
 
     @Override
     public List<IbOrder> getOpenIbOrders(IbAccount ibAccount) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibAccount = :ibAccount AND o.status IN :statuses AND o.strategyMode = :strategyMode", IbOrder.class);
+        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy.ibAccount = :ibAccount AND o.status IN :statuses AND o.strategyMode = :strategyMode", IbOrder.class);
         Set<HtrEnums.IbOrderStatus> statuses = new HashSet<>();
         statuses.add(HtrEnums.IbOrderStatus.NEW);
         statuses.add(HtrEnums.IbOrderStatus.NEW_RETRY);

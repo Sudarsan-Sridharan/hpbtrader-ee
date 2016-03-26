@@ -14,7 +14,6 @@ import java.util.Calendar;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
-@Table(name = "strategylog")
 public class StrategyLog  implements Serializable {
     private static final long serialVersionUID = 1L;
     

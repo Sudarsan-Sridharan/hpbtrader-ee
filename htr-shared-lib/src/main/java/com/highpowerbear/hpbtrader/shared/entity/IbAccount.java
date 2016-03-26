@@ -15,7 +15,6 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name="ibaccount")
 public class IbAccount implements Serializable {
     private static final long serialVersionUID = 1L;
 

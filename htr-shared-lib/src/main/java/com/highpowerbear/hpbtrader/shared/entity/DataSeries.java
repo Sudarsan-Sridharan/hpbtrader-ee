@@ -14,7 +14,6 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Cacheable(false)
-@Table(name = "dataseries")
 public class DataSeries implements Serializable {
     private static final long serialVersionUID = 1L;
 

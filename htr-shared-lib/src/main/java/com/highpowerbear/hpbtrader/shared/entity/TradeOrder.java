@@ -11,7 +11,6 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "tradeorder")
 public class TradeOrder implements Serializable {
     private static final long serialVersionUID = 1L;
     

@@ -14,7 +14,6 @@ import java.util.Calendar;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "orderevent", uniqueConstraints = @UniqueConstraint(columnNames = {"order_id", "orderStatus"}))
 public class OrderEvent implements Serializable {
     private static final long serialVersionUID = 1L;
 

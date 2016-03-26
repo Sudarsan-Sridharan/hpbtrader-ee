@@ -15,7 +15,6 @@ import java.util.Calendar;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
-@Table(name = "databar", uniqueConstraints = @UniqueConstraint(columnNames = {"qDateBarClose", "series_id"}))
 public class DataBar implements Serializable {
     private static final long serialVersionUID = 1L;
 
