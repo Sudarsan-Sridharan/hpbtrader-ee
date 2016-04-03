@@ -35,9 +35,7 @@ public class HistDataController {
     public void barReceived(int reqId, String date, DataBar dataBar) {
         int seriesId = reqId / HtrDefinitions.IB_REQUEST_MULT;
         DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
-        if (barsReceivedMap.get(dataSeries) == null) {
-            barsReceivedMap.put(dataSeries, new LinkedHashMap<>());
-        }
+        barsReceivedMap.putIfAbsent(dataSeries, new LinkedHashMap<>());
         Calendar c = HtrUtil.getCalendar();
         c.setTimeInMillis(Long.valueOf(date) * 1000 + dataSeries.getInterval().getMillis()); // date-time stamp of the end of the bar
         if (HtrEnums.Interval.MIN60.equals(dataSeries.getInterval())) {
@@ -66,7 +64,7 @@ public class HistDataController {
         barsReceivedMap.remove(dataSeries);
     }
 
-    public void requestFiveMinBars() {
+    void requestFiveMinBars() {
         l.info("START requestFiveMinBars");
         dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.MIN5).stream().filter(DataSeries::getActive).forEach(s -> {
             Contract contract = s.getInstrument().createIbContract();
@@ -85,7 +83,7 @@ public class HistDataController {
         l.info("END requestFiveMinBars");
     }
 
-    public void requestSixtyMinBars() {
+    void requestSixtyMinBars() {
         l.info("START requestSixtyMinBars");
         dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.MIN60).stream().filter(DataSeries::getActive).forEach(s -> {
             Contract contract = s.getInstrument().createIbContract();

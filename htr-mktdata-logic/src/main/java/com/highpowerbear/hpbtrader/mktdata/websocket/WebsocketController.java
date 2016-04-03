@@ -21,11 +21,11 @@ public class WebsocketController {
 
     private Set<Session> sessions = new HashSet<>();
 
-    public Set<Session> getSessions() {
+    Set<Session> getSessions() {
         return sessions;
     }
 
-    public void sendMessage(Session s, String message) {
+    void sendMessage(Session s, String message) {
         try {
             RemoteEndpoint.Async remote = s.getAsyncRemote();
             remote.setSendTimeout(HtrDefinitions.WEBSOCKET_ASYNC_SEND_TIMEOUT);

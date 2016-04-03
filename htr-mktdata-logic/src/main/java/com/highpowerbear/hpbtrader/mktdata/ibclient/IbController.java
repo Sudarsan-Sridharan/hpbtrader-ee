@@ -78,11 +78,11 @@ public class IbController {
         return connected;
     }
 
-    public IbConnection getActiveMktDataConnection() {
+    private IbConnection getActiveMktDataConnection() {
         return ibConnectionMap.values().stream().filter(IbConnection::isConnected).findFirst().orElse(null);
     }
 
-    public List<IbConnection> getActiveMktDataConnections() {
+    private List<IbConnection> getActiveMktDataConnections() {
         return ibConnectionMap.values().stream().filter(IbConnection::isConnected).collect(Collectors.toList());
     }
 
