@@ -93,7 +93,7 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
     }
     
     private boolean isTradeTime() {
-        int barHour = dataBar.getbCloseDate().get(Calendar.HOUR_OF_DAY);
+        int barHour = dataBar.getBarCloseDate().get(Calendar.HOUR_OF_DAY);
         return (barHour >= this.startHourEst && barHour < (this.startHourEst + this.durationHours));
     }
     

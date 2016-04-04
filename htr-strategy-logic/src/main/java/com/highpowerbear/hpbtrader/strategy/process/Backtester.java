@@ -64,13 +64,13 @@ public class Backtester {
                 }
                 continue;
             }
-            l.fine("Backtest iteration=" + i + ", new order, trigger=" + ibOrder.getTriggerDesc() + ", date=" + df.format(dataBar.getbCloseDate().getTime()));
+            l.fine("Backtest iteration=" + i + ", new order, trigger=" + ibOrder.getTriggerDesc() + ", date=" + df.format(dataBar.getBarCloseDate().getTime()));
             backtestResult.addOrder(ibOrder);
             ctx.activeTrade.addTradeOrder(ibOrder);
-            ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, dataBar.getbCloseDate(), null);
-            ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, dataBar.getbCloseDate(), null);
-            ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, dataBar.getbCloseDate(), null);
-            ibOrder.setFillPrice(dataBar.getbClose());
+            ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, dataBar.getBarCloseDate(), null);
+            ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, dataBar.getBarCloseDate(), null);
+            ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, dataBar.getBarCloseDate(), null);
+            ibOrder.setFillPrice(dataBar.getbBarClose());
             backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
 
             ctx.strategy.setNumAllOrders(ctx.strategy.getNumAllOrders() + 1);
@@ -78,11 +78,11 @@ public class Backtester {
             ctx.strategy.setCurrentPosition(ibOrder.isBuyOrder() ? ctx.strategy.getCurrentPosition() + ibOrder.getQuantity() : ctx.strategy.getCurrentPosition() - ibOrder.getQuantity());
 
             if (ibOrder.isOpeningOrder()) {
-                ctx.activeTrade.open(dataBar.getbClose());
+                ctx.activeTrade.open(dataBar.getbBarClose());
             } else {
                 ctx.activeTrade.initClose();
                 backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
-                ctx.activeTrade.close(dataBar.getbCloseDate(), dataBar.getbClose());
+                ctx.activeTrade.close(dataBar.getBarCloseDate(), dataBar.getbBarClose());
                 ctx.strategy.recalculateStats(ctx.activeTrade);
             }
             backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
@@ -92,7 +92,7 @@ public class Backtester {
                 strategyLogic.setInitialStopAndTarget();
                 ctx.activeTrade.addTradeOrder(ibOrder);
                 backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
-                ctx.activeTrade.open(dataBar.getbClose());
+                ctx.activeTrade.open(dataBar.getbBarClose());
                 backtestResult.updateOrCreateTrade(ctx.activeTrade, dataBar);
             }
             backtestResult.updateStrategy(ctx.strategy, dataBar);
@@ -106,7 +106,7 @@ public class Backtester {
             return dataBars;
         }
         return dataBars.stream()
-                .filter(q -> q.getbCloseDateMillis() >= startDate.getTimeInMillis() && q.getbCloseDateMillis() <= endDate.getTimeInMillis())
+                .filter(q -> q.getBarCloseDateMillis() >= startDate.getTimeInMillis() && q.getBarCloseDateMillis() <= endDate.getTimeInMillis())
                 .collect(Collectors.toList());
     }
 }

@@ -1,8 +1,11 @@
 package com.highpowerbear.hpbtrader.shared.techanalysis.indicator;
 
+import com.highpowerbear.hpbtrader.shared.techanalysis.TiIndicator;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Calendar;
 
 /**
  *
@@ -10,20 +13,22 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Stochastics {
-    private Long timeInMillis;
+public class Stochastics implements TiIndicator {
+
+    private Calendar barCloseDate;
     
     private Double stochK;
     private Double stochD;
 
-    public Stochastics(Long timeInMillis, Double stochK, Double stochD) {
-        this.timeInMillis = timeInMillis;
+    public Stochastics(Calendar barCloseDate, Double stochK, Double stochD) {
+        this.barCloseDate = barCloseDate;
         this.stochK = stochK;
         this.stochD = stochD;
     }
 
-    public Long getTimeInMillis() {
-        return timeInMillis;
+    @Override
+    public Calendar getBarCloseDate() {
+        return barCloseDate;
     }
 
     public Double getStochK() {

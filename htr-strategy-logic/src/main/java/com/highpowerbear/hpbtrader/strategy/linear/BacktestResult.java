@@ -46,7 +46,7 @@ public class BacktestResult {
             strategyLog.setId(nextStrategyLogId++);
             strategyLog.setStrategy(strategy);
             strategyLog.setStrategyMode(HtrEnums.StrategyMode.BTEST);
-            strategyLog.setLogDate(dataBar.getbCloseDate());
+            strategyLog.setLogDate(dataBar.getBarCloseDate());
             strategy.copyValues(strategyLog);
             strategyLogs.add(strategyLog);
         }
@@ -60,9 +60,9 @@ public class BacktestResult {
             TradeLog tradeLog = new TradeLog();
             tradeLog.setId(nextTradeLogId++);
             tradeLog.setTrade(trade);
-            tradeLog.setLogDate(dataBar.getbCloseDate());
+            tradeLog.setLogDate(dataBar.getBarCloseDate());
             trade.copyValues(tradeLog);
-            tradeLog.setPrice(dataBar.getbClose());
+            tradeLog.setPrice(dataBar.getbBarClose());
             tradeLogs.add(tradeLog);
         }
         if (dbTrade == null) {

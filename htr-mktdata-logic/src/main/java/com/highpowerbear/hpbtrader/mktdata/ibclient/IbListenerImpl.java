@@ -23,10 +23,10 @@ public class IbListenerImpl extends AbstractIbListener {
             histDataController.reqFinished(reqId);
         } else {
             DataBar dataBar = new DataBar();
-            dataBar.setbOpen(open);
-            dataBar.setbHigh(high);
-            dataBar.setbLow(low);
-            dataBar.setbClose(close);
+            dataBar.setbBarOpen(open);
+            dataBar.setbBarHigh(high);
+            dataBar.setbBarLow(low);
+            dataBar.setbBarClose(close);
             dataBar.setVolume(volume == -1 ? 0 : volume);
             dataBar.setCount(count);
             dataBar.setWap(WAP);

@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -23,17 +24,18 @@ public class DataBar implements Serializable {
     @GeneratedValue(generator="databar")
     private Long id;
     @ManyToOne
+    @XmlTransient
     private DataSeries dataSeries;
     @Temporal(value=TemporalType.TIMESTAMP)
-    private Calendar bCloseDate;
+    private Calendar barCloseDate;
     @XmlElement
-    private Double bOpen;
+    private Double barOpen;
     @XmlElement
-    private Double bHigh;
+    private Double barHigh;
     @XmlElement
-    private Double bLow;
+    private Double barLow;
     @XmlElement
-    private Double bClose;
+    private Double barClose;
     @XmlElement
     private Integer volume;
     private Integer count;
@@ -41,19 +43,23 @@ public class DataBar implements Serializable {
     private Boolean hasGaps;
 
     @XmlElement
-    public long getbCloseDateMillis() {
-        return bCloseDate.getTimeInMillis();
+    public Integer getDataSeriesId() {
+        return dataSeries.getId();
+    }
+
+    public long getBarCloseDateMillis() {
+        return barCloseDate.getTimeInMillis();
     }
 
     public String print() {
-        return dataSeries.getInstrument().getSymbol() + ": " + HtrUtil.getFormattedDate(bCloseDate) + ", " + bOpen + ", " + bHigh + ", " + bLow + ", " + bClose + ", " + volume + ", " + count + ", " + hasGaps;
+        return dataSeries.getInstrument().getSymbol() + ": " + HtrUtil.getFormattedDate(barCloseDate) + ", " + barOpen + ", " + barHigh + ", " + barLow + ", " + barClose + ", " + volume + ", " + count + ", " + hasGaps;
     }
 
     public void mergeFrom(DataBar from) {
-        this.bOpen = from.getbOpen();
-        this.bHigh = from.getbHigh();
-        this.bLow = from.getbLow();
-        this.bClose = from.getbClose();
+        this.barOpen = from.getbBarOpen();
+        this.barHigh = from.getbBarHigh();
+        this.barLow = from.getbBarLow();
+        this.barClose = from.getbBarClose();
         this.volume = from.getVolume();
         this.count = from.getCount();
         this.wap = from.getWap();
@@ -91,44 +97,44 @@ public class DataBar implements Serializable {
         this.dataSeries = dataSeries;
     }
 
-    public Calendar getbCloseDate() {
-        return bCloseDate;
+    public Calendar getBarCloseDate() {
+        return barCloseDate;
     }
 
-    public void setbCloseDate(Calendar bCloseDate) {
-        this.bCloseDate = bCloseDate;
+    public void setbBarCloseDate(Calendar bCloseDate) {
+        this.barCloseDate = bCloseDate;
     }
 
-    public Double getbOpen() {
-        return bOpen;
+    public Double getbBarOpen() {
+        return barOpen;
     }
 
-    public void setbOpen(Double bOpen) {
-        this.bOpen = bOpen;
+    public void setbBarOpen(Double bOpen) {
+        this.barOpen = bOpen;
     }
 
-    public Double getbHigh() {
-        return bHigh;
+    public Double getbBarHigh() {
+        return barHigh;
     }
 
-    public void setbHigh(Double bHigh) {
-        this.bHigh = bHigh;
+    public void setbBarHigh(Double bHigh) {
+        this.barHigh = bHigh;
     }
 
-    public Double getbLow() {
-        return bLow;
+    public Double getbBarLow() {
+        return barLow;
     }
 
-    public void setbLow(Double bLow) {
-        this.bLow = bLow;
+    public void setbBarLow(Double bLow) {
+        this.barLow = bLow;
     }
 
-    public Double getbClose() {
-        return bClose;
+    public Double getbBarClose() {
+        return barClose;
     }
 
-    public void setbClose(Double bClose) {
-        this.bClose = bClose;
+    public void setbBarClose(Double bClose) {
+        this.barClose = bClose;
     }
 
     public Integer getVolume() {

@@ -54,7 +54,7 @@ public class Processor implements Serializable {
         
         long intervalMillis = dataSeries.getInterval().getMillis();
         long nowMillis = HtrUtil.getCalendar().getTimeInMillis();
-        boolean isCurrentBar = ((dataBar.getbCloseDateMillis() + intervalMillis) > nowMillis);
+        boolean isCurrentBar = ((dataBar.getBarCloseDateMillis() + intervalMillis) > nowMillis);
         if (!isCurrentBar) {
             l.info("END " + logMessage + ", not current bar");
             return;
@@ -70,7 +70,7 @@ public class Processor implements Serializable {
         
         if (ibOrder == null) {
             if (ctx.activeTrade != null) {
-                tradeDao.updateOrCreateTrade(ctx.activeTrade, dataBar.getbClose());
+                tradeDao.updateOrCreateTrade(ctx.activeTrade, dataBar.getbBarClose());
             }
             l.info("END " + logMessage + ", no new order");
             return;
@@ -78,20 +78,20 @@ public class Processor implements Serializable {
         
         ibOrderDao.createIbOrder(ibOrder);
         ctx.activeTrade.addTradeOrder(ibOrder);
-        tradeDao.updateOrCreateTrade(ctx.activeTrade, dataBar.getbClose());
+        tradeDao.updateOrCreateTrade(ctx.activeTrade, dataBar.getbBarClose());
 
         // needed to get fresh copy of trade and trade orders with set ids to prevent trade order duplication in the next update
         ctx.activeTrade = tradeDao.getActiveTrade(strategy);
         
         if (ibOrder.isClosingOrder()) {
             ctx.activeTrade.initClose();
-            tradeDao.updateOrCreateTrade(ctx.activeTrade, dataBar.getbClose());
+            tradeDao.updateOrCreateTrade(ctx.activeTrade, dataBar.getbBarClose());
         }
         if (ibOrder.isReversalOrder()) {
             ctx.activeTrade = new Trade().initOpen(ibOrder);
             strategyLogic.setInitialStopAndTarget();
             ctx.activeTrade.addTradeOrder(ibOrder);
-            tradeDao.updateOrCreateTrade(ctx.activeTrade, dataBar.getbClose());
+            tradeDao.updateOrCreateTrade(ctx.activeTrade, dataBar.getbBarClose());
         }
         
         ctx.strategy.setNumAllOrders(strategy.getNumAllOrders() + 1);
@@ -121,13 +121,13 @@ public class Processor implements Serializable {
         l.info("START " + logMessage);
         ibOrderDao.createIbOrder(manualIbOrder);
         activeTrade.addTradeOrder(manualIbOrder);
-        tradeDao.updateOrCreateTrade(activeTrade, dataBar.getbClose());
+        tradeDao.updateOrCreateTrade(activeTrade, dataBar.getbBarClose());
         // needed to get fresh copy of trade and trade orders with set ids to prevent trade order duplication in the next update
         activeTrade = tradeDao.getActiveTrade(strategy);
 
         if (manualIbOrder.isClosingOrder()) {
             activeTrade.initClose();
-            tradeDao.updateOrCreateTrade(activeTrade, dataBar.getbClose());
+            tradeDao.updateOrCreateTrade(activeTrade, dataBar.getbBarClose());
         }
         strategy.setNumAllOrders(strategy.getNumAllOrders() + 1);
         strategyDao.updateStrategy(strategy);

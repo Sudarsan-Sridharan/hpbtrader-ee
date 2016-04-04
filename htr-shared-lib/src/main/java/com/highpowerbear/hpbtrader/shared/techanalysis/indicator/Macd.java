@@ -1,8 +1,11 @@
 package com.highpowerbear.hpbtrader.shared.techanalysis.indicator;
 
+import com.highpowerbear.hpbtrader.shared.techanalysis.TiIndicator;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Calendar;
 
 /**
  *
@@ -10,22 +13,24 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Macd {
-    private Long timeInMillis;
+public class Macd implements TiIndicator {
+
+    private Calendar barCloseDate;
     
     private Double macdL;
     private Double macdSl;
     private Double macdH;
 
-    public Macd(Long timeInMillis, Double macdL, Double macdSl, Double macdH) {
-        this.timeInMillis = timeInMillis;
+    public Macd(Calendar barCloseDate, Double macdL, Double macdSl, Double macdH) {
+        this.barCloseDate = barCloseDate;
         this.macdL = macdL;
         this.macdSl = macdSl;
         this.macdH = macdH;
     }
 
-    public Long getTimeInMillis() {
-        return timeInMillis;
+    @Override
+    public Calendar getBarCloseDate() {
+        return barCloseDate;
     }
 
     public Double getMacdL() {

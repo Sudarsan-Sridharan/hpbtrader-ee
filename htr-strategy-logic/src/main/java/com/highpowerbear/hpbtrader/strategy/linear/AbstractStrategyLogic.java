@@ -60,32 +60,32 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
         ibOrder.setOrderType(HtrEnums.OrderType.MKT);
         ibOrder.setLimitPrice(null); // N/A for market order
         ibOrder.setStopPrice(null); // N/A for market order
-        ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW, (ctx.isBacktest ? dataBar.getbCloseDate() : HtrUtil.getCalendar()), null);
+        ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW, (ctx.isBacktest ? dataBar.getBarCloseDate() : HtrUtil.getCalendar()), null);
     }
     
     protected Double getPrice() {
-        return dataBar.getbClose();
+        return dataBar.getbBarClose();
     }
     
     protected boolean targetMet() {
         if (ctx.activeTrade == null || ctx.activeTrade.getProfitTarget() == null) {
             return false;
         }
-        return (ctx.activeTrade.isLong() ? (dataBar.getbClose() >= ctx.activeTrade.getProfitTarget()) : (dataBar.getbClose() <= ctx.activeTrade.getProfitTarget()));
+        return (ctx.activeTrade.isLong() ? (dataBar.getbBarClose() >= ctx.activeTrade.getProfitTarget()) : (dataBar.getbBarClose() <= ctx.activeTrade.getProfitTarget()));
     }
     
     protected boolean stopTriggered() {
         if (ctx.activeTrade == null || ctx.activeTrade.getStopLoss() == null) {
             return false;
         }
-        return (ctx.activeTrade.isLong() ? (dataBar.getbClose() <= ctx.activeTrade.getStopLoss()) : (dataBar.getbClose() >= ctx.activeTrade.getStopLoss()));
+        return (ctx.activeTrade.isLong() ? (dataBar.getbBarClose() <= ctx.activeTrade.getStopLoss()) : (dataBar.getbBarClose() >= ctx.activeTrade.getStopLoss()));
     }
     
     protected void setInitialStop(Double stopPct) {
         if (ctx.activeTrade == null) {
             return;
         }
-        Double stop = (ctx.activeTrade.isLong() ? HtrUtil.round5(dataBar.getbClose() - (stopPct / 100.0) * dataBar.getbClose()) : HtrUtil.round5(dataBar.getbClose() + (stopPct / 100.0) * dataBar.getbClose()));
+        Double stop = (ctx.activeTrade.isLong() ? HtrUtil.round5(dataBar.getbBarClose() - (stopPct / 100.0) * dataBar.getbBarClose()) : HtrUtil.round5(dataBar.getbBarClose() + (stopPct / 100.0) * dataBar.getbBarClose()));
         ctx.activeTrade.setStopLoss(stop);
         ctx.activeTrade.setInitialStop(stop);
     }
@@ -95,15 +95,15 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
             return;
         }
         if (ctx.activeTrade.isLong()) {
-            if (dataBar.getbClose() > prevDataBar.getbClose()) {
-                Double newStop = HtrUtil.round5(dataBar.getbClose() - (stopPct / 100.0) * dataBar.getbClose());
+            if (dataBar.getbBarClose() > prevDataBar.getbBarClose()) {
+                Double newStop = HtrUtil.round5(dataBar.getbBarClose() - (stopPct / 100.0) * dataBar.getbBarClose());
                 if (newStop > ctx.activeTrade.getStopLoss()) {
                     ctx.activeTrade.setStopLoss(newStop);
                 }
             }
         } else {
-            if (dataBar.getbClose() < prevDataBar.getbClose()) {
-                Double newStop = HtrUtil.round5(dataBar.getbClose() + (stopPct / 100.0) * dataBar.getbClose());
+            if (dataBar.getbBarClose() < prevDataBar.getbBarClose()) {
+                Double newStop = HtrUtil.round5(dataBar.getbBarClose() + (stopPct / 100.0) * dataBar.getbBarClose());
                 if (newStop < ctx.activeTrade.getStopLoss()) {
                     ctx.activeTrade.setStopLoss(newStop);
                 }
@@ -115,14 +115,14 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
         if (ctx.activeTrade == null) {
             return;
         }
-        ctx.activeTrade.setProfitTarget(ctx.activeTrade.isLong() ? HtrUtil.round5(dataBar.getbClose() + (targetPct / 100.0) * dataBar.getbClose()) : HtrUtil.round5(dataBar.getbClose() - (targetPct / 100.0) * dataBar.getbClose()));
+        ctx.activeTrade.setProfitTarget(ctx.activeTrade.isLong() ? HtrUtil.round5(dataBar.getbBarClose() + (targetPct / 100.0) * dataBar.getbBarClose()) : HtrUtil.round5(dataBar.getbBarClose() - (targetPct / 100.0) * dataBar.getbBarClose()));
     }
     
     protected void setPl() {
         if (ctx.activeTrade == null || ctx.activeTrade.getOpenPrice() == null) {
             return;
         }
-        Double unrealizedPl = (ctx.activeTrade.isLong() ? HtrUtil.round5((dataBar.getbClose() - ctx.activeTrade.getOpenPrice()) * ctx.strategy.getTradingQuantity()) : HtrUtil.round5((ctx.activeTrade.getOpenPrice() - dataBar.getbClose()) * ctx.strategy.getTradingQuantity()));
+        Double unrealizedPl = (ctx.activeTrade.isLong() ? HtrUtil.round5((dataBar.getbBarClose() - ctx.activeTrade.getOpenPrice()) * ctx.strategy.getTradingQuantity()) : HtrUtil.round5((ctx.activeTrade.getOpenPrice() - dataBar.getbBarClose()) * ctx.strategy.getTradingQuantity()));
         if (HtrEnums.SecType.FUT.equals(ctx.strategy.getTradeInstrument().getSecType())) {
             unrealizedPl *= HtrEnums.FutureMultiplier.getMultiplierBySymbol(ctx.strategy.getTradeInstrument().getSymbol());
         }

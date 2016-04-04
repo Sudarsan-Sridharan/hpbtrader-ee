@@ -6,8 +6,6 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  *

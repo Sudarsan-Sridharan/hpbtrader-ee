@@ -1,8 +1,11 @@
 package com.highpowerbear.hpbtrader.shared.techanalysis.indicator;
 
+import com.highpowerbear.hpbtrader.shared.techanalysis.TiIndicator;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Calendar;
 
 /**
  *
@@ -10,17 +13,19 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Ema {
-    private Long timeInMillis;
+public class Ema implements TiIndicator {
+
+    private Calendar barCloseDate;
     private Double ema;
 
-    public Ema(Long timeInMillis, Double ema) {
-        this.timeInMillis = timeInMillis;
+    public Ema(Calendar barCloseDate, Double ema) {
+        this.barCloseDate = barCloseDate;
         this.ema = ema;
     }
 
-    public Long getTimeInMillis() {
-        return timeInMillis;
+    @Override
+    public Calendar getBarCloseDate() {
+        return barCloseDate;
     }
 
     public Double getEma() {

@@ -41,9 +41,9 @@ public class HistDataController {
         if (HtrEnums.Interval.MIN60.equals(dataSeries.getInterval())) {
             c.set(Calendar.MINUTE, 0); // needed in case of bars started at 9:30 (END 10:00 not 10:30) or 17:15 (END 18:00 not 18:15)
         }
-        dataBar.setbCloseDate(c);
+        dataBar.setbBarCloseDate(c);
         dataBar.setDataSeries(dataSeries);
-        barsReceivedMap.get(dataSeries).put(dataBar.getbCloseDateMillis(), dataBar);
+        barsReceivedMap.get(dataSeries).put(dataBar.getBarCloseDateMillis(), dataBar);
     }
 
     public void reqFinished(int reqId) {
@@ -57,7 +57,7 @@ public class HistDataController {
         List<DataBar> barsToCreate = new ArrayList<>(barsReceivedMap.get(dataSeries).values());
         dataSeriesDao.createBars(dataSeries, barsToCreate);
         DataBar lastDataBar = barsToCreate.get(barsToCreate.size() - 1);
-        boolean isCurrentLastBar = ((lastDataBar.getbCloseDateMillis() + dataSeries.getInterval().getMillis()) > System.currentTimeMillis());
+        boolean isCurrentLastBar = ((lastDataBar.getBarCloseDateMillis() + dataSeries.getInterval().getMillis()) > System.currentTimeMillis());
         if (isCurrentLastBar) {
             mqSender.notifyBarsAdded(dataSeries);
         }
