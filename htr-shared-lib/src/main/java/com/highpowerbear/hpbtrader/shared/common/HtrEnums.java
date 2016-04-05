@@ -16,27 +16,28 @@ public class HtrEnums {
     }
 
     public enum OrderStatus {
-        PENDINGSUBMIT("PendingSubmit", Css.DODGER_BLUE_BG),
-        PENDINGCANCEL("PendingCancel", Css.ORANGE_BG),
-        PRESUBMITTED("PreSubmitted", Css.DODGER_BLUE_BG),
-        SUBMITTED("Submitted", Css.BLUE_BG),
-        CANCELLED("Cancelled", Css.RED_BG),
-        FILLED("Filled", Css.GREEN_BG),
-        INACTIVE("Inactive", Css.BROWN_BG);
+        PENDINGSUBMIT("PendingSubmit", DisplayColor.DODGER_BLUE_BG),
+        PENDINGCANCEL("PendingCancel", DisplayColor.ORANGE_BG),
+        PRESUBMITTED("PreSubmitted", DisplayColor.DODGER_BLUE_BG),
+        SUBMITTED("Submitted", DisplayColor.BLUE_BG),
+        CANCELLED("Cancelled", DisplayColor.RED_BG),
+        FILLED("Filled", DisplayColor.GREEN_BG),
+        INACTIVE("Inactive", DisplayColor.BROWN_BG);
 
         private String displayName;
-        private Css css;
+        private DisplayColor displayColor;
 
-        OrderStatus(String displayName, Css css) {
+        OrderStatus(String displayName, DisplayColor displayColor) {
             this.displayName = displayName;
-            this.css = css;
+            this.displayColor = displayColor;
         }
 
         public String getDisplayName() {
             return displayName;
         }
-        public String getCssClass() {
-            return css.getCssClass();
+
+        public DisplayColor getDisplayColor() {
+            return displayColor;
         }
     }
 
@@ -153,27 +154,28 @@ public class HtrEnums {
     }
     
     public enum IbOrderStatus {
-        NEW("new", Css.MAGENTA_BG),
-        NEW_RETRY("newRetry", Css.MAGENTA_BG),
-        SUBMIT_REQ("submitReq", Css.DODGER_BLUE_BG),
-        SUBMITTED("submitted", Css.BLUE_BG),
-        FILLED("filled", Css.GREEN_BG),
-        CANCEL_REQ("cancelReq", Css.MAGENTA_BG),
-        CANCELED("canceled", Css.RED_BG),
-        UNKNOWN("unknown", Css.BROWN_BG);
+        NEW("new", DisplayColor.MAGENTA_BG),
+        NEW_RETRY("newRetry", DisplayColor.MAGENTA_BG),
+        SUBMIT_REQ("submitReq", DisplayColor.DODGER_BLUE_BG),
+        SUBMITTED("submitted", DisplayColor.BLUE_BG),
+        FILLED("filled", DisplayColor.GREEN_BG),
+        CANCEL_REQ("cancelReq", DisplayColor.MAGENTA_BG),
+        CANCELED("canceled", DisplayColor.RED_BG),
+        UNKNOWN("unknown", DisplayColor.BROWN_BG);
         
         private String displayName;
-        private Css css;
+        private DisplayColor displayColor;
         
-        IbOrderStatus(String displayName, Css css) {
+        IbOrderStatus(String displayName, DisplayColor displayColor) {
             this.displayName = displayName;
-            this.css = css;
+            this.displayColor = displayColor;
         }
         public String getDisplayName() {
             return displayName;
         }
-        public String getCssClass() {
-            return css.getCssClass();
+
+        public DisplayColor getDisplayColor() {
+            return displayColor;
         }
     }
     
@@ -213,17 +215,18 @@ public class HtrEnums {
     }
     
     public enum StrategyMode {
-        IB(Css.ORANGE_BG),
+        IB(DisplayColor.ORANGE_BG),
         SIM(null),
         BTEST(null);
 
-        private Css css;
+        private DisplayColor displayColor;
 
-        StrategyMode(Css css) {
-            this.css = css;
+        StrategyMode(DisplayColor displayColor) {
+            this.displayColor = displayColor;
         }
-        public String getCssClass() {
-            return (css != null ? css.getCssClass() : "");
+
+        public DisplayColor getDisplayColor() {
+            return displayColor;
         }
     }
     
@@ -234,44 +237,46 @@ public class HtrEnums {
     }
     
     public enum TradeType {
-        LONG("L", Css.BLUE_BG),
-        SHORT("S", Css.BROWN_BG);
+        LONG("L", DisplayColor.BLUE_BG),
+        SHORT("S", DisplayColor.BROWN_BG);
 
         private String displayName;
-        private Css css;
+        private DisplayColor displayColor;
 
-        TradeType(String displayName, Css css) {
+        TradeType(String displayName, DisplayColor displayColor) {
             this.displayName = displayName;
-            this.css = css;
+            this.displayColor = displayColor;
         }
         public String getDisplayName() {
             return displayName;
         }
-        public String getCssClass() {
-            return css.getCssClass();
+
+        public DisplayColor getDisplayColor() {
+            return displayColor;
         }
     }
     
     public enum TradeStatus {
-        INIT_OPEN("initOpen", Css.BLUE_BG),
-        OPEN("open", Css.GREEN_BG),
-        INIT_CLOSE("initClose", Css.ORANGE_BG),
-        CLOSED("closed", Css.BROWN_BG),
-        CNC_CLOSED("cncClosed", Css.RED_BG),
-        ERR_CLOSED("errClosed", Css.RED_BG);
+        INIT_OPEN("initOpen", DisplayColor.BLUE_BG),
+        OPEN("open", DisplayColor.GREEN_BG),
+        INIT_CLOSE("initClose", DisplayColor.ORANGE_BG),
+        CLOSED("closed", DisplayColor.BROWN_BG),
+        CNC_CLOSED("cncClosed", DisplayColor.RED_BG),
+        ERR_CLOSED("errClosed", DisplayColor.RED_BG);
         
         private String displayName;
-        private Css css;
+        private DisplayColor displayColor;
         
-        TradeStatus(String displayName, Css css) {
+        TradeStatus(String displayName, DisplayColor displayColor) {
             this.displayName = displayName;
-            this.css = css;
+            this.displayColor = displayColor;
         }
         public String getDisplayName() {
             return displayName;
         }
-        public String getCssClass() {
-            return css.getCssClass();
+
+        public DisplayColor getDisplayColor() {
+            return displayColor;
         }
     }
     
@@ -315,21 +320,33 @@ public class HtrEnums {
         STRATEGY_UPDATE
     }
 
+    public enum RealtimeFieldName {
+        BID,
+        ASK,
+        LAST,
+        CLOSE,
+        BID_SIZE,
+        ASK_SIZE,
+        LAST_SIZE,
+        VOLUME,
+        CHANGE_PCT
+    }
+
     public enum RealtimeStatus {
-        UPTICK(Css.LIME),
-        DOWNTICK(Css.ORANGE),
-        UNCHANGED(Css.YELLOW),
-        POSITIVE(Css.BLUE),
-        NEGATIVE(Css.RED);
+        UPTICK(DisplayColor.LIME),
+        DOWNTICK(DisplayColor.ORANGE),
+        UNCHANGED(DisplayColor.YELLOW),
+        POSITIVE(DisplayColor.BLUE),
+        NEGATIVE(DisplayColor.RED);
 
-        private Css css;
+        private DisplayColor displayColor;
 
-        RealtimeStatus(Css css) {
-            this.css = css;
+        RealtimeStatus(DisplayColor displayColor) {
+            this.displayColor = displayColor;
         }
 
-        public String getCssClass() {
-            return css.getCssClass();
+        public DisplayColor getDisplayColor() {
+            return displayColor;
         }
     }
 
@@ -347,45 +364,35 @@ public class HtrEnums {
         UNCHANGED
     }
 
-    public enum Css {
-        MAGENTA("htr-magenta"),
-        MAGENTA_BG("htr-magenta-bg"),
-        BLUE("htr-blue"),
-        BLUE_BG("htr-blue-bg"),
-        DARK_BLUE("htr-dark-blue"),
-        DARK_BLUE_BG("htr-dark-blue-bg"),
-        GREEN("htr-green"),
-        GREEN_BG("htr-green-bg"),
-        DARK_GREEN("htr-dark-green"),
-        DARK_GREEN_BG("htr-dark-green-bg"),
-        RED("htr-red"),
-        RED_BG("htr-red-bg"),
-        DARK_RED("htr-dark-red"),
-        DARK_RED_BG("htr-dark-red-bg"),
-        ORANGE("htr-orange"),
-        ORANGE_BG("htr-orange-bg"),
-        DARK_ORANGE("htr-dark-orange"),
-        DARK_ORANGE_BG("htr-dark-orange-bg"),
-        DARK_CYAN("htr-dark-cyan"),
-        DARK_CYAN_BG("htr-dark-cyan-bg"),
-        LIME("htr-lime"),
-        LIME_BG("htr-lime-bg"),
-        YELLOW("htr-yellow"),
-        YELLOW_BG("htr-yellow-bg"),
-        BROWN("htr-brown"),
-        BROWN_BG("htr-brown-bg"),
-        DODGER_BLUE("htr-dodger-blue"),
-        DODGER_BLUE_BG("htr-dodger-blue-bg");
-
-        private String cssClass;
-
-        Css(String cssClass) {
-            this.cssClass = cssClass;
-        }
-
-        public String getCssClass() {
-            return cssClass;
-        }
+    public enum DisplayColor {
+        MAGENTA,
+        MAGENTA_BG,
+        BLUE,
+        BLUE_BG,
+        DARK_BLUE,
+        DARK_BLUE_BG,
+        GREEN,
+        GREEN_BG,
+        DARK_GREEN,
+        DARK_GREEN_BG,
+        RED,
+        RED_BG,
+        DARK_RED,
+        DARK_RED_BG,
+        ORANGE,
+        ORANGE_BG,
+        DARK_ORANGE,
+        DARK_ORANGE_BG,
+        DARK_CYAN,
+        DARK_CYAN_BG,
+        LIME,
+        LIME_BG,
+        YELLOW,
+        YELLOW_BG,
+        BROWN,
+        BROWN_BG,
+        DODGER_BLUE,
+        DODGER_BLUE_BG;
     }
 
     public enum OptRequestIdOffset {

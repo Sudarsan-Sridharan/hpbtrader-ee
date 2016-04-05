@@ -17,7 +17,7 @@ import java.util.List;
  * Created by robertk on 3.12.2015.
  */
 @ApplicationScoped
-@Path("indicator")
+@Path("techanalysis")
 public class TechAnalysisService {
 
     @Inject private DataSeriesDao dataSeriesDao;

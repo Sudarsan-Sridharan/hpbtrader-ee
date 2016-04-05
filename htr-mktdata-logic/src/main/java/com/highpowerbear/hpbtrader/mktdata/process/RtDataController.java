@@ -11,7 +11,9 @@ import com.ib.client.TickType;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -26,6 +28,10 @@ public class RtDataController {
     @Inject private IbController ibController;
     @Inject private WebsocketController websocketController;
     private Map<Integer, RealtimeData> realtimeDataMap = new LinkedHashMap<>(); // ib request id --> realtimeData
+
+    public List<RealtimeData> getRealtimeDataList() {
+        return new ArrayList<>(realtimeDataMap.values());
+    }
 
     public void tickPriceReceived(int tickerId, int field, double price) {
         RealtimeData rtd = realtimeDataMap.get(tickerId);

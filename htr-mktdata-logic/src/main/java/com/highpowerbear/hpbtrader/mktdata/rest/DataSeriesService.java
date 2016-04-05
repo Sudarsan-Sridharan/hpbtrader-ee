@@ -1,5 +1,6 @@
 package com.highpowerbear.hpbtrader.mktdata.rest;
 
+import com.highpowerbear.hpbtrader.mktdata.model.RealtimeData;
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
 import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
@@ -27,16 +28,15 @@ public class DataSeriesService {
     @Inject private RtDataController rtDataController;
 
     @GET
-    @Path("series")
     @Produces(MediaType.APPLICATION_JSON)
-    public RestList<DataSeries> getSeries(@QueryParam("inactiveToo") boolean inactiveToo) {
+    public RestList<DataSeries> getSeriesList(@QueryParam("inactiveToo") boolean inactiveToo) {
         List<DataSeries> dataSeriesList = dataSeriesDao.getAllSeries(inactiveToo);
         return new RestList<>(dataSeriesList, (long) dataSeriesList.size());
     }
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("series/{seriesId}/backfill")
+    @Path("{seriesId}/backfill")
     public Response backfillBars(@PathParam("seriesId") Integer seriesId) {
         DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
         if (dataSeries == null) {
@@ -47,7 +47,7 @@ public class DataSeriesService {
     }
 
     @GET
-    @Path("series/{seriesId}/bars")
+    @Path("{seriesId}/bars")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBars(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
         DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
@@ -59,7 +59,7 @@ public class DataSeriesService {
     }
 
     @GET
-    @Path("series/{seriesId}/pagedbars")
+    @Path("{seriesId}/pagedbars")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPagedBars(@PathParam("seriesId") Integer seriesId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
         DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
@@ -74,7 +74,7 @@ public class DataSeriesService {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("series/{seriesId}/togglert")
+    @Path("{seriesId}/rtdata/toggle")
     public Response toggleRtData(@PathParam("seriesId") Integer seriesId) {
         DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
         if (dataSeries == null) {
@@ -82,5 +82,13 @@ public class DataSeriesService {
         }
         rtDataController.toggleRealtimeData(dataSeries);
         return Response.ok().build();
+    }
+
+    @GET
+    @Path("{seriesId}/rtdata")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRtData(@PathParam("seriesId") Integer seriesId) {
+        List<RealtimeData> rtDataList = rtDataController.getRealtimeDataList();
+        return Response.ok(new RestList<>(rtDataList, (long) rtDataList.size())).build();
     }
 }

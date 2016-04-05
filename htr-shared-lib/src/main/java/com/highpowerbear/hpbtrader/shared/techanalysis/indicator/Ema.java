@@ -4,14 +4,12 @@ import com.highpowerbear.hpbtrader.shared.techanalysis.TiIndicator;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Calendar;
 
 /**
  *
  * @author robertk
  */
-@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Ema implements TiIndicator {
 

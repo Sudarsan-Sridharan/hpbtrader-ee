@@ -21,7 +21,7 @@ import java.util.List;
  * Created by robertk on 25.11.2015.
  */
 @ApplicationScoped
-@Path("ibaccount")
+@Path("ibaccounts")
 public class IbAccountService {
 
     @Inject private TiCalculator tiCalculator;
@@ -32,7 +32,6 @@ public class IbAccountService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("ibaccounts")
     public RestList<IbAccount> getIbAccounts() {
         List<IbAccount> ibAccounts = ibAccountDao.getIbAccounts();
         ibAccounts.forEach(ibAccount -> {
@@ -45,7 +44,6 @@ public class IbAccountService {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("ibaccounts")
     public Response updateIbAccount(IbAccount ibAccount) {
         IbAccount ibAccountDb = ibAccountDao.findIbAccount(ibAccount.getAccountId());
         if (ibAccountDb == null) {
@@ -56,7 +54,7 @@ public class IbAccountService {
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("ibaccounts/{accountId}/connect")
+    @Path("{accountId}/connect")
     public Response connectIbAccount(@PathParam("accountId") String accountId) {
         IbAccount ibAccount = ibAccountDao.findIbAccount(accountId);
         if (ibAccount == null) {
@@ -71,7 +69,7 @@ public class IbAccountService {
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("ibaccounts/{accountId}/disconnect")
+    @Path("{accountId}/disconnect")
     public Response disconnectIbAccount(@PathParam("accountId") String accountId) {
         IbAccount ibAccount = ibAccountDao.findIbAccount(accountId);
         if (ibAccount == null) {

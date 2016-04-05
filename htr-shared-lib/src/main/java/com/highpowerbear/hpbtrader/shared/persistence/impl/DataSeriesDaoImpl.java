@@ -144,7 +144,11 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
 
     @Override
     public List<DataBar> getPagedBars(DataSeries dataSeries, Integer start, Integer limit) {
-        return null;
+        TypedQuery<DataBar> q = em.createQuery("SELECT b FROM DataBar b where b.dataSeries = :dataSeries ORDER BY b.barCloseDate DESC", DataBar.class);
+        q.setParameter("dataSeries", dataSeries);
+        q.setFirstResult(start);
+        q.setMaxResults(limit);
+        return q.getResultList();
     }
 
     @Override

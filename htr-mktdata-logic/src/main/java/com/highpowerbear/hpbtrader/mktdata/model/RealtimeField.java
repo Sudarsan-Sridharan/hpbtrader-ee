@@ -1,21 +1,22 @@
 package com.highpowerbear.hpbtrader.mktdata.model;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * Created by rkolar on 5/23/14.
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 class RealtimeField<T> {
     private T value;
     private HtrEnums.RealtimeStatus status;
-    private String fieldName;
-    private String colorClass;
+    private HtrEnums.RealtimeFieldName fieldName;
 
-    RealtimeField(T value, HtrEnums.RealtimeStatus status, String fieldName, String colorClass) {
+    RealtimeField(T value, HtrEnums.RealtimeStatus status, HtrEnums.RealtimeFieldName fieldName) {
         this.value = value;
         this.status = status;
         this.fieldName = fieldName;
-        this.colorClass = colorClass;
     }
 
     T getValue() {
@@ -34,12 +35,8 @@ class RealtimeField<T> {
         this.status = realtimeStatus;
     }
 
-    String getFieldName() {
+    public HtrEnums.RealtimeFieldName getFieldName() {
         return fieldName;
-    }
-
-    public String getColorClass() {
-        return colorClass;
     }
 
     @Override

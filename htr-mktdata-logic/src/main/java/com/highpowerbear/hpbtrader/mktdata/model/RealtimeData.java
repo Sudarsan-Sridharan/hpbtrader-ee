@@ -6,9 +6,13 @@ import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 import com.ib.client.TickType;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 /**
  * Created by rkolar on 5/23/14.
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class RealtimeData {
     private DataSeries dataSeries;
     private String contractClassName;
@@ -36,15 +40,15 @@ public class RealtimeData {
     }
 
     private void initFields() {
-        bid = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "bid", "col-gray-bck");
-        ask = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "ask", "col-gray-bck");
-        last = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "last", "col-gray-bck");
-        close = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, "close", "col-gray-bck");
-        changePct = new RealtimeField<>(null, HtrEnums.RealtimeStatus.POSITIVE, "changePct", "");
-        bidSize = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "bid_size", "col-gray-bck");
-        askSize = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "ask_size", "col-gray-bck");
-        lastSize = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "last_size", "col-gray-bck");
-        volume = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, "volume", "col-gray-bck");
+        bid = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.BID);
+        ask = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.ASK);
+        last = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.LAST);
+        close = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.CLOSE);
+        changePct = new RealtimeField<>(null, HtrEnums.RealtimeStatus.POSITIVE, HtrEnums.RealtimeFieldName.CHANGE_PCT);
+        bidSize = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.BID_SIZE);
+        askSize = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.ASK_SIZE);
+        lastSize = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.LAST_SIZE);
+        volume = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.VOLUME);
     }
 
     public String createUpdateMessage(int field, double price) {
@@ -52,19 +56,19 @@ public class RealtimeData {
         switch(field) {
             case TickType.BID:
                 setValueStatus(bid, price);
-                message += contractClassName + "," + bid.getFieldName() + "," + bid.getValue() + "," + bid.getStatus().getCssClass();
+                message += contractClassName + "," + bid.getFieldName() + "," + bid.getValue();
                 break;
             case TickType.ASK:
                 setValueStatus(ask, price);
-                message += contractClassName + "," + ask.getFieldName() + "," + ask.getValue() + "," + ask.getStatus().getCssClass();
+                message += contractClassName + "," + ask.getFieldName() + "," + ask.getValue();
                 break;
             case TickType.LAST:
                 setValueStatus(last, price);
-                message += contractClassName + "," + last.getFieldName() + "," + last.getValue() + "," + last.getStatus().getCssClass();
+                message += contractClassName + "," + last.getFieldName() + "," + last.getValue();
                 break;
             case TickType.CLOSE:
                 setValueStatus(close, price);
-                message += contractClassName + "," + close.getFieldName() + "," + close.getValue() + "," + close.getStatus().getCssClass();
+                message += contractClassName + "," + close.getFieldName() + "," + close.getValue();
                 break;
         }
         return (message.equals("rt,") ? null : message);
@@ -75,19 +79,19 @@ public class RealtimeData {
         switch(field) {
             case TickType.BID_SIZE:
                 setValueStatus(bidSize, size);
-                message += contractClassName + "," + bidSize.getFieldName() + "," + bidSize.getValue() + "," + bidSize.getStatus().getCssClass();
+                message += contractClassName + "," + bidSize.getFieldName() + "," + bidSize.getValue();
                 break;
             case TickType.ASK_SIZE:
                 setValueStatus(askSize, size);
-                message += contractClassName + "," + askSize.getFieldName() + "," + askSize.getValue() + "," + askSize.getStatus().getCssClass();
+                message += contractClassName + "," + askSize.getFieldName() + "," + askSize.getValue();
                 break;
             case TickType.LAST_SIZE:
                 setValueStatus(lastSize, size);
-                message += contractClassName + "," + lastSize.getFieldName() + "," + lastSize.getValue() + "," + lastSize.getStatus().getCssClass();
+                message += contractClassName + "," + lastSize.getFieldName() + "," + lastSize.getValue();
                 break;
             case TickType.VOLUME:
                 setValueStatus(volume, size);
-                message += contractClassName + "," + volume.getFieldName() + "," + volume.getValue() + "," + volume.getStatus().getCssClass();
+                message += contractClassName + "," + volume.getFieldName() + "," + volume.getValue();
                 break;
         }
         return (message.equals("rt,") ? null : message);
@@ -102,7 +106,7 @@ public class RealtimeData {
             double price = ((ask.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
         }
-        message += contractClassName + "," + changePct.getFieldName() + "," + getChangePctStr() + "," + changePct.getStatus().getCssClass();
+        message += contractClassName + "," + changePct.getFieldName() + "," + getChangePctStr();
         return message;
     }
 
