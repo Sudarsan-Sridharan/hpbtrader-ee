@@ -4,18 +4,22 @@ import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
+import com.highpowerbear.hpbtrader.shared.entity.Instrument;
 import com.ib.client.TickType;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Created by rkolar on 5/23/14.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RealtimeData {
+    @XmlTransient
     private DataSeries dataSeries;
-    private String contractClassName;
+    @XmlTransient
     private int ibRequestId;
 
     // price fields
@@ -34,9 +38,18 @@ public class RealtimeData {
 
     public RealtimeData(DataSeries dataSeries) {
         this.dataSeries = dataSeries;
-        this.contractClassName = (HtrUtil.removeDot(dataSeries.getInstrument().getSymbol()) + "-" + dataSeries.getInstrument().getCurrency()).toLowerCase();
         this.ibRequestId = dataSeries.getId() * HtrDefinitions.IB_REQUEST_MULT + 10;
         initFields();
+    }
+
+    @XmlElement
+    public Integer getSeriesId() {
+        return dataSeries.getId();
+    }
+
+    @XmlElement
+    public Instrument getInstrument() {
+        return dataSeries.getInstrument();
     }
 
     private void initFields() {
@@ -56,19 +69,19 @@ public class RealtimeData {
         switch(field) {
             case TickType.BID:
                 setValueStatus(bid, price);
-                message += contractClassName + "," + bid.getFieldName() + "," + bid.getValue();
+                message += getSeriesId() + "," + bid.getFieldName() + "," + bid.getValue();
                 break;
             case TickType.ASK:
                 setValueStatus(ask, price);
-                message += contractClassName + "," + ask.getFieldName() + "," + ask.getValue();
+                message += getSeriesId() + "," + ask.getFieldName() + "," + ask.getValue();
                 break;
             case TickType.LAST:
                 setValueStatus(last, price);
-                message += contractClassName + "," + last.getFieldName() + "," + last.getValue();
+                message += getSeriesId() + "," + last.getFieldName() + "," + last.getValue();
                 break;
             case TickType.CLOSE:
                 setValueStatus(close, price);
-                message += contractClassName + "," + close.getFieldName() + "," + close.getValue();
+                message += getSeriesId() + "," + close.getFieldName() + "," + close.getValue();
                 break;
         }
         return (message.equals("rt,") ? null : message);
@@ -79,19 +92,19 @@ public class RealtimeData {
         switch(field) {
             case TickType.BID_SIZE:
                 setValueStatus(bidSize, size);
-                message += contractClassName + "," + bidSize.getFieldName() + "," + bidSize.getValue();
+                message += getSeriesId() + "," + bidSize.getFieldName() + "," + bidSize.getValue();
                 break;
             case TickType.ASK_SIZE:
                 setValueStatus(askSize, size);
-                message += contractClassName + "," + askSize.getFieldName() + "," + askSize.getValue();
+                message += getSeriesId() + "," + askSize.getFieldName() + "," + askSize.getValue();
                 break;
             case TickType.LAST_SIZE:
                 setValueStatus(lastSize, size);
-                message += contractClassName + "," + lastSize.getFieldName() + "," + lastSize.getValue();
+                message += getSeriesId() + "," + lastSize.getFieldName() + "," + lastSize.getValue();
                 break;
             case TickType.VOLUME:
                 setValueStatus(volume, size);
-                message += contractClassName + "," + volume.getFieldName() + "," + volume.getValue();
+                message += getSeriesId() + "," + volume.getFieldName() + "," + volume.getValue();
                 break;
         }
         return (message.equals("rt,") ? null : message);
@@ -106,7 +119,7 @@ public class RealtimeData {
             double price = ((ask.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
         }
-        message += contractClassName + "," + changePct.getFieldName() + "," + getChangePctStr();
+        message += getSeriesId() + "," + changePct.getFieldName() + "," + getChangePctStr();
         return message;
     }
 
@@ -127,10 +140,6 @@ public class RealtimeData {
 
     public DataSeries getDataSeries() {
         return dataSeries;
-    }
-
-    public String getContractClassName() {
-        return contractClassName;
     }
 
     public int getIbRequestId() {

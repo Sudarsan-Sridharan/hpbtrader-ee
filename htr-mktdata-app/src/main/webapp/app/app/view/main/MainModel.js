@@ -9,6 +9,4 @@ Ext.define('MktData.view.main.MainModel', {
     data: {
         name: 'MktData'
     }
-
-    //TODO - add data, formulas and/or methods to support your view
 });

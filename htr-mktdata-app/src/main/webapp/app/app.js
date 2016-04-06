@@ -8,7 +8,7 @@ Ext.application({
 
     extend: 'MktData.Application',
     
-    autoCreateViewport: 'MktData.view.main.Main'
+    autoCreateViewport: false
 	
     //-------------------------------------------------------------------------
     // Most customizations should be made to MktData.Application. If you need to

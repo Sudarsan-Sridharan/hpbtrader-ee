@@ -91,7 +91,7 @@ public class IbOrder implements Serializable {
     }
 
     public String getDescription() {
-        return strategy.getTradeInstrument().getSymbol() + ", " +  strategy.getStrategyType().getDisplayName() + ": " + orderAction.toString();
+        return strategy.getTradeInstrument().getSymbol() + ", " +  strategy.getStrategyType().name().toLowerCase() + ": " + orderAction.toString();
     }
 
     public com.ib.client.Order createIbOrder() {

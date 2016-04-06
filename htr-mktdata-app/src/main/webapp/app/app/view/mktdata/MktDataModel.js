@@ -26,6 +26,10 @@ Ext.define('MktData.view.mktdata.MktDataModel', {
         dataBars: {
             model: 'MktData.model.mktdata.DataBar',
             pageSize: 25
+        },
+        rtDataStore: {
+            model: 'MktData.model.mktdata.RtData',
+            pageSize: 25
         }
     }
 });

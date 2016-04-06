@@ -86,7 +86,7 @@ public class OrderStateHandler {
     }
 
     public void orderCanceled(IbOrder ibOrder, Calendar cal) {
-        ibOrder.addEvent(HtrEnums.IbOrderStatus.CANCELED, cal, null);
+        ibOrder.addEvent(HtrEnums.IbOrderStatus.CANCELLED, cal, null);
         ibOrderDao.updateIbOrder(ibOrder);
 
         List<Trade> trades = tradeDao.getTradesByOrder(ibOrder);

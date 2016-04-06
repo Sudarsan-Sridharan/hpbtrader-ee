@@ -76,7 +76,7 @@ public class StrategyDaoImpl implements StrategyDao {
 
     @Override
     public void deleteStrategy(Strategy strategy) {
-        l.info("START deleteStrategy " + strategy.getTradeInstrument().getSymbol() + ", " + strategy.getStrategyType().getDisplayName());
+        l.info("START deleteStrategy " + strategy.getTradeInstrument().getSymbol() + ", " + strategy.getStrategyType().name().toLowerCase());
         strategy = em.find(Strategy.class, strategy.getId());
         Query q;
         for (Trade trade : tradeDao.getTradesByStrategy(strategy, true)) {
@@ -94,7 +94,7 @@ public class StrategyDaoImpl implements StrategyDao {
             em.remove(ibOrder);
         }
         em.remove(strategy);
-        l.info("END deleteStrategy " + strategy.getTradeInstrument().getSymbol() + ", " + strategy.getStrategyType().getDisplayName());
+        l.info("END deleteStrategy " + strategy.getTradeInstrument().getSymbol() + ", " + strategy.getStrategyType().name().toLowerCase());
     }
 
     @Override

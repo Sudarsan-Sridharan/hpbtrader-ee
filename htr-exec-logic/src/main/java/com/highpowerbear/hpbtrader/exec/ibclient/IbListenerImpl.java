@@ -28,9 +28,9 @@ public class IbListenerImpl extends AbstractIbListener {
     public void orderStatus(int orderId, String status, int filled, int remaining, double avgFillPrice, int permId, int parentId, double lastFillPrice, int clientId, String whyHeld) {
         super.orderStatus(orderId, status, filled, remaining, avgFillPrice, permId, parentId, lastFillPrice, clientId, whyHeld);
         
-        if (!(  HtrEnums.OrderStatus.SUBMITTED.name().equalsIgnoreCase(status) ||
-                HtrEnums.OrderStatus.CANCELLED.name().equalsIgnoreCase(status) ||
-                HtrEnums.OrderStatus.FILLED.name().equalsIgnoreCase(status)))
+        if (!(  HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) ||
+                HtrEnums.IbOrderStatus.CANCELLED.name().equalsIgnoreCase(status) ||
+                HtrEnums.IbOrderStatus.FILLED.name().equalsIgnoreCase(status)))
         {
             return;
         }
@@ -39,15 +39,15 @@ public class IbListenerImpl extends AbstractIbListener {
             return;
         }
 
-        if (HtrEnums.OrderStatus.SUBMITTED.name().equalsIgnoreCase(status) && HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
+        if (HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) && HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
             heartbeatControl.heartbeatReceived(ibOrder);
-        } else if (HtrEnums.OrderStatus.SUBMITTED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
+        } else if (HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
             heartbeatControl.heartbeatReceived(ibOrder);
             //orderStateHandler.orderSubmitted(ibOrder, HtrUtil.getCalendar());
-        } else if (HtrEnums.OrderStatus.CANCELLED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.CANCELED.equals(ibOrder.getStatus())) {
+        } else if (HtrEnums.IbOrderStatus.CANCELLED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.CANCELLED.equals(ibOrder.getStatus())) {
             heartbeatControl.removeHeartbeat(ibOrder);
             //orderStateHandler.orderCanceled(ibOrder, HtrUtil.getCalendar());
-        } else if (HtrEnums.OrderStatus.FILLED.name().equalsIgnoreCase(status) && remaining == 0 && !HtrEnums.IbOrderStatus.FILLED.equals(ibOrder.getStatus())) {
+        } else if (HtrEnums.IbOrderStatus.FILLED.name().equalsIgnoreCase(status) && remaining == 0 && !HtrEnums.IbOrderStatus.FILLED.equals(ibOrder.getStatus())) {
             heartbeatControl.removeHeartbeat(ibOrder);
             //orderStateHandler.orderFilled(ibOrder, HtrUtil.getCalendar(), avgFillPrice);
         }

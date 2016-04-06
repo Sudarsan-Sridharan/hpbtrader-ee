@@ -1,14 +1,14 @@
 /**
- * Created by robertk on 4/3/2016.
+ * Created by robertk on 6.4.2016.
  */
-Ext.define('MktData.view.mktdata.grid.RtDataGrid', {
+Ext.define('MktData.view.mktdata.grid.IbAccountsGrid', {
     extend: 'Ext.grid.Panel',
-    xtype: 'htr-mktdata-rtdata-grid',
+    xtype: 'htr-mktdata-ibaccounts-grid',
     requires: [
         'Ext.grid.column.Date',
         'Ext.toolbar.Paging'
     ],
-    bind: '{rtDataStore}',
+    bind: '{ibAccounts}',
     viewConfig: {
         stripeRows: true
     },
@@ -16,8 +16,8 @@ Ext.define('MktData.view.mktdata.grid.RtDataGrid', {
 
     dockedItems: [{
         xtype: 'pagingtoolbar',
-        reference: 'rtDataPaging',
-        bind: '{rtDataStore}',
+        reference: 'ibAccountsPaging',
+        bind: '{ibAccounts}',
         dock: 'bottom',
         displayInfo: true
     }]

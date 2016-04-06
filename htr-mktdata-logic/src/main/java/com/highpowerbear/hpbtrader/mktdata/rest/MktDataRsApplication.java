@@ -1,5 +1,7 @@
 package com.highpowerbear.hpbtrader.mktdata.rest;
 
+import com.highpowerbear.hpbtrader.shared.rest.CodeMapService;
+
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
@@ -17,6 +19,7 @@ public class MktDataRsApplication extends Application {
         classes.add(IbAccountService.class);
         classes.add(DataSeriesService.class);
         classes.add(TechAnalysisService.class);
+        classes.add(CodeMapService.class);
         return classes;
     }
 }

@@ -15,32 +15,6 @@ public class HtrEnums {
         SSHORT
     }
 
-    public enum OrderStatus {
-        PENDINGSUBMIT("PendingSubmit", DisplayColor.DODGER_BLUE_BG),
-        PENDINGCANCEL("PendingCancel", DisplayColor.ORANGE_BG),
-        PRESUBMITTED("PreSubmitted", DisplayColor.DODGER_BLUE_BG),
-        SUBMITTED("Submitted", DisplayColor.BLUE_BG),
-        CANCELLED("Cancelled", DisplayColor.RED_BG),
-        FILLED("Filled", DisplayColor.GREEN_BG),
-        INACTIVE("Inactive", DisplayColor.BROWN_BG);
-
-        private String displayName;
-        private DisplayColor displayColor;
-
-        OrderStatus(String displayName, DisplayColor displayColor) {
-            this.displayName = displayName;
-            this.displayColor = displayColor;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public DisplayColor getDisplayColor() {
-            return displayColor;
-        }
-    }
-
     public enum OrderType {
         MKT,
         MKTCLS,
@@ -105,24 +79,18 @@ public class HtrEnums {
     }
     
     public enum SecType {
-        STK("STK", 100, HtrDefinitions.IB_BAR_TYPE_TRADES),
-        OPT("OPT", 1, HtrDefinitions.IB_BAR_TYPE_TRADES),
-        FUT("FUT", 1, HtrDefinitions.IB_BAR_TYPE_TRADES),
-        FOP("FOP", 1, HtrDefinitions.IB_BAR_TYPE_TRADES),
-        CASH("CSH", 100000, HtrDefinitions.IB_BAR_TYPE_ASK);
+        STK(100, HtrDefinitions.IB_BAR_TYPE_TRADES),
+        OPT(1, HtrDefinitions.IB_BAR_TYPE_TRADES),
+        FUT(1, HtrDefinitions.IB_BAR_TYPE_TRADES),
+        FOP(1, HtrDefinitions.IB_BAR_TYPE_TRADES),
+        CASH(100000, HtrDefinitions.IB_BAR_TYPE_ASK);
 
-        private String displayName;
         private int defaultTradingQuantity;
         private String ibBarType;
 
-        SecType(String displayName, int defaultTradingQuantity, String ibBarType) {
-            this.displayName = displayName;
+        SecType(int defaultTradingQuantity, String ibBarType) {
             this.defaultTradingQuantity = defaultTradingQuantity;
             this.ibBarType = ibBarType;
-        }
-
-        public String getDisplayName() {
-            return displayName;
         }
 
         public int getDefaultTradingQuantity() {
@@ -160,18 +128,18 @@ public class HtrEnums {
         SUBMITTED("submitted", DisplayColor.BLUE_BG),
         FILLED("filled", DisplayColor.GREEN_BG),
         CANCEL_REQ("cancelReq", DisplayColor.MAGENTA_BG),
-        CANCELED("canceled", DisplayColor.RED_BG),
+        CANCELLED("cancelled", DisplayColor.RED_BG),
         UNKNOWN("unknown", DisplayColor.BROWN_BG);
         
-        private String displayName;
+        private String displayText;
         private DisplayColor displayColor;
         
-        IbOrderStatus(String displayName, DisplayColor displayColor) {
-            this.displayName = displayName;
+        IbOrderStatus(String displayText, DisplayColor displayColor) {
+            this.displayText = displayText;
             this.displayColor = displayColor;
         }
-        public String getDisplayName() {
-            return displayName;
+        public String getDisplayText() {
+            return displayText;
         }
 
         public DisplayColor getDisplayColor() {
@@ -180,33 +148,19 @@ public class HtrEnums {
     }
     
     public enum SubmitType {
-        AUTO("auto"),
-        MANUAL("manual");
-        
-        private String displayName;
-        
-        SubmitType(String displayName) {
-            this.displayName = displayName;
-        }
-        public String getDisplayName() {
-            return displayName;
-        }
+        AUTO,
+        MANUAL
     }
     
     public enum StrategyType {
-        LUXOR("luxor", "20, 50, 1.3d, 2.2d, 4, 6"), // emaShort, emaLong, stopPct, targetPct, startHourEst, durationHours
-        MACD_CROSS("macdCross", "50, 50"), // stochOversold, stochOverbougth
-        TEST("test", "1.3d, 2.2d"); // stopPct, targetPct
-        
-        private String displayName;
+        LUXOR("20, 50, 1.3d, 2.2d, 4, 6"), // emaShort, emaLong, stopPct, targetPct, startHourEst, durationHours
+        MACD_CROSS("50, 50"), // stochOversold, stochOverbougth
+        TEST("1.3d, 2.2d"); // stopPct, targetPct
+
         private String defaultParams;
 
-        StrategyType(String displayName, String defaultParams) {
-            this.displayName = displayName;
+        StrategyType(String defaultParams) {
             this.defaultParams = defaultParams;
-        }
-        public String getDisplayName() {
-            return displayName;
         }
 
         public String getDefaultParams() {
@@ -240,15 +194,15 @@ public class HtrEnums {
         LONG("L", DisplayColor.BLUE_BG),
         SHORT("S", DisplayColor.BROWN_BG);
 
-        private String displayName;
+        private String displayText;
         private DisplayColor displayColor;
 
-        TradeType(String displayName, DisplayColor displayColor) {
-            this.displayName = displayName;
+        TradeType(String displayText, DisplayColor displayColor) {
+            this.displayText = displayText;
             this.displayColor = displayColor;
         }
-        public String getDisplayName() {
-            return displayName;
+        public String getDisplayText() {
+            return displayText;
         }
 
         public DisplayColor getDisplayColor() {
@@ -264,15 +218,15 @@ public class HtrEnums {
         CNC_CLOSED("cncClosed", DisplayColor.RED_BG),
         ERR_CLOSED("errClosed", DisplayColor.RED_BG);
         
-        private String displayName;
+        private String displayText;
         private DisplayColor displayColor;
         
-        TradeStatus(String displayName, DisplayColor displayColor) {
-            this.displayName = displayName;
+        TradeStatus(String displayText, DisplayColor displayColor) {
+            this.displayText = displayText;
             this.displayColor = displayColor;
         }
-        public String getDisplayName() {
-            return displayName;
+        public String getDisplayText() {
+            return displayText;
         }
 
         public DisplayColor getDisplayColor() {
