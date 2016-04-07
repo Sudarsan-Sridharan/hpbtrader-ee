@@ -54,28 +54,17 @@ public class IbAccountService {
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{accountId}/connect")
-    public Response connectIbAccount(@PathParam("accountId") String accountId) {
+    @Path("{accountId}/connect/{connect}")
+    public Response connectIbAccount(@PathParam("accountId") String accountId,  @PathParam("connect") Boolean connect) {
         IbAccount ibAccount = ibAccountDao.findIbAccount(accountId);
         if (ibAccount == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        ibController.connectMktData(ibAccount);
-        HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
-        ibAccount.setMktDataConnection(ibController.getIbConnectionMap().get(ibAccount));
-        ibAccount.getMktDataConnection().setIsConnected(ibController.isConnectedMktData(ibAccount));
-        return Response.ok(ibAccount).build();
-    }
-
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("{accountId}/disconnect")
-    public Response disconnectIbAccount(@PathParam("accountId") String accountId) {
-        IbAccount ibAccount = ibAccountDao.findIbAccount(accountId);
-        if (ibAccount == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        if (connect) {
+            ibController.connectMktData(ibAccount);
+        } else {
+            ibController.disconnectMktData(ibAccount);
         }
-        ibController.disconnectMktData(ibAccount);
         HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
         ibAccount.setMktDataConnection(ibController.getIbConnectionMap().get(ibAccount));
         ibAccount.getMktDataConnection().setIsConnected(ibController.isConnectedMktData(ibAccount));

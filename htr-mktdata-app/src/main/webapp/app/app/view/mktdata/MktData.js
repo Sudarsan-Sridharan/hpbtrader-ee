@@ -8,10 +8,10 @@ Ext.define('MktData.view.mktdata.MktData', {
         'Ext.layout.container.VBox',
         'MktData.view.mktdata.MktDataController',
         'MktData.view.mktdata.MktDataModel',
-        'MktData.view.mktdata.grid.DataBarsGrid',
-        'MktData.view.mktdata.grid.DataSeriesGrid',
         'MktData.view.mktdata.grid.IbAccountsGrid',
+        'MktData.view.mktdata.grid.DataSeriesGrid',
         'MktData.view.mktdata.grid.RtDataGrid',
+        'MktData.view.mktdata.grid.DataBarsGrid',
         'MktData.common.Glyphs',
         'Ext.tab.Panel'
     ],
@@ -27,5 +27,17 @@ Ext.define('MktData.view.mktdata.MktData', {
         type: 'vbox',
         align: 'stretch'
     },
-    items: [{}]
+    items: [{
+        xtype: 'htr-mktdata-ibaccounts-grid',
+        reference: 'ibAccountsGrid'
+    }, {
+        xtype: 'htr-mktdata-dataseries-grid',
+        reference: 'dataSeriesGrid'
+    }, {
+        xtype: 'htr-mktdata-rtdata-grid',
+        reference: 'rtDataGrid'
+    }, {
+        xtype: 'htr-mktdata-databars-grid',
+        reference: 'dataBarsGrid'
+    }]
 });
