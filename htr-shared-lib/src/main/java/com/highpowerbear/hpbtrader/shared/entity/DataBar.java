@@ -16,10 +16,11 @@ import java.util.Calendar;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
+@Table(name = "databar", schema = "hpbtrader", catalog = "hpbtrader")
 public class DataBar implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @TableGenerator(name="databar", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="databar", table="sequence", schema = "hpbtrader", catalog = "hpbtrader", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
     @GeneratedValue(generator="databar")
     private Long id;

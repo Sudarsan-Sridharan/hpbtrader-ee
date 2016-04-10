@@ -12,6 +12,7 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
+@Table(name = "instrument", schema = "hpbtrader", catalog = "hpbtrader")
 public class Instrument implements Serializable {
     private static final long serialVersionUID = 1L;
 

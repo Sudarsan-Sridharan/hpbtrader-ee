@@ -16,10 +16,11 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
+@Table(name = "iborder", schema = "hpbtrader", catalog = "hpbtrader")
 public class IbOrder implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @TableGenerator(name="iborder", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="iborder", table="sequence", schema = "hpbtrader", catalog = "hpbtrader", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
     @GeneratedValue(generator="iborder")
     private Long id;

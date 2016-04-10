@@ -11,12 +11,13 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-public class TradeOrder implements Serializable {
+@Table(name = "tradeiborder", schema = "hpbtrader", catalog = "hpbtrader")
+public class TradeIbOrder implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="tradeorder", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="tradeiborder", table="sequence", schema = "hpbtrader", catalog = "hpbtrader", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="tradeorder")
+    @GeneratedValue(generator="tradeiborder")
     private Long id;
     private Integer quantity;
     @ManyToOne
@@ -29,7 +30,7 @@ public class TradeOrder implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TradeOrder that = (TradeOrder) o;
+        TradeIbOrder that = (TradeIbOrder) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
     }

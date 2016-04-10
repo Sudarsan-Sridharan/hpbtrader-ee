@@ -9,6 +9,7 @@ Ext.define('MktData.view.mktdata.grid.RtDataGrid', {
         'Ext.toolbar.Paging'
     ],
     bind: '{rtDataStore}',
+    title: 'RT Data',
     viewConfig: {
         stripeRows: true
     },

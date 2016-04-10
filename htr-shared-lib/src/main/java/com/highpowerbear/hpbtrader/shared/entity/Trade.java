@@ -18,10 +18,11 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
+@Table(name = "trade", schema = "hpbtrader", catalog = "hpbtrader")
 public class Trade implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="trade", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="trade", table="sequence", schema = "hpbtrader", catalog = "hpbtrader", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
     @GeneratedValue(generator="trade")
     private Long id;
@@ -47,7 +48,7 @@ public class Trade implements Serializable {
     private HtrEnums.TradeStatus tradeStatus;
     @OneToMany(mappedBy = "trade", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy // by primary key
-    private List<TradeOrder> tradeOrders = new ArrayList<>();
+    private List<TradeIbOrder> tradeIbOrders = new ArrayList<>();
     
     @XmlElement
     public long getTimeInMillis() {
@@ -55,11 +56,11 @@ public class Trade implements Serializable {
     }
     
     public void addTradeOrder(IbOrder ibOrder) {
-        TradeOrder tradeOrder = new TradeOrder();
-        tradeOrder.setIbOrder(ibOrder);
-        tradeOrder.setTrade(this);
-        tradeOrder.setQuantity(ibOrder.isReversalOrder() ? ibOrder.getQuantity()/2 : ibOrder.getQuantity());
-        tradeOrders.add(tradeOrder);
+        TradeIbOrder tradeIbOrder = new TradeIbOrder();
+        tradeIbOrder.setIbOrder(ibOrder);
+        tradeIbOrder.setTrade(this);
+        tradeIbOrder.setQuantity(ibOrder.isReversalOrder() ? ibOrder.getQuantity()/2 : ibOrder.getQuantity());
+        tradeIbOrders.add(tradeIbOrder);
     }
     
     public Trade initOpen(IbOrder ibOrder) {
@@ -154,7 +155,7 @@ public class Trade implements Serializable {
         otherTrade.setRealizedPl(realizedPl);
         otherTrade.setTradeType(tradeType);
         otherTrade.setTradeStatus(tradeStatus);
-        otherTrade.setTradeOrders(tradeOrders);
+        otherTrade.setTradeIbOrders(tradeIbOrders);
         return otherTrade;
     }
     
@@ -311,11 +312,11 @@ public class Trade implements Serializable {
         this.tradeStatus = tradeStatus;
     }
 
-    public List<TradeOrder> getTradeOrders() {
-        return tradeOrders;
+    public List<TradeIbOrder> getTradeIbOrders() {
+        return tradeIbOrders;
     }
 
-    public void setTradeOrders(List<TradeOrder> tradeOrders) {
-        this.tradeOrders = tradeOrders;
+    public void setTradeIbOrders(List<TradeIbOrder> tradeIbOrders) {
+        this.tradeIbOrders = tradeIbOrders;
     }
 }

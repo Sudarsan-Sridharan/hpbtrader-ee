@@ -64,7 +64,7 @@ public class TradeDaoImpl implements TradeDao {
 
     @Override
     public List<Trade> getTradesByOrder(IbOrder ibOrder) {
-        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t, TradeOrder to WHERE to.ibOrder = :ibOrder AND to.trade = t ORDER BY t.initOpenDate ASC", Trade.class);
+        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t, TradeIbOrder to WHERE to.ibOrder = :ibOrder AND to.trade = t ORDER BY t.initOpenDate ASC", Trade.class);
         query.setParameter("ibOrder", ibOrder);
         return query.getResultList();
     }

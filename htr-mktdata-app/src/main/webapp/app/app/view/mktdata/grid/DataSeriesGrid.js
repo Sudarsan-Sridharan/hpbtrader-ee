@@ -9,10 +9,52 @@ Ext.define('MktData.view.mktdata.grid.DataSeriesGrid', {
         'Ext.toolbar.Paging'
     ],
     bind: '{dataSeries}',
+    title: 'Data Series',
     viewConfig: {
         stripeRows: true
     },
-    columns: [{}],
+    columns: [{
+        text: '#',
+        width: 60,
+        dataIndex: 'displayOrder'
+    }, {
+        text: 'ID',
+        width: 60,
+        dataIndex: 'id'
+    }, {
+        text: 'Sec',
+        width: 60,
+        dataIndex: 'secType'
+    }, {
+        text: 'Undl',
+        width: 80,
+        dataIndex: 'underlying'
+    }, {
+        text: 'Cur',
+        width: 60,
+        dataIndex: 'currency'
+    }, {
+        text: 'Symbol',
+        width: 180,
+        dataIndex: 'symbol'
+    }, {
+        text: 'Exchange',
+        width: 120,
+        dataIndex: 'exchange'
+    }, {
+        text: 'Interval',
+        width: 80,
+        dataIndex: 'interval'
+    }, {
+        text: 'Active',
+        width: 60,
+        dataIndex: 'active',
+        xtype: 'checkcolumn'
+    }, {
+        text: 'Alias',
+        flex: 1,
+        dataIndex: 'alias'
+    }],
 
     dockedItems: [{
         xtype: 'pagingtoolbar',

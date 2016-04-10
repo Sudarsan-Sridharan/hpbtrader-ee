@@ -14,7 +14,7 @@ public class BacktestResult {
     private Strategy strategy;
     private List<StrategyLog> strategyLogs = new ArrayList<>();
     private List<IbOrder> ibOrders = new ArrayList<>(); // will include also OrderEvent list
-    private List<Trade> trades = new ArrayList<>(); // will include also TradeOrder list
+    private List<Trade> trades = new ArrayList<>(); // will include also TradeIbOrder list
     private List<TradeLog> tradeLogs = new ArrayList<>();
     private Long nextStrategyLogId = 1L;
     private Long nextOrderId = 1L;

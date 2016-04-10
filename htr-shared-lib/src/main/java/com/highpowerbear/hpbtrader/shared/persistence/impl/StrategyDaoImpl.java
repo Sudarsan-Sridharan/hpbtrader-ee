@@ -80,7 +80,7 @@ public class StrategyDaoImpl implements StrategyDao {
         strategy = em.find(Strategy.class, strategy.getId());
         Query q;
         for (Trade trade : tradeDao.getTradesByStrategy(strategy, true)) {
-            trade.getTradeOrders().forEach(em::remove);
+            trade.getTradeIbOrders().forEach(em::remove);
             q = em.createQuery("DELETE FROM TradeLog tl WHERE tl.trade = :trade");
             q.setParameter("trade", trade);
             q.executeUpdate();

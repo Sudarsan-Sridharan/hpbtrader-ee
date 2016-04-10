@@ -13,6 +13,7 @@ import java.io.Serializable;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
+@Table(name = "strategy", schema = "hpbtrader", catalog = "hpbtrader")
 public class Strategy implements Serializable {
     private static final long serialVersionUID = 1L;
 

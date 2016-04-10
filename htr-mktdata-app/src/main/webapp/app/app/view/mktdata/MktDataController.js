@@ -11,6 +11,27 @@ Ext.define('MktData.view.mktdata.MktDataController', {
     alias: 'controller.htr-mktdata',
 
     init: function () {
+        var me = this,
+            ibAccounts = me.getStore('ibAccounts'),
+            dataSeries = me.getStore('dataSeries');
+
+        if (ibAccounts) {
+            ibAccounts.getProxy().setUrl(MktData.common.Definitions.urlPrefix + '/ibaccounts');
+            ibAccounts.load(function(records, operation, success) {
+                if (success) {
+                    console.log('loaded ibAccounts');
+                }
+            });
+        }
+
+        if (dataSeries) {
+            dataSeries.getProxy().setUrl(MktData.common.Definitions.urlPrefix + '/series');
+            dataSeries.load(function(records, operation, success) {
+                if (success) {
+                    console.log('loaded dataSeries');
+                }
+            });
+        }
     },
 
     connectStatusRenderer: function(val, metadata, record) {

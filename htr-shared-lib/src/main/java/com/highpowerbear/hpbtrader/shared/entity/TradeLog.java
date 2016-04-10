@@ -15,10 +15,11 @@ import java.util.Calendar;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
+@Table(name = "tradelog", schema = "hpbtrader", catalog = "hpbtrader")
 public class TradeLog implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="tradelog", table="sequence", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="tradelog", table="sequence", schema = "hpbtrader", catalog = "hpbtrader", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
     @GeneratedValue(generator="tradelog")
     private Long id;
