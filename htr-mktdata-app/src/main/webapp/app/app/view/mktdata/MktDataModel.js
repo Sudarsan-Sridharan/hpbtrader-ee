@@ -19,7 +19,7 @@ Ext.define('MktData.view.mktdata.MktDataModel', {
             model: 'MktData.model.mktdata.IbAccount',
             pageSize: 10
         },
-        dataSeries: {
+        dataSeriesStore: {
             model: 'MktData.model.mktdata.DataSeries',
             pageSize: 25
         },

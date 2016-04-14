@@ -8,10 +8,13 @@ Ext.define('MktData.view.mktdata.grid.DataSeriesGrid', {
         'Ext.grid.column.Date',
         'Ext.toolbar.Paging'
     ],
-    bind: '{dataSeries}',
+    bind: '{dataSeriesStore}',
     title: 'Data Series',
     viewConfig: {
         stripeRows: true
+    },
+    listeners: {
+        select: 'onDataSeriesSelect'
     },
     columns: [{
         text: '#',
@@ -54,12 +57,34 @@ Ext.define('MktData.view.mktdata.grid.DataSeriesGrid', {
         text: 'Alias',
         flex: 1,
         dataIndex: 'alias'
+    }, {
+        xtype: 'widgetcolumn',
+        text: 'Rt',
+        width: 50,
+        widget: {
+            xtype: 'button',
+            width: 30,
+            tooltip: 'Toggle RT Data',
+            glyph: MktData.common.Glyphs.getGlyph('rss'),
+            handler: 'toggleRtData'
+        }
+    }, {
+        xtype: 'widgetcolumn',
+        text: 'Bf',
+        width : 50,
+        widget: {
+            xtype: 'button',
+            width: 30,
+            tooltip: 'Backfill Data Bars',
+            glyph: MktData.common.Glyphs.getGlyph('longarrowleft'),
+            handler: 'backfillDataBars'
+        }
     }],
 
     dockedItems: [{
         xtype: 'pagingtoolbar',
         reference: 'dataSeriesPaging',
-        bind: '{dataSeries}',
+        bind: '{dataSeriesStore}',
         dock: 'bottom',
         displayInfo: true
     }]

@@ -13,7 +13,9 @@ Ext.define('MktData.view.mktdata.MktDataController', {
     init: function () {
         var me = this,
             ibAccounts = me.getStore('ibAccounts'),
-            dataSeries = me.getStore('dataSeries');
+            dataSeriesStore = me.getStore('dataSeriesStore'),
+            rtDataStore = me.getStore('rtDataStore'),
+            dataSeriesGrid = me.lookupReference('dataSeriesGrid');
 
         if (ibAccounts) {
             ibAccounts.getProxy().setUrl(MktData.common.Definitions.urlPrefix + '/ibaccounts');
@@ -23,12 +25,20 @@ Ext.define('MktData.view.mktdata.MktDataController', {
                 }
             });
         }
-
-        if (dataSeries) {
-            dataSeries.getProxy().setUrl(MktData.common.Definitions.urlPrefix + '/series');
-            dataSeries.load(function(records, operation, success) {
+        if (dataSeriesStore) {
+            dataSeriesStore.getProxy().setUrl(MktData.common.Definitions.urlPrefix + '/dataseries');
+            dataSeriesStore.load(function(records, operation, success) {
                 if (success) {
-                    console.log('loaded dataSeries');
+                    console.log('loaded dataSeriesStore');
+                    dataSeriesGrid.setSelection(dataSeriesStore.first());
+                }
+            });
+        }
+        if (rtDataStore) {
+            rtDataStore.getProxy().setUrl(MktData.common.Definitions.urlPrefix + '/dataseries/rtdata');
+            rtDataStore.load(function(records, operation, success) {
+                if (success) {
+                    console.log('loaded rtDataStore');
                 }
             });
         }
@@ -65,6 +75,48 @@ Ext.define('MktData.view.mktdata.MktDataController', {
             failure: function() {
                 box.hide();
             }
+        });
+    },
+
+    onDataSeriesSelect: function(grid, record, index, eOpts) {
+        var me = this,
+            dataBars = me.getStore('dataBars'),
+            dataBarsPaging = me.lookupReference('dataBarsPaging');
+
+        me.dataSeriesId = record.data.id;
+        dataBars.getProxy().setUrl(MktData.common.Definitions.urlPrefix + '/dataseries/' + me.dataSeriesId  + '/pagedbars');
+
+        if (dataBarsPaging.getStore().isLoaded()) {
+            dataBarsPaging.moveFirst();
+        } else {
+            dataBars.load(function(records, operation, success) {
+                if (success) {
+                    console.log('loaded dataBars for dataSeriesId=' + me.dataSeriesId)
+                }
+            });
+        }
+    },
+
+    toggleRtData: function(grid, rowIndex, colIndex) {
+        var me = this,
+            rtDataStore = me.getStore('rtDataStore'),
+            dataSeriesId = grid.getStore().getAt(rowIndex).get('id');
+
+        Ext.Ajax.request({
+            method: 'PUT',
+            url: MktData.common.Definitions.urlPrefix + '/dataseries/' + dataSeriesId + '/rtdata/toggle',
+            success: function(response) {
+                rtDataStore.reload();
+            }
+        });
+    },
+
+    backfillDataBars: function(grid, rowIndex, colIndex) {
+        var dataSeriesId = grid.getStore().getAt(rowIndex).get('id');
+
+        Ext.Ajax.request({
+            method: 'PUT',
+            url: MktData.common.Definitions.urlPrefix + '/dataseries/' + dataSeriesId + '/backfill'
         });
     }
 });

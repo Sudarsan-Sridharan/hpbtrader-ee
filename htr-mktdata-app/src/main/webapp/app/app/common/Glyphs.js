@@ -15,7 +15,9 @@ Ext.define('MktData.common.Glyphs', {
         barchart: 'xf080',
         orderedlist: 'xf0cb',
         money: 'xf0d6',
-        gear: 'xf013'
+        gear: 'xf013',
+        rss: 'xf09e',
+        longarrowleft: 'xf177'
     },
 
     constructor: function(config) {

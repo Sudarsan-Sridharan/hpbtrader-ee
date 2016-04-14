@@ -20,7 +20,7 @@ import java.util.List;
  * Created by robertk on 2.12.2015.
  */
 @ApplicationScoped
-@Path("series")
+@Path("dataseries")
 public class DataSeriesService {
 
     @Inject private DataSeriesDao dataSeriesDao;
@@ -36,9 +36,9 @@ public class DataSeriesService {
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{seriesId}/backfill")
-    public Response backfillBars(@PathParam("seriesId") Integer seriesId) {
-        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
+    @Path("{dataSeriesId}/backfill")
+    public Response backfillBars(@PathParam("dataSeriesId") Integer dataSeriesId) {
+        DataSeries dataSeries = dataSeriesDao.findSeries(dataSeriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -47,10 +47,10 @@ public class DataSeriesService {
     }
 
     @GET
-    @Path("{seriesId}/bars")
+    @Path("{dataSeriesId}/bars")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBars(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
-        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
+    public Response getBars(@PathParam("dataSeriesId") Integer dataSeriesId, @QueryParam("numBars") Integer numBars) {
+        DataSeries dataSeries = dataSeriesDao.findSeries(dataSeriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -59,10 +59,10 @@ public class DataSeriesService {
     }
 
     @GET
-    @Path("{seriesId}/pagedbars")
+    @Path("{dataSeriesId}/pagedbars")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPagedBars(@PathParam("seriesId") Integer seriesId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
+    public Response getPagedBars(@PathParam("dataSeriesId") Integer dataSeriesId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
+        DataSeries dataSeries = dataSeriesDao.findSeries(dataSeriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -74,9 +74,9 @@ public class DataSeriesService {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{seriesId}/rtdata/toggle")
-    public Response toggleRtData(@PathParam("seriesId") Integer seriesId) {
-        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
+    @Path("{dataSeriesId}/rtdata/toggle")
+    public Response toggleRtData(@PathParam("dataSeriesId") Integer dataSeriesId) {
+        DataSeries dataSeries = dataSeriesDao.findSeries(dataSeriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -85,9 +85,9 @@ public class DataSeriesService {
     }
 
     @GET
-    @Path("{seriesId}/rtdata")
+    @Path("rtdata")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRtData(@PathParam("seriesId") Integer seriesId) {
+    public Response getRtData() {
         List<RealtimeData> rtDataList = rtDataController.getRealtimeDataList();
         return Response.ok(new RestList<>(rtDataList, (long) rtDataList.size())).build();
     }
