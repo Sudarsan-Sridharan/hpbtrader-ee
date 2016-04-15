@@ -41,7 +41,7 @@ public class IbController {
     public void connectMktData(IbAccount ibAccount) {
         IbConnection c = ibConnectionMap.get(ibAccount);
         if (c.getClientSocket() == null)  {
-            c.setClientSocket(new EClientSocket(new IbListenerImpl()));
+            c.setClientSocket(new EClientSocket(new IbListenerImpl(ibAccount)));
         }
         if (c.getClientSocket() != null && !c.getClientSocket().isConnected()) {
             c.setAccounts(null);

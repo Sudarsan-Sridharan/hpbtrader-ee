@@ -5,6 +5,7 @@ import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
 import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.entity.DataBar;
+import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.ibclient.AbstractIbListener;
 
 /**
@@ -14,6 +15,13 @@ import com.highpowerbear.hpbtrader.shared.ibclient.AbstractIbListener;
 public class IbListenerImpl extends AbstractIbListener {
     private HistDataController histDataController = SingletonRepo.getInstance().getHistDataController();
     private RtDataController rtDataController = SingletonRepo.getInstance().getRtDataController();
+    private IbController ibController = SingletonRepo.getInstance().getIbController();
+
+    private IbAccount ibAccount;
+
+    public IbListenerImpl(IbAccount ibAccount) {
+        this.ibAccount = ibAccount;
+    }
 
     @Override
     public void historicalData(int reqId, String date, double open, double high, double low, double close, int volume, int count, double WAP, boolean hasGaps) {
@@ -48,5 +56,11 @@ public class IbListenerImpl extends AbstractIbListener {
     @Override
     public void tickGeneric(int tickerId, int tickType, double value) {
         rtDataController.tickGenericReceived(tickerId, tickType, value);
+    }
+
+    @Override
+    public void managedAccounts(String accountsList) {
+        super.managedAccounts(accountsList);
+        ibController.getIbConnectionMap().get(ibAccount).setAccounts(accountsList);
     }
 }
