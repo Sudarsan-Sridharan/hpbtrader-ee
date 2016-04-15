@@ -42,6 +42,49 @@ Ext.define('MktData.view.mktdata.MktDataController', {
                 }
             });
         }
+
+        var ws = new WebSocket(MktData.common.Definitions.wsUrl);
+        ws.onopen = function(evt) {
+            console.log('WS opened');
+        };
+        ws.onclose = function(evt) {
+            console.log('WS closed');
+        };
+        ws.onmessage = function(evt) {
+            var msg = evt.data;
+            if (msg.substring(0, 2) === 'rt') {
+                me.updateRtData(msg);
+            }
+            //console.log('WS message, content=' + evt.data);
+        };
+        ws.onerror = function(evt) {
+            console.log('WS error');
+        };
+    },
+
+    updateRtData: function(msg) {
+        var arr = msg.split(","),
+            dataSeriesId = arr[1],
+            symbol = arr[2],
+            fieldName = arr[3],
+            fieldValue = arr[4],
+            fieldStatus = arr[5];
+
+        var selector = 'td.htr-' + dataSeriesId + '.htr-' + fieldName.replace('_', '-').toLowerCase();
+        var td = Ext.query(selector)[0];
+        if (td) {
+            td.classList.remove('htr-uptick');
+            td.classList.remove('htr-downtick');
+            td.classList.remove('htr-unchanged');
+            td.classList.remove('htr-positive');
+            td.classList.remove('htr-negative');
+            td.classList.add('htr-' + fieldStatus.toLowerCase());
+
+            var div = Ext.query('div', true, td)[0];
+            if (div) {
+                div.innerHTML = fieldValue;
+            }
+        }
     },
 
     connectStatusRenderer: function(val, metadata, record) {
@@ -63,6 +106,7 @@ Ext.define('MktData.view.mktdata.MktDataController', {
         var me = this,
             ibAccounts = me.getStore('ibAccounts'),
             accountId = grid.getStore().getAt(rowIndex).get('accountId'),
+            rtDataStore = me.getStore('rtDataStore');
             box = Ext.MessageBox.wait(((con ? 'Connecting' : 'Disconnecting') + ' IB account ' + accountId), 'Action in progress');
 
         Ext.Ajax.request({
@@ -71,6 +115,7 @@ Ext.define('MktData.view.mktdata.MktDataController', {
             success: function(response) {
                 box.hide();
                 grid.getStore().reload();
+                rtDataStore.reload();
             },
             failure: function() {
                 box.hide();
@@ -97,10 +142,10 @@ Ext.define('MktData.view.mktdata.MktDataController', {
         }
     },
 
-    toggleRtData: function(grid, rowIndex, colIndex) {
+    toggleRtData: function(button, evt) {
         var me = this,
-            rtDataStore = me.getStore('rtDataStore'),
-            dataSeriesId = grid.getStore().getAt(rowIndex).get('id');
+            dataSeriesId = button.getWidgetRecord().data.id,
+            rtDataStore = me.getStore('rtDataStore');
 
         Ext.Ajax.request({
             method: 'PUT',
@@ -111,8 +156,8 @@ Ext.define('MktData.view.mktdata.MktDataController', {
         });
     },
 
-    backfillDataBars: function(grid, rowIndex, colIndex) {
-        var dataSeriesId = grid.getStore().getAt(rowIndex).get('id');
+    backfillDataBars: function(button, evt) {
+        var dataSeriesId = button.getWidgetRecord().data.id;
 
         Ext.Ajax.request({
             method: 'PUT',

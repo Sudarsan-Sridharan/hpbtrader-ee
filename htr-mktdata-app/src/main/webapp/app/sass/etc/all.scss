@@ -1,1 +1,26 @@
 @import "fontAwesome/font-awesome";
+
+.htr-uptick div {
+  color: #76FF03;
+  background-color: #212121;
+}
+
+.htr-downtick div {
+  color: #FF9800;
+  background-color: #212121;
+}
+
+.htr-unchanged div {
+  color: #FFEB3B;
+  background-color: #212121;
+}
+
+.htr-positive div {
+  color: white;
+  background-color: #0D47A1;
+}
+
+.htr-negative div {
+  color: white;
+  background-color: #B71C1C;
+}

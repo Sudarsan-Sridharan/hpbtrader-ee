@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.mktdata.model;
+package com.highpowerbear.hpbtrader.shared.model;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
@@ -43,7 +43,7 @@ public class RealtimeData {
     }
 
     @XmlElement
-    public Integer getSeriesId() {
+    public Integer getDataSeriesId() {
         return dataSeries.getId();
     }
 
@@ -52,12 +52,17 @@ public class RealtimeData {
         return dataSeries.getInstrument();
     }
 
+    @XmlElement
+    public String getChangePctStr() {
+        return changePct.getValue() == null ? "N/A" : HtrUtil.round(changePct.getValue(), 2) + "%";
+    }
+
     private void initFields() {
         bid = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.BID);
         ask = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.ASK);
         last = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.LAST);
         close = new RealtimeField<>(HtrDefinitions.INVALID_PRICE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.CLOSE);
-        changePct = new RealtimeField<>(null, HtrEnums.RealtimeStatus.POSITIVE, HtrEnums.RealtimeFieldName.CHANGE_PCT);
+        changePct = new RealtimeField<>(null, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.CHANGE_PCT);
         bidSize = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.BID_SIZE);
         askSize = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.ASK_SIZE);
         lastSize = new RealtimeField<>(HtrDefinitions.INVALID_SIZE, HtrEnums.RealtimeStatus.UNCHANGED, HtrEnums.RealtimeFieldName.LAST_SIZE);
@@ -65,62 +70,70 @@ public class RealtimeData {
     }
 
     public String createUpdateMessage(int field, double price) {
-        String message = "rt,";
+        StringBuilder sb = new StringBuilder();
+        sb.append("rt,").append(getDataSeriesId()).append(",").append(dataSeries.getInstrument().getSymbol()).append(",");
         switch(field) {
             case TickType.BID:
                 setValueStatus(bid, price);
-                message += getSeriesId() + "," + bid.getFieldName() + "," + bid.getValue();
+                sb.append(bid.getFieldName()).append(",").append(bid.getValue()).append(",").append(bid.getStatus());
                 break;
             case TickType.ASK:
                 setValueStatus(ask, price);
-                message += getSeriesId() + "," + ask.getFieldName() + "," + ask.getValue();
+                sb.append(ask.getFieldName()).append(",").append(ask.getValue()).append(",").append(ask.getStatus());
                 break;
             case TickType.LAST:
                 setValueStatus(last, price);
-                message += getSeriesId() + "," + last.getFieldName() + "," + last.getValue();
+                sb.append(last.getFieldName()).append(",").append(last.getValue()).append(",").append(last.getStatus());
                 break;
             case TickType.CLOSE:
                 setValueStatus(close, price);
-                message += getSeriesId() + "," + close.getFieldName() + "," + close.getValue();
+                sb.append(close.getFieldName()).append(",").append(close.getValue()).append(",").append(close.getStatus());
                 break;
+
+            default: return null;
         }
-        return (message.equals("rt,") ? null : message);
+        return sb.toString();
     }
 
     public String createUpdateMessage(int field, int size) {
-        String message = "rt,";
+        StringBuilder sb = new StringBuilder();
+        sb.append("rt,").append(getDataSeriesId()).append(",").append(dataSeries.getInstrument().getSymbol()).append(",");
         switch(field) {
             case TickType.BID_SIZE:
                 setValueStatus(bidSize, size);
-                message += getSeriesId() + "," + bidSize.getFieldName() + "," + bidSize.getValue();
+                sb.append(bidSize.getFieldName()).append(",").append(bidSize.getValue()).append(",").append(bidSize.getStatus());
                 break;
             case TickType.ASK_SIZE:
                 setValueStatus(askSize, size);
-                message += getSeriesId() + "," + askSize.getFieldName() + "," + askSize.getValue();
+                sb.append(askSize.getFieldName()).append(",").append(askSize.getValue()).append(",").append(askSize.getStatus());
                 break;
             case TickType.LAST_SIZE:
                 setValueStatus(lastSize, size);
-                message += getSeriesId() + "," + lastSize.getFieldName() + "," + lastSize.getValue();
+                sb.append(lastSize.getFieldName()).append(",").append(lastSize.getValue()).append(",").append(lastSize.getStatus());
                 break;
             case TickType.VOLUME:
                 setValueStatus(volume, size);
-                message += getSeriesId() + "," + volume.getFieldName() + "," + volume.getValue();
+                sb.append(volume.getFieldName()).append(",").append(volume.getValue()).append(",").append(volume.getStatus());
                 break;
+
+            default: return null;
         }
-        return (message.equals("rt,") ? null : message);
+        return sb.toString();
     }
 
     public String createChangePctUpdateMsg() {
-        String message = "rt,";
+        StringBuilder sb = new StringBuilder();
+        sb.append("rt,").append(getDataSeriesId()).append(",").append(dataSeries.getInstrument().getSymbol()).append(",");
         if (!HtrEnums.SecType.CASH.equals(dataSeries.getInstrument().getSecType()) && !HtrDefinitions.INVALID_PRICE.equals(last.getValue()) && !HtrDefinitions.INVALID_PRICE.equals(close.getValue())) {
             double price = ((last.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
+
         } else if (HtrEnums.SecType.CASH.equals(dataSeries.getInstrument().getSecType()) && !HtrDefinitions.INVALID_PRICE.equals(ask.getValue()) && !HtrDefinitions.INVALID_PRICE.equals(close.getValue())) {
             double price = ((ask.getValue() - close.getValue()) / close.getValue()) * 100d;
             setValueStatusChangePct(changePct, price);
         }
-        message += getSeriesId() + "," + changePct.getFieldName() + "," + getChangePctStr();
-        return message;
+        sb.append(changePct.getFieldName()).append(",").append(getChangePctStr()).append(",").append(changePct.getStatus());
+        return sb.toString();
     }
 
     private void setValueStatus(RealtimeField<Double> v, Double price) {
@@ -133,9 +146,15 @@ public class RealtimeData {
         v.setValue(size);
     }
 
-    private void setValueStatusChangePct(RealtimeField<Double> v, Double price) {
-        v.setValueStatus(price == null || price >= 0d ? HtrEnums.RealtimeStatus.POSITIVE : HtrEnums.RealtimeStatus.NEGATIVE);
-        v.setValue(price);
+    private void setValueStatusChangePct(RealtimeField<Double> v, Double changePct) {
+        if (changePct == null || changePct == 0d) {
+            v.setValueStatus(HtrEnums.RealtimeStatus.UNCHANGED);
+        } else if (changePct > 0d) {
+            v.setValueStatus(HtrEnums.RealtimeStatus.POSITIVE);
+        } else {
+            v.setValueStatus(HtrEnums.RealtimeStatus.NEGATIVE);
+        }
+        v.setValue(changePct);
     }
 
     public DataSeries getDataSeries() {
@@ -180,9 +199,5 @@ public class RealtimeData {
 
     public RealtimeField<Double> getChangePct() {
         return changePct;
-    }
-
-    public String getChangePctStr() {
-        return changePct.getValue() == null ? "N/A" : HtrUtil.round(changePct.getValue(), 2) + "%";
     }
 }

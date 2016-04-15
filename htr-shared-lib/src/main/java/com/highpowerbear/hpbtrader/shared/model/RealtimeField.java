@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.mktdata.model;
+package com.highpowerbear.hpbtrader.shared.model;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import javax.xml.bind.annotation.XmlAccessType;

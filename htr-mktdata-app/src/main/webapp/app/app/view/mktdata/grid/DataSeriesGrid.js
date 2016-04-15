@@ -59,7 +59,6 @@ Ext.define('MktData.view.mktdata.grid.DataSeriesGrid', {
         dataIndex: 'alias'
     }, {
         xtype: 'widgetcolumn',
-        text: 'Rt',
         width: 50,
         widget: {
             xtype: 'button',
@@ -70,7 +69,6 @@ Ext.define('MktData.view.mktdata.grid.DataSeriesGrid', {
         }
     }, {
         xtype: 'widgetcolumn',
-        text: 'Bf',
         width : 50,
         widget: {
             xtype: 'button',

@@ -7,6 +7,7 @@ Ext.define('MktData.view.mktdata.MktDataModel', {
         'MktData.model.mktdata.DataBar',
         'MktData.model.mktdata.DataSeries',
         'MktData.model.mktdata.IbAccount',
+        'MktData.model.mktdata.RtData',
         'MktData.model.indicator.Ema',
         'MktData.model.indicator.Macd',
         'MktData.model.indicator.Stochastics'

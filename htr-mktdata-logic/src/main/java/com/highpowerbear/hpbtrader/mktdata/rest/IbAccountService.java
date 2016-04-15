@@ -2,6 +2,7 @@ package com.highpowerbear.hpbtrader.mktdata.rest;
 
 import com.highpowerbear.hpbtrader.mktdata.ibclient.IbController;
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
+import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
@@ -29,6 +30,7 @@ public class IbAccountService {
     @Inject private IbAccountDao ibAccountDao;
     @Inject private IbController ibController;
     @Inject private HistDataController histDataController;
+    @Inject private RtDataController rtDataController;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -63,6 +65,7 @@ public class IbAccountService {
         if (connect) {
             ibController.connectMktData(ibAccount);
         } else {
+            rtDataController.cancelAllMktData();
             ibController.disconnectMktData(ibAccount);
         }
         HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);

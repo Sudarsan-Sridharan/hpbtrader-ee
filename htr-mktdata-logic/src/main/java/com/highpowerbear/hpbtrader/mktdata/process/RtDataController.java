@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.mktdata.process;
 
 import com.highpowerbear.hpbtrader.mktdata.ibclient.IbController;
-import com.highpowerbear.hpbtrader.mktdata.model.RealtimeData;
+import com.highpowerbear.hpbtrader.shared.model.RealtimeData;
 import com.highpowerbear.hpbtrader.mktdata.websocket.WebsocketController;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
@@ -74,17 +74,32 @@ public class RtDataController {
         if (!ibController.isAnyActiveMktDataConnection()) {
             return;
         }
-        RealtimeData rtd = realtimeDataMap.values().stream().filter(r -> r.getDataSeries().equals(dataSeries)).findAny().get();
+        RealtimeData rtd = realtimeDataMap.values().stream().filter(r -> r.getDataSeries().equals(dataSeries)).findAny().orElse(null);
         if (rtd == null) {
             rtd = new RealtimeData(dataSeries);
             l.info("Requesting realtime data for " + rtd.getDataSeries().getInstrument().getSymbol());
             realtimeDataMap.put(rtd.getIbRequestId(), rtd);
-            ibController.requestRealtimeData(rtd.getIbRequestId(), rtd.getDataSeries().getInstrument().createIbContract());
-            realtimeDataMap.remove(rtd.getIbRequestId());
+            boolean requested = ibController.requestRealtimeData(rtd.getIbRequestId(), rtd.getDataSeries().getInstrument().createIbContract());
+            if (!requested) {
+                realtimeDataMap.remove(rtd.getIbRequestId());
+            }
         } else {
             l.info("Canceling realtime data for " + rtd.getDataSeries().getInstrument().getSymbol());
-            ibController.cancelRealtimeData(rtd.getIbRequestId());
-            realtimeDataMap.remove(rtd.getIbRequestId());
+            boolean canceled = ibController.cancelRealtimeData(rtd.getIbRequestId());
+            if (canceled) {
+                realtimeDataMap.remove(rtd.getIbRequestId());
+            }
+        }
+    }
+
+    public void cancelAllMktData() {
+        for (Integer requestId : new ArrayList<>(realtimeDataMap.keySet())) {
+            RealtimeData rtd = realtimeDataMap.get(requestId);
+            l.info("Canceling realtime data for " + rtd.getDataSeries().getInstrument().getSymbol());
+            boolean canceled = ibController.cancelRealtimeData(rtd.getIbRequestId());
+            if (canceled) {
+                realtimeDataMap.remove(rtd.getIbRequestId());
+            }
         }
     }
 }

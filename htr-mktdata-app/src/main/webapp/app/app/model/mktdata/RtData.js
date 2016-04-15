@@ -4,9 +4,15 @@
 Ext.define('MktData.model.mktdata.RtData', {
     extend: 'MktData.model.mktdata.Base',
 
-    idProperty: 'seriesId',
+    idProperty: 'dataSeriesId',
 
     fields: [
+        {name: 'symbol', mapping: 'instrument.symbol'},
+        {name: 'underlying', mapping: 'instrument.underlying'},
+        {name: 'secType', mapping: 'instrument.secType'},
+        {name: 'currency', mapping: 'instrument.currency'},
+        {name: 'exchange', mapping: 'instrument.exchange'},
+        
         {name: 'bidValue', mapping: 'bid.value'},
         {name: 'bidStatus', mapping: 'bid.status'},
         {name: 'bidFieldName', mapping: 'bid.fieldName'},
@@ -23,6 +29,7 @@ Ext.define('MktData.model.mktdata.RtData', {
         {name: 'closeStatus', mapping: 'close.status'},
         {name: 'closeFieldName', mapping: 'close.fieldName'},
 
+        'changePctStr',
         {name: 'changePctValue', mapping: 'changePct.value'},
         {name: 'changePctStatus', mapping: 'changePct.status'},
         {name: 'changePctFieldName', mapping: 'changePct.fieldName'},

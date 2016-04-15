@@ -97,18 +97,24 @@ public class IbController {
         }
     }
 
-    public void requestRealtimeData(int reqId, Contract contract) {
+    public boolean requestRealtimeData(int reqId, Contract contract) {
         IbConnection c = getActiveMktDataConnection();
+        boolean requested = false;
         if (c != null) {
             l.info("Requested realtime data, reqId=" + reqId + ", contract=" + HtrUtil.printIbContract(contract));
             c.getClientSocket().reqMktData(reqId, contract, "", false, null);
+            requested = true;
         }
+        return requested;
     }
 
-    public void cancelRealtimeData(int reqId) {
-        getActiveMktDataConnections().forEach(c -> {
+    public boolean cancelRealtimeData(int reqId) {
+        boolean canceled = false;
+        for (IbConnection c : getActiveMktDataConnections()) {
             l.info("Canceling realtime data for reqId=" + reqId);
             c.getClientSocket().cancelMktData(reqId);
-        });
+            canceled = true;
+        }
+       return canceled;
     }
 }
