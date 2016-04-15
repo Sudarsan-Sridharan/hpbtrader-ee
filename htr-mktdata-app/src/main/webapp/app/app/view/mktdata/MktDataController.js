@@ -126,20 +126,21 @@ Ext.define('MktData.view.mktdata.MktDataController', {
     onDataSeriesSelect: function(grid, record, index, eOpts) {
         var me = this,
             dataBars = me.getStore('dataBars'),
+            dataBarsGrid =  me.lookupReference('dataBarsGrid'),
             dataBarsPaging = me.lookupReference('dataBarsPaging');
 
         me.dataSeriesId = record.data.id;
+        dataBarsGrid.setTitle('Data Bars, dataSeriesId=' + me.dataSeriesId + ', symbol=' + record.data.symbol + ', interval=' + record.data.interval);
         dataBars.getProxy().setUrl(MktData.common.Definitions.urlPrefix + '/dataseries/' + me.dataSeriesId  + '/pagedbars');
 
         if (dataBarsPaging.getStore().isLoaded()) {
             dataBarsPaging.moveFirst();
-        } else {
-            dataBars.load(function(records, operation, success) {
-                if (success) {
-                    console.log('loaded dataBars for dataSeriesId=' + me.dataSeriesId)
-                }
-            });
         }
+        dataBars.load(function(records, operation, success) {
+            if (success) {
+                console.log('loaded dataBars for dataSeriesId=' + me.dataSeriesId)
+            }
+        });
     },
 
     toggleRtData: function(button, evt) {

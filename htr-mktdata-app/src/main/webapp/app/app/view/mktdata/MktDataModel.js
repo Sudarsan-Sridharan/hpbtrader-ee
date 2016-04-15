@@ -22,15 +22,15 @@ Ext.define('MktData.view.mktdata.MktDataModel', {
         },
         dataSeriesStore: {
             model: 'MktData.model.mktdata.DataSeries',
-            pageSize: 25
+            pageSize: 10
         },
         dataBars: {
             model: 'MktData.model.mktdata.DataBar',
-            pageSize: 25
+            pageSize: 10
         },
         rtDataStore: {
             model: 'MktData.model.mktdata.RtData',
-            pageSize: 25
+            pageSize: 10
         }
     }
 });

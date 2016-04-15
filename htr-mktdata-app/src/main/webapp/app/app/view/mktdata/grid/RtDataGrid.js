@@ -27,7 +27,7 @@ Ext.define('MktData.view.mktdata.grid.RtDataGrid', {
         dataIndex: 'exchange'
     }, {
         text: 'Bid Size',
-        width: 120,
+        width: 100,
         dataIndex: 'bidSizeValue',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -36,7 +36,7 @@ Ext.define('MktData.view.mktdata.grid.RtDataGrid', {
         }
     }, {
         text: 'Bid',
-        width: 120,
+        width: 100,
         dataIndex: 'bidValue',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -45,7 +45,7 @@ Ext.define('MktData.view.mktdata.grid.RtDataGrid', {
         }
     }, {
         text: 'Ask',
-        width: 120,
+        width: 100,
         dataIndex: 'askValue',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -54,7 +54,7 @@ Ext.define('MktData.view.mktdata.grid.RtDataGrid', {
         }
     }, {
         text: 'Ask Size',
-        width: 120,
+        width: 100,
         dataIndex: 'askSizeValue',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -63,7 +63,7 @@ Ext.define('MktData.view.mktdata.grid.RtDataGrid', {
         }
     }, {
         text: 'Last',
-        width: 120,
+        width: 100,
         dataIndex: 'lastValue',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -72,7 +72,7 @@ Ext.define('MktData.view.mktdata.grid.RtDataGrid', {
         }
     }, {
         text: 'Last Size',
-        width: 120,
+        width: 100,
         dataIndex: 'lastSizeValue',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -81,7 +81,7 @@ Ext.define('MktData.view.mktdata.grid.RtDataGrid', {
         }
     }, {
         text: 'Volume',
-        width: 120,
+        width: 100,
         dataIndex: 'volumeValue',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -90,7 +90,7 @@ Ext.define('MktData.view.mktdata.grid.RtDataGrid', {
         }
     }, {
         text: 'Close',
-        width: 120,
+        width: 100,
         dataIndex: 'closeValue',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -99,7 +99,7 @@ Ext.define('MktData.view.mktdata.grid.RtDataGrid', {
         }
     }, {
         text: 'Change',
-        width: 120,
+        width: 100,
         dataIndex: 'changePctStr',
         align: 'right',
         renderer: function(val, metadata, record) {

@@ -14,7 +14,7 @@ import java.util.Calendar;
  *
  * @author rkolar
  */
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "databar", schema = "hpbtrader", catalog = "hpbtrader")
 public class DataBar implements Serializable {
@@ -29,15 +29,10 @@ public class DataBar implements Serializable {
     private DataSeries dataSeries;
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar barCloseDate;
-    @XmlElement
     private Double barOpen;
-    @XmlElement
     private Double barHigh;
-    @XmlElement
     private Double barLow;
-    @XmlElement
     private Double barClose;
-    @XmlElement
     private Integer volume;
     private Integer count;
     private Double wap;

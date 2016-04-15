@@ -9,7 +9,7 @@ Ext.define('MktData.model.mktdata.DataBar', {
         {name: 'barCloseDate', type: 'date', dateFormat: 'time'},
         'barOpen',
         'barHigh',
-        'barHigh',
+        'barLow',
         'barClose',
         'volume',
         'count',
