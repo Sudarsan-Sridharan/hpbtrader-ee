@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class IbConnection {
     private String accounts; // csv, filled upon connection to IB, main account + FA subaccounts if any
-    private Boolean isConnected;
+    private Boolean isConnected = false;
     @XmlTransient
     private EClientSocket eClientSocket; // null means not connected yet or manually disconnected
 
