@@ -66,7 +66,7 @@ public class HistDataController {
 
     void requestFiveMinBars() {
         l.info("START requestFiveMinBars");
-        dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.MIN5).stream().filter(DataSeries::getActive).forEach(s -> {
+        dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.MIN5).stream().filter(DataSeries::isActive).forEach(s -> {
             Contract contract = s.getInstrument().createIbContract();
             Calendar now = HtrUtil.getCalendar();
             int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);
@@ -85,7 +85,7 @@ public class HistDataController {
 
     void requestSixtyMinBars() {
         l.info("START requestSixtyMinBars");
-        dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.MIN60).stream().filter(DataSeries::getActive).forEach(s -> {
+        dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.MIN60).stream().filter(DataSeries::isActive).forEach(s -> {
             Contract contract = s.getInstrument().createIbContract();
             Calendar now = HtrUtil.getCalendar();
             int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);
@@ -103,7 +103,7 @@ public class HistDataController {
     }
 
     public void backfill(DataSeries dataSeries) {
-        if (!dataSeries.getActive()) {
+        if (!dataSeries.isActive()) {
             l.info("Series not enabled, backfill won't be performed, seriesId=" + dataSeries.getId() + ", symbol=" + dataSeries.getInstrument().getSymbol());
             return;
         }

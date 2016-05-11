@@ -1,5 +1,6 @@
 package com.highpowerbear.hpbtrader.strategy.linear.logic;
 
+import com.highpowerbear.hpbtrader.shared.entity.Strategy;
 import com.highpowerbear.hpbtrader.strategy.linear.AbstractStrategyLogic;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
@@ -14,31 +15,28 @@ public class TestStrategyLogic extends AbstractStrategyLogic {
     private Double stopPct;
     private Double targetPct;
 
-    @Override
-    public IbOrder processSignals() {
-        createOrder();
-        if (ctx.activeTrade != null) {
-            ibOrder.setTriggerDesc("testReverse: test reverse");
-            ibOrder.setOrderAction(ctx.activeTrade.isLong() ? HtrEnums.OrderAction.SREV : HtrEnums.OrderAction.BREV);
-            ibOrder.setQuantity(ibOrder.getQuantity() * 2);
-        } else {
-            ibOrder.setTriggerDesc("testOpen: test open");
-            ibOrder.setOrderAction(HtrEnums.OrderAction.BTO);
-            ctx.activeTrade = new Trade().initOpen(ibOrder);
-            setInitialStopAndTarget();
-        }
-        return ibOrder;
+    public TestStrategyLogic(Strategy strategy) {
+        super(strategy);
     }
-    
+
     @Override
-    public void setInitialStopAndTarget() {
-        setInitialStop(stopPct);
-        setTarget(targetPct);
+    public IbOrder process() {
+        createOrder();
+        if (activeTrade != null) {
+            resultIbOrder.setTriggerDesc("testReverse: test reverse");
+            resultIbOrder.setOrderAction(activeTrade.isLong() ? HtrEnums.OrderAction.SREV : HtrEnums.OrderAction.BREV);
+            resultIbOrder.setQuantity(resultIbOrder.getQuantity() * 2);
+        } else {
+            resultIbOrder.setTriggerDesc("testOpen: test open");
+            resultIbOrder.setOrderAction(HtrEnums.OrderAction.BTO);
+            activeTrade = new Trade().initOpen(resultIbOrder, calculateInitialStop(stopPct), calculateTarget(targetPct));
+        }
+        return resultIbOrder;
     }
 
     @Override
     protected void reloadParameters() {
-        String params[] = ctx.strategy.getParams().split(",");
+        String params[] = strategy.getParams().split(",");
         stopPct = Double.valueOf(params[0].trim());
         targetPct = Double.valueOf(params[1].trim());
     }

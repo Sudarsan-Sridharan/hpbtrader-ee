@@ -26,7 +26,7 @@ public class DataSeries implements Serializable {
     @Column(name = "sinterval")
     private HtrEnums.Interval interval;
     private Integer displayOrder;
-    private Boolean active;
+    private boolean active;
     private String alias; // symbol_currency_exchange_interval
 
     @Override
@@ -76,11 +76,11 @@ public class DataSeries implements Serializable {
         this.displayOrder = displayOrder;
     }
 
-    public Boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 

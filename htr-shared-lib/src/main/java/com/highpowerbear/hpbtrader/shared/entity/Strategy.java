@@ -29,7 +29,7 @@ public class Strategy implements Serializable {
     private HtrEnums.StrategyType strategyType;
     
     // can be changed
-    private Boolean active;
+    private boolean active;
     private Integer displayOrder;
     @Enumerated(EnumType.STRING)
     private HtrEnums.StrategyMode strategyMode = HtrEnums.StrategyMode.SIM;
@@ -122,7 +122,7 @@ public class Strategy implements Serializable {
         if (otherStrategy == null) {
             return false;
         }
-        if (    active.equals(otherStrategy.getActive()) &&
+        if (    active == otherStrategy.isActive() &&
                 strategyMode.equals(otherStrategy.getStrategyMode()) &&
                 tradingQuantity.equals(otherStrategy.getTradingQuantity()) &&
                 params.equals(otherStrategy.getParams()) &&
@@ -196,11 +196,11 @@ public class Strategy implements Serializable {
         this.strategyType = strategyType;
     }
 
-    public Boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 

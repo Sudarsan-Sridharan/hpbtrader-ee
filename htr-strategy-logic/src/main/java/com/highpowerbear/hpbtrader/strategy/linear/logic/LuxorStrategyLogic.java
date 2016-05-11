@@ -1,5 +1,6 @@
 package com.highpowerbear.hpbtrader.strategy.linear.logic;
 
+import com.highpowerbear.hpbtrader.shared.entity.Strategy;
 import com.highpowerbear.hpbtrader.strategy.linear.AbstractStrategyLogic;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
@@ -27,45 +28,42 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
     private Double emaShortValue;
     private Double prevEmaLongValue;
     private Double emaLongValue;
-    
+
+    public LuxorStrategyLogic(Strategy strategy) {
+         super(strategy);
+    }
+
     @Override
-    public IbOrder processSignals() {
+    public IbOrder process() {
         createOrder();
-        if (ctx.activeTrade != null) {
+        if (activeTrade != null) {
             setPl();
             setTrailStop(stopPct);
             if (targetMet()) {
-                ibOrder.setOrderAction(ctx.activeTrade.isLong() ? HtrEnums.OrderAction.STC : HtrEnums.OrderAction.BTC);
-                ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.TARGET));
+                resultIbOrder.setOrderAction(activeTrade.isLong() ? HtrEnums.OrderAction.STC : HtrEnums.OrderAction.BTC);
+                resultIbOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.TARGET));
             } else if (stopTriggered()) {
-                ibOrder.setOrderAction(ctx.activeTrade.isLong() ? HtrEnums.OrderAction.STC : HtrEnums.OrderAction.BTC);
-                ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.STOP));
-            } else if (((ctx.activeTrade.isLong() && crossBelowEma()) || (ctx.activeTrade.isShort() && crossAboveEma())) && isTradeTime()) {
-                ibOrder.setOrderAction(ctx.activeTrade.isLong() ? HtrEnums.OrderAction.SREV : HtrEnums.OrderAction.BREV);
-                ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.REVERSE));
-                ibOrder.setQuantity(ibOrder.getQuantity() * 2);
+                resultIbOrder.setOrderAction(activeTrade.isLong() ? HtrEnums.OrderAction.STC : HtrEnums.OrderAction.BTC);
+                resultIbOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.STOP));
+            } else if (((activeTrade.isLong() && crossBelowEma()) || (activeTrade.isShort() && crossAboveEma())) && isTradeTime()) {
+                resultIbOrder.setOrderAction(activeTrade.isLong() ? HtrEnums.OrderAction.SREV : HtrEnums.OrderAction.BREV);
+                resultIbOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.REVERSE));
+                resultIbOrder.setQuantity(resultIbOrder.getQuantity() * 2);
             }
         } else if ((crossAboveEma() || crossBelowEma()) && isTradeTime()) {
-            ibOrder.setOrderAction(crossAboveEma() ? HtrEnums.OrderAction.BTO : HtrEnums.OrderAction.STO);
-            ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.OPEN));
-            ctx.activeTrade = new Trade().initOpen(ibOrder);
-            setInitialStopAndTarget();
+            resultIbOrder.setOrderAction(crossAboveEma() ? HtrEnums.OrderAction.BTO : HtrEnums.OrderAction.STO);
+            resultIbOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.OPEN));
+            activeTrade = new Trade().initOpen(resultIbOrder, calculateInitialStop(stopPct), calculateTarget(targetPct));
         }
-        if (ibOrder.getOrderAction() == null) {
-            ibOrder = null;
+        if (resultIbOrder.getOrderAction() == null) {
+            resultIbOrder = null;
         }
-        return ibOrder;
-    }
-    
-    @Override
-    public void setInitialStopAndTarget() {
-        setInitialStop(stopPct);
-        setTarget(targetPct);
+        return resultIbOrder;
     }
     
     @Override
     protected void reloadParameters() {
-        String params[] = ctx.strategy.getParams().split(",");
+        String params[] = strategy.getParams().split(",");
         emaShortPeriod = Integer.valueOf(params[0].trim());
         emaLongPeriod = Integer.valueOf(params[1].trim());
         stopPct = Double.valueOf(params[2].trim());
@@ -76,8 +74,8 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
 
     @Override
     protected void calculateIndicators() {
-        List<Ema> emaShortList = tiCalculator.calculateEma(ctx.dataBars, emaShortPeriod);
-        List<Ema> emaLongList = tiCalculator.calculateEma(ctx.dataBars, emaLongPeriod);
+        List<Ema> emaShortList = tiCalculator.calculateEma(dataBars, emaShortPeriod);
+        List<Ema> emaLongList = tiCalculator.calculateEma(dataBars, emaLongPeriod);
         prevEmaShortValue = emaShortList.get(emaShortList.size() - 2).getEma();
         emaShortValue = emaShortList.get(emaShortList.size() - 1).getEma();
         prevEmaLongValue = emaLongList.get(emaLongList.size() - 2).getEma();
@@ -93,7 +91,7 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
     }
     
     private boolean isTradeTime() {
-        int barHour = dataBar.getBarCloseDate().get(Calendar.HOUR_OF_DAY);
+        int barHour = lastDataBar.getBarCloseDate().get(Calendar.HOUR_OF_DAY);
         return (barHour >= this.startHourEst && barHour < (this.startHourEst + this.durationHours));
     }
     
@@ -105,21 +103,21 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
         String desc = null;
         switch(te) {
             case TARGET:
-                if (ctx.activeTrade.isLong()) {
-                    desc = "targetSTC: price=" + getPrice() + " > target=" + ctx.activeTrade.getProfitTarget();
+                if (activeTrade.isLong()) {
+                    desc = "targetSTC: price=" + getPrice() + " > target=" + activeTrade.getProfitTarget();
                 } else {
-                    desc = "targetBTC: price=" + getPrice() + " < target=" + ctx.activeTrade.getProfitTarget();
+                    desc = "targetBTC: price=" + getPrice() + " < target=" + activeTrade.getProfitTarget();
                 }
                 break;
             case STOP:
-                if (ctx.activeTrade.isLong()) {
-                    desc = "stopSTC: price=" + getPrice() + " < stop=" + ctx.activeTrade.getStopLoss();
+                if (activeTrade.isLong()) {
+                    desc = "stopSTC: price=" + getPrice() + " < stop=" + activeTrade.getStopLoss();
                 } else {
-                    desc = "stopBTC: price=" + getPrice() + " > stop=" + ctx.activeTrade.getStopLoss();
+                    desc = "stopBTC: price=" + getPrice() + " > stop=" + activeTrade.getStopLoss();
                 }
                 break;
             case REVERSE:
-                if (ctx.activeTrade.isLong()) {
+                if (activeTrade.isLong()) {
                     desc = "sigSREV: " + getEmaDesc(EmaPeriod.SHORT) + " CB " + getEmaDesc(EmaPeriod.LONG);
                 } else {
                     desc = "sigBREV: " + getEmaDesc(EmaPeriod.SHORT) + " CA " + getEmaDesc(EmaPeriod.LONG);

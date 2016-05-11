@@ -63,12 +63,14 @@ public class Trade implements Serializable {
         tradeIbOrders.add(tradeIbOrder);
     }
     
-    public Trade initOpen(IbOrder ibOrder) {
+    public Trade initOpen(IbOrder ibOrder, Double initialStop, Double profitTarget) {
         this.strategy = ibOrder.getStrategy();
         this.initOpenDate = ibOrder.getCreatedDate();
         this.tradeStatus = HtrEnums.TradeStatus.INIT_OPEN;
         this.tradeType = (ibOrder.isBuyOrder() ? HtrEnums.TradeType.LONG : HtrEnums.TradeType.SHORT);
         this.quantity = strategy.getTradingQuantity();
+        this.initialStop = initialStop;
+        this.profitTarget = profitTarget;
         return this;
     }
     
