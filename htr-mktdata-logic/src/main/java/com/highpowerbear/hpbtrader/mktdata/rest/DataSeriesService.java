@@ -47,28 +47,16 @@ public class DataSeriesService {
     }
 
     @GET
-    @Path("{dataSeriesId}/bars")
+    @Path("{dataSeriesId}/databars")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBars(@PathParam("dataSeriesId") Integer dataSeriesId, @QueryParam("numBars") Integer numBars) {
-        DataSeries dataSeries = dataSeriesDao.findSeries(dataSeriesId);
-        if (dataSeries == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        List<DataBar> dataBars = dataSeriesDao.getBars(dataSeries, numBars);
-        return Response.ok(new RestList<>(dataSeriesDao.getBars(dataSeries, numBars), (long) dataBars.size())).build();
-    }
-
-    @GET
-    @Path("{dataSeriesId}/pagedbars")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getPagedBars(@PathParam("dataSeriesId") Integer dataSeriesId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
+    public Response getDataBars(@PathParam("dataSeriesId") Integer dataSeriesId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
         DataSeries dataSeries = dataSeriesDao.findSeries(dataSeriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         start = (start == null ? 0 : start);
         limit = (limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit);
-        return Response.ok(new RestList<>(dataSeriesDao.getPagedBars(dataSeries, start, limit), dataSeriesDao.getNumBars(dataSeries))).build();
+        return Response.ok(new RestList<>(dataSeriesDao.getDataBars(dataSeries, start, limit, true), dataSeriesDao.getNumDataBars(dataSeries))).build();
     }
 
     @PUT

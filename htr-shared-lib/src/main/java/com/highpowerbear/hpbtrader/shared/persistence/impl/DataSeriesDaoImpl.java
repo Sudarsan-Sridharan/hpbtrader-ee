@@ -96,11 +96,11 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
 }
 
     @Override
-    public void createBars(DataSeries dataSeries, List<DataBar> dataBars) {
+    public void createDataBars(DataSeries dataSeries, List<DataBar> dataBars) {
         if (dataBars == null || dataBars.isEmpty()) {
             return;
         }
-        l.fine("START createBars, symbol=" + dataSeries.getInstrument().getSymbol());
+        l.fine("START createDataBars, symbol=" + dataSeries.getInstrument().getSymbol());
         int created = 0;
         int updated = 0;
         for (DataBar dataBar : dataBars) {
@@ -125,25 +125,11 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
                 em.merge(dbDataBar);
             }
         }
-        l.fine("END createBars, symbol=" + dataSeries.getInstrument().getSymbol() + ", added=" + created + ", updated=" + updated);
+        l.fine("END createDataBars, symbol=" + dataSeries.getInstrument().getSymbol() + ", added=" + created + ", updated=" + updated);
     }
 
     @Override
-    public List<DataBar> getBars(DataSeries dataSeries, Integer numBars) {
-        TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries ORDER BY b.barCloseDate ASC", DataBar.class);
-        query.setParameter("dataSeries", dataSeries);
-        if (numBars != null && numBars > 0) {
-            query.setMaxResults(numBars);
-        }
-        List<DataBar> dataBars = query.getResultList();
-        if (dataBars == null) {
-            dataBars = new ArrayList<>();
-        }
-        return dataBars;
-    }
-
-    @Override
-    public List<DataBar> getPagedBars(DataSeries dataSeries, Integer start, Integer limit) {
+    public List<DataBar> getDataBars(DataSeries dataSeries, int start, int limit, boolean desc) {
         TypedQuery<DataBar> q = em.createQuery("SELECT b FROM DataBar b where b.dataSeries = :dataSeries ORDER BY b.barCloseDate DESC", DataBar.class);
         q.setParameter("dataSeries", dataSeries);
         q.setFirstResult(start);
@@ -152,7 +138,7 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
     }
 
     @Override
-    public DataBar getLastBar(DataSeries dataSeries) {
+    public DataBar getLastDataBar(DataSeries dataSeries) {
         TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries ORDER BY b.barCloseDate DESC", DataBar.class);
         query.setParameter("dataSeries", dataSeries);
         query.setMaxResults(1);
@@ -161,7 +147,7 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
     }
 
     @Override
-    public Long getNumBars(DataSeries dataSeries) {
+    public Long getNumDataBars(DataSeries dataSeries) {
         Query query = em.createQuery("SELECT COUNT(b) FROM DataBar b WHERE b.dataSeries = :dataSeries");
         query.setParameter("dataSeries", dataSeries);
         return (Long) query.getSingleResult();

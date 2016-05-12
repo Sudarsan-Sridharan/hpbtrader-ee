@@ -55,7 +55,7 @@ public class HistDataController {
                 .filter(timeInMillisBarClose -> timeInMillisBarClose > System.currentTimeMillis())
                 .forEach(barsReceivedMap.get(dataSeries)::remove);
         List<DataBar> barsToCreate = new ArrayList<>(barsReceivedMap.get(dataSeries).values());
-        dataSeriesDao.createBars(dataSeries, barsToCreate);
+        dataSeriesDao.createDataBars(dataSeries, barsToCreate);
         DataBar lastDataBar = barsToCreate.get(barsToCreate.size() - 1);
         boolean isCurrentLastBar = ((lastDataBar.getBarCloseDateMillis() + dataSeries.getInterval().getMillis()) > System.currentTimeMillis());
         if (isCurrentLastBar) {

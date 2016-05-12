@@ -1,6 +1,5 @@
 package com.highpowerbear.hpbtrader.strategy.linear;
 
-import com.highpowerbear.hpbtrader.strategy.common.EventBroker;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.DataBar;
@@ -26,7 +25,6 @@ public class OrderStateHandler {
     @Inject private IbOrderDao ibOrderDao;
     @Inject private TradeDao tradeDao;
     @Inject private StrategyDao strategyDao;
-    @Inject private EventBroker eventBroker;
 
     public void simulateFill(IbOrder ibOrder, DataBar dataBar) {
         Calendar t1 = HtrUtil.getCalendar();
@@ -54,7 +52,6 @@ public class OrderStateHandler {
     public void orderSubmitted(IbOrder ibOrder, Calendar cal) {
         ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, cal, null);
         ibOrderDao.updateIbOrder(ibOrder);
-        eventBroker.trigger(HtrEnums.DataChangeEvent.STRATEGY_UPDATE);
     }
 
     public void orderFilled(IbOrder ibOrder, Calendar cal, Double fillPrice) {
@@ -82,7 +79,6 @@ public class OrderStateHandler {
         strategy.setNumFilledOrders(strategy.getNumFilledOrders() + 1);
         strategy.setCurrentPosition(ibOrder.isBuyOrder() ? strategy.getCurrentPosition() + ibOrder.getQuantity() : strategy.getCurrentPosition() - ibOrder.getQuantity());
         strategyDao.updateStrategy(strategy);
-        eventBroker.trigger(HtrEnums.DataChangeEvent.STRATEGY_UPDATE);
     }
 
     public void orderCanceled(IbOrder ibOrder, Calendar cal) {
@@ -94,6 +90,5 @@ public class OrderStateHandler {
             t.cncClosed();
             tradeDao.updateOrCreateTrade(t, null);
         });
-        eventBroker.trigger(HtrEnums.DataChangeEvent.STRATEGY_UPDATE);
     }
 }

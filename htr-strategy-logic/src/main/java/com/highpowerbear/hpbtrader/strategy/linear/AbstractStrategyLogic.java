@@ -4,6 +4,7 @@ import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.*;
+import com.highpowerbear.hpbtrader.shared.model.OperResult;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
@@ -30,13 +31,13 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     protected TiCalculator tiCalculator;
     protected NumberFormat doubleValueFormat;
 
-    // update before each processing in preflight method
+    // prepare before each processing in preflight method
     protected List<DataBar> dataBars;
     protected DataBar lastDataBar;
     protected DataBar prevDataBar;
     protected Trade activeTrade;
 
-    protected boolean backtest = false;
+    protected int offset;
 
     protected IbOrder resultIbOrder;
 
@@ -50,43 +51,51 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     }
 
     @Override
-    public boolean preflight(boolean backtest) {
-        this.backtest = backtest;
-        l.info("START preflight " + getInfo());
-
-        this.dataBars = dataSeriesDao.getBars(inputDataSeries, HtrDefinitions.BARS_REQUIRED + INDICATORS_LIST_SIZE);
+    public OperResult<Boolean, String> prepare(int offset) {
+        this.dataBars = dataSeriesDao.getDataBars(inputDataSeries, offset, HtrDefinitions.BARS_REQUIRED + INDICATORS_LIST_SIZE, false);
         this.lastDataBar = dataBars.get(dataBars.size() - 1);
         this.prevDataBar = dataBars.get(dataBars.size() - 2);
         this.activeTrade = tradeDao.getActiveTrade(strategy);
 
         if (dataBars.size() < HtrDefinitions.BARS_REQUIRED + INDICATORS_LIST_SIZE) {
-            l.info("END preflight " +  getInfo() + ", not enough  bars available");
-            return false;
+            return new OperResult<>(false, "not enough  bars available");
         }
         long intervalMillis = inputDataSeries.getInterval().getMillis();
         long nowMillis = HtrUtil.getCalendar().getTimeInMillis();
         boolean isCurrentBar = ((lastDataBar.getBarCloseDateMillis() + intervalMillis) > nowMillis);
         if (!isCurrentBar) {
-            l.info("END preflight " + getInfo() + ", not current bar");
-            return false;
+            return new OperResult<>(false, "not current bar");
         }
         if (activeTrade != null && activeTrade.isInit()) {
-            l.info("END preflight " + getInfo() + ", active trade in state " + activeTrade.getTradeStatus());
-            return false;
+            return new OperResult<>(false, "active trade in state " + activeTrade.getTradeStatus());
         }
-
         reloadParameters();
         calculateIndicators();
 
-        return true;
+        return new OperResult<>(true, "OK");
     }
 
     @Override
     public abstract IbOrder process();
 
     @Override
-    public String getInfo() {
-        return inputDataSeries.getInstrument().getSymbol() + ", " + inputDataSeries.getInstrument().getCurrency() + ", " + inputDataSeries.getInterval().name() + ", " + strategy.getStrategyType() + " --> " + this.getClass().getSimpleName();
+    public DataSeries getInputDataSeries() {
+        return this.inputDataSeries;
+    }
+
+    @Override
+    public Strategy getStrategy() {
+        return this.strategy;
+    }
+
+    @Override
+    public Trade getActiveTrade() {
+        return this.activeTrade;
+    }
+
+    @Override
+    public DataBar getLastDataBar() {
+        return this.lastDataBar;
     }
 
     protected abstract void calculateIndicators();
@@ -101,7 +110,7 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
         resultIbOrder.setOrderType(HtrEnums.OrderType.MKT);
         resultIbOrder.setLimitPrice(null); // N/A for market order
         resultIbOrder.setStopPrice(null); // N/A for market order
-        resultIbOrder.addEvent(HtrEnums.IbOrderStatus.NEW, (backtest ? lastDataBar.getBarCloseDate() : HtrUtil.getCalendar()), null);
+        resultIbOrder.addEvent(HtrEnums.IbOrderStatus.NEW, (offset != 0 ? lastDataBar.getBarCloseDate() : HtrUtil.getCalendar()), null);
     }
 
     protected Double getPrice() {

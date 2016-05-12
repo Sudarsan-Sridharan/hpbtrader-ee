@@ -31,7 +31,7 @@ public class TechAnalysisService {
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        List<DataBar> dataBars = dataSeriesDao.getBars(dataSeries, HtrDefinitions.BARS_REQUIRED + numBars);
+        List<DataBar> dataBars = dataSeriesDao.getDataBars(dataSeries, 0, HtrDefinitions.BARS_REQUIRED + numBars, false);
         return Response.ok(tiCalculator.calculateEma(dataBars, emaPeriod)).build();
     }
 
@@ -43,7 +43,7 @@ public class TechAnalysisService {
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        List<DataBar> dataBars = dataSeriesDao.getBars(dataSeries, HtrDefinitions.BARS_REQUIRED + numBars);
+        List<DataBar> dataBars = dataSeriesDao.getDataBars(dataSeries, 0, HtrDefinitions.BARS_REQUIRED + numBars, false);
         return Response.ok(tiCalculator.calculateStoch(dataBars)).build();
     }
 
@@ -55,7 +55,7 @@ public class TechAnalysisService {
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        List<DataBar> dataBars = dataSeriesDao.getBars(dataSeries, HtrDefinitions.BARS_REQUIRED + numBars);
+        List<DataBar> dataBars = dataSeriesDao.getDataBars(dataSeries, 0, HtrDefinitions.BARS_REQUIRED + numBars, false);
         return Response.ok(tiCalculator.calculateMacd(dataBars)).build();
     }
 }

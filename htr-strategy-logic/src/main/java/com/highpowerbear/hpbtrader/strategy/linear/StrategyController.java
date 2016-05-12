@@ -4,6 +4,7 @@ import com.highpowerbear.hpbtrader.shared.common.EmailSender;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.*;
+import com.highpowerbear.hpbtrader.shared.model.OperResult;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
@@ -69,60 +70,68 @@ public class StrategyController implements Serializable {
         return strategyLogic;
     }
 
-    public void process(Strategy strategy) {
+    public void processStrategy(Strategy strategy) {
         StrategyLogic strategyLogic = strategyLogicMap.get(strategy);
-        if (!strategyLogic.preflight(false)) {
+        String logMessage = strategyLogic.getInputDataSeries().getInstrument().getSymbol() + ", " + strategyLogic.getInputDataSeries().getInstrument().getCurrency() + ", " + strategyLogic.getInputDataSeries().getInterval().name() + ", " +  strategy.getStrategyType() + " --> " + strategyLogic.getClass().getSimpleName();
+
+        l.info("BEGIN prepare " + logMessage);
+        OperResult<Boolean, String> result = strategyLogic.prepare(0);
+        l.info("END prepare " + logMessage + ", " + result.getContent());
+        if (!result.getStatus()) {
             return;
         }
-        l.info("START process " + strategyLogic.getInfo());
+
+        l.info("BEGIN process " + logMessage);
         IbOrder ibOrder = strategyLogic.process();
-        postProcess(ibOrder, strategy, strategyLogic);
+        l.info("END process " + logMessage + (ibOrder == null ? ", no new order" : ", new order, trigger=" + ibOrder.getTriggerDesc()));
+
+        if (ibOrder == null) {
+            if (strategyLogic.getActiveTrade() != null) {
+                tradeDao.updateOrCreateTrade(strategyLogic.getActiveTrade(), strategyLogic.getLastDataBar().getbBarClose());
+            }
+            return;
+        }
+
+        postProcess(ibOrder);
+        sendEmail(ibOrder);
+
+        if (HtrEnums.StrategyMode.IB.equals(strategyLogic.getStrategy().getStrategyMode())) {
+            //ibController.submitIbOrder(ibOrder);
+            // TODO
+        } else {
+            orderStateHandler.simulateFill(ibOrder, strategyLogic.getLastDataBar());
+        }
     }
 
-    private void postProcess(IbOrder ibOrder, Strategy strategy, StrategyLogic strategyLogic) {
-        Trade activeTrade = tradeDao.getActiveTrade(strategy);
-        DataSeries inputDataSeries = dataSeriesDao.getSeriesByAlias(strategy.getDefaultInputSeriesAlias());
-        DataBar lastDataBar = dataSeriesDao.getLastBar(inputDataSeries);
-        if (ibOrder == null) {
-            if (activeTrade != null) {
-                tradeDao.updateOrCreateTrade(activeTrade, lastDataBar.getbBarClose());
-            }
-            l.info("END process " + strategyLogic.getInfo() + ", no new order");
-            return;
-        }
+    private void postProcess(IbOrder ibOrder) {
+        Strategy strategy = ibOrder.getStrategy();
+        StrategyLogic strategyLogic = strategyLogicMap.get(strategy);
         ibOrderDao.createIbOrder(ibOrder);
-        activeTrade.addTradeOrder(ibOrder);
-        tradeDao.updateOrCreateTrade(activeTrade, lastDataBar.getbBarClose());
+        strategyLogic.getActiveTrade().addTradeOrder(ibOrder);
+        tradeDao.updateOrCreateTrade(strategyLogic.getActiveTrade(), strategyLogic.getLastDataBar().getbBarClose());
 
-        // needed to get fresh copy of trade and trade orders with set ids to prevent trade order duplication in the next update
-        activeTrade = tradeDao.getActiveTrade(strategy);
+        // needed to get fresh copy of trade and trade orders with set ids to prevent trade order duplication in the next prepare
+        Trade activeTrade = tradeDao.getActiveTrade(strategyLogic.getStrategy());
 
         if (ibOrder.isClosingOrder()) {
             activeTrade.initClose();
-            tradeDao.updateOrCreateTrade(activeTrade, lastDataBar.getbBarClose());
+            tradeDao.updateOrCreateTrade(activeTrade, strategyLogic.getLastDataBar().getbBarClose());
         }
         if (ibOrder.isReversalOrder()) {
             activeTrade = new Trade().initOpen(ibOrder, activeTrade.getInitialStop(), activeTrade.getProfitTarget());
             activeTrade.addTradeOrder(ibOrder);
-            tradeDao.updateOrCreateTrade(activeTrade, lastDataBar.getbBarClose());
+            tradeDao.updateOrCreateTrade(activeTrade, strategyLogic.getLastDataBar().getbBarClose());
         }
 
-        strategy.setNumAllOrders(strategy.getNumAllOrders() + 1);
-        strategyDao.updateStrategy(strategy);
+        strategyLogic.getStrategy().setNumAllOrders(strategyLogic.getStrategy().getNumAllOrders() + 1);
 
-        // send email, notifying about new order
+        strategyDao.updateStrategy(strategyLogic.getStrategy());
+    }
+
+    private void sendEmail(IbOrder ibOrder) {
         String subject = ibOrder.getDescription();
-        String content = ibOrder.getTriggerDesc() + "\n" + lastDataBar.print();
+        String content = ibOrder.getTriggerDesc() + "\n" + strategyLogicMap.get(ibOrder.getStrategy()).getLastDataBar().print();
         emailSender.sendEmail(subject, content);
-
-        l.info("END " + strategyLogic.getInfo() + ", new order, trigger=" + ibOrder.getTriggerDesc());
-
-        if (HtrEnums.StrategyMode.IB.equals(strategy.getStrategyMode())) {
-            //ibController.submitIbOrder(ibOrder);
-            // TODO
-        } else {
-            orderStateHandler.simulateFill(ibOrder, lastDataBar);
-        }
     }
 
     public void processManual(IbOrder manualIbOrder, Trade activeTrade, DataBar dataBar) {
@@ -130,11 +139,11 @@ public class StrategyController implements Serializable {
         DataSeries dataSeries = dataSeriesDao.getSeriesByAlias(strategy.getDefaultInputSeriesAlias());
         String logMessage = "processing " + dataSeries.getInstrument().getSymbol() + ", " + dataSeries.getInstrument().getCurrency() + ", " + dataSeries.getInterval().name() + ", " +  strategy.getStrategyType() + " --> manual order";
 
-        l.info("START " + logMessage);
+        l.info("BEGIN " + logMessage);
         ibOrderDao.createIbOrder(manualIbOrder);
         activeTrade.addTradeOrder(manualIbOrder);
         tradeDao.updateOrCreateTrade(activeTrade, dataBar.getbBarClose());
-        // needed to get fresh copy of trade and trade orders with set ids to prevent trade order duplication in the next update
+        // needed to get fresh copy of trade and trade orders with set ids to prevent trade order duplication in the next prepare
         activeTrade = tradeDao.getActiveTrade(strategy);
 
         if (manualIbOrder.isClosingOrder()) {
@@ -159,16 +168,16 @@ public class StrategyController implements Serializable {
         }
     }
 
-    public BacktestResult backtest(Strategy strategy, Calendar startDate, Calendar endDate) {
+    public BacktestMemDb backtest(Strategy strategy, Calendar startDate, Calendar endDate) {
         Strategy backtestStrategy = new Strategy(); // need to create new instance for backtest, copy required parameters
         strategy.deepCopy(backtestStrategy);
         backtestStrategy.resetStatistics();
         StrategyLogic backtestStrategyLogic = createStrategyLogic(backtestStrategy); // need to create new instance for backtest
         String logMessage = "backtesting strategy, " + strategy.getStrategyType().toString() + " --> " + backtestStrategyLogic.getClass().getSimpleName();
         DataSeries dataSeries = dataSeriesDao.getSeriesByAlias(strategy.getDefaultInputSeriesAlias());
+        /*
         List<DataBar> dataBars = dataSeriesDao.getBars(dataSeries, null);
         dataBars = filterBars(dataBars, startDate, endDate);
-        /*
         int numIterations = dataBars.size() - HtrDefinitions.BARS_REQUIRED - INDICATORS_LIST_SIZE;
         l.info("START " + logMessage + ", iterations=" + numIterations);
 

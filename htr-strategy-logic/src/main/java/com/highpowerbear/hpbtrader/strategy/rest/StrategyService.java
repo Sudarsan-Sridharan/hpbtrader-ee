@@ -27,12 +27,12 @@ public class StrategyService {
     @GET
     @Path("bars/{seriesId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<DataBar> getBars(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
+    public List<DataBar> getDataBars(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
         DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
         if (dataSeries == null) {
             return null;
         }
-        return dataSeriesDao.getBars(dataSeries, numBars);
+        return dataSeriesDao.getDataBars(dataSeries, 0, numBars, true);
     }
 
     @GET

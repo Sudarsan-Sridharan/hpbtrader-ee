@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author robertk
  */
-public class BacktestResult {
+public class BacktestMemDb {
     private Strategy strategy;
     private List<StrategyLog> strategyLogs = new ArrayList<>();
     private List<IbOrder> ibOrders = new ArrayList<>(); // will include also OrderEvent list
@@ -21,7 +21,7 @@ public class BacktestResult {
     private Long nextTradeId = 1L;
     private Long nextTradeLogId = 1L;
 
-    public BacktestResult(Strategy strategy) {
+    public BacktestMemDb(Strategy strategy) {
         this.strategy = strategy;
         this.strategy.setStrategyMode(HtrEnums.StrategyMode.BTEST);
     }

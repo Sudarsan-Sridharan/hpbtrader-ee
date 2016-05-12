@@ -1,13 +1,17 @@
 package com.highpowerbear.hpbtrader.strategy.linear;
 
-import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+import com.highpowerbear.hpbtrader.shared.entity.*;
+import com.highpowerbear.hpbtrader.shared.model.OperResult;
 
 /**
  *
  * @author robertk
  */
 public interface StrategyLogic {
-    boolean preflight(boolean backtest);
+    OperResult<Boolean, String> prepare(int offset);
     IbOrder process();
-    String getInfo();
+    DataSeries getInputDataSeries();
+    Strategy getStrategy();
+    Trade getActiveTrade();
+    DataBar getLastDataBar();
 }

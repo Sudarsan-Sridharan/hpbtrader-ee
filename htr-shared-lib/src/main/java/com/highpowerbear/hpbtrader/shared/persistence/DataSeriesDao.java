@@ -21,9 +21,8 @@ public interface DataSeriesDao {
     Integer getHighestDisplayOrder();
     void deleteSeries(DataSeries dataSeries);
 
-    void createBars(DataSeries dataSeries, List<DataBar> dataBars);
-    List<DataBar> getBars(DataSeries dataSeries, Integer numBars);
-    List<DataBar> getPagedBars(DataSeries dataSeries, Integer start, Integer limit);
-    DataBar getLastBar(DataSeries dataSeries);
-    Long getNumBars(DataSeries dataSeries);
+    void createDataBars(DataSeries dataSeries, List<DataBar> dataBars);
+    List<DataBar> getDataBars(DataSeries dataSeries, int start, int limit, boolean desc);
+    DataBar getLastDataBar(DataSeries dataSeries);
+    Long getNumDataBars(DataSeries dataSeries);
 }
