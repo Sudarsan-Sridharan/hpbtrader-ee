@@ -17,24 +17,6 @@ import java.util.List;
 public class StrategyService {
     @Inject private DataSeriesDao dataSeriesDao;
 
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("ibaccounts/{accountId}/connect/{connect}")
-    public IbAccount connectIbAccount(@PathParam("accountId") String accountId, @PathParam("connect") Boolean connect) {
-        return null;
-    }
-
-    @GET
-    @Path("bars/{seriesId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<DataBar> getDataBars(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
-        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
-        if (dataSeries == null) {
-            return null;
-        }
-        return dataSeriesDao.getDataBars(dataSeries, 0, numBars, true);
-    }
-
     @GET
     @Path("strategylogs")
     @Produces(MediaType.APPLICATION_JSON)
@@ -62,5 +44,4 @@ public class StrategyService {
     public List<TradeLog> getLastTradeLogs() {
         return null;
     }
-
 }

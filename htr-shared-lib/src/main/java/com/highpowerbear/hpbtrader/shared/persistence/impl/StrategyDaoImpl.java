@@ -29,19 +29,8 @@ public class StrategyDaoImpl implements StrategyDao {
     @Inject private IbOrderDao ibOrderDao;
 
     @Override
-    public void createStrategy(Strategy strategy) {
-        em.persist(strategy);
-    }
-
-    @Override
-    public List<Strategy> getAllStrategies(boolean inactiveToo) {
-        TypedQuery<Strategy> q;
-        if (inactiveToo) {
-            q = em.createQuery("SELECT s from Strategy s ORDER BY s.displayOrder ASC", Strategy.class);
-        } else {
-            q = em.createQuery("SELECT s from Strategy s WHERE s.active = :active ORDER BY s.displayOrder ASC", Strategy.class);
-            q.setParameter("active", Boolean.TRUE);
-        }
+    public List<Strategy> getStrategies() {
+        TypedQuery<Strategy> q = em.createQuery("SELECT s from Strategy s ORDER BY s.displayOrder", Strategy.class);
         return q.getResultList();
     }
 
@@ -69,7 +58,7 @@ public class StrategyDaoImpl implements StrategyDao {
             StrategyLog strategyLog = new StrategyLog();
             strategyLog.setStrategy(strategy);
             strategyLog.setLogDate(HtrUtil.getCalendar());
-            strategy.copyValues(strategyLog);
+            strategy.copyValuesTo(strategyLog);
             em.persist(strategyLog);
         }
     }
@@ -79,7 +68,7 @@ public class StrategyDaoImpl implements StrategyDao {
         l.info("START deleteStrategy " + strategy.getTradeInstrument().getSymbol() + ", " + strategy.getStrategyType().name().toLowerCase());
         strategy = em.find(Strategy.class, strategy.getId());
         Query q;
-        for (Trade trade : tradeDao.getTradesByStrategy(strategy, true)) {
+        for (Trade trade : tradeDao.getTrades(strategy)) {
             trade.getTradeIbOrders().forEach(em::remove);
             q = em.createQuery("DELETE FROM TradeLog tl WHERE tl.trade = :trade");
             q.setParameter("trade", trade);
@@ -89,7 +78,7 @@ public class StrategyDaoImpl implements StrategyDao {
         q = em.createQuery("DELETE FROM StrategyLog sl WHERE sl.strategy = :strategy");
         q.setParameter("strategy", strategy);
         q.executeUpdate();
-        for (IbOrder ibOrder : ibOrderDao.getIbOrdersByStrategy(strategy)) {
+        for (IbOrder ibOrder : ibOrderDao.getIbOrders(strategy)) {
             ibOrder.getEvents().forEach(em::remove);
             em.remove(ibOrder);
         }
@@ -98,8 +87,8 @@ public class StrategyDaoImpl implements StrategyDao {
     }
 
     @Override
-    public List<StrategyLog> getStrategyLogs(Strategy strategy, boolean ascending) {
-        TypedQuery<StrategyLog> query = em.createQuery("SELECT sl FROM StrategyLog sl WHERE sl.strategy = :strategy ORDER BY sl.logDate " + (ascending ? "ASC" : "DESC"), StrategyLog.class);
+    public List<StrategyLog> getStrategyLogs(Strategy strategy) {
+        TypedQuery<StrategyLog> query = em.createQuery("SELECT sl FROM StrategyLog sl WHERE sl.strategy = :strategy ORDER BY sl.logDate", StrategyLog.class);
         query.setParameter("strategy", strategy);
         return query.getResultList();
     }

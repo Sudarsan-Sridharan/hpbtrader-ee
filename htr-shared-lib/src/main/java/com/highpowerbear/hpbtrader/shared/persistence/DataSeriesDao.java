@@ -5,24 +5,21 @@ import com.highpowerbear.hpbtrader.shared.entity.DataBar;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 import com.highpowerbear.hpbtrader.shared.entity.Instrument;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
  * Created by robertk on 19.11.2015.
  */
 public interface DataSeriesDao {
-    void createSeries(DataSeries dataSeries);
-    List<DataSeries> getAllSeries(boolean inactiveToo);
-    List<DataSeries> getSeriesByInterval(HtrEnums.Interval interval);
-    List<DataSeries> getSeries(Instrument instrument, HtrEnums.Interval interval);
-    DataSeries getSeriesByAlias(String alias);
-    DataSeries findSeries(Integer id);
-    void updateSeries(DataSeries dataSeries);
-    Integer getHighestDisplayOrder();
-    void deleteSeries(DataSeries dataSeries);
+    List<DataSeries> getAllDataSeries();
+    List<DataSeries> getDataSeriesByInterval(HtrEnums.Interval interval);
+    DataSeries getDataSeriesByAlias(String alias);
+    DataSeries findDataSeries(Integer id);
 
     void createDataBars(DataSeries dataSeries, List<DataBar> dataBars);
-    List<DataBar> getDataBars(DataSeries dataSeries, int start, int limit, boolean desc);
-    DataBar getLastDataBar(DataSeries dataSeries);
+    List<DataBar> getLastDataBars(DataSeries dataSeries, int numBars, int offsetFromLast);
+    List<DataBar> getDataBars(DataSeries dataSeries, int numBars, Calendar lastDate);
+    List<DataBar> getPagedDataBars(DataSeries dataSeries, int start, int limit);
     Long getNumDataBars(DataSeries dataSeries);
 }

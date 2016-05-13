@@ -131,7 +131,7 @@ Ext.define('MktData.view.mktdata.MktDataController', {
 
         me.dataSeriesId = record.data.id;
         dataBarsGrid.setTitle('Data Bars, dataSeriesId=' + me.dataSeriesId + ', symbol=' + record.data.symbol + ', interval=' + record.data.interval);
-        dataBars.getProxy().setUrl(MktData.common.Definitions.urlPrefix + '/dataseries/' + me.dataSeriesId  + '/pagedbars');
+        dataBars.getProxy().setUrl(MktData.common.Definitions.urlPrefix + '/dataseries/' + me.dataSeriesId  + '/pageddatabars');
 
         if (dataBarsPaging.getStore().isLoaded()) {
             dataBarsPaging.moveFirst();

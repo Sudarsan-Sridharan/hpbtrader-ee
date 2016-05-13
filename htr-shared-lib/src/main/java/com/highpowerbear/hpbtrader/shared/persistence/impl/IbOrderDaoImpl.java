@@ -57,7 +57,7 @@ public class IbOrderDaoImpl implements IbOrderDao {
     }
 
     @Override
-    public List<IbOrder> getIbOrdersByStrategy(Strategy strategy) {
+    public List<IbOrder> getIbOrders(Strategy strategy) {
         TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy = :strategy ORDER BY o.createdDate DESC", IbOrder.class);
         query.setParameter("strategy", strategy);
         return query.getResultList();
@@ -65,7 +65,7 @@ public class IbOrderDaoImpl implements IbOrderDao {
 
     @Override
     public List<IbOrder> getNewRetryIbOrders(IbAccount ibAccount) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o, OrderEvent e WHERE o.strategy.ibAccount = :ibAccount AND o = e.ibOrder AND o.status = e.status AND o.status IN :statuses ORDER BY e.eventDate ASC", IbOrder.class);
+        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o, OrderEvent e WHERE o.strategy.ibAccount = :ibAccount AND o = e.ibOrder AND o.status = e.status AND o.status IN :statuses ORDER BY e.eventDate", IbOrder.class);
         Set<HtrEnums.IbOrderStatus> statuses = new HashSet<>();
         statuses.add(HtrEnums.IbOrderStatus.NEW_RETRY);
         query.setParameter("ibAccount", ibAccount);

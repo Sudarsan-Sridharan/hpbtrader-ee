@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.strategy.linear;
+package com.highpowerbear.hpbtrader.strategy.linear.logic;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
@@ -6,11 +6,13 @@ import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.shared.model.OperResult;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
-import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
 import com.highpowerbear.hpbtrader.strategy.common.SingletonRepo;
+import com.highpowerbear.hpbtrader.strategy.linear.ProcessContext;
+import com.highpowerbear.hpbtrader.strategy.linear.StrategyLogic;
 
 import java.text.NumberFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -21,41 +23,48 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractStrategyLogic implements StrategyLogic {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
-    protected final int INDICATORS_LIST_SIZE = 10;
+    private final int INDICATORS_LIST_SIZE = 10;
 
-    protected DataSeriesDao dataSeriesDao = SingletonRepo.getInstance().getDataSeriesDao();
-    protected TradeDao tradeDao = SingletonRepo.getInstance().getTradeDao();
+    private DataSeriesDao dataSeriesDao = SingletonRepo.getInstance().getDataSeriesDao();
+    private DataSeries inputDataSeries;
+    private boolean offset;
 
-    protected Strategy strategy;
-    protected DataSeries inputDataSeries;
-    protected TiCalculator tiCalculator;
-    protected NumberFormat doubleValueFormat;
+    protected TiCalculator tiCalculator = SingletonRepo.getInstance().getTiCalculator();
+    protected NumberFormat doubleValueFormat = NumberFormat.getInstance(Locale.US);
 
-    // prepare before each processing in preflight method
+    protected ProcessContext ctx;
     protected List<DataBar> dataBars;
     protected DataBar lastDataBar;
     protected DataBar prevDataBar;
+
     protected Trade activeTrade;
+    protected IbOrder ibOrder;
 
-    protected int offset;
-
-    protected IbOrder resultIbOrder;
-
-    public AbstractStrategyLogic(Strategy strategy) {
-        this.strategy = strategy;
-        this.inputDataSeries = dataSeriesDao.getSeriesByAlias(strategy.getDefaultInputSeriesAlias());
-        this.tiCalculator = SingletonRepo.getInstance().getTiCalculator();
-        this.doubleValueFormat = NumberFormat.getInstance(Locale.US);
+    public AbstractStrategyLogic(ProcessContext ctx) {
+        this.inputDataSeries = dataSeriesDao.getDataSeriesByAlias(ctx.getStrategy().getDefaultInputSeriesAlias());
         doubleValueFormat.setMinimumFractionDigits(6);
         doubleValueFormat.setMaximumFractionDigits(6);
     }
 
     @Override
-    public OperResult<Boolean, String> prepare(int offset) {
-        this.dataBars = dataSeriesDao.getDataBars(inputDataSeries, offset, HtrDefinitions.BARS_REQUIRED + INDICATORS_LIST_SIZE, false);
+        public OperResult<Boolean, String> prepare(int offsetFromLast) {
+        this.offset = offsetFromLast != 0;
+        this.dataBars = dataSeriesDao.getLastDataBars(inputDataSeries, HtrDefinitions.BARS_REQUIRED + INDICATORS_LIST_SIZE, offsetFromLast);
+        return prepare();
+    }
+
+    @Override
+    public OperResult<Boolean, String> prepare(Calendar lastDate) {
+        this.offset = true;
+        this.dataBars = dataSeriesDao.getDataBars(inputDataSeries, HtrDefinitions.BARS_REQUIRED + INDICATORS_LIST_SIZE, lastDate);
+        return prepare();
+    }
+
+    private OperResult<Boolean, String> prepare() {
+        this.ibOrder = null;
+        this.activeTrade = ctx.getActiveTrade();
         this.lastDataBar = dataBars.get(dataBars.size() - 1);
         this.prevDataBar = dataBars.get(dataBars.size() - 2);
-        this.activeTrade = tradeDao.getActiveTrade(strategy);
 
         if (dataBars.size() < HtrDefinitions.BARS_REQUIRED + INDICATORS_LIST_SIZE) {
             return new OperResult<>(false, "not enough  bars available");
@@ -76,16 +85,11 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     }
 
     @Override
-    public abstract IbOrder process();
+    public abstract void process();
 
     @Override
-    public DataSeries getInputDataSeries() {
-        return this.inputDataSeries;
-    }
-
-    @Override
-    public Strategy getStrategy() {
-        return this.strategy;
+    public IbOrder getIbOrder() {
+        return this.ibOrder;
     }
 
     @Override
@@ -101,16 +105,16 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     protected abstract void calculateIndicators();
     protected abstract void reloadParameters();
     
-    protected void createOrder() {
-        resultIbOrder = new IbOrder();
-        resultIbOrder.setStrategy(strategy);
-        resultIbOrder.setStrategyMode(strategy.getStrategyMode());
-        resultIbOrder.setSubmitType(HtrEnums.SubmitType.AUTO);
-        resultIbOrder.setQuantity(strategy.getTradingQuantity());
-        resultIbOrder.setOrderType(HtrEnums.OrderType.MKT);
-        resultIbOrder.setLimitPrice(null); // N/A for market order
-        resultIbOrder.setStopPrice(null); // N/A for market order
-        resultIbOrder.addEvent(HtrEnums.IbOrderStatus.NEW, (offset != 0 ? lastDataBar.getBarCloseDate() : HtrUtil.getCalendar()), null);
+    protected void createIbOrder() {
+        this.ibOrder = new IbOrder();
+        ibOrder.setStrategy(ctx.getStrategy());
+        ibOrder.setStrategyMode(ctx.getStrategy().getStrategyMode());
+        ibOrder.setSubmitType(HtrEnums.SubmitType.AUTO);
+        ibOrder.setQuantity(ctx.getStrategy().getTradingQuantity());
+        ibOrder.setOrderType(HtrEnums.OrderType.MKT);
+        ibOrder.setLimitPrice(null); // N/A for market order
+        ibOrder.setStopPrice(null); // N/A for market order
+        ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW, (offset ? lastDataBar.getBarCloseDate() : HtrUtil.getCalendar()), null);
     }
 
     protected Double getPrice() {
@@ -164,12 +168,17 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
         if (activeTrade == null || activeTrade.getOpenPrice() == null) {
             return;
         }
-        Double unrealizedPl = (activeTrade.isLong() ? HtrUtil.round5((lastDataBar.getbBarClose() - activeTrade.getOpenPrice()) * strategy.getTradingQuantity()) : HtrUtil.round5((activeTrade.getOpenPrice() - lastDataBar.getbBarClose()) * strategy.getTradingQuantity()));
-        if (HtrEnums.SecType.FUT.equals(strategy.getTradeInstrument().getSecType())) {
-            unrealizedPl *= HtrEnums.FutureMultiplier.getMultiplierBySymbol(strategy.getTradeInstrument().getSymbol());
+        Double unrealizedPl;
+        if (activeTrade.isLong()) {
+            unrealizedPl = HtrUtil.round5((lastDataBar.getbBarClose() - activeTrade.getOpenPrice()) * ctx.getStrategy().getTradingQuantity());
+        } else {
+            unrealizedPl = HtrUtil.round5((activeTrade.getOpenPrice() - lastDataBar.getbBarClose()) * ctx.getStrategy().getTradingQuantity());
         }
-        if (HtrEnums.SecType.OPT.equals(strategy.getTradeInstrument().getSecType())) {
-            unrealizedPl *= (HtrEnums.MiniOption.isMiniOption(strategy.getTradeInstrument().getSymbol()) ? 10 : 100);
+        if (HtrEnums.SecType.FUT.equals(ctx.getStrategy().getTradeInstrument().getSecType())) {
+            unrealizedPl *= HtrEnums.FutureMultiplier.getMultiplierBySymbol(ctx.getStrategy().getTradeInstrument().getSymbol());
+        }
+        if (HtrEnums.SecType.OPT.equals(ctx.getStrategy().getTradeInstrument().getSecType())) {
+            unrealizedPl *= (HtrEnums.MiniOption.isMiniOption(ctx.getStrategy().getTradeInstrument().getSymbol()) ? 10 : 100);
         }
         activeTrade.setUnrealizedPl(unrealizedPl);
     }

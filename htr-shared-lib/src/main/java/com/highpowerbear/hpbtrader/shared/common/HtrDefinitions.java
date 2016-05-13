@@ -1,5 +1,8 @@
 package com.highpowerbear.hpbtrader.shared.common;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 /**
  * Created by rkolar on 4/23/14.
  */
@@ -22,6 +25,7 @@ public class HtrDefinitions {
     public static final Double INVALID_PRICE = -1.0;
     public static final Integer INVALID_SIZE = -1;
     public static final Integer ONE_SECOND_MILLIS = 1000;
+    public static final DateFormat DF = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
 
     // settings
     public static final String LOGGER = "com.highpowerbear.hpbtrader";

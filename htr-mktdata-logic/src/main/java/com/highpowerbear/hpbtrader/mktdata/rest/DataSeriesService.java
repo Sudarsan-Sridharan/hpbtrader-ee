@@ -4,7 +4,6 @@ import com.highpowerbear.hpbtrader.shared.model.RealtimeData;
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
 import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
-import com.highpowerbear.hpbtrader.shared.entity.DataBar;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 import com.highpowerbear.hpbtrader.shared.model.RestList;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
@@ -30,7 +29,7 @@ public class DataSeriesService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public RestList<DataSeries> getSeriesList(@QueryParam("inactiveToo") boolean inactiveToo) {
-        List<DataSeries> dataSeriesList = dataSeriesDao.getAllSeries(inactiveToo);
+        List<DataSeries> dataSeriesList = dataSeriesDao.getAllDataSeries();
         return new RestList<>(dataSeriesList, (long) dataSeriesList.size());
     }
 
@@ -38,7 +37,7 @@ public class DataSeriesService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{dataSeriesId}/backfill")
     public Response backfillBars(@PathParam("dataSeriesId") Integer dataSeriesId) {
-        DataSeries dataSeries = dataSeriesDao.findSeries(dataSeriesId);
+        DataSeries dataSeries = dataSeriesDao.findDataSeries(dataSeriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -47,16 +46,16 @@ public class DataSeriesService {
     }
 
     @GET
-    @Path("{dataSeriesId}/databars")
+    @Path("{dataSeriesId}/pageddatabars")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDataBars(@PathParam("dataSeriesId") Integer dataSeriesId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        DataSeries dataSeries = dataSeriesDao.findSeries(dataSeriesId);
+    public Response getPagedDataBars(@PathParam("dataSeriesId") Integer dataSeriesId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
+        DataSeries dataSeries = dataSeriesDao.findDataSeries(dataSeriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         start = (start == null ? 0 : start);
         limit = (limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit);
-        return Response.ok(new RestList<>(dataSeriesDao.getDataBars(dataSeries, start, limit, true), dataSeriesDao.getNumDataBars(dataSeries))).build();
+        return Response.ok(new RestList<>(dataSeriesDao.getPagedDataBars(dataSeries, start, limit), dataSeriesDao.getNumDataBars(dataSeries))).build();
     }
 
     @PUT
@@ -64,7 +63,7 @@ public class DataSeriesService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{dataSeriesId}/rtdata/toggle")
     public Response toggleRtData(@PathParam("dataSeriesId") Integer dataSeriesId) {
-        DataSeries dataSeries = dataSeriesDao.findSeries(dataSeriesId);
+        DataSeries dataSeries = dataSeriesDao.findDataSeries(dataSeriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

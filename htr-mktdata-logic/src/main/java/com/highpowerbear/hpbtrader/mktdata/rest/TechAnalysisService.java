@@ -27,11 +27,11 @@ public class TechAnalysisService {
     @Path("series/{seriesId}/ema/{emaPeriod}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response calculateEma(@PathParam("seriesId") Integer seriesId, @PathParam("emaPeriod") Integer emaPeriod, @QueryParam("numBars") Integer numBars) {
-        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
+        DataSeries dataSeries = dataSeriesDao.findDataSeries(seriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        List<DataBar> dataBars = dataSeriesDao.getDataBars(dataSeries, 0, HtrDefinitions.BARS_REQUIRED + numBars, false);
+        List<DataBar> dataBars = dataSeriesDao.getLastDataBars(dataSeries, HtrDefinitions.BARS_REQUIRED + numBars, 0);
         return Response.ok(tiCalculator.calculateEma(dataBars, emaPeriod)).build();
     }
 
@@ -39,11 +39,11 @@ public class TechAnalysisService {
     @Path("series/{seriesId}/stoch")
     @Produces(MediaType.APPLICATION_JSON)
     public Response calculateStoch(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
-        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
+        DataSeries dataSeries = dataSeriesDao.findDataSeries(seriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        List<DataBar> dataBars = dataSeriesDao.getDataBars(dataSeries, 0, HtrDefinitions.BARS_REQUIRED + numBars, false);
+        List<DataBar> dataBars = dataSeriesDao.getLastDataBars(dataSeries, HtrDefinitions.BARS_REQUIRED + numBars, 0);
         return Response.ok(tiCalculator.calculateStoch(dataBars)).build();
     }
 
@@ -51,11 +51,11 @@ public class TechAnalysisService {
     @Path("series/{seriesId}/macd")
     @Produces(MediaType.APPLICATION_JSON)
     public Response calculateMacd(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
-        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
+        DataSeries dataSeries = dataSeriesDao.findDataSeries(seriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        List<DataBar> dataBars = dataSeriesDao.getDataBars(dataSeries, 0, HtrDefinitions.BARS_REQUIRED + numBars, false);
+        List<DataBar> dataBars = dataSeriesDao.getLastDataBars(dataSeries, HtrDefinitions.BARS_REQUIRED + numBars, 0);
         return Response.ok(tiCalculator.calculateMacd(dataBars)).build();
     }
 }

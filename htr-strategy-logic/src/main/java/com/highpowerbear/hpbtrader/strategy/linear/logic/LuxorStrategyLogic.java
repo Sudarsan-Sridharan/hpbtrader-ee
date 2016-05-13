@@ -1,11 +1,9 @@
 package com.highpowerbear.hpbtrader.strategy.linear.logic;
 
-import com.highpowerbear.hpbtrader.shared.entity.Strategy;
-import com.highpowerbear.hpbtrader.strategy.linear.AbstractStrategyLogic;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.entity.Trade;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Ema;
+import com.highpowerbear.hpbtrader.strategy.linear.ProcessContext;
 
 import java.util.Calendar;
 import java.util.List;
@@ -29,41 +27,40 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
     private Double prevEmaLongValue;
     private Double emaLongValue;
 
-    public LuxorStrategyLogic(Strategy strategy) {
-         super(strategy);
+    public LuxorStrategyLogic(ProcessContext ctx) {
+         super(ctx);
     }
 
     @Override
-    public IbOrder process() {
-        createOrder();
+    public void process() {
+        createIbOrder();
         if (activeTrade != null) {
             setPl();
             setTrailStop(stopPct);
             if (targetMet()) {
-                resultIbOrder.setOrderAction(activeTrade.isLong() ? HtrEnums.OrderAction.STC : HtrEnums.OrderAction.BTC);
-                resultIbOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.TARGET));
+                ibOrder.setOrderAction(activeTrade.isLong() ? HtrEnums.OrderAction.STC : HtrEnums.OrderAction.BTC);
+                ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.TARGET));
             } else if (stopTriggered()) {
-                resultIbOrder.setOrderAction(activeTrade.isLong() ? HtrEnums.OrderAction.STC : HtrEnums.OrderAction.BTC);
-                resultIbOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.STOP));
+                ibOrder.setOrderAction(activeTrade.isLong() ? HtrEnums.OrderAction.STC : HtrEnums.OrderAction.BTC);
+                ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.STOP));
             } else if (((activeTrade.isLong() && crossBelowEma()) || (activeTrade.isShort() && crossAboveEma())) && isTradeTime()) {
-                resultIbOrder.setOrderAction(activeTrade.isLong() ? HtrEnums.OrderAction.SREV : HtrEnums.OrderAction.BREV);
-                resultIbOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.REVERSE));
-                resultIbOrder.setQuantity(resultIbOrder.getQuantity() * 2);
+                ibOrder.setOrderAction(activeTrade.isLong() ? HtrEnums.OrderAction.SREV : HtrEnums.OrderAction.BREV);
+                ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.REVERSE));
+                ibOrder.setQuantity(ibOrder.getQuantity() * 2);
             }
         } else if ((crossAboveEma() || crossBelowEma()) && isTradeTime()) {
-            resultIbOrder.setOrderAction(crossAboveEma() ? HtrEnums.OrderAction.BTO : HtrEnums.OrderAction.STO);
-            resultIbOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.OPEN));
-            activeTrade = new Trade().initOpen(resultIbOrder, calculateInitialStop(stopPct), calculateTarget(targetPct));
+            ibOrder.setOrderAction(crossAboveEma() ? HtrEnums.OrderAction.BTO : HtrEnums.OrderAction.STO);
+            ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.OPEN));
+            activeTrade = new Trade().initOpen(ibOrder, calculateInitialStop(stopPct), calculateTarget(targetPct));
         }
-        if (resultIbOrder.getOrderAction() == null) {
-            resultIbOrder = null;
+        if (ibOrder.getOrderAction() == null) {
+            ibOrder = null;
         }
-        return resultIbOrder;
     }
     
     @Override
     protected void reloadParameters() {
-        String params[] = strategy.getParams().split(",");
+        String params[] = ctx.getStrategy().getParams().split(",");
         emaShortPeriod = Integer.valueOf(params[0].trim());
         emaLongPeriod = Integer.valueOf(params[1].trim());
         stopPct = Double.valueOf(params[2].trim());

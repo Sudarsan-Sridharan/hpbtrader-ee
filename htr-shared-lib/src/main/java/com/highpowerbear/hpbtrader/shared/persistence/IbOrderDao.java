@@ -15,7 +15,7 @@ public interface IbOrderDao {
     IbOrder findIbOrder(Long id);
     IbOrder getIbOrderByIbPermId(IbAccount ibAccount, Integer ibPermId);
     IbOrder getIbOrderByIbOrderId(IbAccount ibAccount, Integer ibOrderId);
-    List<IbOrder> getIbOrdersByStrategy(Strategy strategy);
+    List<IbOrder> getIbOrders(Strategy strategy);
     List<IbOrder> getNewRetryIbOrders(IbAccount ibAccount);
     List<IbOrder> getOpenIbOrders(IbAccount ibAccount);
 }

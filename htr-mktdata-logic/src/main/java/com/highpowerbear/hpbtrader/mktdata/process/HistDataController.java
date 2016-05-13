@@ -34,7 +34,7 @@ public class HistDataController {
 
     public void barReceived(int reqId, String date, DataBar dataBar) {
         int seriesId = reqId / HtrDefinitions.IB_REQUEST_MULT;
-        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
+        DataSeries dataSeries = dataSeriesDao.findDataSeries(seriesId);
         barsReceivedMap.putIfAbsent(dataSeries, new LinkedHashMap<>());
         Calendar c = HtrUtil.getCalendar();
         c.setTimeInMillis(Long.valueOf(date) * 1000 + dataSeries.getInterval().getMillis()); // date-time stamp of the end of the bar
@@ -48,7 +48,7 @@ public class HistDataController {
 
     public void reqFinished(int reqId) {
         int seriesId = reqId / HtrDefinitions.IB_REQUEST_MULT;
-        DataSeries dataSeries = dataSeriesDao.findSeries(seriesId);
+        DataSeries dataSeries = dataSeriesDao.findDataSeries(seriesId);
         // remove last bar if it is not finished yet
         new LinkedHashSet<>(barsReceivedMap.get(dataSeries).keySet())
                 .stream()
@@ -66,7 +66,7 @@ public class HistDataController {
 
     void requestFiveMinBars() {
         l.info("START requestFiveMinBars");
-        dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.MIN5).stream().filter(DataSeries::isActive).forEach(s -> {
+        dataSeriesDao.getDataSeriesByInterval(HtrEnums.Interval.MIN5).stream().filter(DataSeries::isActive).forEach(s -> {
             Contract contract = s.getInstrument().createIbContract();
             Calendar now = HtrUtil.getCalendar();
             int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);
@@ -85,7 +85,7 @@ public class HistDataController {
 
     void requestSixtyMinBars() {
         l.info("START requestSixtyMinBars");
-        dataSeriesDao.getSeriesByInterval(HtrEnums.Interval.MIN60).stream().filter(DataSeries::isActive).forEach(s -> {
+        dataSeriesDao.getDataSeriesByInterval(HtrEnums.Interval.MIN60).stream().filter(DataSeries::isActive).forEach(s -> {
             Contract contract = s.getInstrument().createIbContract();
             Calendar now = HtrUtil.getCalendar();
             int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);

@@ -4,7 +4,6 @@ import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.DataBar;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
-import com.highpowerbear.hpbtrader.shared.entity.Instrument;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 
@@ -14,7 +13,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -30,70 +30,29 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
     @Inject private StrategyDao strategyDao;
 
     @Override
-    public void createSeries(DataSeries dataSeries) {
-        em.persist(dataSeries);
-    }
-
-    @Override
-    public List<DataSeries> getAllSeries(boolean inactiveToo) {
-        TypedQuery<DataSeries> q;
-        if (inactiveToo) {
-            q = em.createQuery("SELECT s from DataSeries s ORDER BY s.displayOrder ASC", DataSeries.class);
-        } else {
-            q = em.createQuery("SELECT s from DataSeries s WHERE s.active = :active ORDER BY s.displayOrder ASC", DataSeries.class);
-            q.setParameter("active", Boolean.TRUE);
-        }
+    public List<DataSeries> getAllDataSeries() {
+        TypedQuery<DataSeries> q = em.createQuery("SELECT s from DataSeries s ORDER BY s.displayOrder", DataSeries.class);
         return q.getResultList();
     }
 
     @Override
-    public List<DataSeries> getSeriesByInterval(HtrEnums.Interval interval) {
+    public List<DataSeries> getDataSeriesByInterval(HtrEnums.Interval interval) {
         TypedQuery<DataSeries> query = em.createQuery("SELECT s FROM DataSeries s WHERE s.interval = :interval", DataSeries.class);
         query.setParameter("interval", interval);
         return query.getResultList();
     }
 
     @Override
-    public List<DataSeries> getSeries(Instrument instrument, HtrEnums.Interval interval) {
-        TypedQuery<DataSeries> query = em.createQuery("SELECT s FROM DataSeries s WHERE s.instrument = :instrument AND s.interval = :interval", DataSeries.class);
-        query.setParameter("instrument", instrument);
-        query.setParameter("interval", interval);
-        return query.getResultList();
-    }
-
-    @Override
-    public DataSeries getSeriesByAlias(String alias) {
+    public DataSeries getDataSeriesByAlias(String alias) {
         TypedQuery<DataSeries> query = em.createQuery("SELECT s FROM DataSeries s WHERE s.alias = :alias", DataSeries.class);
         query.setParameter("alias", alias);
         return query.getResultList().get(0);
     }
 
     @Override
-    public DataSeries findSeries(Integer id) {
+    public DataSeries findDataSeries(Integer id) {
         return em.find(DataSeries.class, id);
     }
-
-    @Override
-    public void updateSeries(DataSeries dataSeries) {
-        em.merge(dataSeries);
-    }
-
-    @Override
-    public Integer getHighestDisplayOrder() {
-        Query query = em.createQuery("SELECT MAX(s.displayOrder) from DataSeries s");
-        return (Integer) query.getSingleResult();
-    }
-
-    @Override
-    public void deleteSeries(DataSeries dataSeries) {
-        l.info("START deleteSeries " + dataSeries.getInstrument().getSymbol() + ", " + dataSeries.getInterval().name());
-        dataSeries = em.find(DataSeries.class, dataSeries.getId()); // make sure it is managed by entitymanager
-        Query q = em.createQuery("DELETE FROM DataBar d WHERE d.dataSeries = :dataSeries");
-        q.setParameter("dataSeries", dataSeries);
-        q.executeUpdate();
-        em.remove(dataSeries);
-        l.info("END deleteSeries " + dataSeries.getInstrument().getSymbol() + ", " + dataSeries.getInterval().name());
-}
 
     @Override
     public void createDataBars(DataSeries dataSeries, List<DataBar> dataBars) {
@@ -129,21 +88,34 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
     }
 
     @Override
-    public List<DataBar> getDataBars(DataSeries dataSeries, int start, int limit, boolean desc) {
+    public List<DataBar> getLastDataBars(DataSeries dataSeries, int numBars, int offsetFromLast) {
         TypedQuery<DataBar> q = em.createQuery("SELECT b FROM DataBar b where b.dataSeries = :dataSeries ORDER BY b.barCloseDate DESC", DataBar.class);
+        q.setParameter("dataSeries", dataSeries);
+        q.setFirstResult(Math.abs(offsetFromLast));
+        q.setMaxResults(numBars);
+        List<DataBar> dataBars = q.getResultList();
+        Collections.reverse(dataBars);
+        return dataBars ;
+    }
+
+    @Override
+    public List<DataBar> getDataBars(DataSeries dataSeries, int numBars, Calendar lastDate) {
+        TypedQuery<DataBar> q = em.createQuery("SELECT b FROM DataBar b where b.dataSeries = :dataSeries AND b.barCloseDate <= :lastDate ORDER BY b.barCloseDate  DESC", DataBar.class);
+        q.setParameter("dataSeries", dataSeries);
+        q.setParameter("lastDate", lastDate);
+        q.setMaxResults(numBars);
+        List<DataBar> dataBars = q.getResultList();
+        Collections.reverse(dataBars);
+        return dataBars ;
+    }
+
+    @Override
+    public List<DataBar> getPagedDataBars(DataSeries dataSeries, int start, int limit) {
+        TypedQuery<DataBar> q = em.createQuery("SELECT b FROM DataBar b where b.dataSeries = :dataSeries ORDER BY b.barCloseDate  DESC", DataBar.class);
         q.setParameter("dataSeries", dataSeries);
         q.setFirstResult(start);
         q.setMaxResults(limit);
         return q.getResultList();
-    }
-
-    @Override
-    public DataBar getLastDataBar(DataSeries dataSeries) {
-        TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries ORDER BY b.barCloseDate DESC", DataBar.class);
-        query.setParameter("dataSeries", dataSeries);
-        query.setMaxResults(1);
-        List<DataBar> dataBars = query.getResultList();
-        return (dataBars == null || dataBars.isEmpty() ? null : dataBars.get(0));
     }
 
     @Override

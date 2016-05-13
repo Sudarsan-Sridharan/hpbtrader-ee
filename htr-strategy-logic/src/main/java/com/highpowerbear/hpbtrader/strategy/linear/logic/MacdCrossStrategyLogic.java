@@ -1,12 +1,10 @@
 package com.highpowerbear.hpbtrader.strategy.linear.logic;
 
-import com.highpowerbear.hpbtrader.shared.entity.Strategy;
-import com.highpowerbear.hpbtrader.strategy.linear.AbstractStrategyLogic;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.entity.Trade;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Macd;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Stochastics;
+import com.highpowerbear.hpbtrader.strategy.linear.ProcessContext;
 
 import java.util.List;
 
@@ -26,35 +24,34 @@ public class MacdCrossStrategyLogic extends AbstractStrategyLogic {
     private Double macdL;
     private Double stochD;
 
-    public MacdCrossStrategyLogic(Strategy strategy) {
-        super(strategy);
+    public MacdCrossStrategyLogic(ProcessContext ctx) {
+        super(ctx);
     }
 
     @Override
-    public IbOrder process() {
-        createOrder();
+    public void process() {
+        createIbOrder();
         if (activeTrade != null) {
             setPl();
             if (((activeTrade.isLong() && crossBelowMacd()) || (activeTrade.isShort() && crossAboveMacd()))) {
-                resultIbOrder.setOrderAction(activeTrade.isLong() ? HtrEnums.OrderAction.SREV : HtrEnums.OrderAction.BREV);
-                resultIbOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.REVERSE));
-                resultIbOrder.setQuantity(resultIbOrder.getQuantity() * 2);
+                ibOrder.setOrderAction(activeTrade.isLong() ? HtrEnums.OrderAction.SREV : HtrEnums.OrderAction.BREV);
+                ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.REVERSE));
+                ibOrder.setQuantity(ibOrder.getQuantity() * 2);
             }
         } else if ((crossAboveMacd() || crossBelowMacd())) {
-            resultIbOrder.setOrderAction(crossAboveMacd() ? HtrEnums.OrderAction.BTO : HtrEnums.OrderAction.STO);
-            resultIbOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.OPEN));
-            activeTrade = new Trade().initOpen(resultIbOrder, null, null);
+            ibOrder.setOrderAction(crossAboveMacd() ? HtrEnums.OrderAction.BTO : HtrEnums.OrderAction.STO);
+            ibOrder.setTriggerDesc(getTriggerDesc(TriggerEvent.OPEN));
+            activeTrade = new Trade().initOpen(ibOrder, null, null);
         }
-        if (resultIbOrder.getOrderAction() == null) {
-            resultIbOrder = null;
+        if (ibOrder.getOrderAction() == null) {
+            ibOrder = null;
         }
-        return resultIbOrder;
     }
 
 
     @Override
     protected void reloadParameters() {
-        String params[] = strategy.getParams().split(",");
+        String params[] = ctx.getStrategy().getParams().split(",");
         stochOversold = Integer.valueOf(params[0].trim());
         stochOverbought = Integer.valueOf(params[1].trim());
     }

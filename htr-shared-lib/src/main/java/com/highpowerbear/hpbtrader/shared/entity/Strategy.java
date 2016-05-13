@@ -66,7 +66,7 @@ public class Strategy implements Serializable {
         return numShorts + numLongs;
     }
     
-    public StrategyLog copyValues(StrategyLog sl) {
+    public StrategyLog copyValuesTo(StrategyLog sl) {
         if (sl == null) {
             return null;
         }
@@ -85,29 +85,32 @@ public class Strategy implements Serializable {
         return sl;
     }
     
-    public Strategy deepCopy(Strategy otherStrategy) {
-        if (otherStrategy == null) {
+    public Strategy deepCopyTo(Strategy other) {
+        if (other == null) {
             return null;
         }
-        otherStrategy.setId(id);
-        otherStrategy.setTradeInstrument(tradeInstrument);
-        otherStrategy.setStrategyType(strategyType);
-        otherStrategy.setActive(active);
-        otherStrategy.setStrategyMode(strategyMode);
-        otherStrategy.setTradingQuantity(tradingQuantity);
-        otherStrategy.setParams(getParams());
-        otherStrategy.setNumAllOrders(numAllOrders);
-        otherStrategy.setNumFilledOrders(numFilledOrders);
-        otherStrategy.setCurrentPosition(currentPosition);
-        otherStrategy.setCumulativePl(cumulativePl);
-        otherStrategy.setNumShorts(numShorts);
-        otherStrategy.setNumLongs(numLongs);
-        otherStrategy.setNumWinners(numWinners);
-        otherStrategy.setNumLosers(numLosers);
-        return otherStrategy;
+        other.setId(id);
+        other.setTradeInstrument(tradeInstrument);
+        other.setIbAccount(ibAccount);
+        other.setInputSeriesAliases(inputSeriesAliases);
+        other.setStrategyType(strategyType);
+        other.setActive(active);
+        other.setDisplayOrder(displayOrder);
+        other.setStrategyMode(strategyMode);
+        other.setParams(params);
+        other.setTradingQuantity(tradingQuantity);
+        other.setNumAllOrders(numAllOrders);
+        other.setNumFilledOrders(numFilledOrders);
+        other.setCurrentPosition(currentPosition);
+        other.setCumulativePl(cumulativePl);
+        other.setNumShorts(numShorts);
+        other.setNumLongs(numLongs);
+        other.setNumWinners(numWinners);
+        other.setNumLosers(numLosers);
+        return other;
     }
     
-    public void resetStatistics() {
+    public Strategy resetStatistics() {
         setNumAllOrders(0L);
         setNumFilledOrders(0L);
         setCurrentPosition(0);
@@ -116,6 +119,7 @@ public class Strategy implements Serializable {
         setNumLongs(0L);
         setNumWinners(0L);
         setNumLosers(0L);
+        return this;
     }
     
     public boolean valuesEqual(Strategy otherStrategy) {
