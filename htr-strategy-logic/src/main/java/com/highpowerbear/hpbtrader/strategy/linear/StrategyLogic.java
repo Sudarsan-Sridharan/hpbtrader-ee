@@ -10,7 +10,7 @@ import java.util.Calendar;
  * @author robertk
  */
 public interface StrategyLogic {
-    OperResult<Boolean, String> prepare(int offsetFromLast);
+    OperResult<Boolean, String> prepare();
     OperResult<Boolean, String> prepare(Calendar lastDate);
     void process();
     IbOrder getIbOrder();

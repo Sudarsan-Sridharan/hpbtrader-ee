@@ -88,10 +88,9 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
     }
 
     @Override
-    public List<DataBar> getLastDataBars(DataSeries dataSeries, int numBars, int offsetFromLast) {
+    public List<DataBar> getLastDataBars(DataSeries dataSeries, int numBars) {
         TypedQuery<DataBar> q = em.createQuery("SELECT b FROM DataBar b where b.dataSeries = :dataSeries ORDER BY b.barCloseDate DESC", DataBar.class);
         q.setParameter("dataSeries", dataSeries);
-        q.setFirstResult(Math.abs(offsetFromLast));
         q.setMaxResults(numBars);
         List<DataBar> dataBars = q.getResultList();
         Collections.reverse(dataBars);

@@ -73,7 +73,12 @@ public class StrategyController implements Serializable {
         String logMessage = " strategy, id=" + ctx.getStrategy().getId() + ", " + ctx.getStrategy().getDefaultInputSeriesAlias() + ", " + ctx.getStrategy().getStrategyType() + " --> " + sl.getClass().getSimpleName();
 
         l.info("BEGIN prepare " + logMessage);
-        OperResult<Boolean, String> result = sl.prepare(0);
+        OperResult<Boolean, String> result;
+        if (HtrEnums.StrategyMode.BTEST.equals(ctx.getStrategy().getStrategyMode())) {
+            result = sl.prepare(ctx.getCurrentDate());
+        } else {
+            result = sl.prepare();
+        }
         l.info("END prepare " + logMessage + ", " + result.getContent());
         if (!result.getStatus()) {
             return;
@@ -106,9 +111,9 @@ public class StrategyController implements Serializable {
         }
         ctx.getStrategy().setNumAllOrders(ctx.getStrategy().getNumAllOrders() + 1);
         ctx.updateStrategy();
-        emailSender.sendEmail(sl.getIbOrder().getDescription(), sl.getIbOrder().getTriggerDesc() + "\n" + sl.getLastDataBar().print());
 
         if (HtrEnums.StrategyMode.IB.equals(ctx.getStrategy().getStrategyMode())) {
+            emailSender.sendEmail(sl.getIbOrder().getDescription(), sl.getIbOrder().getTriggerDesc() + "\n" + sl.getLastDataBar().print());
             //ibController.submitIbOrder(ibOrder);
             // TODO
         } else {
@@ -142,7 +147,7 @@ public class StrategyController implements Serializable {
 
     public void manualOrder(ProcessContext ctx, IbOrder ibOrder) {
         DataSeries inputDataSeries = dataSeriesDao.getDataSeriesByAlias(ctx.getStrategy().getDefaultInputSeriesAlias());
-        DataBar dataBar = dataSeriesDao.getLastDataBars(inputDataSeries, 1, 0).get(0);
+        DataBar dataBar = dataSeriesDao.getLastDataBars(inputDataSeries, 1).get(0);
         String logMessage = " strategy, id=" + ctx.getStrategy().getId() + ", " + ctx.getStrategy().getDefaultInputSeriesAlias() + ", " + ctx.getStrategy().getStrategyType() + " --> " + "manual order";
 
         l.info("BEGIN manualOrder " + logMessage);

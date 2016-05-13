@@ -47,20 +47,20 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     }
 
     @Override
-        public OperResult<Boolean, String> prepare(int offsetFromLast) {
-        this.offset = offsetFromLast != 0;
-        this.dataBars = dataSeriesDao.getLastDataBars(inputDataSeries, HtrDefinitions.BARS_REQUIRED + INDICATORS_LIST_SIZE, offsetFromLast);
-        return prepare();
+    public OperResult<Boolean, String> prepare() {
+        this.offset = false;
+        this.dataBars = dataSeriesDao.getLastDataBars(inputDataSeries, HtrDefinitions.BARS_REQUIRED + INDICATORS_LIST_SIZE);
+        return doPrepare();
     }
 
     @Override
     public OperResult<Boolean, String> prepare(Calendar lastDate) {
         this.offset = true;
         this.dataBars = dataSeriesDao.getDataBars(inputDataSeries, HtrDefinitions.BARS_REQUIRED + INDICATORS_LIST_SIZE, lastDate);
-        return prepare();
+        return doPrepare();
     }
 
-    private OperResult<Boolean, String> prepare() {
+    private OperResult<Boolean, String> doPrepare() {
         this.ibOrder = null;
         this.activeTrade = ctx.getActiveTrade();
         this.lastDataBar = dataBars.get(dataBars.size() - 1);
