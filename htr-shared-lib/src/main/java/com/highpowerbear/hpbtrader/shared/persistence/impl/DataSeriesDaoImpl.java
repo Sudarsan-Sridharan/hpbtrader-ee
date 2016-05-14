@@ -37,16 +37,16 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
 
     @Override
     public List<DataSeries> getDataSeriesByInterval(HtrEnums.Interval interval) {
-        TypedQuery<DataSeries> query = em.createQuery("SELECT s FROM DataSeries s WHERE s.interval = :interval", DataSeries.class);
-        query.setParameter("interval", interval);
-        return query.getResultList();
+        TypedQuery<DataSeries> q = em.createQuery("SELECT s FROM DataSeries s WHERE s.interval = :interval", DataSeries.class);
+        q.setParameter("interval", interval);
+        return q.getResultList();
     }
 
     @Override
     public DataSeries getDataSeriesByAlias(String alias) {
-        TypedQuery<DataSeries> query = em.createQuery("SELECT s FROM DataSeries s WHERE s.alias = :alias", DataSeries.class);
-        query.setParameter("alias", alias);
-        return query.getResultList().get(0);
+        TypedQuery<DataSeries> q = em.createQuery("SELECT s FROM DataSeries s WHERE s.alias = :alias", DataSeries.class);
+        q.setParameter("alias", alias);
+        return q.getResultList().get(0);
     }
 
     @Override
@@ -66,10 +66,10 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
             if (!dataSeries.equals(dataBar.getDataSeries())) {
                 continue;
             }
-            TypedQuery<DataBar> query = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries AND b.barCloseDate = :barCloseDate", DataBar.class);
-            query.setParameter("dataSeries", dataSeries);
-            query.setParameter("barCloseDate", dataBar.getBarCloseDate());
-            List<DataBar> bl = query.getResultList();
+            TypedQuery<DataBar> q = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries AND b.barCloseDate = :barCloseDate", DataBar.class);
+            q.setParameter("dataSeries", dataSeries);
+            q.setParameter("barCloseDate", dataBar.getBarCloseDate());
+            List<DataBar> bl = q.getResultList();
             DataBar dbDataBar = (bl != null && !bl.isEmpty() ? bl.get(0) : null);
             if (dbDataBar == null) {
                 // insert

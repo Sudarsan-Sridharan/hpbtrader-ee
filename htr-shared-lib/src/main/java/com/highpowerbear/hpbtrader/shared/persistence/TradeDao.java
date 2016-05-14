@@ -19,5 +19,6 @@ public interface TradeDao {
     Long getNumTrades(Strategy strategy);
     Trade getActiveTrade(Strategy strategy);
     Trade getLastTrade(Strategy strategy);
-    List<TradeLog> getTradeLogs(Trade trade);
+    List<Trade> getPagedTrades(Strategy strategy, int start, int limit);
+    List<TradeLog> getPagedTradeLogs(Trade trade, int start, int limit);
 }

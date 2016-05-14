@@ -40,51 +40,60 @@ public class IbOrderDaoImpl implements IbOrderDao {
 
     @Override
     public IbOrder getIbOrderByIbPermId(IbAccount ibAccount, Integer ibPermId) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy.ibAccount = :ibAccount AND o.ibPermId = :ibPermId", IbOrder.class);
-        query.setParameter("ibAccount", ibAccount);
-        query.setParameter("ibPermId", ibPermId);
-        List<IbOrder> ibOrders = query.getResultList();
+        TypedQuery<IbOrder> q = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy.ibAccount = :ibAccount AND o.ibPermId = :ibPermId", IbOrder.class);
+        q.setParameter("ibAccount", ibAccount);
+        q.setParameter("ibPermId", ibPermId);
+        List<IbOrder> ibOrders = q.getResultList();
         return (!ibOrders.isEmpty() ? ibOrders.get(0) : null);
     }
 
     @Override
     public IbOrder getIbOrderByIbOrderId(IbAccount ibAccount, Integer ibOrderId) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy.ibAccount = :ibAccount AND o.ibOrderId = :ibOrderId ORDER BY o.createdDate DESC", IbOrder.class);
-        query.setParameter("ibAccount", ibAccount);
-        query.setParameter("ibOrderId", ibOrderId);
-        List<IbOrder> ibOrders = query.getResultList();
+        TypedQuery<IbOrder> q = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy.ibAccount = :ibAccount AND o.ibOrderId = :ibOrderId ORDER BY o.createdDate DESC", IbOrder.class);
+        q.setParameter("ibAccount", ibAccount);
+        q.setParameter("ibOrderId", ibOrderId);
+        List<IbOrder> ibOrders = q.getResultList();
         return (!ibOrders.isEmpty() ? ibOrders.get(0) : null);
     }
 
     @Override
     public List<IbOrder> getIbOrders(Strategy strategy) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy = :strategy ORDER BY o.createdDate DESC", IbOrder.class);
-        query.setParameter("strategy", strategy);
-        return query.getResultList();
+        TypedQuery<IbOrder> q = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy = :strategy ORDER BY o.createdDate", IbOrder.class);
+        q.setParameter("strategy", strategy);
+        return q.getResultList();
     }
 
     @Override
     public List<IbOrder> getNewRetryIbOrders(IbAccount ibAccount) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o, OrderEvent e WHERE o.strategy.ibAccount = :ibAccount AND o = e.ibOrder AND o.status = e.status AND o.status IN :statuses ORDER BY e.eventDate", IbOrder.class);
+        TypedQuery<IbOrder> q = em.createQuery("SELECT o FROM IbOrder o, OrderEvent e WHERE o.strategy.ibAccount = :ibAccount AND o = e.ibOrder AND o.status = e.status AND o.status IN :statuses ORDER BY e.eventDate", IbOrder.class);
         Set<HtrEnums.IbOrderStatus> statuses = new HashSet<>();
         statuses.add(HtrEnums.IbOrderStatus.NEW_RETRY);
-        query.setParameter("ibAccount", ibAccount);
-        query.setParameter("statuses", statuses);
-        return query.getResultList();
+        q.setParameter("ibAccount", ibAccount);
+        q.setParameter("statuses", statuses);
+        return q.getResultList();
     }
 
     @Override
     public List<IbOrder> getOpenIbOrders(IbAccount ibAccount) {
-        TypedQuery<IbOrder> query = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy.ibAccount = :ibAccount AND o.status IN :statuses AND o.strategyMode = :strategyMode", IbOrder.class);
+        TypedQuery<IbOrder> q = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy.ibAccount = :ibAccount AND o.status IN :statuses AND o.strategyMode = :strategyMode", IbOrder.class);
         Set<HtrEnums.IbOrderStatus> statuses = new HashSet<>();
         statuses.add(HtrEnums.IbOrderStatus.NEW);
         statuses.add(HtrEnums.IbOrderStatus.NEW_RETRY);
         statuses.add(HtrEnums.IbOrderStatus.SUBMIT_REQ);
         statuses.add(HtrEnums.IbOrderStatus.SUBMITTED);
         statuses.add(HtrEnums.IbOrderStatus.CANCEL_REQ);
-        query.setParameter("ibAccount", ibAccount);
-        query.setParameter("statuses", statuses);
-        query.setParameter("strategyMode", HtrEnums.StrategyMode.IB);
-        return query.getResultList();
+        q.setParameter("ibAccount", ibAccount);
+        q.setParameter("statuses", statuses);
+        q.setParameter("strategyMode", HtrEnums.StrategyMode.IB);
+        return q.getResultList();
+    }
+
+    @Override
+    public List<IbOrder> getPagedIbOrders(Strategy strategy, int start, int limit) {
+        TypedQuery<IbOrder> q = em.createQuery("SELECT o FROM IbOrder o WHERE o.strategy = :strategy ORDER BY o.createdDate DESC", IbOrder.class);
+        q.setParameter("strategy", strategy);
+        q.setFirstResult(start);
+        q.setMaxResults(limit);
+        return q.getResultList();
     }
 }

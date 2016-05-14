@@ -98,48 +98,19 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
     
     private String getTriggerDesc(TriggerEvent te) {
         String desc = null;
+        boolean tLong = activeTrade.isLong();
+        boolean caEma = crossAboveEma();
+        String sPrice = "price=" + getPrice();
+        String sTarget = "target=" + activeTrade.getProfitTarget();
+        String sStop = "stop=" + activeTrade.getStopLoss();
+        String sEmaSh = "ema " + emaShortPeriod + "=" + nf.format(emaShortValue);
+        String sEmaLo = "ema " + emaLongPeriod  + "=" + nf.format(emaLongValue);
+
         switch(te) {
-            case TARGET:
-                if (activeTrade.isLong()) {
-                    desc = "targetSTC: price=" + getPrice() + " > target=" + activeTrade.getProfitTarget();
-                } else {
-                    desc = "targetBTC: price=" + getPrice() + " < target=" + activeTrade.getProfitTarget();
-                }
-                break;
-            case STOP:
-                if (activeTrade.isLong()) {
-                    desc = "stopSTC: price=" + getPrice() + " < stop=" + activeTrade.getStopLoss();
-                } else {
-                    desc = "stopBTC: price=" + getPrice() + " > stop=" + activeTrade.getStopLoss();
-                }
-                break;
-            case REVERSE:
-                if (activeTrade.isLong()) {
-                    desc = "sigSREV: " + getEmaDesc(EmaPeriod.SHORT) + " CB " + getEmaDesc(EmaPeriod.LONG);
-                } else {
-                    desc = "sigBREV: " + getEmaDesc(EmaPeriod.SHORT) + " CA " + getEmaDesc(EmaPeriod.LONG);
-                }
-                break;
-            case OPEN:
-                if (crossAboveEma()) {
-                    desc = "sigBTO: " + getEmaDesc(EmaPeriod.SHORT) + " CA " + getEmaDesc(EmaPeriod.LONG);
-                } else {
-                    desc = "sigSTO: " + getEmaDesc(EmaPeriod.SHORT) + " CB " + getEmaDesc(EmaPeriod.LONG);
-                }
-                break;
-        }
-        return desc;
-    }
-    
-    private enum EmaPeriod {
-        SHORT, LONG
-    }
-    
-    private String getEmaDesc(EmaPeriod ep) {
-        String desc = "";
-        switch (ep) {
-            case SHORT: desc = "ema " + emaShortPeriod + "=" + doubleValueFormat.format(emaShortValue); break;
-            case LONG: desc = "ema " + emaLongPeriod + "=" + doubleValueFormat.format(emaLongValue); break;
+            case TARGET:  desc = tLong ? "targetSTC: " + sPrice + " > "  + sTarget : "targetBTC: "  + sPrice + " < "  + sTarget; break;
+            case STOP:    desc = tLong ? "stopSTC: "   + sPrice + " < "  + sStop :   "stopBTC: "    + sPrice + " > "  + sStop;   break;
+            case REVERSE: desc = tLong ? "sigSREV: "   + sEmaSh + " CB " + sEmaLo :  "sigBREV: "    + sEmaSh + " CA " + sEmaLo;  break;
+            case OPEN:    desc = caEma ? "sigBTO: "    + sEmaSh + " CA " + sEmaLo :  "sigSTO: "     + sEmaSh + " CB " + sEmaLo;  break;
         }
         return desc;
     }

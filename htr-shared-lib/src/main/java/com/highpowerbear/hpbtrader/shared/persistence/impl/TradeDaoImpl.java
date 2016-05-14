@@ -58,16 +58,16 @@ public class TradeDaoImpl implements TradeDao {
 
     @Override
     public List<Trade> getTrades(Strategy strategy) {
-        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy ORDER BY t.initOpenDate", Trade.class);
-        query.setParameter("strategy", strategy);
-        return query.getResultList();
+        TypedQuery<Trade> q = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy ORDER BY t.initOpenDate", Trade.class);
+        q.setParameter("strategy", strategy);
+        return q.getResultList();
     }
 
     @Override
     public List<Trade> getTradesByOrder(IbOrder ibOrder) {
-        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t, TradeIbOrder to WHERE to.ibOrder = :ibOrder AND to.trade = t ORDER BY t.initOpenDate", Trade.class);
-        query.setParameter("ibOrder", ibOrder);
-        return query.getResultList();
+        TypedQuery<Trade> q = em.createQuery("SELECT t FROM Trade t, TradeIbOrder to WHERE to.ibOrder = :ibOrder AND to.trade = t ORDER BY t.initOpenDate", Trade.class);
+        q.setParameter("ibOrder", ibOrder);
+        return q.getResultList();
     }
 
     @Override
@@ -77,36 +77,47 @@ public class TradeDaoImpl implements TradeDao {
 
     @Override
     public Long getNumTrades(Strategy strategy) {
-        Query query = em.createQuery("SELECT COUNT(t) FROM Trade t WHERE t.strategy = :strategy");
-        query.setParameter("strategy", strategy);
-        return (Long) query.getSingleResult();
+        Query q = em.createQuery("SELECT COUNT(t) FROM Trade t WHERE t.strategy = :strategy");
+        q.setParameter("strategy", strategy);
+        return (Long) q.getSingleResult();
     }
 
     @Override
     public Trade getActiveTrade(Strategy strategy) {
-        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy AND t.tradeStatus IN :statuses ORDER BY t.initOpenDate DESC", Trade.class);
-        query.setParameter("strategy", strategy);
+        TypedQuery<Trade> q = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy AND t.tradeStatus IN :statuses ORDER BY t.initOpenDate DESC", Trade.class);
+        q.setParameter("strategy", strategy);
         Set<HtrEnums.TradeStatus> statuses = new HashSet<>();
         statuses.add(HtrEnums.TradeStatus.INIT_OPEN);
         statuses.add(HtrEnums.TradeStatus.OPEN);
         statuses.add(HtrEnums.TradeStatus.INIT_CLOSE);
-        query.setParameter("statuses", statuses);
-        List<Trade> trades = query.getResultList();
+        q.setParameter("statuses", statuses);
+        List<Trade> trades = q.getResultList();
         return (trades != null && !trades.isEmpty() ? trades.get(0) : null);
     }
 
     @Override
     public Trade getLastTrade(Strategy strategy) {
-        TypedQuery<Trade> query = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy ORDER BY t.initOpenDate DESC", Trade.class);
-        query.setParameter("strategy", strategy);
-        List<Trade> trades = query.getResultList();
+        TypedQuery<Trade> q = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy ORDER BY t.initOpenDate DESC", Trade.class);
+        q.setParameter("strategy", strategy);
+        List<Trade> trades = q.getResultList();
         return (trades != null && !trades.isEmpty() ? trades.get(0) : null);
     }
 
     @Override
-    public List<TradeLog> getTradeLogs(Trade trade) {
-        TypedQuery<TradeLog> query = em.createQuery("SELECT l FROM TradeLog l WHERE l.trade = :trade ORDER BY l.logDate", TradeLog.class);
-        query.setParameter("trade", trade);
-        return query.getResultList();
+    public List<Trade> getPagedTrades(Strategy strategy, int start, int limit) {
+        TypedQuery<Trade> q = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy ORDER BY t.initOpenDate DESC", Trade.class);
+        q.setParameter("strategy", strategy);
+        q.setFirstResult(start);
+        q.setMaxResults(limit);
+        return q.getResultList();
+    }
+
+    @Override
+    public List<TradeLog> getPagedTradeLogs(Trade trade, int start, int limit) {
+        TypedQuery<TradeLog> q = em.createQuery("SELECT l FROM TradeLog l WHERE l.trade = :trade ORDER BY l.logDate DESC", TradeLog.class);
+        q.setParameter("trade", trade);
+        q.setFirstResult(start);
+        q.setMaxResults(limit);
+        return q.getResultList();
     }
 }

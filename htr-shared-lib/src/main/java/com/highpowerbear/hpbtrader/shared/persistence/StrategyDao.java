@@ -13,5 +13,5 @@ public interface StrategyDao {
     Strategy getActiveStrategy(Instrument tradeInstrument, IbAccount ibAccount);
     void updateStrategy(Strategy strategy);
     void deleteStrategy(Strategy strategy);
-    List<StrategyLog> getStrategyLogs(Strategy strategy);
+    List<StrategyLog> getPagedStrategyLogs(Strategy strategy, int start, int limit);
 }

@@ -81,35 +81,15 @@ public class MacdCrossStrategyLogic extends AbstractStrategyLogic {
 
     private String getTriggerDesc(TriggerEvent te) {
         String desc = null;
+        boolean tLong = activeTrade.isLong();
+        boolean caMacd = crossAboveMacd();
+        String sMacdL = "macdL = " + nf.format(macdL);
+        String sMacdSl = "macdSl = " + nf.format(macdSl);
+        String sStochD = "stochD = " + nf.format(stochD);
+
         switch(te) {
-            case REVERSE:
-                if (activeTrade.isLong()) {
-                    desc = "sigSREV: " + getValueDesc(ValueType.MACDL) + " CB " + getValueDesc(ValueType.MACDSL) + " AND " + getValueDesc(ValueType.STOCHD) + " > " + stochOverbought;
-                } else {
-                    desc = "sigBREV: " + getValueDesc(ValueType.MACDL) + " CA " + getValueDesc(ValueType.MACDSL) + " AND " + getValueDesc(ValueType.STOCHD) + " < " + stochOversold;
-                }
-                break;
-            case OPEN:
-                if (crossAboveMacd()) {
-                    desc = "sigBTO: " + getValueDesc(ValueType.MACDL) + " CA " + getValueDesc(ValueType.MACDSL) + " AND " + getValueDesc(ValueType.STOCHD) + " < " + stochOversold;
-                } else {
-                    desc = "sigSTO: " + getValueDesc(ValueType.MACDL) + " CB " + getValueDesc(ValueType.MACDSL) + " AND " + getValueDesc(ValueType.STOCHD) + " > " + stochOverbought;
-                }
-                break;
-        }
-        return desc;
-    }
-
-    private enum ValueType {
-        MACDL, MACDSL, STOCHD
-    }
-
-    private String getValueDesc(ValueType vt) {
-        String desc = "";
-        switch (vt) {
-            case MACDL: desc = "macdL = " + doubleValueFormat.format(macdL); break;
-            case MACDSL: desc = "macdSl = " + doubleValueFormat.format(macdSl); break;
-            case STOCHD: desc = "stochD = " + doubleValueFormat.format(stochD); break;
+            case REVERSE: desc = tLong  ? "sigSREV: " + sMacdL + " CB "  + sMacdSl + " AND " + sStochD + " > " + stochOverbought : "sigBREV: "  + sMacdL + " CA "  + sMacdSl + " AND " + sStochD + " < " + stochOversold ;   break;
+            case OPEN:    desc = caMacd ? "sigBTO: " +  sMacdL + " CA "  + sMacdSl + " AND " + sStochD + " < " + stochOversold   : "sigSTO: "   + sMacdL + " CB "  + sMacdSl + " AND " + sStochD + " > " + stochOverbought ; break;
         }
         return desc;
     }

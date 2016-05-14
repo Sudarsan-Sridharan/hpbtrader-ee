@@ -3,13 +3,9 @@ package com.highpowerbear.hpbtrader.strategy.linear.context;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.strategy.linear.ProcessContext;
-import com.highpowerbear.hpbtrader.strategy.linear.StrategyLogic;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -70,7 +66,7 @@ public class InMemoryCtx implements ProcessContext {
             }
         }
         if (dbActiveTrade != null) {
-            activeTrade = dbActiveTrade.deepCopy(new Trade());
+            activeTrade = dbActiveTrade.deepCopyTo(new Trade());
         }
         return activeTrade;
     }
@@ -91,7 +87,7 @@ public class InMemoryCtx implements ProcessContext {
             trade.setId(nextTradeId++);
             trades.add(trade);
         } else {
-            trade.deepCopy(ctxTrade);
+            trade.deepCopyTo(ctxTrade);
         }
     }
 
@@ -127,26 +123,50 @@ public class InMemoryCtx implements ProcessContext {
     }
 
     @Override
-    public List<StrategyLog> getPagedStrategyLogs() {
-        // TODO
-        return null;
+    public List<StrategyLog> getPagedStrategyLogs(int start, int limit) {
+        Collections.reverse(strategyLogs);
+        List<StrategyLog> strategyLogPage = new ArrayList<>();
+        for (int i = 0; i < strategyLogs.size(); i++) {
+            if (i >= start && i < (start + limit)) {
+                strategyLogPage.add(strategyLogs.get(i));
+            }
+        }
+        return strategyLogPage;
     }
 
     @Override
-    public List<IbOrder> getPagedIbOrders() {
-        // TODO
-        return null;
+    public List<IbOrder> getPagedIbOrders(int start, int limit) {
+        Collections.reverse(ibOrders);
+        List<IbOrder> ibOrdersPage = new ArrayList<>();
+        for (int i = 0; i < ibOrders.size(); i++) {
+            if (i >= start && i < (start + limit)) {
+                ibOrdersPage.add(ibOrders.get(i));
+            }
+        }
+        return ibOrdersPage;
     }
 
     @Override
-    public List<Trade> getPagedTrades() {
-        // TODO
-        return null;
+    public List<Trade> getPagedTrades(int start, int limit) {
+        Collections.reverse(trades);
+        List<Trade> tradesPage = new ArrayList<>();
+        for (int i = 0; i < trades.size(); i++) {
+            if (i >= start && i < (start + limit)) {
+                tradesPage.add(trades.get(i));
+            }
+        }
+        return tradesPage;
     }
 
     @Override
-    public List<TradeLog> getPagedTradeLogs() {
-        // TODO
-        return null;
+    public List<TradeLog> getPagedTradeLogs(Trade trade, int start, int limit) {
+        List<TradeLog> tradeLogsForTrade = tradeLogs.stream().filter(tl -> tl.getTrade().equals(trade)).collect(Collectors.toList());
+        List<TradeLog> tradeLogsForTradePage = new ArrayList<>();
+        for (int i = 0; i < tradeLogsForTrade.size(); i++) {
+            if (i >= start && i < (start + limit)) {
+                tradeLogsForTradePage.add(tradeLogsForTrade.get(i));
+            }
+        }
+        return tradeLogsForTradePage;
     }
 }

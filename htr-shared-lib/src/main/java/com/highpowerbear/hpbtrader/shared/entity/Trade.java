@@ -141,37 +141,37 @@ public class Trade implements Serializable {
         return stl;
     }
     
-    public Trade deepCopy(Trade otherTrade) {
-        otherTrade.setId(id);
-        otherTrade.setStrategy(strategy);
-        otherTrade.setQuantity(quantity);
-        otherTrade.setTradePosition(tradePosition);
-        otherTrade.setInitOpenDate(initOpenDate);
-        otherTrade.setCloseDate(closeDate);
-        otherTrade.setOpenPrice(openPrice);
-        otherTrade.setClosePrice(closePrice);
-        otherTrade.setInitialStop(initialStop);
-        otherTrade.setStopLoss(stopLoss);
-        otherTrade.setProfitTarget(profitTarget);
-        otherTrade.setUnrealizedPl(unrealizedPl);
-        otherTrade.setRealizedPl(realizedPl);
-        otherTrade.setTradeType(tradeType);
-        otherTrade.setTradeStatus(tradeStatus);
-        otherTrade.setTradeIbOrders(tradeIbOrders);
-        return otherTrade;
+    public Trade deepCopyTo(Trade other) {
+        other.setId(id);
+        other.setStrategy(strategy);
+        other.setQuantity(quantity);
+        other.setTradePosition(tradePosition);
+        other.setInitOpenDate(initOpenDate);
+        other.setCloseDate(closeDate);
+        other.setOpenPrice(openPrice);
+        other.setClosePrice(closePrice);
+        other.setInitialStop(initialStop);
+        other.setStopLoss(stopLoss);
+        other.setProfitTarget(profitTarget);
+        other.setUnrealizedPl(unrealizedPl);
+        other.setRealizedPl(realizedPl);
+        other.setTradeType(tradeType);
+        other.setTradeStatus(tradeStatus);
+        other.setTradeIbOrders(tradeIbOrders);
+        return other;
     }
     
-    public boolean valuesEqual(Trade otherTrade) {
-        if (otherTrade == null) {
+    public boolean valuesEqual(Trade other) {
+        if (other == null) {
             return false;
         }
-        if (    HtrUtil.equalsWithNulls(stopLoss, otherTrade.stopLoss) &&
-                HtrUtil.equalsWithNulls(initialStop, otherTrade.initialStop) &&
-                HtrUtil.equalsWithNulls(profitTarget, otherTrade.profitTarget) &&
-                HtrUtil.equalsWithNulls(unrealizedPl, otherTrade.unrealizedPl) &&
-                HtrUtil.equalsWithNulls(realizedPl, otherTrade.realizedPl) &&
-                HtrUtil.equalsWithNulls(tradeType, otherTrade.tradeType) &&
-                HtrUtil.equalsWithNulls(tradeStatus, otherTrade.tradeStatus)
+        if (    HtrUtil.equalsWithNulls(stopLoss, other.stopLoss) &&
+                HtrUtil.equalsWithNulls(initialStop, other.initialStop) &&
+                HtrUtil.equalsWithNulls(profitTarget, other.profitTarget) &&
+                HtrUtil.equalsWithNulls(unrealizedPl, other.unrealizedPl) &&
+                HtrUtil.equalsWithNulls(realizedPl, other.realizedPl) &&
+                HtrUtil.equalsWithNulls(tradeType, other.tradeType) &&
+                HtrUtil.equalsWithNulls(tradeStatus, other.tradeStatus)
            )
         {
             return true;

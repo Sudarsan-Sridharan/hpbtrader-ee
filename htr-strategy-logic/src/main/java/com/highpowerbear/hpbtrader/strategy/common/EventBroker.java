@@ -26,6 +26,7 @@ public class EventBroker {
     public void trigger(HtrEnums.DataChangeEvent dataChangeEvent) {
         if (HtrEnums.DataChangeEvent.BAR_UPDATE.equals(dataChangeEvent)) {
             websocketController.broadcastMessage("qu=" + ++numBarUpdates);
+
         }  else if (HtrEnums.DataChangeEvent.STRATEGY_UPDATE.equals(dataChangeEvent)) {
             websocketController.broadcastMessage("su=" + ++numStrategyUpdates);
         }

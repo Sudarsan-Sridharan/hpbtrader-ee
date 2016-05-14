@@ -30,7 +30,7 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     private boolean offset;
 
     protected TiCalculator tiCalculator = SingletonRepo.getInstance().getTiCalculator();
-    protected NumberFormat doubleValueFormat = NumberFormat.getInstance(Locale.US);
+    protected NumberFormat nf = NumberFormat.getInstance(Locale.US);
 
     protected ProcessContext ctx;
     protected List<DataBar> dataBars;
@@ -42,8 +42,8 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
 
     public AbstractStrategyLogic(ProcessContext ctx) {
         this.inputDataSeries = dataSeriesDao.getDataSeriesByAlias(ctx.getStrategy().getDefaultInputSeriesAlias());
-        doubleValueFormat.setMinimumFractionDigits(6);
-        doubleValueFormat.setMaximumFractionDigits(6);
+        nf.setMinimumFractionDigits(6);
+        nf.setMaximumFractionDigits(6);
     }
 
     @Override

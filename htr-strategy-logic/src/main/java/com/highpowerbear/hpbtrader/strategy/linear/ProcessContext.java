@@ -24,8 +24,8 @@ public interface ProcessContext {
     void updateIbOrder(IbOrder ibOrder);
     IbOrder findIbOrder(IbOrder ibOrder);
 
-    List<StrategyLog> getPagedStrategyLogs();
-    List<IbOrder> getPagedIbOrders();
-    List<Trade> getPagedTrades();
-    List<TradeLog> getPagedTradeLogs();
+    List<StrategyLog> getPagedStrategyLogs(int start, int limit);
+    List<IbOrder> getPagedIbOrders(int start, int limit);
+    List<Trade> getPagedTrades(int start, int limit);
+    List<TradeLog> getPagedTradeLogs(Trade trade, int start, int limit);
 }
