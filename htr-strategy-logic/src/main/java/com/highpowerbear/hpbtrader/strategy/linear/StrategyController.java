@@ -7,8 +7,8 @@ import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.shared.model.OperResult;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
-import com.highpowerbear.hpbtrader.strategy.linear.context.InMemoryCtx;
 import com.highpowerbear.hpbtrader.strategy.linear.context.DatabaseCtx;
+import com.highpowerbear.hpbtrader.strategy.linear.context.InMemoryCtx;
 import com.highpowerbear.hpbtrader.strategy.linear.logic.LuxorStrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.linear.logic.MacdCrossStrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.linear.logic.TestStrategyLogic;
@@ -37,24 +37,25 @@ public class StrategyController implements Serializable {
     @Inject private OrderStateHandler orderStateHandler;
     @Inject private EmailSender emailSender;
 
-    private Map<Strategy, ProcessContext> strategyContextMap = new HashMap<>();
+    private Map<Strategy, ProcessContext> defaultContextMap = new HashMap<>();
     private Map<Strategy, StrategyLogic> strategyLogicMap = new HashMap<>();
+    private Map<Strategy, ProcessContext> backtestContextMap = new HashMap<>();
 
     @PostConstruct
     public void init() {
         for (Strategy strategy : strategyDao.getStrategies()) {
             ProcessContext ctx = new DatabaseCtx(strategy);
-            strategyContextMap.put(strategy, ctx);
+            defaultContextMap.put(strategy, ctx);
             strategyLogicMap.put(strategy, createStrategyLogic(ctx));
         }
     }
 
-    public Map<Strategy, ProcessContext> getStrategyContextMap() {
-        return strategyContextMap;
+    public Map<Strategy, ProcessContext> getDefaultContextMap() {
+        return defaultContextMap;
     }
 
-    public Map<Strategy, StrategyLogic> getStrategyLogicMap() {
-        return strategyLogicMap;
+    public Map<Strategy, ProcessContext> getBacktestContextMap() {
+        return backtestContextMap;
     }
 
     private StrategyLogic createStrategyLogic(ProcessContext ctx) {
@@ -125,7 +126,7 @@ public class StrategyController implements Serializable {
         l.info("END postProcess " + logMessage);
     }
 
-    public ProcessContext backtestStrategy(Strategy strategy, Calendar startDate, Calendar endDate) {
+    public void backtestStrategy(Strategy strategy, Calendar startDate, Calendar endDate) {
         Strategy btStrategy = strategy.deepCopyTo(new Strategy()).resetStatistics();
         btStrategy.setStrategyMode(HtrEnums.StrategyMode.BTEST);
         ProcessContext ctx = new InMemoryCtx(btStrategy);
@@ -144,8 +145,8 @@ public class StrategyController implements Serializable {
             l.info("id=" + strategy.getId() + ", iter=" + i + "/" + numIterations + ", date=" + HtrDefinitions.DF.format(iterDate.getTime()));
             this.processStrategy(ctx);
         }
+        backtestContextMap.put(strategy, ctx);
         l.info("END backtestStrategy " + logMessage);
-        return ctx;
     }
 
     public void manualOrder(ProcessContext ctx, IbOrder ibOrder) {
