@@ -24,10 +24,10 @@ public class TechAnalysisService {
     @Inject private TiCalculator tiCalculator;
 
     @GET
-    @Path("series/{seriesId}/ema/{emaPeriod}")
+    @Path("dataseries/{dataSeriesId}/ema/{emaPeriod}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response calculateEma(@PathParam("seriesId") Integer seriesId, @PathParam("emaPeriod") Integer emaPeriod, @QueryParam("numBars") Integer numBars) {
-        DataSeries dataSeries = dataSeriesDao.findDataSeries(seriesId);
+    public Response calculateEma(@PathParam("dataSeriesId") Integer dataSeriesId, @PathParam("emaPeriod") Integer emaPeriod, @QueryParam("numBars") Integer numBars) {
+        DataSeries dataSeries = dataSeriesDao.findDataSeries(dataSeriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -36,10 +36,10 @@ public class TechAnalysisService {
     }
 
     @GET
-    @Path("series/{seriesId}/stoch")
+    @Path("dataseries/{dataSeriesId}/stoch")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response calculateStoch(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
-        DataSeries dataSeries = dataSeriesDao.findDataSeries(seriesId);
+    public Response calculateStoch(@PathParam("dataSeriesId") Integer dataSeriesId, @QueryParam("numBars") Integer numBars) {
+        DataSeries dataSeries = dataSeriesDao.findDataSeries(dataSeriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -48,10 +48,10 @@ public class TechAnalysisService {
     }
 
     @GET
-    @Path("series/{seriesId}/macd")
+    @Path("dataseries/{dataSeriesId}/macd")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response calculateMacd(@PathParam("seriesId") Integer seriesId, @QueryParam("numBars") Integer numBars) {
-        DataSeries dataSeries = dataSeriesDao.findDataSeries(seriesId);
+    public Response calculateMacd(@PathParam("dataSeriesId") Integer dataSeriesId, @QueryParam("numBars") Integer numBars) {
+        DataSeries dataSeries = dataSeriesDao.findDataSeries(dataSeriesId);
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }

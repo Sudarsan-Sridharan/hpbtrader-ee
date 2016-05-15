@@ -94,4 +94,11 @@ public class StrategyDaoImpl implements StrategyDao {
         q.setMaxResults(limit);
         return q.getResultList();
     }
+
+    @Override
+    public Long getNumStrategyLogs(Strategy strategy) {
+        Query query = em.createQuery("SELECT COUNT(sl) FROM StrategyLog sl WHERE sl.strategy = :strategy");
+        query.setParameter("strategy", strategy);
+        return (Long) query.getSingleResult();
+    }
 }

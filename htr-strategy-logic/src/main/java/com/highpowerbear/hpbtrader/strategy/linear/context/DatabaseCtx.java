@@ -100,4 +100,24 @@ public class DatabaseCtx implements ProcessContext {
     public List<TradeLog> getPagedTradeLogs(Trade trade, int start, int limit) {
         return tradeDao.getPagedTradeLogs(trade, start, limit);
     }
+
+    @Override
+    public Long getNumStrategyLogs() {
+        return strategyDao.getNumStrategyLogs(this.strategy);
+    }
+
+    @Override
+    public Long getNumIbOrders() {
+        return ibOrderDao.getNumIbOrders(this.strategy);
+    }
+
+    @Override
+    public Long getNumTrades() {
+        return tradeDao.getNumTrades(this.strategy);
+    }
+
+    @Override
+    public Long getNumTradeLogs(Trade trade) {
+        return tradeDao.getNumTradeLogs(trade);
+    }
 }

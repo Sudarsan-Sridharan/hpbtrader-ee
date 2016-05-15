@@ -76,13 +76,6 @@ public class TradeDaoImpl implements TradeDao {
     }
 
     @Override
-    public Long getNumTrades(Strategy strategy) {
-        Query q = em.createQuery("SELECT COUNT(t) FROM Trade t WHERE t.strategy = :strategy");
-        q.setParameter("strategy", strategy);
-        return (Long) q.getSingleResult();
-    }
-
-    @Override
     public Trade getActiveTrade(Strategy strategy) {
         TypedQuery<Trade> q = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy AND t.tradeStatus IN :statuses ORDER BY t.initOpenDate DESC", Trade.class);
         q.setParameter("strategy", strategy);
@@ -119,5 +112,19 @@ public class TradeDaoImpl implements TradeDao {
         q.setFirstResult(start);
         q.setMaxResults(limit);
         return q.getResultList();
+    }
+
+    @Override
+    public Long getNumTrades(Strategy strategy) {
+        Query q = em.createQuery("SELECT COUNT(t) FROM Trade t WHERE t.strategy = :strategy");
+        q.setParameter("strategy", strategy);
+        return (Long) q.getSingleResult();
+    }
+
+    @Override
+    public Long getNumTradeLogs(Trade trade) {
+        Query q = em.createQuery("SELECT COUNT(tl) FROM TradeLog tl WHERE tl.trade = :trade");
+        q.setParameter("trade", trade);
+        return (Long) q.getSingleResult();
     }
 }

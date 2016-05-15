@@ -28,4 +28,9 @@ public interface ProcessContext {
     List<IbOrder> getPagedIbOrders(int start, int limit);
     List<Trade> getPagedTrades(int start, int limit);
     List<TradeLog> getPagedTradeLogs(Trade trade, int start, int limit);
+
+    Long getNumStrategyLogs();
+    Long getNumIbOrders();
+    Long getNumTrades();
+    Long getNumTradeLogs(Trade trade);
 }

@@ -47,6 +47,11 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     }
 
     @Override
+    public ProcessContext getProcessContext() {
+        return this.ctx;
+    }
+
+    @Override
     public OperResult<Boolean, String> prepare() {
         this.offset = false;
         this.dataBars = dataSeriesDao.getLastDataBars(inputDataSeries, HtrDefinitions.BARS_REQUIRED + INDICATORS_LIST_SIZE);

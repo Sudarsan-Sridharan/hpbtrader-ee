@@ -160,7 +160,7 @@ public class InMemoryCtx implements ProcessContext {
 
     @Override
     public List<TradeLog> getPagedTradeLogs(Trade trade, int start, int limit) {
-        List<TradeLog> tradeLogsForTrade = tradeLogs.stream().filter(tl -> tl.getTrade().equals(trade)).collect(Collectors.toList());
+        List<TradeLog> tradeLogsForTrade = getTradeLogsForTrade(trade);
         List<TradeLog> tradeLogsForTradePage = new ArrayList<>();
         for (int i = 0; i < tradeLogsForTrade.size(); i++) {
             if (i >= start && i < (start + limit)) {
@@ -168,5 +168,29 @@ public class InMemoryCtx implements ProcessContext {
             }
         }
         return tradeLogsForTradePage;
+    }
+
+    @Override
+    public Long getNumStrategyLogs() {
+        return (long) strategyLogs.size();
+    }
+
+    @Override
+    public Long getNumIbOrders() {
+        return (long) ibOrders.size();
+    }
+
+    @Override
+    public Long getNumTrades() {
+        return (long) trades.size();
+    }
+
+    @Override
+    public Long getNumTradeLogs(Trade trade) {
+        return (long) getTradeLogsForTrade(trade).size();
+    }
+
+    private List<TradeLog> getTradeLogsForTrade(Trade trade) {
+        return tradeLogs.stream().filter(tl -> tl.getTrade().equals(trade)).collect(Collectors.toList());
     }
 }

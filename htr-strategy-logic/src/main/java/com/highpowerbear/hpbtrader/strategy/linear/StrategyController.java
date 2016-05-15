@@ -37,17 +37,20 @@ public class StrategyController implements Serializable {
     @Inject private OrderStateHandler orderStateHandler;
     @Inject private EmailSender emailSender;
 
+    private Map<Strategy, ProcessContext> strategyContextMap = new HashMap<>();
     private Map<Strategy, StrategyLogic> strategyLogicMap = new HashMap<>();
 
     @PostConstruct
     public void init() {
         for (Strategy strategy : strategyDao.getStrategies()) {
-            if (strategy.isActive()) {
-                strategyLogicMap.put(strategy, createStrategyLogic(new DatabaseCtx(strategy)));
-            } else {
-                strategyLogicMap.remove(strategy);
-            }
+            ProcessContext ctx = new DatabaseCtx(strategy);
+            strategyContextMap.put(strategy, ctx);
+            strategyLogicMap.put(strategy, createStrategyLogic(ctx));
         }
+    }
+
+    public Map<Strategy, ProcessContext> getStrategyContextMap() {
+        return strategyContextMap;
     }
 
     public Map<Strategy, StrategyLogic> getStrategyLogicMap() {

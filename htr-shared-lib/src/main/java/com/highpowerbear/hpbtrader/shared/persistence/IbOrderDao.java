@@ -19,4 +19,5 @@ public interface IbOrderDao {
     List<IbOrder> getNewRetryIbOrders(IbAccount ibAccount);
     List<IbOrder> getOpenIbOrders(IbAccount ibAccount);
     List<IbOrder> getPagedIbOrders(Strategy strategy, int start, int limit);
+    Long getNumIbOrders(Strategy strategy);
 }

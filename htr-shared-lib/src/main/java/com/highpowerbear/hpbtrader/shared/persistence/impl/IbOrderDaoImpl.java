@@ -9,6 +9,7 @@ import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.HashSet;
 import java.util.List;
@@ -95,5 +96,12 @@ public class IbOrderDaoImpl implements IbOrderDao {
         q.setFirstResult(start);
         q.setMaxResults(limit);
         return q.getResultList();
+    }
+
+    @Override
+    public Long getNumIbOrders(Strategy strategy) {
+        Query query = em.createQuery("SELECT COUNT(o) FROM IbOrder o WHERE o.strategy = :strategy");
+        query.setParameter("strategy", strategy);
+        return (Long) query.getSingleResult();
     }
 }

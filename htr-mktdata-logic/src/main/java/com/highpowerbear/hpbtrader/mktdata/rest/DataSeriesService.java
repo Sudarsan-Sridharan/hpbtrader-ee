@@ -28,7 +28,7 @@ public class DataSeriesService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public RestList<DataSeries> getSeriesList(@QueryParam("inactiveToo") boolean inactiveToo) {
+    public RestList<DataSeries> getSeriesList() {
         List<DataSeries> dataSeriesList = dataSeriesDao.getAllDataSeries();
         return new RestList<>(dataSeriesList, (long) dataSeriesList.size());
     }
