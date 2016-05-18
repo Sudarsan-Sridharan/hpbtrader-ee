@@ -3,6 +3,7 @@ package com.highpowerbear.hpbtrader.shared.common;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import javax.mail.Message;
 import javax.mail.Session;
@@ -17,7 +18,7 @@ import java.util.logging.Logger;
  * @author robertk
  */
 @Named
-@Singleton
+@ApplicationScoped
 public class EmailSender {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 

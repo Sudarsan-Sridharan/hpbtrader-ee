@@ -7,7 +7,7 @@ import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
 import com.highpowerbear.hpbtrader.strategy.linear.ProcessContext;
 import com.highpowerbear.hpbtrader.strategy.linear.StrategyController;
 
-import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by robertk on 11/14/2015.
  */
-@Singleton
+@ApplicationScoped
 @Path("strategies")
 public class StrategyService {
 

@@ -12,6 +12,7 @@ import com.highpowerbear.hpbtrader.strategy.linear.context.InMemoryCtx;
 import com.highpowerbear.hpbtrader.strategy.linear.logic.LuxorStrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.linear.logic.MacdCrossStrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.linear.logic.TestStrategyLogic;
+import com.highpowerbear.hpbtrader.strategy.message.MqSender;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -36,6 +37,7 @@ public class StrategyController implements Serializable {
 
     @Inject private OrderStateHandler orderStateHandler;
     @Inject private EmailSender emailSender;
+    @Inject private MqSender mqSender;
 
     private Map<Strategy, ProcessContext> defaultContextMap = new HashMap<>();
     private Map<Strategy, StrategyLogic> strategyLogicMap = new HashMap<>();
@@ -118,8 +120,7 @@ public class StrategyController implements Serializable {
 
         if (HtrEnums.StrategyMode.IB.equals(ctx.getStrategy().getStrategyMode())) {
             emailSender.sendEmail(sl.getIbOrder().getDescription(), sl.getIbOrder().getTriggerDesc() + "\n" + sl.getLastDataBar().print());
-            //ibController.submitIbOrder(ibOrder);
-            // TODO
+            mqSender.newOrder(sl.getIbOrder());
         } else {
             orderStateHandler.simulateFill(ctx, sl.getIbOrder(), sl.getLastDataBar().getbBarClose());
         }
@@ -169,8 +170,7 @@ public class StrategyController implements Serializable {
         emailSender.sendEmail(ibOrder.getDescription(), ibOrder.getTriggerDesc() + "\n" + dataBar.print());
 
         if (HtrEnums.StrategyMode.IB.equals(ctx.getStrategy().getStrategyMode())) {
-            //ibController.submitIbOrder(manualIbOrder);
-            // TODO
+            mqSender.newOrder(ibOrder);
         } else {
             orderStateHandler.simulateFill(ctx, ibOrder, dataBar.getbBarClose());
         }

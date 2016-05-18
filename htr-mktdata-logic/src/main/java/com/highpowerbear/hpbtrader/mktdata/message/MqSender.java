@@ -4,8 +4,9 @@ import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 
 import javax.annotation.Resource;
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.jms.JMSContext;
 import javax.jms.JMSProducer;
 import javax.jms.Queue;
@@ -15,7 +16,8 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 25.11.2015.
  */
-@Stateless
+@Named
+@ApplicationScoped
 public class MqSender {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 

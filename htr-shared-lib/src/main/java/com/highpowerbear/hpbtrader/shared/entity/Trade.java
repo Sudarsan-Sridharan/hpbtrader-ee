@@ -103,7 +103,7 @@ public class Trade implements Serializable {
         this.tradeStatus = HtrEnums.TradeStatus.ERR_CLOSED;
     }
 
-    public void cncClosed() {
+    public void cncClose() {
         this.closeDate = HtrUtil.getCalendar();
         this.tradeStatus = HtrEnums.TradeStatus.CNC_CLOSED;
     }

@@ -1,11 +1,11 @@
 package com.highpowerbear.hpbtrader.strategy.options;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
-import com.highpowerbear.hpbtrader.strategy.options.model.MarketData;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+import com.highpowerbear.hpbtrader.strategy.options.model.MarketData;
 
-import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Calendar;
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author rkolar
  */
 @Named
-@Singleton
+@ApplicationScoped
 public class OptionDataRetriever {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
