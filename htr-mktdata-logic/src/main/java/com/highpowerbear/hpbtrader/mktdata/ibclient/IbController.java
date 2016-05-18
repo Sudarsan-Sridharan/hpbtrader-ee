@@ -1,6 +1,7 @@
 package com.highpowerbear.hpbtrader.mktdata.ibclient;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.ibclient.IbConnection;
@@ -34,48 +35,13 @@ public class IbController {
     }
 
     @PostConstruct
-    public void init() {
-        ibAccountDao.getIbAccounts().stream().forEach(ibAccount -> ibConnectionMap.put(ibAccount, new IbConnection()));
+    private void init() {
+        ibAccountDao.getIbAccounts().forEach(ibAccount -> ibConnectionMap.put(ibAccount, createIbConnection(ibAccount)));
     }
 
-    public void connectMktData(IbAccount ibAccount) {
-        IbConnection c = ibConnectionMap.get(ibAccount);
-        if (c.getClientSocket() == null)  {
-            c.setClientSocket(new EClientSocket(new IbListenerImpl(ibAccount)));
-        }
-        if (c.getClientSocket() != null && !c.getClientSocket().isConnected()) {
-            c.setAccounts(null);
-            c.setIsConnected(false);
-            l.info("Connecting mkt data " + ibAccount.print());
-            c.getClientSocket().eConnect(ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId());
-            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
-            if (isConnectedMktData(ibAccount)) {
-                c.setIsConnected(true);
-                l.info("Sucessfully connected mkt data " + ibAccount.print());
-            }
-        }
-    }
-
-    public void disconnectMktData(IbAccount ibAccount) {
-        IbConnection c = ibConnectionMap.get(ibAccount);
-        if (c.getClientSocket() != null && c.getClientSocket().isConnected()) {
-            l.info("Disconnecting mkt data " + ibAccount.print());
-            c.getClientSocket().eDisconnect();
-            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
-            if (!isConnectedMktData(ibAccount)) {
-                l.info("Successfully disconnected mkt data " + ibAccount.print());
-                c.clear();
-            }
-        }
-    }
-
-    public boolean isConnectedMktData(IbAccount ibAccount) {
-        IbConnection c = ibConnectionMap.get(ibAccount);
-        boolean connected = c.getClientSocket() != null && c.getClientSocket().isConnected();
-        if (!connected) {
-            l.info("Not connected mkt data " + ibAccount.print());
-        }
-        return connected;
+    private IbConnection createIbConnection(IbAccount ibAccount) {
+        EClientSocket eClientSocket = new EClientSocket(new IbListenerImpl(ibAccount));
+        return new IbConnection(HtrEnums.IbConnectionType.MKTDATA, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId(), eClientSocket);
     }
 
     private IbConnection getActiveMktDataConnection() {
@@ -84,6 +50,14 @@ public class IbController {
 
     private List<IbConnection> getActiveMktDataConnections() {
         return ibConnectionMap.values().stream().filter(IbConnection::isConnected).collect(Collectors.toList());
+    }
+
+    public void connectMktData(IbAccount ibAccount) {
+        ibConnectionMap.get(ibAccount).connect();
+    }
+
+    public void disconnectMktData(IbAccount ibAccount) {
+        ibConnectionMap.get(ibAccount).disconnect();
     }
 
     public boolean isAnyActiveMktDataConnection() {

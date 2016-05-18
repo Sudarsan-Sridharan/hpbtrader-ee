@@ -28,6 +28,7 @@ public class HeartbeatControl {
 
     @PostConstruct
     public void init() {
+        ibAccountDao.getIbAccounts().forEach(ibAccount -> openOrderHeartbeatMap.put(ibAccount, null));
         ibAccountDao.getIbAccounts().stream()
                 .flatMap(ibAccount -> ibOrderDao.getOpenIbOrders(ibAccount).stream())
                 .forEach(this::addHeartbeat);

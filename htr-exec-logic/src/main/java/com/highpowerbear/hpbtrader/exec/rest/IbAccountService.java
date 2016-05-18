@@ -1,15 +1,11 @@
-package com.highpowerbear.hpbtrader.mktdata.rest;
+package com.highpowerbear.hpbtrader.exec.rest;
 
-import com.highpowerbear.hpbtrader.mktdata.ibclient.IbController;
-import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
-import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
+import com.highpowerbear.hpbtrader.exec.ibclient.IbController;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.model.RestList;
 import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
-import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
-import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,24 +15,20 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
- * Created by robertk on 25.11.2015.
+ * Created by robertk on 18.5.2016.
  */
 @ApplicationScoped
 @Path("ibaccounts")
 public class IbAccountService {
 
-    @Inject private TiCalculator tiCalculator;
-    @Inject private DataSeriesDao dataSeriesDao;
     @Inject private IbAccountDao ibAccountDao;
     @Inject private IbController ibController;
-    @Inject private HistDataController histDataController;
-    @Inject private RtDataController rtDataController;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public RestList<IbAccount> getIbAccounts() {
         List<IbAccount> ibAccounts = ibAccountDao.getIbAccounts();
-        ibAccounts.forEach(ibAccount -> ibAccount.setMktDataConnection(ibController.getIbConnectionMap().get(ibAccount)));
+        ibAccounts.forEach(ibAccount -> ibAccount.setExecConnection(ibController.getIbConnectionMap().get(ibAccount)));
         return new RestList<>(ibAccounts, (long) ibAccounts.size());
     }
 
@@ -60,13 +52,13 @@ public class IbAccountService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         if (connect) {
-            ibController.connectMktData(ibAccount);
+            ibController.connectExec(ibAccount);
         } else {
-            rtDataController.cancelAllMktData();
-            ibController.disconnectMktData(ibAccount);
+            ibController.disconnectExec(ibAccount);
         }
         HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
-        ibAccount.setMktDataConnection(ibController.getIbConnectionMap().get(ibAccount));
+        ibAccount.setExecConnection(ibController.getIbConnectionMap().get(ibAccount));
         return Response.ok(ibAccount).build();
     }
+
 }

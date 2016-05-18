@@ -32,13 +32,18 @@ public class IbController {
     private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>(); // ibAccount --> ibConnection
     private int nextValidOrderId = 1;
 
-    @PostConstruct
-    public void init() {
-        ibAccountDao.getIbAccounts().stream().forEach(ibAccount -> ibConnectionMap.put(ibAccount, new IbConnection()));
-    }
-
     public Map<IbAccount, IbConnection> getIbConnectionMap() {
         return ibConnectionMap;
+    }
+
+    @PostConstruct
+    private void init() {
+        ibAccountDao.getIbAccounts().forEach(ibAccount -> ibConnectionMap.put(ibAccount, createIbConnection(ibAccount)));
+    }
+
+    private IbConnection createIbConnection(IbAccount ibAccount) {
+        EClientSocket eClientSocket = new EClientSocket(new IbListenerImpl(ibAccount));
+        return new IbConnection(HtrEnums.IbConnectionType.EXEC, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId(), eClientSocket);
     }
 
     public void setNextValidOrderId(IbAccount ibAccount, int nextValidOrderId) {
@@ -50,42 +55,11 @@ public class IbController {
     }
 
     public void connectExec(IbAccount ibAccount) {
-        IbConnection c = ibConnectionMap.get(ibAccount);
-
-        if (c.getClientSocket() == null)  {
-            c.setClientSocket(new EClientSocket(new IbListenerImpl(ibAccount)));
-        }
-        if (c.getClientSocket() != null && !c.getClientSocket().isConnected()) {
-            c.setAccounts(null);
-            c.setIsConnected(false);
-            l.info("Connecting ibAccount " + ibAccount.print());
-            c.getClientSocket().eConnect(ibAccount.getHost(), ibAccount.getPort(), ibAccount.getExecClientId());
-            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
-            if (isConnectedExec(ibAccount)) {
-                c.setIsConnected(true);
-                l.info("Sucessfully connected ibAccount " + ibAccount.print());
-                requestOpenOrders(ibAccount);
-                requestAccounts(ibAccount);
-            }
-        }
+        ibConnectionMap.get(ibAccount).connect();
     }
 
     public void disconnectExec(IbAccount ibAccount) {
-        IbConnection c = ibConnectionMap.get(ibAccount);
-        if (c.getClientSocket() != null && c.getClientSocket().isConnected()) {
-            l.info("Disconnecting ibAccount " + ibAccount.print());
-            c.getClientSocket().eDisconnect();
-            HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
-            if (!isConnectedExec(ibAccount)) {
-                l.info("Successfully disconnected ibAccount " + ibAccount.print());
-                c.clear();
-            }
-        }
-    }
-
-    public boolean isConnectedExec(IbAccount ibAccount) {
-        IbConnection c = ibConnectionMap.get(ibAccount);
-        return (c.getClientSocket() != null && c.getClientSocket().isConnected());
+        ibConnectionMap.get(ibAccount).disconnect();
     }
 
     public void requestOpenOrders(IbAccount ibAccount) {
@@ -96,11 +70,6 @@ public class IbController {
         c.getClientSocket().reqAutoOpenOrders(true);
     }
 
-    private void requestAccounts(IbAccount ibAccount) {
-        l.info("Requesting account for ibAccount " + ibAccount.print());
-        ibConnectionMap.get(ibAccount).getClientSocket().reqManagedAccts();
-    }
-
     private void retrySubmit(IbAccount ibAccount) {
         ibOrderDao.getNewRetryIbOrders(ibAccount).forEach(this::submitIbOrder);
     }
@@ -109,7 +78,7 @@ public class IbController {
         l.info("START submit order " + ibOrder.getDescription());
         IbConnection c = ibConnectionMap.get(ibOrder.getStrategy().getIbAccount());
         heartbeatControl.addHeartbeat(ibOrder);
-        if (!isConnectedExec(ibOrder.getStrategy().getIbAccount())) {
+        if (!c.isConnected()) {
             if (!HtrEnums.IbOrderStatus.NEW_RETRY.equals(ibOrder.getStatus())) {
                 ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW_RETRY, HtrUtil.getCalendar(), null);
                 ibOrderDao.updateIbOrder(ibOrder);

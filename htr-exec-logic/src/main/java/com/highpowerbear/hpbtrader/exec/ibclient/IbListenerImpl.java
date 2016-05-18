@@ -69,4 +69,10 @@ public class IbListenerImpl extends AbstractIbListener {
         super.nextValidId(orderId);
         ibController.setNextValidOrderId(ibAccount, orderId);
     }
+
+    @Override
+    public void managedAccounts(String accountsList) {
+        super.managedAccounts(accountsList);
+        ibController.getIbConnectionMap().get(ibAccount).setAccounts(accountsList);
+    }
 }

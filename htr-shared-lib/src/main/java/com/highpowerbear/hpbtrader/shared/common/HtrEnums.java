@@ -385,4 +385,9 @@ public class HtrEnums {
             return week;
         }
     }
+
+    public enum IbConnectionType {
+        MKTDATA,
+        EXEC
+    }
 }

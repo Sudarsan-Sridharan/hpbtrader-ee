@@ -23,17 +23,20 @@ public class ExecScheduler {
     public void reconnect() {
         ibAccountDao.getIbAccounts().forEach(ibAccount -> {
             IbConnection c = ibController.getIbConnectionMap().get(ibAccount);
-            if (c != null && c.getClientSocket() != null) {
-                ibController.connectExec(ibAccount);
+            if (!c.isConnected() && c.isMarkConnected()) {
+                c.connect();
             }
         });
     }
 
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="31", timezone="US/Eastern", persistent=false)
     private void requestOpenOrders() {
-        ibAccountDao.getIbAccounts().stream().filter(ibController::isConnectedExec).forEach(ibAccount -> {
-            heartbeatControl.updateHeartbeats(ibAccount);
-            ibController.requestOpenOrders(ibAccount);
+        ibAccountDao.getIbAccounts().forEach(ibAccount -> {
+            IbConnection c = ibController.getIbConnectionMap().get(ibAccount);
+            if (c.isConnected()) {
+                heartbeatControl.updateHeartbeats(ibAccount);
+                ibController.requestOpenOrders(ibAccount);
+            }
         });
     }
 }
