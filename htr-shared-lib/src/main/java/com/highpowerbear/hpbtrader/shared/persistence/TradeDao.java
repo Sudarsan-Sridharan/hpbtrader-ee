@@ -17,7 +17,6 @@ public interface TradeDao {
     List<Trade> getTradesByOrder(IbOrder ibOrder);
     Trade findTrade(Long id);
     Trade getActiveTrade(Strategy strategy);
-    Trade getLastTrade(Strategy strategy);
     List<Trade> getPagedTrades(Strategy strategy, int start, int limit);
     List<TradeLog> getPagedTradeLogs(Trade trade, int start, int limit);
     Long getNumTrades(Strategy strategy);

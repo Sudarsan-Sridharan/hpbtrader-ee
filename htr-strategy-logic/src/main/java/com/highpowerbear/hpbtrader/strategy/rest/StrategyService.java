@@ -36,6 +36,17 @@ public class StrategyService {
         return new RestList<>(strategies, (long) strategies.size());
     }
 
+    @DELETE
+    @Path("{strategyid}")
+    public Response deleteStrategy(@PathParam("strategyid") Integer strategyId) {
+        Strategy strategy = strategyDao.findStrategy(strategyId);
+        if (strategy == null) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        strategyDao.deleteStrategy(strategy);
+        return Response.ok().build();
+    }
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{strategyid}/backtest")

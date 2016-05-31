@@ -10,7 +10,6 @@ import java.util.List;
 public interface StrategyDao {
     List<Strategy> getStrategies();
     Strategy findStrategy(Integer id);
-    Strategy getActiveStrategy(Instrument tradeInstrument, IbAccount ibAccount);
     void updateStrategy(Strategy strategy);
     void deleteStrategy(Strategy strategy);
     List<StrategyLog> getPagedStrategyLogs(Strategy strategy, int start, int limit);

@@ -89,14 +89,6 @@ public class TradeDaoImpl implements TradeDao {
     }
 
     @Override
-    public Trade getLastTrade(Strategy strategy) {
-        TypedQuery<Trade> q = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy ORDER BY t.initOpenDate DESC", Trade.class);
-        q.setParameter("strategy", strategy);
-        List<Trade> trades = q.getResultList();
-        return (trades != null && !trades.isEmpty() ? trades.get(0) : null);
-    }
-
-    @Override
     public List<Trade> getPagedTrades(Strategy strategy, int start, int limit) {
         TypedQuery<Trade> q = em.createQuery("SELECT t FROM Trade t WHERE t.strategy = :strategy ORDER BY t.initOpenDate DESC", Trade.class);
         q.setParameter("strategy", strategy);

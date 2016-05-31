@@ -40,16 +40,6 @@ public class StrategyDaoImpl implements StrategyDao {
     }
 
     @Override
-    public Strategy getActiveStrategy(Instrument tradeInstrument, IbAccount ibAccount) {
-        TypedQuery<Strategy> query = em.createQuery("SELECT str FROM Strategy str WHERE str.tradeInstrument = :tradeInstrument AND str.ibAccount = :ibAccount AND str.active = :active", Strategy.class);
-        query.setParameter("tradeInstrument", tradeInstrument);
-        query.setParameter("ibAccount", ibAccount);
-        query.setParameter("active", Boolean.TRUE);
-        List<Strategy> strategyList = query.getResultList();
-        return strategyList.get(0);
-    }
-
-    @Override
     public void updateStrategy(Strategy strategy) {
         Strategy dbStrategy = em.find(Strategy.class, strategy.getId());
         em.detach(dbStrategy);
