@@ -28,7 +28,7 @@ public class MktDataScheduler {
         histDataController.requestSixtyMinBars();
     }
 
-    @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*/5", second="11", timezone="US/Eastern", persistent=false)
+    @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*/5", second="21", timezone="US/Eastern", persistent=false)
     public void reconnect() {
         ibAccountDao.getIbAccounts().forEach(ibAccount -> {
             IbConnection c = ibController.getIbConnectionMap().get(ibAccount);

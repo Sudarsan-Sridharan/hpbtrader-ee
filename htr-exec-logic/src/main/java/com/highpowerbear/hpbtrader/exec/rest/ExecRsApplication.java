@@ -13,7 +13,6 @@ public class ExecRsApplication extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
-        // register root resources/providers
         classes.add(IbAccountService.class);
         return classes;
     }

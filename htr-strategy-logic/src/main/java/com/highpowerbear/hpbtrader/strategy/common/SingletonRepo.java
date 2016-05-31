@@ -33,7 +33,6 @@ public class SingletonRepo {
     @Inject private TradeDao tradeDao;
     @Inject private IbOrderDao ibOrderDao;
     @Inject private OrderStateHandler orderStateHandler;
-    @Inject private EventBroker eventBroker;
     @Inject private TiCalculator tiCalculator;
 
     public DataSeriesDao getDataSeriesDao() {
@@ -54,10 +53,6 @@ public class SingletonRepo {
 
     public OrderStateHandler getOrderStateHandler() {
         return orderStateHandler;
-    }
-
-    public EventBroker getEventBroker() {
-        return eventBroker;
     }
 
     public TiCalculator getTiCalculator() {

@@ -38,7 +38,10 @@ public class HtrDefinitions {
     public static final Integer IB_REQUEST_MULT = 100;
     public static final Integer WEBSOCKET_ASYNC_SEND_TIMEOUT = 5 * 1000; // milliseconds
     public static final int JPA_MAX_RESULTS = 1000;
-    public static final Integer REQUEST_ID_MULTIPLIER = 1000;
+    public static final int BACKTEST_DEFAULT_MONTHS = 3;
+
+    // options
+    public static final Integer IB_REQUEST_MULT_OPTIONS = 1000;
     public static final Integer CONTRACT_CHANGE_MIN_INTERVAL = 60; // seconds
 
     // option contract properties precautionary limits

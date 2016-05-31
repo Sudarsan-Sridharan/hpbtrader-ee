@@ -15,20 +15,21 @@ import com.highpowerbear.hpbtrader.strategy.linear.logic.TestStrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.message.MqSender;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.*;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
  * Created by robertk on 4/13/14.
  */
-@Named
-@ApplicationScoped
+@Singleton
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+@Lock(LockType.READ)
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class StrategyController implements Serializable {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
@@ -39,9 +40,10 @@ public class StrategyController implements Serializable {
     @Inject private EmailSender emailSender;
     @Inject private MqSender mqSender;
 
-    private Map<Strategy, ProcessContext> defaultContextMap = new HashMap<>();
-    private Map<Strategy, StrategyLogic> strategyLogicMap = new HashMap<>();
-    private Map<Strategy, ProcessContext> backtestContextMap = new HashMap<>();
+    private Map<Strategy, ProcessContext> defaultContextMap = new ConcurrentHashMap<>();
+    private Map<Strategy, StrategyLogic> strategyLogicMap = new ConcurrentHashMap<>();
+    private Map<Strategy, ProcessContext> backtestContextMap = new ConcurrentHashMap<>();
+    private Map<Strategy, Boolean> backtestFinishedMap = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void init() {
@@ -58,6 +60,11 @@ public class StrategyController implements Serializable {
 
     public Map<Strategy, ProcessContext> getBacktestContextMap() {
         return backtestContextMap;
+    }
+
+    public boolean isBacktestFinished(Strategy strategy) {
+        Boolean ready = backtestFinishedMap.get(strategy);
+        return ready != null && Boolean.TRUE.equals(ready);
     }
 
     private StrategyLogic createStrategyLogic(ProcessContext ctx) {
@@ -127,7 +134,9 @@ public class StrategyController implements Serializable {
         l.info("END postProcess " + logMessage);
     }
 
-    public void backtestStrategy(Strategy strategy, Calendar startDate, Calendar endDate) {
+    @Asynchronous
+    public void backtestStrategy(Strategy strategy, Calendar fromDate, Calendar toDate) {
+        backtestFinishedMap.put(strategy, Boolean.FALSE);
         Strategy btStrategy = strategy.deepCopyTo(new Strategy()).resetStatistics();
         btStrategy.setStrategyMode(HtrEnums.StrategyMode.BTEST);
         ProcessContext ctx = new InMemoryCtx(btStrategy);
@@ -137,20 +146,22 @@ public class StrategyController implements Serializable {
         l.info("BEGIN backtestStrategy " + logMessage);
 
         DataSeries inputDataSeries = dataSeriesDao.getDataSeriesByAlias(ctx.getStrategy().getDefaultInputSeriesAlias());
-        int numIterations = (int) ((endDate.getTimeInMillis() - startDate.getTimeInMillis()) / inputDataSeries.getInterval().getMillis());
+        int numIterations = (int) ((toDate.getTimeInMillis() - fromDate.getTimeInMillis()) / inputDataSeries.getInterval().getMillis());
         Calendar iterDate = Calendar.getInstance();
-        iterDate.setTimeInMillis(startDate.getTimeInMillis());
+        iterDate.setTimeInMillis(fromDate.getTimeInMillis());
         int i = 0;
-        while (iterDate.before(endDate)) {
+        while (iterDate.before(toDate)) {
             ctx.setCurrentDate(iterDate);
             l.info("id=" + strategy.getId() + ", iter=" + i + "/" + numIterations + ", date=" + HtrDefinitions.DF.format(iterDate.getTime()));
             this.processStrategy(ctx);
         }
         backtestContextMap.put(strategy, ctx);
+        backtestFinishedMap.put(strategy, Boolean.TRUE);
         l.info("END backtestStrategy " + logMessage);
     }
 
-    public void manualOrder(ProcessContext ctx, IbOrder ibOrder) {
+    public void manualOrder(IbOrder ibOrder) {
+        ProcessContext ctx = defaultContextMap.get(ibOrder.getStrategy());
         DataSeries inputDataSeries = dataSeriesDao.getDataSeriesByAlias(ctx.getStrategy().getDefaultInputSeriesAlias());
         DataBar dataBar = dataSeriesDao.getLastDataBars(inputDataSeries, 1).get(0);
         String logMessage = " strategy, id=" + ctx.getStrategy().getId() + ", " + ctx.getStrategy().getDefaultInputSeriesAlias() + ", " + ctx.getStrategy().getStrategyType() + " --> " + "manual order";

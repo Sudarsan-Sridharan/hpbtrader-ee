@@ -1,7 +1,10 @@
 package com.highpowerbear.hpbtrader.strategy.rest;
 
+import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.shared.model.RestList;
+import com.highpowerbear.hpbtrader.shared.model.TimeFrame;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
 import com.highpowerbear.hpbtrader.strategy.linear.ProcessContext;
@@ -12,6 +15,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -30,6 +34,43 @@ public class StrategyService {
     public RestList<Strategy> getStrategies() {
         List<Strategy> strategies =  strategyDao.getStrategies();
         return new RestList<>(strategies, (long) strategies.size());
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("{strategyid}/backtest")
+    public Response backtestStrategy(@PathParam("strategyid") Integer strategyId, TimeFrame timeFrame) {
+        Strategy strategy = strategyDao.findStrategy(strategyId);
+        if (strategy == null) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        Calendar fromDate = timeFrame.getFromDate() == null ? HtrUtil.getCalendarMonthsOffset(HtrDefinitions.BACKTEST_DEFAULT_MONTHS) : timeFrame.getFromDate();
+        Calendar toDate = timeFrame.getToDate() == null ? HtrUtil.getCalendar() : timeFrame.getToDate();
+        strategyController.backtestStrategy(strategy, fromDate, toDate);
+        return Response.ok().build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{strategyid}/backtest/finished")
+    public Response isBacktestFinished(@PathParam("strategyid") Integer strategyId, TimeFrame timeFrame) {
+        Strategy strategy = strategyDao.findStrategy(strategyId);
+        if (strategy == null) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        return Response.ok(strategyController.isBacktestFinished(strategy)).build();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("{strategyid}/manualorder")
+    public Response manualOrder(@PathParam("strategyid") Integer strategyId, IbOrder ibOrder) {
+        Strategy strategy = strategyDao.findStrategy(strategyId);
+        if (strategy == null) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        strategyController.manualOrder(ibOrder);
+        return Response.ok().build();
     }
 
     @GET

@@ -269,11 +269,6 @@ public class HtrEnums {
         }
     }
 
-    public enum DataChangeEvent {
-        BAR_UPDATE,
-        STRATEGY_UPDATE
-    }
-
     public enum RealtimeFieldName {
         BID,
         ASK,

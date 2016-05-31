@@ -27,7 +27,7 @@ public class DataRetriever {
     public void start() throws Exception {
         int i = 1;
         for (String underlying : optData.getUnderlyingDataMap().keySet()) {
-            optData.getUnderlyingDataMap().get(underlying).setIbRequestIdBase(HtrDefinitions.REQUEST_ID_MULTIPLIER * i++);
+            optData.getUnderlyingDataMap().get(underlying).setIbRequestIdBase(HtrDefinitions.IB_REQUEST_MULT_OPTIONS * i++);
         }
         chainsRetriever.reloadOptionChains();
         HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS * 4);
