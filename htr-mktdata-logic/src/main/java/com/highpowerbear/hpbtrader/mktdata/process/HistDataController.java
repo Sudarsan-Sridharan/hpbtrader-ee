@@ -37,8 +37,8 @@ public class HistDataController {
         DataSeries dataSeries = dataSeriesDao.findDataSeries(seriesId);
         barsReceivedMap.putIfAbsent(dataSeries, new LinkedHashMap<>());
         Calendar c = HtrUtil.getCalendar();
-        c.setTimeInMillis(Long.valueOf(date) * 1000 + dataSeries.getInterval().getMillis()); // date-time stamp of the end of the bar
-        if (HtrEnums.Interval.MIN60.equals(dataSeries.getInterval())) {
+        c.setTimeInMillis(Long.valueOf(date) * 1000 + dataSeries.getBarType().getMillis()); // date-time stamp of the end of the bar
+        if (HtrEnums.BarType.MIN_60.equals(dataSeries.getBarType())) {
             c.set(Calendar.MINUTE, 0); // needed in case of bars started at 9:30 (END 10:00 not 10:30) or 17:15 (END 18:00 not 18:15)
         }
         dataBar.setbBarCloseDate(c);
@@ -57,7 +57,7 @@ public class HistDataController {
         List<DataBar> barsToCreate = new ArrayList<>(barsReceivedMap.get(dataSeries).values());
         dataSeriesDao.createDataBars(dataSeries, barsToCreate);
         DataBar lastDataBar = barsToCreate.get(barsToCreate.size() - 1);
-        boolean isCurrentLastBar = ((lastDataBar.getBarCloseDateMillis() + dataSeries.getInterval().getMillis()) > System.currentTimeMillis());
+        boolean isCurrentLastBar = ((lastDataBar.getBarCloseDateMillis() + dataSeries.getBarType().getMillis()) > System.currentTimeMillis());
         if (isCurrentLastBar) {
             mqSender.notifyBarsAdded(dataSeries);
         }
@@ -66,7 +66,7 @@ public class HistDataController {
 
     void requestFiveMinBars() {
         l.info("START requestFiveMinBars");
-        dataSeriesDao.getDataSeriesByInterval(HtrEnums.Interval.MIN5).stream().filter(DataSeries::isActive).forEach(s -> {
+        dataSeriesDao.getDataSeriesByBarType(HtrEnums.BarType.MIN_5).stream().filter(DataSeries::isActive).forEach(s -> {
             Contract contract = s.getInstrument().createIbContract();
             Calendar now = HtrUtil.getCalendar();
             int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);
@@ -76,7 +76,7 @@ public class HistDataController {
                     df.format(now.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
                     (HtrEnums.SecType.CASH.equals(s.getInstrument().getSecType()) ? HtrDefinitions.IB_DURATION_1_DAY : HtrDefinitions.IB_DURATION_2_DAY),
                     HtrDefinitions.IB_BAR_5_MIN,
-                    s.getInstrument().getSecType().getIbBarType(),
+                    s.getInstrument().getSecType().getIbWhatToShow(),
                     isUseRTH,
                     HtrDefinitions.IB_FORMAT_DATE_MILLIS);
         });
@@ -85,7 +85,7 @@ public class HistDataController {
 
     void requestSixtyMinBars() {
         l.info("START requestSixtyMinBars");
-        dataSeriesDao.getDataSeriesByInterval(HtrEnums.Interval.MIN60).stream().filter(DataSeries::isActive).forEach(s -> {
+        dataSeriesDao.getDataSeriesByBarType(HtrEnums.BarType.MIN_60).stream().filter(DataSeries::isActive).forEach(s -> {
             Contract contract = s.getInstrument().createIbContract();
             Calendar now = HtrUtil.getCalendar();
             int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);
@@ -95,7 +95,7 @@ public class HistDataController {
                     df.format(now.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
                     HtrDefinitions.IB_DURATION_1_WEEK,
                     HtrDefinitions.IB_BAR_1_HOUR,
-                    s.getInstrument().getSecType().getIbBarType(),
+                    s.getInstrument().getSecType().getIbWhatToShow(),
                     isUseRTH,
                     HtrDefinitions.IB_FORMAT_DATE_MILLIS);
         });
@@ -114,17 +114,17 @@ public class HistDataController {
         Contract contract = dataSeries.getInstrument().createIbContract();
         Calendar now = HtrUtil.getCalendar();
         int isUseRTH = (HtrEnums.SecType.FUT.equals(dataSeries.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);
-        if (HtrEnums.Interval.MIN5.equals(dataSeries.getInterval())) {
+        if (HtrEnums.BarType.MIN_5.equals(dataSeries.getBarType())) {
             ibController.reqHistoricalData(
                     dataSeries.getId() * HtrDefinitions.IB_REQUEST_MULT,
                     contract,
                     df.format(now.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
                     HtrDefinitions.IB_DURATION_10_DAY,
                     HtrDefinitions.IB_BAR_5_MIN,
-                    dataSeries.getInstrument().getSecType().getIbBarType(),
+                    dataSeries.getInstrument().getSecType().getIbWhatToShow(),
                     isUseRTH,
                     HtrDefinitions.IB_FORMAT_DATE_MILLIS);
-        } else if (HtrEnums.Interval.MIN60.equals(dataSeries.getInterval())) {
+        } else if (HtrEnums.BarType.MIN_60.equals(dataSeries.getBarType())) {
             int reqId = (dataSeries.getId() * HtrDefinitions.IB_REQUEST_MULT) + 4;
             Calendar his = HtrUtil.getCalendar();
             his.add(Calendar.MONTH, -3);
@@ -135,7 +135,7 @@ public class HistDataController {
                         df.format(his.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
                         HtrDefinitions.IB_DURATION_1_MONTH,
                         HtrDefinitions.IB_BAR_1_HOUR,
-                        dataSeries.getInstrument().getSecType().getIbBarType(),
+                        dataSeries.getInstrument().getSecType().getIbWhatToShow(),
                         isUseRTH,
                         HtrDefinitions.IB_FORMAT_DATE_MILLIS);
                 his.add(Calendar.MONTH, 1);
@@ -147,7 +147,7 @@ public class HistDataController {
                     df.format(now.getTime()) + " " + HtrDefinitions.IB_TIMEZONE,
                     HtrDefinitions.IB_DURATION_1_MONTH,
                     HtrDefinitions.IB_BAR_1_HOUR,
-                    dataSeries.getInstrument().getSecType().getIbBarType(),
+                    dataSeries.getInstrument().getSecType().getIbWhatToShow(),
                     isUseRTH,
                     HtrDefinitions.IB_FORMAT_DATE_MILLIS);
         }

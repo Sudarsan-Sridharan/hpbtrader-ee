@@ -35,6 +35,13 @@ public class StrategyDaoImpl implements StrategyDao {
     }
 
     @Override
+    public List<Strategy> getStrategies(String inputSeriesAlias) {
+        TypedQuery<Strategy> q = em.createQuery("SELECT s from Strategy s WHERE s.inputSeriesAliases LIKE :inputSeriesAlias ORDER BY s.displayOrder", Strategy.class);
+        q.setParameter("inputSeriesAlias", "%" + inputSeriesAlias + "%");
+        return q.getResultList();
+    }
+
+    @Override
     public Strategy findStrategy(Integer id) {
         return em.find(Strategy.class, id);
     }

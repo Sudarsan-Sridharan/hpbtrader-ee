@@ -45,7 +45,7 @@ public class Strategy implements Serializable {
     private Long numLosers = 0L;
 
     public String getDefaultInputSeriesAlias() {
-        return this.inputSeriesAliases.split(",")[0];
+        return this.inputSeriesAliases.split(",")[0].trim();
     }
 
     public void recalculateStats(Trade closedTrade) {

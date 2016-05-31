@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface DataSeriesDao {
     List<DataSeries> getAllDataSeries();
-    List<DataSeries> getDataSeriesByInterval(HtrEnums.Interval interval);
+    List<DataSeries> getDataSeriesByBarType(HtrEnums.BarType barType);
     DataSeries getDataSeriesByAlias(String alias);
     DataSeries findDataSeries(Integer id);
 

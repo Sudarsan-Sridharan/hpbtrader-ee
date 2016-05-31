@@ -36,9 +36,9 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
     }
 
     @Override
-    public List<DataSeries> getDataSeriesByInterval(HtrEnums.Interval interval) {
+    public List<DataSeries> getDataSeriesByBarType(HtrEnums.BarType barType) {
         TypedQuery<DataSeries> q = em.createQuery("SELECT s FROM DataSeries s WHERE s.interval = :interval", DataSeries.class);
-        q.setParameter("interval", interval);
+        q.setParameter("interval", barType);
         return q.getResultList();
     }
 

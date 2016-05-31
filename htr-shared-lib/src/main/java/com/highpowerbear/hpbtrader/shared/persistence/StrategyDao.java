@@ -9,6 +9,7 @@ import java.util.List;
  */
 public interface StrategyDao {
     List<Strategy> getStrategies();
+    List<Strategy> getStrategies(String inputSeriesAlias);
     Strategy findStrategy(Integer id);
     void updateStrategy(Strategy strategy);
     void deleteStrategy(Strategy strategy);

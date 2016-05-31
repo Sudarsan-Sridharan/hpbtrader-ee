@@ -74,7 +74,7 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
         if (dataBars.size() < HtrDefinitions.BARS_REQUIRED + INDICATORS_LIST_SIZE) {
             return new OperResult<>(false, "not enough  bars available");
         }
-        long intervalMillis = inputDataSeries.getInterval().getMillis();
+        long intervalMillis = inputDataSeries.getBarType().getMillis();
         long nowMillis = HtrUtil.getCalendar().getTimeInMillis();
         boolean isCurrentBar = ((lastDataBar.getBarCloseDateMillis() + intervalMillis) > nowMillis);
         if (!isCurrentBar) {

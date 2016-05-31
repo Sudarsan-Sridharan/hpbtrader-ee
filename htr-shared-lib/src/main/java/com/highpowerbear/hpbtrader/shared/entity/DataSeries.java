@@ -23,11 +23,10 @@ public class DataSeries implements Serializable {
     @ManyToOne
     private Instrument instrument;
     @Enumerated(EnumType.STRING)
-    @Column(name = "sinterval")
-    private HtrEnums.Interval interval;
+    private HtrEnums.BarType barType;
     private Integer displayOrder;
     private boolean active;
-    private String alias; // symbol_currency_exchange_interval
+    private String alias; // symbol_currency_exchange_barType
 
     @Override
     public boolean equals(Object o) {
@@ -60,12 +59,12 @@ public class DataSeries implements Serializable {
         this.instrument = instrument;
     }
 
-    public HtrEnums.Interval getInterval() {
-        return interval;
+    public HtrEnums.BarType getBarType() {
+        return barType;
     }
 
-    public void setInterval(HtrEnums.Interval interval) {
-        this.interval = interval;
+    public void setBarType(HtrEnums.BarType barType) {
+        this.barType = barType;
     }
 
     public Integer getDisplayOrder() {

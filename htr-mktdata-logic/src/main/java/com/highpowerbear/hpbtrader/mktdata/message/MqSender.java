@@ -7,10 +7,8 @@ import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.jms.JMSContext;
-import javax.jms.JMSProducer;
-import javax.jms.Queue;
-import javax.jms.TextMessage;
+import javax.jms.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -22,14 +20,19 @@ public class MqSender {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject private JMSContext jmsContext;
-    @Resource(lookup = "java:/jms/queue/mktdata_strategy")
+    @Resource(lookup = "java:/jms/queue/MktDataToStrategyQ")
     private Queue mktDataToStrategyQ;
 
     public void notifyBarsAdded(DataSeries dataSeries) {
-        l.info("BEGIN send message to MQ=mktdata_strategy, dataSeries=" + dataSeries.getId() + " (" + dataSeries.getAlias() + ")");
-        JMSProducer producer = jmsContext.createProducer();
-        TextMessage message = jmsContext.createTextMessage(dataSeries.getId() + "," + dataSeries.getAlias());
-        producer.send(mktDataToStrategyQ, message);
-        l.info("END send message to MQ=mktdata_strategy, dataSeries=" + dataSeries.getId() + " (" + dataSeries.getAlias() + ")");
+        try {
+            l.info("BEGIN send message to MQ=MktDataToStrategyQ, corId=" + dataSeries.getId() + " (" + dataSeries.getAlias() + ")");
+            JMSProducer producer = jmsContext.createProducer();
+            TextMessage message = jmsContext.createTextMessage(dataSeries.getAlias());
+            message.setJMSCorrelationID(String.valueOf(dataSeries.getId()));
+            producer.send(mktDataToStrategyQ, message);
+            l.info("END send message to MQ=MktDataToStrategyQ, corId=" + dataSeries.getId() + " (" + dataSeries.getAlias() + ")");
+        } catch (JMSException e) {
+            l.log(Level.SEVERE, "Error", e);
+        }
     }
 }

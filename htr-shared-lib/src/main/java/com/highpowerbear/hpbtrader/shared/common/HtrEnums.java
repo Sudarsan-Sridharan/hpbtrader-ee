@@ -65,12 +65,12 @@ public class HtrEnums {
         }
     }
 
-    public enum Interval {
-        MIN5(300000),
-        MIN60(3600000);
+    public enum BarType {
+        MIN_5(300000),
+        MIN_60(3600000);
         
         private long millis;
-        Interval(long millis) {
+        BarType(long millis) {
             this.millis = millis;
         }
         public long getMillis() {
@@ -79,26 +79,26 @@ public class HtrEnums {
     }
     
     public enum SecType {
-        STK(100, HtrDefinitions.IB_BAR_TYPE_TRADES),
-        OPT(1, HtrDefinitions.IB_BAR_TYPE_TRADES),
-        FUT(1, HtrDefinitions.IB_BAR_TYPE_TRADES),
-        FOP(1, HtrDefinitions.IB_BAR_TYPE_TRADES),
-        CASH(100000, HtrDefinitions.IB_BAR_TYPE_ASK);
+        STK(100, HtrDefinitions.IB_TRADES_LITERAL),
+        OPT(1, HtrDefinitions.IB_TRADES_LITERAL),
+        FUT(1, HtrDefinitions.IB_TRADES_LITERAL),
+        FOP(1, HtrDefinitions.IB_TRADES_LITERAL),
+        CASH(100000, HtrDefinitions.IB_ASK_LITERAL);
 
         private int defaultTradingQuantity;
-        private String ibBarType;
+        private String ibWhatToShow;
 
-        SecType(int defaultTradingQuantity, String ibBarType) {
+        SecType(int defaultTradingQuantity, String ibWhatToShow) {
             this.defaultTradingQuantity = defaultTradingQuantity;
-            this.ibBarType = ibBarType;
+            this.ibWhatToShow = ibWhatToShow;
         }
 
         public int getDefaultTradingQuantity() {
             return defaultTradingQuantity;
         }
 
-        public String getIbBarType() {
-            return ibBarType;
+        public String getIbWhatToShow() {
+            return ibWhatToShow;
         }
     }
     
@@ -341,7 +341,7 @@ public class HtrEnums {
         BROWN,
         BROWN_BG,
         DODGER_BLUE,
-        DODGER_BLUE_BG;
+        DODGER_BLUE_BG
     }
 
     public enum OptRequestIdOffset {

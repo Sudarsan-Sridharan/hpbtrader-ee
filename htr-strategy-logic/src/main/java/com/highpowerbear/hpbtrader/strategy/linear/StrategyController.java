@@ -81,6 +81,10 @@ public class StrategyController implements Serializable {
         return strategyLogic;
     }
 
+    public void processStrategy(Strategy strategy) {
+        processStrategy(defaultContextMap.get(strategy));
+    }
+
     public void processStrategy(ProcessContext ctx) {
         StrategyLogic sl = strategyLogicMap.get(ctx.getStrategy());
         String logMessage = " strategy, id=" + ctx.getStrategy().getId() + ", " + ctx.getStrategy().getDefaultInputSeriesAlias() + ", " + ctx.getStrategy().getStrategyType() + " --> " + sl.getClass().getSimpleName();
@@ -146,7 +150,7 @@ public class StrategyController implements Serializable {
         l.info("BEGIN backtestStrategy " + logMessage);
 
         DataSeries inputDataSeries = dataSeriesDao.getDataSeriesByAlias(ctx.getStrategy().getDefaultInputSeriesAlias());
-        int numIterations = (int) ((toDate.getTimeInMillis() - fromDate.getTimeInMillis()) / inputDataSeries.getInterval().getMillis());
+        int numIterations = (int) ((toDate.getTimeInMillis() - fromDate.getTimeInMillis()) / inputDataSeries.getBarType().getMillis());
         Calendar iterDate = Calendar.getInstance();
         iterDate.setTimeInMillis(fromDate.getTimeInMillis());
         int i = 0;

@@ -8,8 +8,8 @@ import java.text.SimpleDateFormat;
  */
 public class HtrDefinitions {
     // constants
-    public static final String IB_BAR_TYPE_ASK = "ASK";
-    public static final String IB_BAR_TYPE_TRADES = "TRADES";
+    public static final String IB_ASK_LITERAL = "ASK";
+    public static final String IB_TRADES_LITERAL = "TRADES";
     public static final String IB_TIMEZONE = "EST";
     public static final String FINISH = "finish";
     public static final String IB_DURATION_1_DAY = "1 D";
