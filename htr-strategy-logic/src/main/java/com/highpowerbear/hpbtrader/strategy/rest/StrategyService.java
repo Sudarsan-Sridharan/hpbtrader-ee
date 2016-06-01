@@ -57,7 +57,7 @@ public class StrategyService {
         }
         Calendar fromDate = timeFrame.getFromDate() == null ? HtrUtil.getCalendarMonthsOffset(HtrDefinitions.BACKTEST_DEFAULT_MONTHS) : timeFrame.getFromDate();
         Calendar toDate = timeFrame.getToDate() == null ? HtrUtil.getCalendar() : timeFrame.getToDate();
-        strategyController.backtestStrategy(strategy, fromDate, toDate);
+        strategyController.queueBacktestStrategy(strategy, new TimeFrame(fromDate, toDate));
         return Response.ok().build();
     }
 
@@ -80,6 +80,7 @@ public class StrategyService {
         if (strategy == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
+        ibOrder.setStrategy(strategy);
         strategyController.manualOrder(ibOrder);
         return Response.ok().build();
     }
@@ -189,6 +190,6 @@ public class StrategyService {
         if (strategy == null) {
             return null;
         }
-        return backtest ? strategyController.getBacktestContextMap().get(strategy) : strategyController.getDefaultContextMap().get(strategy);
+        return backtest ? strategyController.getBacktestContextMap().get(strategy) : strategyController.getProcessContextMap().get(strategy);
     }
 }

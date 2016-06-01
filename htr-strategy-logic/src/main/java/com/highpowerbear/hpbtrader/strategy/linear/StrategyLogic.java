@@ -10,6 +10,7 @@ import java.util.Calendar;
  * @author robertk
  */
 public interface StrategyLogic {
+    Strategy getStrategy();
     ProcessContext getProcessContext();
     OperResult<Boolean, String> prepare();
     OperResult<Boolean, String> prepare(Calendar lastDate);

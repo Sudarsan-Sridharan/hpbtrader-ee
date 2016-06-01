@@ -47,6 +47,11 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     }
 
     @Override
+    public Strategy getStrategy() {
+        return this.ctx.getStrategy();
+    }
+
+    @Override
     public ProcessContext getProcessContext() {
         return this.ctx;
     }

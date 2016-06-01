@@ -39,6 +39,7 @@ public class HtrDefinitions {
     public static final Integer WEBSOCKET_ASYNC_SEND_TIMEOUT = 5 * 1000; // milliseconds
     public static final int JPA_MAX_RESULTS = 1000;
     public static final int BACKTEST_DEFAULT_MONTHS = 3;
+    public static final int BLOCKING_QUEUE_CAPACITY = 5;
 
     // options
     public static final Integer IB_REQUEST_MULT_OPTIONS = 1000;

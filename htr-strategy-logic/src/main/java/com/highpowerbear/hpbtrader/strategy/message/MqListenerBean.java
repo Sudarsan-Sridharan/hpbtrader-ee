@@ -37,7 +37,7 @@ public class MqListenerBean implements MessageListener {
                 String seriesAlias = ((TextMessage) message).getText();
                 l.info("Text message received from MQ=MktDataToStrategyQ, corId=" + message.getJMSCorrelationID() + ", seriesAlias=" + seriesAlias);
                 List<Strategy> strategies = strategyDao.getStrategies(seriesAlias);
-                strategies.forEach(strategyController::processStrategy);
+                strategies.forEach(str -> strategyController.queueProcessStrategy(str, seriesAlias));
             } else {
                 l.warning("Non-text message received from MQ=MktDataToStrategyQ, ignoring");
             }

@@ -3,6 +3,7 @@ package com.highpowerbear.hpbtrader.strategy.linear;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+import com.highpowerbear.hpbtrader.shared.entity.Strategy;
 import com.highpowerbear.hpbtrader.shared.entity.Trade;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -39,6 +40,7 @@ public class OrderStateHandler {
     }
 
     public void orderFilled(ProcessContext ctx, IbOrder ibOrder) {
+        Strategy str = ctx.getStrategy();
         List<Trade> trades = ctx.getTradesByOrder(ibOrder);
         Trade trade1 = trades.get(0);
         Trade trade2 = (ibOrder.isReversalOrder() ? trades.get(1) : null);
@@ -47,7 +49,7 @@ public class OrderStateHandler {
             trade1.open(ibOrder.getFillPrice());
         } else {
             trade1.close(ibOrder.getEventDate(HtrEnums.IbOrderStatus.FILLED), ibOrder.getFillPrice());
-            ctx.getStrategy().recalculateStats(trade1);
+            str.recalculateStats(trade1);
         }
         ctx.updateOrCreateTrade(trade1, ibOrder.getFillPrice());
 
@@ -56,8 +58,8 @@ public class OrderStateHandler {
             ctx.updateOrCreateTrade(trade2, ibOrder.getFillPrice());
         }
 
-        ctx.getStrategy().setNumFilledOrders(ctx.getStrategy().getNumFilledOrders() + 1);
-        ctx.getStrategy().setCurrentPosition(ibOrder.isBuyOrder() ? ctx.getStrategy().getCurrentPosition() + ibOrder.getQuantity() : ctx.getStrategy().getCurrentPosition() - ibOrder.getQuantity());
+        str.setNumFilledOrders(str.getNumFilledOrders() + 1);
+        str.setCurrentPosition(ibOrder.isBuyOrder() ? str.getCurrentPosition() + ibOrder.getQuantity() : str.getCurrentPosition() - ibOrder.getQuantity());
         ctx.updateStrategy();
     }
 
