@@ -8,8 +8,8 @@ import java.util.List;
  * Created by robertk on 19.11.2015.
  */
 public interface StrategyDao {
-    List<Strategy> getStrategies();
-    List<Strategy> getStrategies(String inputSeriesAlias);
+    List<Strategy> getStrategiesByInputSeriesAlias();
+    List<Strategy> getStrategiesByInputSeriesAlias(String inputSeriesAlias);
     Strategy findStrategy(Integer id);
     void updateStrategy(Strategy strategy);
     void deleteStrategy(Strategy strategy);

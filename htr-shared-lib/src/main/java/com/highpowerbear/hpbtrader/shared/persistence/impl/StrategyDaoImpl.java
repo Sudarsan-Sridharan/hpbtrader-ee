@@ -29,13 +29,13 @@ public class StrategyDaoImpl implements StrategyDao {
     @Inject private IbOrderDao ibOrderDao;
 
     @Override
-    public List<Strategy> getStrategies() {
+    public List<Strategy> getStrategiesByInputSeriesAlias() {
         TypedQuery<Strategy> q = em.createQuery("SELECT s from Strategy s ORDER BY s.displayOrder", Strategy.class);
         return q.getResultList();
     }
 
     @Override
-    public List<Strategy> getStrategies(String inputSeriesAlias) {
+    public List<Strategy> getStrategiesByInputSeriesAlias(String inputSeriesAlias) {
         TypedQuery<Strategy> q = em.createQuery("SELECT s from Strategy s WHERE s.inputSeriesAliases LIKE :inputSeriesAlias ORDER BY s.displayOrder", Strategy.class);
         q.setParameter("inputSeriesAlias", "%" + inputSeriesAlias + "%");
         return q.getResultList();

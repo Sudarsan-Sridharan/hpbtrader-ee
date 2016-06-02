@@ -32,7 +32,7 @@ public class StrategyService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public RestList<Strategy> getStrategies() {
-        List<Strategy> strategies =  strategyDao.getStrategies();
+        List<Strategy> strategies =  strategyDao.getStrategiesByInputSeriesAlias();
         return new RestList<>(strategies, (long) strategies.size());
     }
 

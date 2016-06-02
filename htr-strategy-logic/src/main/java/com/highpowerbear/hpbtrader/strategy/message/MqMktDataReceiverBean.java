@@ -21,10 +21,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @MessageDriven(activationConfig = {
-@ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "java:/jms/queue/MktDataToStrategyQ"),
-@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue")
+    @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "java:/jms/queue/MktDataToStrategyQ"),
+    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue")
 })
-public class MqListenerBean implements MessageListener {
+public class MqMktDataReceiverBean implements MessageListener {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject private StrategyController strategyController;
@@ -34,9 +34,11 @@ public class MqListenerBean implements MessageListener {
     public void onMessage(Message message) {
         try {
             if (message instanceof TextMessage) {
-                String seriesAlias = ((TextMessage) message).getText();
-                l.info("Text message received from MQ=MktDataToStrategyQ, corId=" + message.getJMSCorrelationID() + ", seriesAlias=" + seriesAlias);
-                List<Strategy> strategies = strategyDao.getStrategies(seriesAlias);
+                String msg = ((TextMessage) message).getText();
+                String corId = message.getJMSCorrelationID();
+                l.info("Text message received from MQ=MktDataToStrategyQ, corId=" + corId + ", msg=" + msg);
+                String seriesAlias = msg.split(":")[1].trim();
+                List<Strategy> strategies = strategyDao.getStrategiesByInputSeriesAlias(seriesAlias);
                 strategies.forEach(str -> strategyController.queueProcessStrategy(str, seriesAlias));
             } else {
                 l.warning("Non-text message received from MQ=MktDataToStrategyQ, ignoring");

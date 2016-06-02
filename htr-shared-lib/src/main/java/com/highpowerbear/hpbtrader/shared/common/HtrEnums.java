@@ -385,4 +385,10 @@ public class HtrEnums {
         MKTDATA,
         EXEC
     }
+
+    public enum MessageType {
+        BARS_ADDED,
+        NEW_ORDER,
+        ORDER_STATUS_CHANGED
+    }
 }

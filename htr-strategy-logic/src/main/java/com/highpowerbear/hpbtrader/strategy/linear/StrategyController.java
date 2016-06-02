@@ -56,31 +56,35 @@ public class StrategyController implements Serializable {
     private Map<Strategy, Boolean> backtestStatusMap = new ConcurrentHashMap<>(); // false = in progress, true = finished
     private BlockingQueue<GenericTuple<Strategy, TimeFrame>> backtestQueue = new ArrayBlockingQueue<>(HtrDefinitions.BLOCKING_QUEUE_CAPACITY);
 
-    private class ProcessQueueConsumer implements Runnable {
-        private Strategy strategy;
+    @PostConstruct
+    public void init() {
+        initProcess();
+        initBacktest();
+    }
 
-        public ProcessQueueConsumer(Strategy strategy) {
-            this.strategy = strategy;
-        }
-
-        @Override
-        public void run() {
-            BlockingQueue<String> queue = processQueueMap.get(strategy);
-            while (true) {
-                try {
-                    String seriesAlias = queue.take();
-                    l.info("Process strategy request detected, strategy id=" + strategy.getId() + ", triggered by series=" + seriesAlias);
-                    processStrategy(strategyLogicMap.get(strategy));
-                } catch (InterruptedException ie) {
-                    l.warning(ie.getMessage());
+    private void initProcess() {
+        for (Strategy strategy : strategyDao.getStrategiesByInputSeriesAlias()) {
+            ProcessContext ctx = new DatabaseCtx(strategy);
+            processContextMap.put(strategy, ctx);
+            strategyLogicMap.put(strategy, createStrategyLogic(ctx));
+            BlockingQueue<String> queue = new ArrayBlockingQueue<>(HtrDefinitions.BLOCKING_QUEUE_CAPACITY);
+            processQueueMap.put(strategy, queue);
+            managedExecutorService.submit(() -> {
+                while (true) {
+                    try {
+                        String seriesAlias = queue.take();
+                        l.info("Process strategy request detected, strategy id=" + strategy.getId() + ", triggered by series=" + seriesAlias);
+                        processStrategy(strategyLogicMap.get(strategy));
+                    } catch (InterruptedException ie) {
+                        l.warning(ie.getMessage());
+                    }
                 }
-            }
+            });
         }
     }
 
-    private class BacktestQueueConsumer implements Runnable {
-        @Override
-        public void run() {
+    private void initBacktest() {
+        managedExecutorService.submit(() -> {
             while (true) {
                 try {
                     GenericTuple<Strategy, TimeFrame> backtestParam = backtestQueue.take();
@@ -95,19 +99,7 @@ public class StrategyController implements Serializable {
                     l.warning(ie.getMessage());
                 }
             }
-        }
-    }
-
-    @PostConstruct
-    public void init() {
-        for (Strategy strategy : strategyDao.getStrategies()) {
-            ProcessContext ctx = new DatabaseCtx(strategy);
-            processContextMap.put(strategy, ctx);
-            strategyLogicMap.put(strategy, createStrategyLogic(ctx));
-            processQueueMap.put(strategy, new ArrayBlockingQueue<>(HtrDefinitions.BLOCKING_QUEUE_CAPACITY));
-            managedExecutorService.submit(new ProcessQueueConsumer(strategy));
-        }
-        managedExecutorService.submit(new BacktestQueueConsumer());
+        });
     }
 
     public Map<Strategy, ProcessContext> getProcessContextMap() {
