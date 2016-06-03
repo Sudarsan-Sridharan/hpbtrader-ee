@@ -36,7 +36,7 @@ public class MqReceiverBean implements MessageListener {
             if (message instanceof TextMessage) {
                 String msg = ((TextMessage) message).getText();
                 String corId = message.getJMSCorrelationID();
-                l.info("Text message received from MQ=StrategyToExecQ, corId=" + corId + ", msg=" + msg);
+                l.info("Text message received from MQ=" + HtrDefinitions.STRATEGY_TO_EXEC_QUEUE + ", corId=" + corId + ", msg=" + msg);
                 Long id = Long.valueOf(corId);
                 IbOrder ibOrder = ibOrderDao.findIbOrder(id);
                 HtrEnums.MessageType messageType = HtrUtil.parseMessageType(msg);
@@ -44,7 +44,7 @@ public class MqReceiverBean implements MessageListener {
                     ibController.submitIbOrder(ibOrder);
                 }
             } else {
-                l.warning("Non-text message received from MQ=StrategyToExecQ, ignoring");
+                l.warning("Non-text message received from MQ=" + HtrDefinitions.STRATEGY_TO_EXEC_QUEUE + ", ignoring");
             }
         } catch (JMSException e) {
             l.log(Level.SEVERE, "Error", e);

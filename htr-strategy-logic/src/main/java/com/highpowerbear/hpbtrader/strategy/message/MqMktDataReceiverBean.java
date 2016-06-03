@@ -38,7 +38,7 @@ public class MqMktDataReceiverBean implements MessageListener {
             if (message instanceof TextMessage) {
                 String msg = ((TextMessage) message).getText();
                 String corId = message.getJMSCorrelationID();
-                l.info("Text message received from MQ=MktDataToStrategyQ, corId=" + corId + ", msg=" + msg);
+                l.info("Text message received from MQ=" + HtrDefinitions.MKTDATA_TO_STRATEGY_QUEUE + ", corId=" + corId + ", msg=" + msg);
                 HtrEnums.MessageType messageType = HtrUtil.parseMessageType(msg);
                 if (HtrEnums.MessageType.BARS_ADDED.equals(messageType)) {
                     String seriesAlias = HtrUtil.parseMessageContent(msg);
@@ -46,7 +46,7 @@ public class MqMktDataReceiverBean implements MessageListener {
                     strategies.forEach(str -> strategyController.queueProcessStrategy(str, seriesAlias));
                 }
             } else {
-                l.warning("Non-text message received from MQ=MktDataToStrategyQ, ignoring");
+                l.warning("Non-text message received from MQ=" + HtrDefinitions.MKTDATA_TO_STRATEGY_QUEUE + ", ignoring");
             }
         } catch (JMSException e) {
             l.log(Level.SEVERE, "Error", e);

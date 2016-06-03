@@ -30,12 +30,12 @@ public class MqSender {
         try {
             String corId = String.valueOf(ibOrder.getId());
             String msg = HtrUtil.constructMessage(HtrEnums.MessageType.ORDER_STATUS_CHANGED, ibOrder.getDescription() + ", status=" + ibOrder.getStatus());
-            l.info("BEGIN send message to MQ=MktDataToStrategyQ, corId=" + corId + ", msg=" + msg);
+            l.info("BEGIN send message to MQ=" + HtrDefinitions.EXEC_TO_STRATEGY_QUEUE + ", corId=" + corId + ", msg=" + msg);
             JMSProducer producer = jmsContext.createProducer();
             TextMessage message = jmsContext.createTextMessage(msg);
             message.setJMSCorrelationID(corId);
             producer.send(execToStrategyQ, message);
-            l.info("END send message to MQ=MktDataToStrategyQ, corId=" + corId + ", msg=" + msg);
+            l.info("END send message to MQ=" + HtrDefinitions.EXEC_TO_STRATEGY_QUEUE + ", corId=" + corId + ", msg=" + msg);
         } catch (JMSException e) {
             l.log(Level.SEVERE, "Error", e);
         }
