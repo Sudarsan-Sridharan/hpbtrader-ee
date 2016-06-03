@@ -1,8 +1,13 @@
 package com.highpowerbear.hpbtrader.strategy.message;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
+import com.highpowerbear.hpbtrader.strategy.linear.OrderStateHandler;
+import com.highpowerbear.hpbtrader.strategy.linear.ProcessContext;
+import com.highpowerbear.hpbtrader.strategy.linear.StrategyController;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -25,6 +30,8 @@ public class MqExecReceiverBean implements MessageListener {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject private IbOrderDao ibOrderDao;
+    @Inject private StrategyController strategyController;
+    @Inject private OrderStateHandler orderStateHandler;
 
     @Override
     public void onMessage(Message message) {
@@ -35,7 +42,11 @@ public class MqExecReceiverBean implements MessageListener {
                 l.info("Text message received from MQ=ExecToStrategyQ, corId=" + corId + ", msg=" + msg);
                 Long id = Long.valueOf(corId);
                 IbOrder ibOrder = ibOrderDao.findIbOrder(id);
-                // TODO process ib order
+                HtrEnums.MessageType messageType = HtrUtil.parseMessageType(msg);
+                if (HtrEnums.MessageType.ORDER_STATUS_CHANGED.equals(messageType)) {
+                    ProcessContext ctx = strategyController.getTradingContext(ibOrder.getStrategy());
+                    orderStateHandler.orderStateChanged(ctx, ibOrder);
+                }
             } else {
                 l.warning("Non-text message received from MQ=ExecToStrategyQ, ignoring");
             }

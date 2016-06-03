@@ -5,6 +5,8 @@ package com.highpowerbear.hpbtrader.strategy.message;
  */
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.Strategy;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 import com.highpowerbear.hpbtrader.strategy.linear.StrategyController;
@@ -37,9 +39,12 @@ public class MqMktDataReceiverBean implements MessageListener {
                 String msg = ((TextMessage) message).getText();
                 String corId = message.getJMSCorrelationID();
                 l.info("Text message received from MQ=MktDataToStrategyQ, corId=" + corId + ", msg=" + msg);
-                String seriesAlias = msg.split(":")[1].trim();
-                List<Strategy> strategies = strategyDao.getStrategiesByInputSeriesAlias(seriesAlias);
-                strategies.forEach(str -> strategyController.queueProcessStrategy(str, seriesAlias));
+                HtrEnums.MessageType messageType = HtrUtil.parseMessageType(msg);
+                if (HtrEnums.MessageType.BARS_ADDED.equals(messageType)) {
+                    String seriesAlias = HtrUtil.parseMessageContent(msg);
+                    List<Strategy> strategies = strategyDao.getStrategiesByInputSeriesAlias(seriesAlias);
+                    strategies.forEach(str -> strategyController.queueProcessStrategy(str, seriesAlias));
+                }
             } else {
                 l.warning("Non-text message received from MQ=MktDataToStrategyQ, ignoring");
             }

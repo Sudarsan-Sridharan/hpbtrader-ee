@@ -1,6 +1,9 @@
 package com.highpowerbear.hpbtrader.exec.message;
 
+import com.highpowerbear.hpbtrader.exec.ibclient.IbController;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 
@@ -25,6 +28,7 @@ public class MqReceiverBean implements MessageListener {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject private IbOrderDao ibOrderDao;
+    @Inject private IbController ibController;
 
     @Override
     public void onMessage(Message message) {
@@ -35,7 +39,10 @@ public class MqReceiverBean implements MessageListener {
                 l.info("Text message received from MQ=StrategyToExecQ, corId=" + corId + ", msg=" + msg);
                 Long id = Long.valueOf(corId);
                 IbOrder ibOrder = ibOrderDao.findIbOrder(id);
-                // TODO process ib order
+                HtrEnums.MessageType messageType = HtrUtil.parseMessageType(msg);
+                if (HtrEnums.MessageType.NEW_ORDER.equals(messageType)) {
+                    ibController.submitIbOrder(ibOrder);
+                }
             } else {
                 l.warning("Non-text message received from MQ=StrategyToExecQ, ignoring");
             }

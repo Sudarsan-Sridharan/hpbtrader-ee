@@ -1,6 +1,7 @@
 package com.highpowerbear.hpbtrader.exec.ibclient;
 
 import com.highpowerbear.hpbtrader.exec.common.SingletonRepo;
+import com.highpowerbear.hpbtrader.exec.message.MqSender;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
@@ -14,9 +15,11 @@ import com.ib.client.OrderState;
  * @author rkolar
  */
 public class IbListenerImpl extends AbstractIbListener {
+
     private IbOrderDao ibOrderDao = SingletonRepo.getInstance().getIbOrderDao();
     private IbController ibController = SingletonRepo.getInstance().getIbController();
     private HeartbeatControl heartbeatControl = SingletonRepo.getInstance().getHeartbeatControl();
+    private MqSender mqSender = SingletonRepo.getInstance().getMqSender();
 
     private IbAccount ibAccount;
 
@@ -41,15 +44,18 @@ public class IbListenerImpl extends AbstractIbListener {
 
         if (HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) && HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
             heartbeatControl.heartbeatReceived(ibOrder);
+
         } else if (HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
             heartbeatControl.heartbeatReceived(ibOrder);
-            //orderStateHandler.orderSubmitted(ibOrder, HtrUtil.getCalendar());
+            mqSender.notifyOrderStateChanged(ibOrder);
+
         } else if (HtrEnums.IbOrderStatus.CANCELLED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.CANCELLED.equals(ibOrder.getStatus())) {
             heartbeatControl.removeHeartbeat(ibOrder);
-            //orderStateHandler.orderCanceled(ibOrder, HtrUtil.getCalendar());
+            mqSender.notifyOrderStateChanged(ibOrder);
+
         } else if (HtrEnums.IbOrderStatus.FILLED.name().equalsIgnoreCase(status) && remaining == 0 && !HtrEnums.IbOrderStatus.FILLED.equals(ibOrder.getStatus())) {
             heartbeatControl.removeHeartbeat(ibOrder);
-            //orderStateHandler.orderFilled(ibOrder, HtrUtil.getCalendar(), avgFillPrice);
+            mqSender.notifyOrderStateChanged(ibOrder);
         }
     }
 

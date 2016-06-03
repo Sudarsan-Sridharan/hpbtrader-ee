@@ -2,6 +2,7 @@ package com.highpowerbear.hpbtrader.mktdata.message;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 
 import javax.annotation.Resource;
@@ -27,7 +28,7 @@ public class MqSender {
     public void notifyBarsAdded(DataSeries dataSeries) {
         try {
             String corId = String.valueOf(dataSeries.getId());
-            String msg = HtrEnums.MessageType.BARS_ADDED.name() + ": " + dataSeries.getAlias();
+            String msg = HtrUtil.constructMessage(HtrEnums.MessageType.BARS_ADDED, dataSeries.getAlias());
             l.info("BEGIN send message to MQ=MktDataToStrategyQ, corId=" + corId + ", msg=" + msg);
             JMSProducer producer = jmsContext.createProducer();
             TextMessage message = jmsContext.createTextMessage(msg);

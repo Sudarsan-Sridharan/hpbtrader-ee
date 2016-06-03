@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.logging.Logger;
 
 /*
  * To change this template, choose Tools | Templates
@@ -17,6 +18,7 @@ import java.util.TimeZone;
  * @author rkolar
  */
 public class HtrUtil {
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
     private static final DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
     private static DateFormat expiryFormatFull = new SimpleDateFormat("yyyyMMdd");
     private static DateFormat expiryFormatShort = new SimpleDateFormat("yyyyMM");
@@ -161,5 +163,31 @@ public class HtrUtil {
 
     public static Double abs (Double number) {
         return (number != null ? Math.abs(number) : null);
+    }
+
+    public static String constructMessage(HtrEnums.MessageType type, String content) {
+        return type.name() + ": " + content;
+    }
+
+    public static HtrEnums.MessageType parseMessageType(String msg) {
+        HtrEnums.MessageType type = null;
+        String[] parts = msg.split(":");
+        if (parts.length == 2) {
+            try {
+                type = HtrEnums.MessageType.valueOf(parts[0].trim());
+            } catch (Exception e) {
+                l.warning(e.getMessage());
+            }
+        }
+        return type;
+    }
+
+    public static String parseMessageContent(String msg) {
+        String content = null;
+        String[] parts = msg.split(":");
+        if (parts.length == 2) {
+            content = parts[1].trim();
+        }
+        return content;
     }
 }

@@ -2,6 +2,7 @@ package com.highpowerbear.hpbtrader.strategy.message;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 
 import javax.annotation.Resource;
@@ -28,7 +29,7 @@ public class MqSender {
     public void newOrder(IbOrder ibOrder) {
         try {
             String corId = String.valueOf(ibOrder.getId());
-            String msg = HtrEnums.MessageType.NEW_ORDER.name() + ":" + ibOrder.getDescription();
+            String msg = HtrUtil.constructMessage(HtrEnums.MessageType.NEW_ORDER, ibOrder.getDescription());
             l.info("BEGIN send message to MQ=StrategyToExecQ, corId=" + corId + ", msg=" + msg);
             JMSProducer producer = jmsContext.createProducer();
             TextMessage message = jmsContext.createTextMessage(msg);

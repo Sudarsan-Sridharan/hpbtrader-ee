@@ -190,6 +190,6 @@ public class StrategyService {
         if (strategy == null) {
             return null;
         }
-        return backtest ? strategyController.getBacktestContextMap().get(strategy) : strategyController.getProcessContextMap().get(strategy);
+        return backtest ? strategyController.getBacktestContext(strategy) : strategyController.getTradingContext(strategy);
     }
 }

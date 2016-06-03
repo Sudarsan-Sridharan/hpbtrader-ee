@@ -49,9 +49,9 @@ public class StrategyController implements Serializable {
     @Resource
     private ManagedExecutorService managedExecutorService;
 
-    private Map<Strategy, ProcessContext> processContextMap = new ConcurrentHashMap<>();
-    private Map<Strategy, StrategyLogic> strategyLogicMap = new ConcurrentHashMap<>();
-    private Map<Strategy, BlockingQueue<String>> processQueueMap = new ConcurrentHashMap<>();
+    private Map<Strategy, ProcessContext> tradingContextMap = new ConcurrentHashMap<>();
+    private Map<Strategy, StrategyLogic> tradingLogicMap = new ConcurrentHashMap<>();
+    private Map<Strategy, BlockingQueue<String>> tradingQueueMap = new ConcurrentHashMap<>();
     private Map<Strategy, ProcessContext> backtestContextMap = new ConcurrentHashMap<>();
     private Map<Strategy, Boolean> backtestStatusMap = new ConcurrentHashMap<>(); // false = in progress, true = finished
     private BlockingQueue<GenericTuple<Strategy, TimeFrame>> backtestQueue = new ArrayBlockingQueue<>(HtrDefinitions.BLOCKING_QUEUE_CAPACITY);
@@ -65,16 +65,16 @@ public class StrategyController implements Serializable {
     private void initProcess() {
         for (Strategy strategy : strategyDao.getStrategiesByInputSeriesAlias()) {
             ProcessContext ctx = new DatabaseCtx(strategy);
-            processContextMap.put(strategy, ctx);
-            strategyLogicMap.put(strategy, createStrategyLogic(ctx));
+            tradingContextMap.put(strategy, ctx);
+            tradingLogicMap.put(strategy, createStrategyLogic(ctx));
             BlockingQueue<String> queue = new ArrayBlockingQueue<>(HtrDefinitions.BLOCKING_QUEUE_CAPACITY);
-            processQueueMap.put(strategy, queue);
+            tradingQueueMap.put(strategy, queue);
             managedExecutorService.submit(() -> {
                 while (true) {
                     try {
                         String seriesAlias = queue.take();
                         l.info("Process strategy request detected, strategy id=" + strategy.getId() + ", triggered by series=" + seriesAlias);
-                        processStrategy(strategyLogicMap.get(strategy));
+                        processStrategy(tradingLogicMap.get(strategy));
                     } catch (InterruptedException ie) {
                         l.warning(ie.getMessage());
                     }
@@ -102,12 +102,12 @@ public class StrategyController implements Serializable {
         });
     }
 
-    public Map<Strategy, ProcessContext> getProcessContextMap() {
-        return processContextMap;
+    public ProcessContext getTradingContext(Strategy strategy) {
+        return tradingContextMap.get(strategy);
     }
 
-    public Map<Strategy, ProcessContext> getBacktestContextMap() {
-        return backtestContextMap;
+    public ProcessContext getBacktestContext(Strategy strategy) {
+        return backtestContextMap.get(strategy);
     }
 
     public boolean isBacktestFinished(Strategy strategy) {
@@ -131,7 +131,7 @@ public class StrategyController implements Serializable {
 
     public void queueProcessStrategy(Strategy strategy, String seriesAlias) {
         try {
-            processQueueMap.get(strategy).put(seriesAlias);
+            tradingQueueMap.get(strategy).put(seriesAlias);
         } catch (InterruptedException ie) {
             l.log(Level.SEVERE, "Error", ie);
         }
@@ -225,7 +225,7 @@ public class StrategyController implements Serializable {
 
     public void manualOrder(IbOrder ibOrder) {
         Strategy str = ibOrder.getStrategy();
-        ProcessContext ctx = processContextMap.get(str);
+        ProcessContext ctx = tradingContextMap.get(str);
         DataSeries inputDataSeries = dataSeriesDao.getDataSeriesByAlias(str.getDefaultInputSeriesAlias());
         DataBar dataBar = dataSeriesDao.getLastDataBars(inputDataSeries, 1).get(0);
         String logMessage = " strategy, id=" + str.getId() + ", " + str.getDefaultInputSeriesAlias() + ", " + str.getStrategyType() + " --> " + "manual order";

@@ -39,7 +39,18 @@ public class OrderStateHandler {
         orderFilled(ctx, ibOrder);
     }
 
-    public void orderFilled(ProcessContext ctx, IbOrder ibOrder) {
+    public void orderStateChanged(ProcessContext ctx, IbOrder ibOrder) {
+        HtrEnums.IbOrderStatus status = ibOrder.getStatus();
+        if (HtrEnums.IbOrderStatus.FILLED.equals(status)) {
+            orderFilled(ctx, ibOrder);
+        } else if (HtrEnums.IbOrderStatus.CANCELLED.equals(status)) {
+            orderCanceled(ctx, ibOrder);
+        } else if (HtrEnums.IbOrderStatus.UNKNOWN.equals(status)) {
+            orderUnknown(ctx, ibOrder);
+        }
+    }
+
+    private void orderFilled(ProcessContext ctx, IbOrder ibOrder) {
         Strategy str = ctx.getStrategy();
         List<Trade> trades = ctx.getTradesByOrder(ibOrder);
         Trade trade1 = trades.get(0);
@@ -63,7 +74,7 @@ public class OrderStateHandler {
         ctx.updateStrategy();
     }
 
-    public void orderCanceled(ProcessContext ctx, IbOrder ibOrder) {
+    private void orderCanceled(ProcessContext ctx, IbOrder ibOrder) {
         List<Trade> trades = ctx.getTradesByOrder(ibOrder);
         trades.forEach(t -> {
             t.cncClose();
@@ -71,7 +82,7 @@ public class OrderStateHandler {
         });
     }
 
-    public void orderUnknown(ProcessContext ctx, IbOrder ibOrder) {
+    private void orderUnknown(ProcessContext ctx, IbOrder ibOrder) {
         List<Trade> trades = ctx.getTradesByOrder(ibOrder);
         trades.forEach(t -> {
             t.errClose();
