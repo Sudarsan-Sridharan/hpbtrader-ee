@@ -29,7 +29,7 @@ public class DataSeriesService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public RestList<DataSeries> getSeriesList() {
-        List<DataSeries> dataSeriesList = dataSeriesDao.getAllDataSeries();
+        List<DataSeries> dataSeriesList = dataSeriesDao.getDataSeries();
         return new RestList<>(dataSeriesList, (long) dataSeriesList.size());
     }
 
@@ -53,8 +53,8 @@ public class DataSeriesService {
         if (dataSeries == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        start = (start == null ? 0 : start);
-        limit = (limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit);
+        start = start == null ? 0 : start;
+        limit = limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit;
         return Response.ok(new RestList<>(dataSeriesDao.getPagedDataBars(dataSeries, start, limit), dataSeriesDao.getNumDataBars(dataSeries))).build();
     }
 

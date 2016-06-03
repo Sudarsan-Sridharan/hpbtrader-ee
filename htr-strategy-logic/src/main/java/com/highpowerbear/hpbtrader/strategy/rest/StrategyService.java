@@ -32,7 +32,7 @@ public class StrategyService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public RestList<Strategy> getStrategies() {
-        List<Strategy> strategies =  strategyDao.getStrategiesByInputSeriesAlias();
+        List<Strategy> strategies =  strategyDao.getStrategies();
         return new RestList<>(strategies, (long) strategies.size());
     }
 
@@ -88,90 +88,96 @@ public class StrategyService {
     @GET
     @Path("{strategyid}/strategylogs")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getStrategyLogs(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getStrategyLogs(strategyId, false, start, limit);
+    public Response getPagedStrategyLogs(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
+        return getPagedStrategyLogs(strategyId, false, start, limit);
     }
 
     @GET
     @Path("{strategyid}/backtest/strategylogs")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBacktestStrategyLogs(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getStrategyLogs(strategyId, true, start, limit);
+        return getPagedStrategyLogs(strategyId, true, start, limit);
     }
 
     @GET
     @Path("{strategyid}/iborders")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getIbOrders(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getIbOrders(strategyId, false, start, limit);
+    public Response getPagedIbOrders(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
+        return getPagedIbOrders(strategyId, false, start, limit);
     }
 
     @GET
     @Path("{strategyid}/backtest/iborders")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBacktestIbOrders(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getIbOrders(strategyId, true, start, limit);
+    public Response getPagedBacktestIbOrders(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
+        return getPagedIbOrders(strategyId, true, start, limit);
     }
 
     @GET
     @Path("{strategyid}/trades")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTrades(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getTrades(strategyId, false, start, limit);
+    public Response getPagedTrades(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
+        return getPagedTrades(strategyId, false, start, limit);
     }
 
     @GET
     @Path("{strategyid}/backtest/trades")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBacktestTrades(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getTrades(strategyId, true, start, limit);
+    public Response getPagedBacktestTrades(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
+        return getPagedTrades(strategyId, true, start, limit);
     }
 
     @GET
     @Path("trade/{tradeid}/tradelogs")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTradeLogs(@PathParam("tradeid") Long tradeId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getTradeLogs(tradeId, false, start, limit);
+    public Response getPagedTradeLogs(@PathParam("tradeid") Long tradeId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
+        return getPagedTradeLogs(tradeId, false, start, limit);
     }
 
     @GET
     @Path("{tradeid}/backtest/tradelogs")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBacktestTradeLogs(@PathParam("tradeid") Long tradeId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getTradeLogs(tradeId, false, start, limit);
+        return getPagedTradeLogs(tradeId, false, start, limit);
     }
 
-    private Response getStrategyLogs(Integer strategyId, boolean backtest, Integer start, Integer limit) {
+    private Response getPagedStrategyLogs(Integer strategyId, boolean backtest, Integer start, Integer limit) {
         ProcessContext ctx = getProcessContext(strategyId, backtest);
         if (ctx == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+        start = start == null ? 0 : start;
+        limit = limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit;
         List<StrategyLog> strategyLogs = ctx.getPagedStrategyLogs(start, limit);
         Long numStrategyLogs = ctx.getNumStrategyLogs();
         return Response.ok(new RestList<>(strategyLogs, numStrategyLogs)).build();
     }
 
-    private Response getIbOrders(Integer strategyId, boolean backtest, Integer start, Integer limit) {
+    private Response getPagedIbOrders(Integer strategyId, boolean backtest, Integer start, Integer limit) {
         ProcessContext ctx = getProcessContext(strategyId, backtest);
         if (ctx == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+        start = start == null ? 0 : start;
+        limit = limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit;
         List<IbOrder> ibOrders = ctx.getPagedIbOrders(start, limit);
         Long numIbOrders = ctx.getNumIbOrders();
         return Response.ok(new RestList<>(ibOrders, numIbOrders)).build();
     }
 
-    private Response getTrades(Integer strategyId, boolean backtest, Integer start, Integer limit) {
+    private Response getPagedTrades(Integer strategyId, boolean backtest, Integer start, Integer limit) {
         ProcessContext ctx = getProcessContext(strategyId, backtest);
         if (ctx == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+        start = start == null ? 0 : start;
+        limit = limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit;
         List<Trade> trades = ctx.getPagedTrades(start, limit);
         Long numTrades = ctx.getNumTrades();
         return Response.ok(new RestList<>(trades, numTrades)).build();
     }
 
-    private Response getTradeLogs(Long tradeId, boolean backtest, Integer start, Integer limit) {
+    private Response getPagedTradeLogs(Long tradeId, boolean backtest, Integer start, Integer limit) {
         Trade trade = tradeDao.findTrade(tradeId);
         if (trade == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -180,6 +186,8 @@ public class StrategyService {
         if (ctx == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+        start = start == null ? 0 : start;
+        limit = limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit;
         List<TradeLog> tradeLogs = ctx.getPagedTradeLogs(trade, start, limit);
         Long numTradeLogs = ctx.getNumTradeLogs(trade);
         return Response.ok(new RestList<>(tradeLogs, numTradeLogs)).build();

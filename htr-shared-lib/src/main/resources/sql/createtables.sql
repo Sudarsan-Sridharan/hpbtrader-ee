@@ -32,7 +32,7 @@ CREATE TABLE dataseries
 (
   id integer NOT NULL,
   instrument_id integer,
-  sinterval character varying(255),
+  bartype character varying(255),
   displayorder integer,
   active boolean,
   alias character varying(255),

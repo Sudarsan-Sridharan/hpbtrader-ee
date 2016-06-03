@@ -29,7 +29,7 @@ public class StrategyDaoImpl implements StrategyDao {
     @Inject private IbOrderDao ibOrderDao;
 
     @Override
-    public List<Strategy> getStrategiesByInputSeriesAlias() {
+    public List<Strategy> getStrategies() {
         TypedQuery<Strategy> q = em.createQuery("SELECT s from Strategy s ORDER BY s.displayOrder", Strategy.class);
         return q.getResultList();
     }

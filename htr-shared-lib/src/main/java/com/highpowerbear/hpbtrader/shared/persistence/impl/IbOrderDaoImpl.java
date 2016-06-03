@@ -104,4 +104,18 @@ public class IbOrderDaoImpl implements IbOrderDao {
         query.setParameter("strategy", strategy);
         return (Long) query.getSingleResult();
     }
+
+    @Override
+    public List<IbOrder> getPagedIbOrders(int start, int limit) {
+        TypedQuery<IbOrder> q = em.createQuery("SELECT o FROM IbOrder o ORDER BY o.createdDate DESC", IbOrder.class);
+        q.setFirstResult(start);
+        q.setMaxResults(limit);
+        return q.getResultList();
+    }
+
+    @Override
+    public Long getNumIbOrders() {
+        Query query = em.createQuery("SELECT COUNT(o) FROM IbOrder o");
+        return (Long) query.getSingleResult();
+    }
 }

@@ -30,15 +30,15 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
     @Inject private StrategyDao strategyDao;
 
     @Override
-    public List<DataSeries> getAllDataSeries() {
+    public List<DataSeries> getDataSeries() {
         TypedQuery<DataSeries> q = em.createQuery("SELECT s from DataSeries s ORDER BY s.displayOrder", DataSeries.class);
         return q.getResultList();
     }
 
     @Override
     public List<DataSeries> getDataSeriesByBarType(HtrEnums.BarType barType) {
-        TypedQuery<DataSeries> q = em.createQuery("SELECT s FROM DataSeries s WHERE s.interval = :interval", DataSeries.class);
-        q.setParameter("interval", barType);
+        TypedQuery<DataSeries> q = em.createQuery("SELECT s FROM DataSeries s WHERE s.barType = :barType", DataSeries.class);
+        q.setParameter("barType", barType);
         return q.getResultList();
     }
 

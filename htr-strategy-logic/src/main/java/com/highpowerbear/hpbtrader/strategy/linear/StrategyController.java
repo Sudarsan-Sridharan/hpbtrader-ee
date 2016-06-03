@@ -63,7 +63,7 @@ public class StrategyController implements Serializable {
     }
 
     private void initProcess() {
-        for (Strategy strategy : strategyDao.getStrategiesByInputSeriesAlias()) {
+        for (Strategy strategy : strategyDao.getStrategies()) {
             ProcessContext ctx = new DatabaseCtx(strategy);
             tradingContextMap.put(strategy, ctx);
             tradingLogicMap.put(strategy, createStrategyLogic(ctx));
@@ -148,6 +148,9 @@ public class StrategyController implements Serializable {
     private void processStrategy(StrategyLogic sl) {
         ProcessContext ctx = sl.getProcessContext();
         Strategy str = sl.getStrategy();
+        if (str.isActive()) {
+            return;
+        }
         String logMessage = " strategy, id=" + str.getId() + ", " + str.getDefaultInputSeriesAlias() + ", " + str.getStrategyType() + " --> " + sl.getClass().getSimpleName();
 
         l.info("BEGIN prepare " + logMessage);

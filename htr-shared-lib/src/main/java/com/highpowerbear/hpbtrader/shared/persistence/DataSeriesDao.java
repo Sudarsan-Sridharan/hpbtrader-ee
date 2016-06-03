@@ -11,7 +11,7 @@ import java.util.List;
  * Created by robertk on 19.11.2015.
  */
 public interface DataSeriesDao {
-    List<DataSeries> getAllDataSeries();
+    List<DataSeries> getDataSeries();
     List<DataSeries> getDataSeriesByBarType(HtrEnums.BarType barType);
     DataSeries getDataSeriesByAlias(String alias);
     DataSeries findDataSeries(Integer id);

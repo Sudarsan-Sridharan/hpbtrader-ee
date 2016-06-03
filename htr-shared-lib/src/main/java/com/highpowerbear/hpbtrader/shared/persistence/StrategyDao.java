@@ -8,7 +8,7 @@ import java.util.List;
  * Created by robertk on 19.11.2015.
  */
 public interface StrategyDao {
-    List<Strategy> getStrategiesByInputSeriesAlias();
+    List<Strategy> getStrategies();
     List<Strategy> getStrategiesByInputSeriesAlias(String inputSeriesAlias);
     Strategy findStrategy(Integer id);
     void updateStrategy(Strategy strategy);
