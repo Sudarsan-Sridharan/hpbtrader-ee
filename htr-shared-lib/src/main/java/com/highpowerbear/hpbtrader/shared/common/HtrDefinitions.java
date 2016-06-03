@@ -31,6 +31,9 @@ public class HtrDefinitions {
     public static final String LOGGER = "com.highpowerbear.hpbtrader";
     public static final String EMAIL_FROM = "hpbtrader@highpowerbear.com";
     public static final String EMAIL_TO = "info@highpowerbear.com";
+    public static final String MKTDATA_TO_STRATEGY_QUEUE = "java:/jms/queue/MktDataToStrategyQ";
+    public static final String STRATEGY_TO_EXEC_QUEUE = "java:/jms/queue/StrategyToExecQ";
+    public static final String EXEC_TO_STRATEGY_QUEUE = "java:/jms/queue/ExecToStrategyQ";
     public static final int BARS_REQUIRED = 400;
     public static final int MAX_EMA_PERIOD = 200;
     public static final String TIMEZONE = "America/New_York";
@@ -40,6 +43,7 @@ public class HtrDefinitions {
     public static final int JPA_MAX_RESULTS = 1000;
     public static final int BACKTEST_DEFAULT_MONTHS = 3;
     public static final int BLOCKING_QUEUE_CAPACITY = 5;
+
 
     // options
     public static final Integer IB_REQUEST_MULT_OPTIONS = 1000;

@@ -23,7 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @MessageDriven(activationConfig = {
-    @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "java:/jms/queue/MktDataToStrategyQ"),
+    @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = HtrDefinitions.MKTDATA_TO_STRATEGY_QUEUE),
     @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue")
 })
 public class MqMktDataReceiverBean implements MessageListener {

@@ -23,7 +23,7 @@ public class MqSender {
 
     @Inject
     private JMSContext jmsContext;
-    @Resource(lookup = "java:/jms/queue/ExecToStrategyQ")
+    @Resource(lookup = HtrDefinitions.EXEC_TO_STRATEGY_QUEUE)
     private Queue execToStrategyQ;
 
     public void notifyOrderStateChanged(IbOrder ibOrder) {

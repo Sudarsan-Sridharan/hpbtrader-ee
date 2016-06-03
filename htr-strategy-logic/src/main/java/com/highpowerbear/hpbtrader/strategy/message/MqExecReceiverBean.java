@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  * Created by robertk on 2.6.2016.
  */
 @MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "java:/jms/queue/ExecToStrategyQ"),
+        @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = HtrDefinitions.EXEC_TO_STRATEGY_QUEUE),
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue")
 })
 public class MqExecReceiverBean implements MessageListener {

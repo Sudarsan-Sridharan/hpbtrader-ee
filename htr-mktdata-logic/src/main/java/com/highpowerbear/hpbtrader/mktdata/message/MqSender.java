@@ -22,7 +22,7 @@ public class MqSender {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject private JMSContext jmsContext;
-    @Resource(lookup = "java:/jms/queue/MktDataToStrategyQ")
+    @Resource(lookup = HtrDefinitions.MKTDATA_TO_STRATEGY_QUEUE)
     private Queue mktDataToStrategyQ;
 
     public void notifyBarsAdded(DataSeries dataSeries) {
