@@ -28,7 +28,7 @@ public class IbAccountService {
     @Produces(MediaType.APPLICATION_JSON)
     public RestList<IbAccount> getIbAccounts() {
         List<IbAccount> ibAccounts = ibAccountDao.getIbAccounts();
-        ibAccounts.forEach(ibAccount -> ibAccount.setExecConnection(ibController.getIbConnectionMap().get(ibAccount)));
+        ibAccounts.forEach(ibAccount -> ibAccount.setExecConnection(ibController.getIbConnection(ibAccount)));
         return new RestList<>(ibAccounts, (long) ibAccounts.size());
     }
 
@@ -57,7 +57,7 @@ public class IbAccountService {
             ibController.disconnectExec(ibAccount);
         }
         HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
-        ibAccount.setExecConnection(ibController.getIbConnectionMap().get(ibAccount));
+        ibAccount.setExecConnection(ibController.getIbConnection(ibAccount));
         return Response.ok(ibAccount).build();
     }
 

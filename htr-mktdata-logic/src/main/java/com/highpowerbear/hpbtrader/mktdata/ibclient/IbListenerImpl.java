@@ -61,6 +61,6 @@ public class IbListenerImpl extends AbstractIbListener {
     @Override
     public void managedAccounts(String accountsList) {
         super.managedAccounts(accountsList);
-        ibController.getIbConnectionMap().get(ibAccount).setAccounts(accountsList);
+        ibController.getIbConnection(ibAccount).setAccounts(accountsList);
     }
 }

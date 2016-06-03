@@ -30,8 +30,8 @@ public class IbController {
     @Inject IbAccountDao ibAccountDao;
     private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>(); // ibAccount --> ibConnection
 
-    public Map<IbAccount, IbConnection> getIbConnectionMap() {
-        return ibConnectionMap;
+    public IbConnection getIbConnection(IbAccount ibAccount) {
+        return ibConnectionMap.get(ibAccount);
     }
 
     @PostConstruct

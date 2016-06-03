@@ -31,7 +31,7 @@ public class MktDataScheduler {
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*/5", second="21", timezone="US/Eastern", persistent=false)
     public void reconnect() {
         ibAccountDao.getIbAccounts().forEach(ibAccount -> {
-            IbConnection c = ibController.getIbConnectionMap().get(ibAccount);
+            IbConnection c = ibController.getIbConnection(ibAccount);
             if (!c.isConnected() && c.isMarkConnected()) {
                 c.connect();
             }

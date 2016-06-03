@@ -14,6 +14,7 @@ public class ExecRsApplication extends Application {
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
         classes.add(IbAccountService.class);
+        classes.add(ExecService.class);
         return classes;
     }
 }

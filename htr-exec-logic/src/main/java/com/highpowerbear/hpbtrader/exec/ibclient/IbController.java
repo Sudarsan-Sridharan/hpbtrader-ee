@@ -32,8 +32,8 @@ public class IbController {
     private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>(); // ibAccount --> ibConnection
     private int nextValidOrderId = 1;
 
-    public Map<IbAccount, IbConnection> getIbConnectionMap() {
-        return ibConnectionMap;
+    public IbConnection getIbConnection(IbAccount ibAccount) {
+        return ibConnectionMap.get(ibAccount);
     }
 
     @PostConstruct
@@ -70,7 +70,7 @@ public class IbController {
         c.getClientSocket().reqAutoOpenOrders(true);
     }
 
-    private void retrySubmit(IbAccount ibAccount) {
+    public void retrySubmit(IbAccount ibAccount) {
         ibOrderDao.getNewRetryIbOrders(ibAccount).forEach(this::submitIbOrder);
     }
 

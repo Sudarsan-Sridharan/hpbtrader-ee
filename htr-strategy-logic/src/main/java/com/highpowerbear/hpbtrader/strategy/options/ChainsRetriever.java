@@ -45,22 +45,14 @@ public class ChainsRetriever {
         ibContract.m_multiplier = HtrEnums.Multiplier.M_100.getValue();
         ibContract.m_includeExpired = false;
         int reqId = ud.getIbRequestIdBase() + HtrEnums.OptRequestIdOffset.CHAIN_CALL_THIS_MONTH.getValue();
-        if (optData.getOptionChainRequestMap().get(reqId) == null) {
-            optData.getOptionChainRequestMap().put(reqId, underlying);
-            //ibController.requestOptionChain(reqId, ibContract);
-            // TODO
-        }
+        optData.getOptionChainRequestMap().putIfAbsent(reqId, underlying);
 
         // call contracts, next month
         HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
         ibContract = cloneIbOptionContract(ibContract);
         ibContract.m_expiry = nextMonth;
         reqId = ud.getIbRequestIdBase() + HtrEnums.OptRequestIdOffset.CHAIN_CALL_NEXT_MONTH.getValue();
-        if (optData.getOptionChainRequestMap().get(reqId) == null) {
-            optData.getOptionChainRequestMap().put(reqId, underlying);
-            //ibController.requestOptionChain(reqId, ibContract);
-            // TODO
-        }
+        optData.getOptionChainRequestMap().putIfAbsent(reqId, underlying);
 
         // put contracts, this month
         HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
@@ -68,22 +60,14 @@ public class ChainsRetriever {
         ibContract.m_expiry = thisMonth;
         ibContract.m_right = HtrEnums.OptionType.PUT.name();
         reqId = ud.getIbRequestIdBase() + HtrEnums.OptRequestIdOffset.CHAIN_PUT_THIS_MONTH.getValue();
-        if (optData.getOptionChainRequestMap().get(reqId) == null) {
-            optData.getOptionChainRequestMap().put(reqId, underlying);
-            //ibController.requestOptionChain(reqId, ibContract);
-            // TODO
-        }
+        optData.getOptionChainRequestMap().putIfAbsent(reqId, underlying);
 
         // put contracts, next month
         HtrUtil.waitMilliseconds(HtrDefinitions.ONE_SECOND_MILLIS);
         ibContract = cloneIbOptionContract(ibContract);
         ibContract.m_expiry = nextMonth;
         reqId = ud.getIbRequestIdBase() + HtrEnums.OptRequestIdOffset.CHAIN_PUT_NEXT_MONTH.getValue();
-        if (optData.getOptionChainRequestMap().get(reqId) == null) {
-            optData.getOptionChainRequestMap().put(reqId, underlying);
-            //ibController.requestOptionChain(reqId, ibContract);
-            // TODO
-        }
+        optData.getOptionChainRequestMap().putIfAbsent(reqId, underlying);
         l.info("END request for loading option chains for underlying=" + underlying);
     }
 

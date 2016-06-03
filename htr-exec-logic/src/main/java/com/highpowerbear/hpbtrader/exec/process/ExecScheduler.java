@@ -19,24 +19,29 @@ public class ExecScheduler {
     @Inject private HeartbeatControl heartbeatControl;
     @Inject private IbAccountDao ibAccountDao;
 
-    @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="1", timezone="US/Eastern", persistent=false)
+    @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="31", timezone="US/Eastern", persistent=false)
     public void reconnect() {
         ibAccountDao.getIbAccounts().forEach(ibAccount -> {
-            IbConnection c = ibController.getIbConnectionMap().get(ibAccount);
+            IbConnection c = ibController.getIbConnection(ibAccount);
             if (!c.isConnected() && c.isMarkConnected()) {
                 c.connect();
             }
         });
     }
 
-    @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="11", timezone="US/Eastern", persistent=false)
+    @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="41", timezone="US/Eastern", persistent=false)
     private void requestOpenOrders() {
         ibAccountDao.getIbAccounts().forEach(ibAccount -> {
-            IbConnection c = ibController.getIbConnectionMap().get(ibAccount);
+            IbConnection c = ibController.getIbConnection(ibAccount);
             if (c.isConnected()) {
                 heartbeatControl.updateHeartbeats(ibAccount);
                 ibController.requestOpenOrders(ibAccount);
             }
         });
+    }
+
+    @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="51", timezone="US/Eastern", persistent=false)
+    public void retrySubmitOrders() {
+        ibAccountDao.getIbAccounts().forEach(ibAccount -> ibController.retrySubmit(ibAccount));
     }
 }
