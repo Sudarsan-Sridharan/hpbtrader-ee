@@ -7,7 +7,6 @@ import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Macd;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Stochastics;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import java.util.List;
  *
  * @author rkolar
  */
-@Named
 @ApplicationScoped
 public class TiCalculator {
     public List<Ema> calculateEma(List<DataBar> dataBars, Integer emaPeriod) {

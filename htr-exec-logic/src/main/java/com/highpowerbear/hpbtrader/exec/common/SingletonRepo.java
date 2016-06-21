@@ -3,18 +3,16 @@ package com.highpowerbear.hpbtrader.exec.common;
 import com.highpowerbear.hpbtrader.exec.ibclient.HeartbeatControl;
 import com.highpowerbear.hpbtrader.exec.ibclient.IbController;
 import com.highpowerbear.hpbtrader.exec.message.MqSender;
-import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
+import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Created by rkolar on 4/25/14.
  */
-@Named
 @ApplicationScoped
 public class SingletonRepo {
     private static SingletonRepo srepo;

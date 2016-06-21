@@ -1,8 +1,8 @@
 package com.highpowerbear.hpbtrader.exec.ibclient;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.ibclient.IbConnection;
@@ -13,7 +13,6 @@ import com.ib.client.EClientSocket;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -21,7 +20,6 @@ import java.util.logging.Logger;
 /**
  * Created by rkolar on 4/10/14.
  */
-@Named
 @ApplicationScoped
 public class IbController {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);

@@ -7,14 +7,12 @@ import com.highpowerbear.hpbtrader.shared.entity.Strategy;
 import com.highpowerbear.hpbtrader.shared.entity.Trade;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
 import java.util.Calendar;
 import java.util.List;
 
 /**
  * Created by rkolar on 4/23/14.
  */
-@Named
 @ApplicationScoped
 public class OrderStateHandler {
 

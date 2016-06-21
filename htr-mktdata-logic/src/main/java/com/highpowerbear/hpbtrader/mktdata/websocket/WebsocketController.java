@@ -3,7 +3,6 @@ package com.highpowerbear.hpbtrader.mktdata.websocket;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 import java.util.HashSet;
@@ -14,7 +13,6 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 20.11.2015.
  */
-@Named
 @ApplicationScoped
 public class WebsocketController {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);

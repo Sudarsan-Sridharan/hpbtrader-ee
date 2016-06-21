@@ -1,20 +1,18 @@
 package com.highpowerbear.hpbtrader.strategy.common;
 
+import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
+import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
-import com.highpowerbear.hpbtrader.strategy.linear.OrderStateHandler;
-import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
-import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
+import com.highpowerbear.hpbtrader.strategy.linear.OrderStateHandler;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Created by rkolar on 4/25/14.
  */
-@Named
 @ApplicationScoped
 public class SingletonRepo {
     private static SingletonRepo srepo;

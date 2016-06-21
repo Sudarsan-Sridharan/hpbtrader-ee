@@ -1,20 +1,18 @@
 package com.highpowerbear.hpbtrader.strategy.options;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
-import com.highpowerbear.hpbtrader.strategy.options.model.UnderlyingData;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+import com.highpowerbear.hpbtrader.strategy.options.model.UnderlyingData;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
 /**
  * Created by robertk on 29.9.2015.
  */
-@Named
 @ApplicationScoped
 public class ChainsRetriever {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);

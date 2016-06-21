@@ -1,16 +1,15 @@
 package com.highpowerbear.hpbtrader.mktdata.process;
 
 import com.highpowerbear.hpbtrader.mktdata.ibclient.IbController;
-import com.highpowerbear.hpbtrader.shared.model.RealtimeData;
 import com.highpowerbear.hpbtrader.mktdata.websocket.WebsocketController;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
+import com.highpowerbear.hpbtrader.shared.model.RealtimeData;
 import com.ib.client.TickType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 20.11.2015.
  */
-@Named
 @ApplicationScoped
 public class RtDataController {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);

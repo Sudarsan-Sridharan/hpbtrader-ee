@@ -8,7 +8,6 @@ import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.jms.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,7 +15,6 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 25.11.2015.
  */
-@Named
 @ApplicationScoped
 public class MqSender {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);

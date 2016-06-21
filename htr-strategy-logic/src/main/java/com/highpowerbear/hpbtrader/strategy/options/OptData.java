@@ -1,13 +1,12 @@
 package com.highpowerbear.hpbtrader.strategy.options;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.strategy.options.model.ContractProperties;
 import com.highpowerbear.hpbtrader.strategy.options.model.MarketData;
 import com.highpowerbear.hpbtrader.strategy.options.model.UnderlyingData;
-import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
  *
  * @author robertk
  */
-@Named
 @ApplicationScoped
 public class OptData {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);

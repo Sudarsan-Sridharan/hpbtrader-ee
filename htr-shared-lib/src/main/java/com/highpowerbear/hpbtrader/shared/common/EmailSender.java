@@ -2,9 +2,7 @@ package com.highpowerbear.hpbtrader.shared.common;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
-import javax.ejb.Singleton;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -17,7 +15,6 @@ import java.util.logging.Logger;
  *
  * @author robertk
  */
-@Named
 @ApplicationScoped
 public class EmailSender {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);

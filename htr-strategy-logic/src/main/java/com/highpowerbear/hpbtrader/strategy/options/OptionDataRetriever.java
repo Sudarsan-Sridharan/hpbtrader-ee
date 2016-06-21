@@ -7,7 +7,6 @@ import com.highpowerbear.hpbtrader.strategy.options.model.MarketData;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
@@ -15,7 +14,6 @@ import java.util.logging.Logger;
  *
  * @author rkolar
  */
-@Named
 @ApplicationScoped
 public class OptionDataRetriever {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);

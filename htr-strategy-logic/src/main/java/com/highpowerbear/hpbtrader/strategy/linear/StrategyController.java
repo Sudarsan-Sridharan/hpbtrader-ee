@@ -21,7 +21,6 @@ import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Map;
@@ -34,7 +33,6 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 4/13/14.
  */
-@Named
 @ApplicationScoped
 public class StrategyController implements Serializable {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);

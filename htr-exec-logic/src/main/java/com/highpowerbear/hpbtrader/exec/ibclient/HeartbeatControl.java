@@ -10,7 +10,6 @@ import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by rkolar on 5/9/14.
  */
-@Named
 @ApplicationScoped
 public class HeartbeatControl {
     @Inject private IbOrderDao ibOrderDao;

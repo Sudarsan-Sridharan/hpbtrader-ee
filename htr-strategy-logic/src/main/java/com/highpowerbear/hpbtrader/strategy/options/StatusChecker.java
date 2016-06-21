@@ -6,7 +6,6 @@ import com.highpowerbear.hpbtrader.strategy.options.model.*;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
  *
  * @author rkolar
  */
-@Named
 @ApplicationScoped
 public class StatusChecker {
     @Inject private OptData optData;

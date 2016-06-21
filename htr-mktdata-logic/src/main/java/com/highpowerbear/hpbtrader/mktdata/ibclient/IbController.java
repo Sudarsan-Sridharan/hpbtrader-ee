@@ -12,7 +12,6 @@ import com.ib.client.EClientSocket;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 /**
  * Created by rkolar on 4/10/14.
  */
-@Named
 @ApplicationScoped
 public class IbController {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);

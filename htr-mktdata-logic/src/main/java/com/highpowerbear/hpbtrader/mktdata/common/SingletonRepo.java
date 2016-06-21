@@ -5,17 +5,15 @@ import com.highpowerbear.hpbtrader.mktdata.message.MqSender;
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
 import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
 import com.highpowerbear.hpbtrader.mktdata.websocket.WebsocketController;
-import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
+import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Created by rkolar on 4/25/14.
  */
-@Named
 @ApplicationScoped
 public class SingletonRepo {
     private static SingletonRepo srepo;

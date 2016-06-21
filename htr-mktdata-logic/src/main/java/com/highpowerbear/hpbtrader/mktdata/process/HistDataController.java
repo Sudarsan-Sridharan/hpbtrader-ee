@@ -12,7 +12,6 @@ import com.ib.client.Contract;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -21,7 +20,6 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 4/13/14.
  */
-@Named
 @ApplicationScoped
 public class HistDataController {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
