@@ -22,14 +22,14 @@ public class StrategyLifecycle {
 
     @PostConstruct
     public void startup() {
-        l.info("BEGIN OptLinLifecycleLifecycle.startup");
+        l.info("BEGIN StrategyLifecycle.startup");
         SingletonRepo.setInstance(singletonRepo);
-        l.info("END LinLifecycle.startup");
+        l.info("END StrategyLifecycle.startup");
     }
 
     @PreDestroy
     public void shutdown() {
-        l.info("BEGIN LinLifecycle.shutdown");
-        l.info("END LinLifecycle.shutdown");
+        l.info("BEGIN StrategyLifecycle.shutdown");
+        l.info("END StrategyLifecycle.shutdown");
     }
 }
