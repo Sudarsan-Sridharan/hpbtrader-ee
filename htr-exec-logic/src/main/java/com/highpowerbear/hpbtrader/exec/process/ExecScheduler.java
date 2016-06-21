@@ -42,6 +42,6 @@ public class ExecScheduler {
 
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="51", timezone="US/Eastern", persistent=false)
     public void retrySubmitOrders() {
-        ibAccountDao.getIbAccounts().forEach(ibAccount -> ibController.retrySubmit(ibAccount));
+        ibAccountDao.getIbAccounts().forEach(ibController::retrySubmit);
     }
 }

@@ -22,14 +22,14 @@ public class MktDataLifecycle {
 
     @PostConstruct
     public void startup() {
-        l.info("BEGIN MktLifecycle.startup");
+        l.info("BEGIN MktDataLifecycle.startup");
         SingletonRepo.setInstance(singletonRepo);
-        l.info("END MktLifecycle.startup");
+        l.info("END MktDataLifecycle.startup");
     }
 
     @PreDestroy
     public void shutdown() {
-        l.info("BEGIN MktLifecycle.shutdown");
-        l.info("END MktLifecycle.shutdown");
+        l.info("BEGIN MktDataLifecycle.shutdown");
+        l.info("END MktDataLifecycle.shutdown");
     }
 }
