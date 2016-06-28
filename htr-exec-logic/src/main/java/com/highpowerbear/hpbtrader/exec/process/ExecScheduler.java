@@ -4,6 +4,7 @@ import com.highpowerbear.hpbtrader.exec.ibclient.HeartbeatControl;
 import com.highpowerbear.hpbtrader.exec.ibclient.IbController;
 import com.highpowerbear.hpbtrader.shared.ibclient.IbConnection;
 import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
+import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
@@ -18,6 +19,7 @@ public class ExecScheduler {
     @Inject private IbController ibController;
     @Inject private HeartbeatControl heartbeatControl;
     @Inject private IbAccountDao ibAccountDao;
+    @Inject private IbOrderDao ibOrderDao;
 
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="31", timezone="US/Eastern", persistent=false)
     public void reconnect() {
@@ -42,6 +44,6 @@ public class ExecScheduler {
 
     @Schedule(dayOfWeek="Sun-Fri", hour = "*", minute = "*", second="51", timezone="US/Eastern", persistent=false)
     public void retrySubmitOrders() {
-        ibAccountDao.getIbAccounts().forEach(ibController::retrySubmit);
+        ibAccountDao.getIbAccounts().forEach(ibAccount -> ibOrderDao.getNewRetryIbOrders(ibAccount).forEach(ibController::submitIbOrder));
     }
 }

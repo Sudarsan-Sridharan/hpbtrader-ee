@@ -22,7 +22,6 @@ public interface ProcessContext {
 
     void createIbOrder(IbOrder ibOrder);
     void updateIbOrder(IbOrder ibOrder);
-    IbOrder findIbOrder(IbOrder ibOrder);
 
     List<StrategyLog> getPagedStrategyLogs(int start, int limit);
     List<IbOrder> getPagedIbOrders(int start, int limit);

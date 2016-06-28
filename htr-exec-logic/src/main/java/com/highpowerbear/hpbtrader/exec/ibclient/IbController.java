@@ -37,14 +37,11 @@ public class IbController {
     @PostConstruct
     private void init() {
         ibAccountDao.getIbAccounts().forEach(ibAccount -> {
-            ibConnectionMap.put(ibAccount, createIbConnection(ibAccount));
+            EClientSocket eClientSocket = new EClientSocket(new IbListenerImpl(ibAccount));
+            IbConnection ibConnection = new IbConnection(HtrEnums.IbConnectionType.EXEC, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId(), eClientSocket);
+            ibConnectionMap.put(ibAccount, ibConnection);
             validOrderIdMap.put(ibAccount, 1);
         });
-    }
-
-    private IbConnection createIbConnection(IbAccount ibAccount) {
-        EClientSocket eClientSocket = new EClientSocket(new IbListenerImpl(ibAccount));
-        return new IbConnection(HtrEnums.IbConnectionType.EXEC, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId(), eClientSocket);
     }
 
     public synchronized void setNextValidOrderId(IbAccount ibAccount, int nextValidOrderId) {
@@ -71,10 +68,6 @@ public class IbController {
         c.getClientSocket().reqOpenOrders();
         c.getClientSocket().reqAllOpenOrders();
         c.getClientSocket().reqAutoOpenOrders(true);
-    }
-
-    public void retrySubmit(IbAccount ibAccount) {
-        ibOrderDao.getNewRetryIbOrders(ibAccount).forEach(this::submitIbOrder);
     }
 
     public void submitIbOrder(IbOrder ibOrder) {

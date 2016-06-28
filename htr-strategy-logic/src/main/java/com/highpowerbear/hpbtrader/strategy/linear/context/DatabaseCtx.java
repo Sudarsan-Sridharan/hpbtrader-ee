@@ -77,11 +77,6 @@ public class DatabaseCtx implements ProcessContext {
     }
 
     @Override
-    public IbOrder findIbOrder(IbOrder ibOrder) {
-        return ibOrderDao.findIbOrder(ibOrder.getId()); // refresh from db
-    }
-
-    @Override
     public List<StrategyLog> getPagedStrategyLogs(int start, int limit) {
         return strategyDao.getPagedStrategyLogs(this.strategy, start, limit);
     }

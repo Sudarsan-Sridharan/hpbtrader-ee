@@ -118,11 +118,6 @@ public class InMemoryCtx implements ProcessContext {
     }
 
     @Override
-    public IbOrder findIbOrder(IbOrder ibOrder) {
-        return ibOrder; // return the same
-    }
-
-    @Override
     public List<StrategyLog> getPagedStrategyLogs(int start, int limit) {
         Collections.reverse(strategyLogs);
         List<StrategyLog> strategyLogPage = new ArrayList<>();

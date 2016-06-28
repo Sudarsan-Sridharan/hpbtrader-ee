@@ -63,10 +63,10 @@ public class IbListenerImpl extends AbstractIbListener {
     public void openOrder(int orderId, Contract contract, com.ib.client.Order order, OrderState orderState) {
         super.openOrder(orderId, contract, order, orderState);
         
-        IbOrder dbIbOrder = ibOrderDao.getIbOrderByIbOrderId(ibAccount, orderId);
-        if (dbIbOrder != null && dbIbOrder.getIbPermId() == null) {
-            dbIbOrder.setIbPermId(order.m_permId);
-            ibOrderDao.updateIbOrder(dbIbOrder);
+        IbOrder ibOrder = ibOrderDao.getIbOrderByIbOrderId(ibAccount, orderId);
+        if (ibOrder != null && ibOrder.getIbPermId() == null) {
+            ibOrder.setIbPermId(order.m_permId);
+            ibOrderDao.updateIbOrder(ibOrder);
         }
     }
 
