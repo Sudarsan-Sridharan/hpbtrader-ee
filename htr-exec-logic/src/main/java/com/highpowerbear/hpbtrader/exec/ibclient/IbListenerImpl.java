@@ -43,10 +43,10 @@ public class IbListenerImpl extends AbstractIbListener {
         }
 
         if (HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) && HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
-            heartbeatControl.heartbeatReceived(ibOrder);
+            heartbeatControl.initHeartbeat(ibOrder);
 
         } else if (HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
-            heartbeatControl.heartbeatReceived(ibOrder);
+            heartbeatControl.initHeartbeat(ibOrder);
             mqSender.notifyOrderStateChanged(ibOrder);
 
         } else if (HtrEnums.IbOrderStatus.CANCELLED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.CANCELLED.equals(ibOrder.getStatus())) {

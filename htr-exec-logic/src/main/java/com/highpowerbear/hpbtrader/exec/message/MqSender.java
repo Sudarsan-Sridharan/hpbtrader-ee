@@ -19,8 +19,7 @@ import java.util.logging.Logger;
 public class MqSender {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
-    @Inject
-    private JMSContext jmsContext;
+    @Inject private JMSContext jmsContext;
     @Resource(lookup = HtrDefinitions.EXEC_TO_STRATEGY_QUEUE)
     private Queue execToStrategyQ;
 

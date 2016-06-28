@@ -28,7 +28,7 @@ public class IbController {
     @Inject private HeartbeatControl heartbeatControl;
     @Inject private IbAccountDao ibAccountDao;
     private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>(); // ibAccount --> ibConnection
-    private int nextValidOrderId = 1;
+    private Map<IbAccount, Integer> validOrderIdMap = new HashMap<>();
 
     public IbConnection getIbConnection(IbAccount ibAccount) {
         return ibConnectionMap.get(ibAccount);
@@ -36,7 +36,10 @@ public class IbController {
 
     @PostConstruct
     private void init() {
-        ibAccountDao.getIbAccounts().forEach(ibAccount -> ibConnectionMap.put(ibAccount, createIbConnection(ibAccount)));
+        ibAccountDao.getIbAccounts().forEach(ibAccount -> {
+            ibConnectionMap.put(ibAccount, createIbConnection(ibAccount));
+            validOrderIdMap.put(ibAccount, 1);
+        });
     }
 
     private IbConnection createIbConnection(IbAccount ibAccount) {
@@ -44,12 +47,14 @@ public class IbController {
         return new IbConnection(HtrEnums.IbConnectionType.EXEC, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId(), eClientSocket);
     }
 
-    public void setNextValidOrderId(IbAccount ibAccount, int nextValidOrderId) {
-        this.nextValidOrderId = nextValidOrderId;
+    public synchronized void setNextValidOrderId(IbAccount ibAccount, int nextValidOrderId) {
+        validOrderIdMap.put(ibAccount, nextValidOrderId);
     }
 
-    private Integer getNextValidOrderId() {
-        return this.nextValidOrderId++;
+    private synchronized Integer nextValidOrderId(IbAccount ibAccount) {
+        Integer nextValidOrderId = validOrderIdMap.get(ibAccount);
+        validOrderIdMap.put(ibAccount, nextValidOrderId + 1);
+        return nextValidOrderId;
     }
 
     public void connectExec(IbAccount ibAccount) {
@@ -75,7 +80,7 @@ public class IbController {
     public void submitIbOrder(IbOrder ibOrder) {
         l.info("START submit order " + ibOrder.getDescription());
         IbConnection c = ibConnectionMap.get(ibOrder.getStrategy().getIbAccount());
-        heartbeatControl.addHeartbeat(ibOrder);
+        heartbeatControl.initHeartbeat(ibOrder);
         if (!c.isConnected()) {
             if (!HtrEnums.IbOrderStatus.NEW_RETRY.equals(ibOrder.getStatus())) {
                 ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW_RETRY, HtrUtil.getCalendar(), null);
@@ -84,7 +89,7 @@ public class IbController {
             l.info("Not connected to IB, cannot submit order " + ibOrder.getDescription());
             return;
         }
-        Integer ibOrderId = getNextValidOrderId();
+        Integer ibOrderId = nextValidOrderId(ibOrder.getStrategy().getIbAccount());
         c.getClientSocket().placeOrder(ibOrderId, ibOrder.getStrategy().getTradeInstrument().createIbContract(), ibOrder.createIbOrder());
         ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, HtrUtil.getCalendar(), null);
         ibOrder.setIbOrderId(ibOrderId);

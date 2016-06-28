@@ -9,6 +9,8 @@ import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -22,8 +24,10 @@ import java.util.logging.Logger;
  */
 @MessageDriven(activationConfig = {
         @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = HtrDefinitions.STRATEGY_TO_EXEC_QUEUE),
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue")
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+        @ActivationConfigProperty(propertyName = "maxSession", propertyValue = "5")
 })
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class MqReceiverBean implements MessageListener {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
