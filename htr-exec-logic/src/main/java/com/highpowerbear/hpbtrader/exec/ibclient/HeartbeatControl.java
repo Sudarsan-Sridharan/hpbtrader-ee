@@ -2,6 +2,7 @@ package com.highpowerbear.hpbtrader.exec.ibclient;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
@@ -39,7 +40,7 @@ public class HeartbeatControl {
             Integer failedHeartbeatsLeft = hm.get(ibOrder);
             if (failedHeartbeatsLeft <= 0) {
                 if (!HtrEnums.IbOrderStatus.UNKNOWN.equals(ibOrder.getStatus())) {
-                    ibOrder.addEvent(HtrEnums.IbOrderStatus.UNKNOWN, null, null);
+                    ibOrder.addEvent(HtrEnums.IbOrderStatus.UNKNOWN, HtrUtil.getCalendar());
                     ibOrderDao.updateIbOrder(ibOrder);
                 }
                 hm.remove(ibOrder);

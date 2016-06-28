@@ -27,14 +27,14 @@ public class Instrument implements Serializable {
     @Enumerated(EnumType.STRING)
     private HtrEnums.Exchange exchange;
 
-    public com.ib.client.Contract createIbContract() {
-        com.ib.client.Contract contract = new com.ib.client.Contract();
-        contract.m_symbol = this.underlying;
-        contract.m_localSymbol = this.symbol;
-        contract.m_secType = secType.name();
-        contract.m_exchange = this.exchange.toString();
-        contract.m_currency = this.currency.toString();
-        return contract;
+    public com.ib.client.Contract createContract() {
+        com.ib.client.Contract ctr = new com.ib.client.Contract();
+        ctr.m_symbol = this.underlying;
+        ctr.m_localSymbol = this.symbol;
+        ctr.m_secType = secType.name();
+        ctr.m_exchange = this.exchange.toString();
+        ctr.m_currency = this.currency.toString();
+        return ctr;
     }
 
     @Override

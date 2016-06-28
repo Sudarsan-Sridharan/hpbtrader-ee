@@ -65,7 +65,7 @@ public class HistDataController {
     void requestFiveMinBars() {
         l.info("START requestFiveMinBars");
         dataSeriesDao.getDataSeriesByBarType(HtrEnums.BarType.MIN_5).stream().filter(DataSeries::isActive).forEach(s -> {
-            Contract contract = s.getInstrument().createIbContract();
+            Contract contract = s.getInstrument().createContract();
             Calendar now = HtrUtil.getCalendar();
             int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);
             ibController.reqHistoricalData(
@@ -84,7 +84,7 @@ public class HistDataController {
     void requestSixtyMinBars() {
         l.info("START requestSixtyMinBars");
         dataSeriesDao.getDataSeriesByBarType(HtrEnums.BarType.MIN_60).stream().filter(DataSeries::isActive).forEach(s -> {
-            Contract contract = s.getInstrument().createIbContract();
+            Contract contract = s.getInstrument().createContract();
             Calendar now = HtrUtil.getCalendar();
             int isUseRTH = (HtrEnums.SecType.FUT.equals(s.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);
             ibController.reqHistoricalData(
@@ -109,7 +109,7 @@ public class HistDataController {
         if (!ibController.isAnyActiveMktDataConnection()) {
             return;
         }
-        Contract contract = dataSeries.getInstrument().createIbContract();
+        Contract contract = dataSeries.getInstrument().createContract();
         Calendar now = HtrUtil.getCalendar();
         int isUseRTH = (HtrEnums.SecType.FUT.equals(dataSeries.getInstrument().getSecType()) ? HtrDefinitions.IB_ETH_TOO : HtrDefinitions.IB_RTH_ONLY);
         if (HtrEnums.BarType.MIN_5.equals(dataSeries.getBarType())) {

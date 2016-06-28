@@ -77,7 +77,7 @@ public class RtDataController {
             rtd = new RealtimeData(dataSeries);
             l.info("Requesting realtime data for " + rtd.getDataSeries().getInstrument().getSymbol());
             realtimeDataMap.put(rtd.getIbRequestId(), rtd);
-            boolean requested = ibController.requestRealtimeData(rtd.getIbRequestId(), rtd.getDataSeries().getInstrument().createIbContract());
+            boolean requested = ibController.requestRealtimeData(rtd.getIbRequestId(), rtd.getDataSeries().getInstrument().createContract());
             if (!requested) {
                 realtimeDataMap.remove(rtd.getIbRequestId());
             }

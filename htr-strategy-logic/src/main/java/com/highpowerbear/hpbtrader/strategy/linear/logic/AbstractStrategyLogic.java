@@ -124,7 +124,7 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
         ibOrder.setOrderType(HtrEnums.OrderType.MKT);
         ibOrder.setLimitPrice(null); // N/A for market order
         ibOrder.setStopPrice(null); // N/A for market order
-        ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW, (offset ? lastDataBar.getBarCloseDate() : HtrUtil.getCalendar()), null);
+        ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW, (offset ? lastDataBar.getBarCloseDate() : HtrUtil.getCalendar()));
     }
 
     protected Double getPrice() {

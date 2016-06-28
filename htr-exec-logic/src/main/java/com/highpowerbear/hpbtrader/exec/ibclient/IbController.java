@@ -79,19 +79,20 @@ public class IbController {
 
     public void submitIbOrder(IbOrder ibOrder) {
         l.info("START submit order " + ibOrder.getDescription());
-        IbConnection c = ibConnectionMap.get(ibOrder.getStrategy().getIbAccount());
+        IbAccount ibAccount = ibOrder.getStrategy().getIbAccount();
+        IbConnection c = ibConnectionMap.get(ibAccount);
         heartbeatControl.initHeartbeat(ibOrder);
         if (!c.isConnected()) {
             if (!HtrEnums.IbOrderStatus.NEW_RETRY.equals(ibOrder.getStatus())) {
-                ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW_RETRY, HtrUtil.getCalendar(), null);
+                ibOrder.addEvent(HtrEnums.IbOrderStatus.NEW_RETRY, HtrUtil.getCalendar());
                 ibOrderDao.updateIbOrder(ibOrder);
             }
             l.info("Not connected to IB, cannot submit order " + ibOrder.getDescription());
             return;
         }
-        Integer ibOrderId = nextValidOrderId(ibOrder.getStrategy().getIbAccount());
-        c.getClientSocket().placeOrder(ibOrderId, ibOrder.getStrategy().getTradeInstrument().createIbContract(), ibOrder.createIbOrder());
-        ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, HtrUtil.getCalendar(), null);
+        Integer ibOrderId = nextValidOrderId(ibAccount);
+        c.getClientSocket().placeOrder(ibOrderId, ibOrder.getStrategy().getTradeInstrument().createContract(), ibOrder.createOrder());
+        ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, HtrUtil.getCalendar());
         ibOrder.setIbOrderId(ibOrderId);
         ibOrderDao.updateIbOrder(ibOrder);
         l.info("END submit order " + ibOrder.getDescription());

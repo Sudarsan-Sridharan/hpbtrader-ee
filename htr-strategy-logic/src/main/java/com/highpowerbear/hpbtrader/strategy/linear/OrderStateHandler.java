@@ -18,21 +18,22 @@ public class OrderStateHandler {
 
     public void simulateFill(ProcessContext ctx, IbOrder ibOrder, Double price) {
         Calendar t1 = HtrUtil.getCalendar();
-        ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, t1, null);
+        ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, t1);
         ctx.updateIbOrder(ibOrder);
         ibOrder = ctx.findIbOrder(ibOrder); // get a fresh copy from ctx
         Calendar t2 = HtrUtil.getCalendar();
         if (t2.getTimeInMillis() == t1.getTimeInMillis()) {
             t2.setTimeInMillis(t1.getTimeInMillis() + 1);
         }
-        ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, t2, null);
+        ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, t2);
         ctx.updateIbOrder(ibOrder);
         ibOrder = ctx.findIbOrder(ibOrder); // get a fresh copy from ctx
         Calendar t3 = HtrUtil.getCalendar();
         if (t3.getTimeInMillis() == t2.getTimeInMillis()) {
             t3.setTimeInMillis(t2.getTimeInMillis() + 1);
         }
-        ibOrder.addEvent(ibOrder.getStatus(), t3, price);
+        ibOrder.setFillPrice(price);
+        ibOrder.addEvent(ibOrder.getStatus(), t3);
         ctx.updateIbOrder(ibOrder);
         orderFilled(ctx, ibOrder);
     }

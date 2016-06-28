@@ -24,7 +24,6 @@ public class OrderEvent implements Serializable {
     private Long id;
     @Enumerated(EnumType.STRING)
     private HtrEnums.IbOrderStatus status;
-    private Double fillPrice;
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar eventDate;
     @ManyToOne
@@ -59,14 +58,6 @@ public class OrderEvent implements Serializable {
 
     public void setStatus(HtrEnums.IbOrderStatus ibOrderStatus) {
         this.status = ibOrderStatus;
-    }
-
-    public Double getFillPrice() {
-        return fillPrice;
-    }
-
-    public void setFillPrice(Double fillPrice) {
-        this.fillPrice = fillPrice;
     }
 
     public Calendar getEventDate() {

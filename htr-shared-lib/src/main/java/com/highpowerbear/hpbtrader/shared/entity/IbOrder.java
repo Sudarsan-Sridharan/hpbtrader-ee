@@ -50,13 +50,12 @@ public class IbOrder implements Serializable {
     @OrderBy("eventDate ASC")
     private List<OrderEvent> events = new ArrayList<>();
 
-    public void addEvent(HtrEnums.IbOrderStatus status, Calendar date, Double fillPrice) {
+    public void addEvent(HtrEnums.IbOrderStatus status, Calendar date) {
         this.status = status;
         OrderEvent event = new OrderEvent();
         event.setIbOrder(this);
         event.setEventDate(date);
         event.setStatus(status);
-        event.setFillPrice(fillPrice);
         events.add(event);
         if (HtrEnums.IbOrderStatus.NEW.equals(event.getStatus())) {
             this.setCreatedDate(event.getEventDate());
@@ -95,15 +94,15 @@ public class IbOrder implements Serializable {
         return strategy.getTradeInstrument().getSymbol() + ", " +  strategy.getStrategyType().name().toLowerCase() + ": " + orderAction.toString();
     }
 
-    public com.ib.client.Order createIbOrder() {
-        com.ib.client.Order ibOrder = new com.ib.client.Order();
-        ibOrder.m_action = (this.isBuyOrder() ? HtrEnums.Action.BUY.name() : HtrEnums.Action.SELL.name());
-        ibOrder.m_orderType = getOrderType().name();
-        ibOrder.m_auxPrice = (this.stopPrice != null ? this.stopPrice : 0d);
-        ibOrder.m_lmtPrice = (this.limitPrice!= null ? this.limitPrice : 0d);
-        ibOrder.m_totalQuantity = this.quantity;
-        ibOrder.m_tif = HtrEnums.Tif.GTC.name();
-        return ibOrder;
+    public com.ib.client.Order createOrder() {
+        com.ib.client.Order ord = new com.ib.client.Order();
+        ord.m_action = (this.isBuyOrder() ? HtrEnums.Action.BUY.name() : HtrEnums.Action.SELL.name());
+        ord.m_orderType = getOrderType().name();
+        ord.m_auxPrice = (this.stopPrice != null ? this.stopPrice : 0d);
+        ord.m_lmtPrice = (this.limitPrice!= null ? this.limitPrice : 0d);
+        ord.m_totalQuantity = this.quantity;
+        ord.m_tif = HtrEnums.Tif.GTC.name();
+        return ord;
     }
 
     @Override

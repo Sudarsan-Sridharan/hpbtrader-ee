@@ -41,11 +41,15 @@ public class MqReceiverBean implements MessageListener {
                 String msg = ((TextMessage) message).getText();
                 String corId = message.getJMSCorrelationID();
                 l.info("Text message received from MQ=" + HtrDefinitions.STRATEGY_TO_EXEC_QUEUE + ", corId=" + corId + ", msg=" + msg);
-                Long id = Long.valueOf(corId);
-                IbOrder ibOrder = ibOrderDao.findIbOrder(id);
                 HtrEnums.MessageType messageType = HtrUtil.parseMessageType(msg);
                 if (HtrEnums.MessageType.NEW_ORDER.equals(messageType)) {
-                    ibController.submitIbOrder(ibOrder);
+                    Long id = Long.valueOf(corId);
+                    IbOrder ibOrder = ibOrderDao.findIbOrder(id);
+                    if (ibOrder != null) {
+                        ibController.submitIbOrder(ibOrder);
+                    } else {
+                        l.warning("IB order id=" + id + " not found, ignoring");
+                    }
                 }
             } else {
                 l.warning("Non-text message received from MQ=" + HtrDefinitions.STRATEGY_TO_EXEC_QUEUE + ", ignoring");
