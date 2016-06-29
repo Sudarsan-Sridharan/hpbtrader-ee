@@ -1,10 +1,11 @@
-package com.highpowerbear.hpbtrader.strategy.process;
+package com.highpowerbear.hpbtrader.strategy.logic;
 
 import com.highpowerbear.hpbtrader.shared.entity.DataBar;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.entity.Strategy;
 import com.highpowerbear.hpbtrader.shared.entity.Trade;
 import com.highpowerbear.hpbtrader.shared.model.OperResult;
+import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
 
 import java.util.Calendar;
 

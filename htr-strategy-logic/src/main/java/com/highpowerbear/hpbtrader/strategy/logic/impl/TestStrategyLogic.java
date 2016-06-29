@@ -1,7 +1,8 @@
-package com.highpowerbear.hpbtrader.strategy.process.logic;
+package com.highpowerbear.hpbtrader.strategy.logic.impl;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.Trade;
+import com.highpowerbear.hpbtrader.strategy.logic.AbstractStrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
 
 /**

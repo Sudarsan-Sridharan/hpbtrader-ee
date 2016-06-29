@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.strategy.process.logic;
+package com.highpowerbear.hpbtrader.strategy.logic;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
@@ -9,20 +9,17 @@ import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
 import com.highpowerbear.hpbtrader.strategy.common.SingletonRepo;
 import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
-import com.highpowerbear.hpbtrader.strategy.process.StrategyLogic;
 
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 /**
  *
  * @author rkolar
  */
 public abstract class AbstractStrategyLogic implements StrategyLogic {
-    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
     private final int INDICATORS_LIST_SIZE = 10;
 
     private DataSeriesDao dataSeriesDao = SingletonRepo.getInstance().getDataSeriesDao();
