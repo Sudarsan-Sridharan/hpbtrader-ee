@@ -1,6 +1,7 @@
 package com.highpowerbear.hpbtrader.shared.persistence;
 
-import com.highpowerbear.hpbtrader.shared.entity.*;
+import com.highpowerbear.hpbtrader.shared.entity.Strategy;
+import com.highpowerbear.hpbtrader.shared.entity.StrategyLog;
 
 import java.util.List;
 

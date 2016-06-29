@@ -1,10 +1,10 @@
 package com.highpowerbear.hpbtrader.mktdata.rest;
 
-import com.highpowerbear.hpbtrader.shared.model.RealtimeData;
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
 import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
+import com.highpowerbear.hpbtrader.shared.model.RealtimeData;
 import com.highpowerbear.hpbtrader.shared.model.RestList;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 

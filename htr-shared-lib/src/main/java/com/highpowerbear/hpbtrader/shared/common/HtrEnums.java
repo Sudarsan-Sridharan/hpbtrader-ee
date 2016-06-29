@@ -255,12 +255,6 @@ public class HtrEnums {
         NYMEX
     }
 
-    public enum ValueStatus {
-        UPTICK,
-        DOWNTICK,
-        UNCHANGED
-    }
-
     public enum DisplayColor {
         MAGENTA,
         MAGENTA_BG,

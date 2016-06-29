@@ -9,12 +9,12 @@ import com.highpowerbear.hpbtrader.shared.model.OperResult;
 import com.highpowerbear.hpbtrader.shared.model.TimeFrame;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
+import com.highpowerbear.hpbtrader.strategy.message.MqSender;
 import com.highpowerbear.hpbtrader.strategy.process.context.DatabaseCtx;
 import com.highpowerbear.hpbtrader.strategy.process.context.InMemoryCtx;
 import com.highpowerbear.hpbtrader.strategy.process.logic.LuxorStrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.process.logic.MacdCrossStrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.process.logic.TestStrategyLogic;
-import com.highpowerbear.hpbtrader.strategy.message.MqSender;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

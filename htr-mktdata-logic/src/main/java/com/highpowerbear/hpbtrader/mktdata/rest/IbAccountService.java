@@ -7,8 +7,8 @@ import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.model.RestList;
-import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
+import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
 
 import javax.enterprise.context.ApplicationScoped;

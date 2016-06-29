@@ -2,7 +2,10 @@ package com.highpowerbear.hpbtrader.shared.persistence.impl;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
-import com.highpowerbear.hpbtrader.shared.entity.*;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+import com.highpowerbear.hpbtrader.shared.entity.Strategy;
+import com.highpowerbear.hpbtrader.shared.entity.StrategyLog;
+import com.highpowerbear.hpbtrader.shared.entity.Trade;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
