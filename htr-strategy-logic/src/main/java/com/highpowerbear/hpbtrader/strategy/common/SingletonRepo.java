@@ -5,7 +5,7 @@ import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
-import com.highpowerbear.hpbtrader.strategy.linear.OrderStateHandler;
+import com.highpowerbear.hpbtrader.strategy.process.OrderStateHandler;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

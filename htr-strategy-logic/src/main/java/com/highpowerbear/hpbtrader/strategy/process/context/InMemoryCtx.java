@@ -1,8 +1,8 @@
-package com.highpowerbear.hpbtrader.strategy.linear.context;
+package com.highpowerbear.hpbtrader.strategy.process.context;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.*;
-import com.highpowerbear.hpbtrader.strategy.linear.ProcessContext;
+import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
 
 import java.util.*;
 import java.util.stream.Collectors;

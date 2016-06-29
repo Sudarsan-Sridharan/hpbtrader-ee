@@ -43,22 +43,4 @@ public class HtrDefinitions {
     public static final int JPA_MAX_RESULTS = 1000;
     public static final int BACKTEST_DEFAULT_MONTHS = 3;
     public static final int BLOCKING_QUEUE_CAPACITY = 5;
-
-
-    // options
-    public static final Integer IB_REQUEST_MULT_OPTIONS = 1000;
-    public static final Integer CONTRACT_CHANGE_MIN_INTERVAL = 60; // seconds
-
-    // option contract properties precautionary limits
-    public static final Double MIN_maxSpread = 0.01; // 1
-    public static final Double MIN_maxValidSpread = 0.05; // 2
-    public static final Integer MIN_minVolume = 0; // 3
-    public static final Integer MIN_minOpenInterest = 0; // 4
-    public static final Double MIN_callStrikeDiff = 0.5; // 5
-    public static final Double MIN_putStrikeDiff = 0.01; // 6
-    // autoLimit // 7
-    public static final Double MAX_ABS_bidPriceOffset = 0.99; // 8, 9
-    public static final Integer MAX_tradingQuantCall = 200; // 10
-    public static final Integer MAX_tradingQuantPut = 200; // 11
-    // tradingStartTime, tradingStopTime // 12, 13
 }

@@ -1,8 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.common;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  *
@@ -37,34 +35,6 @@ public class HtrEnums {
         GTD
     }
 
-    public enum OptionType {
-        CALL("C"),
-        PUT("P");
-
-        private String code;
-
-        OptionType(String code) {
-            this.code = code;
-        }
-        public String getCode() {
-            return code;
-        }
-    }
-
-    public enum Multiplier {
-        M_100("100");
-
-        String value;
-
-        Multiplier(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
-
     public enum BarType {
         MIN_5(300000),
         MIN_60(3600000);
@@ -79,22 +49,16 @@ public class HtrEnums {
     }
     
     public enum SecType {
-        STK(100, HtrDefinitions.IB_TRADES_LITERAL),
-        OPT(1, HtrDefinitions.IB_TRADES_LITERAL),
-        FUT(1, HtrDefinitions.IB_TRADES_LITERAL),
-        FOP(1, HtrDefinitions.IB_TRADES_LITERAL),
-        CASH(100000, HtrDefinitions.IB_ASK_LITERAL);
+        STK(HtrDefinitions.IB_TRADES_LITERAL),
+        OPT(HtrDefinitions.IB_TRADES_LITERAL),
+        FUT(HtrDefinitions.IB_TRADES_LITERAL),
+        FOP(HtrDefinitions.IB_TRADES_LITERAL),
+        CASH(HtrDefinitions.IB_ASK_LITERAL);
 
-        private int defaultTradingQuantity;
         private String ibWhatToShow;
 
-        SecType(int defaultTradingQuantity, String ibWhatToShow) {
-            this.defaultTradingQuantity = defaultTradingQuantity;
+        SecType(String ibWhatToShow) {
             this.ibWhatToShow = ibWhatToShow;
-        }
-
-        public int getDefaultTradingQuantity() {
-            return defaultTradingQuantity;
         }
 
         public String getIbWhatToShow() {
@@ -183,13 +147,7 @@ public class HtrEnums {
             return displayColor;
         }
     }
-    
-    public static final List<StrategyMode> selectableStrategyModes = new ArrayList<>();
-    static {
-        selectableStrategyModes.add(StrategyMode.IB);
-        selectableStrategyModes.add(StrategyMode.SIM);
-    }
-    
+
     public enum TradeType {
         LONG("L", DisplayColor.BLUE_BG),
         SHORT("S", DisplayColor.BROWN_BG);
@@ -232,16 +190,6 @@ public class HtrEnums {
         public DisplayColor getDisplayColor() {
             return displayColor;
         }
-    }
-    
-    public static final List<Integer> tradingQuantities = new ArrayList<>();
-    static {
-        tradingQuantities.add(1);
-        tradingQuantities.add(10);
-        tradingQuantities.add(100);
-        tradingQuantities.add(1000);
-        tradingQuantities.add(10000);
-        tradingQuantities.add(100000);
     }
     
     public enum FutureMultiplier {
@@ -342,43 +290,6 @@ public class HtrEnums {
         BROWN_BG,
         DODGER_BLUE,
         DODGER_BLUE_BG
-    }
-
-    public enum OptRequestIdOffset {
-        CHAIN_CALL_THIS_MONTH(1),
-        CHAIN_CALL_NEXT_MONTH(2),
-        CHAIN_PUT_THIS_MONTH(11),
-        CHAIN_PUT_NEXT_MONTH(12),
-        MKTDATA_UNDERLYING(10),
-        MKTDATA_CALL_ACTIVE(20),
-        MKTDATA_PUT_ACTIVE(30);
-
-        private Integer value;
-
-        OptRequestIdOffset(Integer value) {
-            this.value = value;
-        }
-
-        public Integer getValue() {
-            return value;
-        }
-    }
-
-    public enum OptExpiryDistance {
-        FRONT_WEEK(0),
-        ONE_WEEK_OUT(1),
-        TWO_WEEK_OUT(2),
-        THREE_WEEK_OUT(3);
-
-        private Integer week;
-
-        OptExpiryDistance(Integer number) {
-            this.week = number;
-        }
-
-        public Integer getWeek() {
-            return week;
-        }
     }
 
     public enum IbConnectionType {

@@ -5,9 +5,9 @@ import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
-import com.highpowerbear.hpbtrader.strategy.linear.OrderStateHandler;
-import com.highpowerbear.hpbtrader.strategy.linear.ProcessContext;
-import com.highpowerbear.hpbtrader.strategy.linear.StrategyController;
+import com.highpowerbear.hpbtrader.strategy.process.OrderStateHandler;
+import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
+import com.highpowerbear.hpbtrader.strategy.process.StrategyController;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;

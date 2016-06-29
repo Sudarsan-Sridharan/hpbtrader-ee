@@ -7,8 +7,8 @@ import com.highpowerbear.hpbtrader.shared.model.RestList;
 import com.highpowerbear.hpbtrader.shared.model.TimeFrame;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
-import com.highpowerbear.hpbtrader.strategy.linear.ProcessContext;
-import com.highpowerbear.hpbtrader.strategy.linear.StrategyController;
+import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
+import com.highpowerbear.hpbtrader.strategy.process.StrategyController;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

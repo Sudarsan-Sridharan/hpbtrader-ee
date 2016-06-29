@@ -9,7 +9,7 @@ import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.Strategy;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
-import com.highpowerbear.hpbtrader.strategy.linear.StrategyController;
+import com.highpowerbear.hpbtrader.strategy.process.StrategyController;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;

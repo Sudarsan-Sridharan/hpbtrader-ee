@@ -1,4 +1,4 @@
-package com.highpowerbear.hpbtrader.strategy.linear.context;
+package com.highpowerbear.hpbtrader.strategy.process.context;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.*;
@@ -6,7 +6,7 @@ import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
 import com.highpowerbear.hpbtrader.strategy.common.SingletonRepo;
-import com.highpowerbear.hpbtrader.strategy.linear.ProcessContext;
+import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
 
 import java.util.Calendar;
 import java.util.List;
