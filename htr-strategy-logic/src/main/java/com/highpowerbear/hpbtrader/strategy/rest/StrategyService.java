@@ -9,6 +9,7 @@ import com.highpowerbear.hpbtrader.shared.model.TimeFrame;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
 import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
+import com.highpowerbear.hpbtrader.strategy.process.ProcessQueueManager;
 import com.highpowerbear.hpbtrader.strategy.process.StrategyController;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,6 +30,7 @@ public class StrategyService {
     @Inject private StrategyDao strategyDao;
     @Inject private TradeDao tradeDao;
     @Inject private StrategyController strategyController;
+    @Inject private ProcessQueueManager processQueueManager;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -58,7 +60,7 @@ public class StrategyService {
         }
         Calendar fromDate = timeFrame.getFromDate() == null ? HtrUtil.getCalendarMonthsOffset(HtrDefinitions.BACKTEST_DEFAULT_MONTHS) : timeFrame.getFromDate();
         Calendar toDate = timeFrame.getToDate() == null ? HtrUtil.getCalendar() : timeFrame.getToDate();
-        strategyController.queueBacktestStrategy(new GenericTuple<>(strategy, new TimeFrame(fromDate, toDate)));
+        processQueueManager.queueBacktestStrategy(new GenericTuple<>(strategy, new TimeFrame(fromDate, toDate)));
         return Response.ok().build();
     }
 

@@ -9,7 +9,7 @@ import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.Strategy;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
-import com.highpowerbear.hpbtrader.strategy.process.StrategyController;
+import com.highpowerbear.hpbtrader.strategy.process.ProcessQueueManager;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 public class MqMktDataReceiverBean implements MessageListener {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
-    @Inject private StrategyController strategyController;
+    @Inject private ProcessQueueManager processQueueManager;
     @Inject private StrategyDao strategyDao;
 
     @Override
@@ -47,7 +47,7 @@ public class MqMktDataReceiverBean implements MessageListener {
                 if (HtrEnums.MessageType.BARS_ADDED.equals(messageType)) {
                     String seriesAlias = HtrUtil.parseMessageContent(msg);
                     List<Strategy> strategies = strategyDao.getStrategiesByInputSeriesAlias(seriesAlias);
-                    strategies.forEach(str -> strategyController.queueProcessStrategy(str, seriesAlias));
+                    strategies.forEach(str -> processQueueManager.queueProcessStrategy(str, seriesAlias));
                 }
             } else {
                 l.warning("Non-text message received from MQ=" + HtrDefinitions.MKTDATA_TO_STRATEGY_QUEUE + ", ignoring");
