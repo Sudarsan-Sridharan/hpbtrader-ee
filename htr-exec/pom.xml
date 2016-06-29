@@ -9,7 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>htr-exec-logic</artifactId>
+    <artifactId>htr-exec</artifactId>
+    <packaging>war</packaging>
 
     <dependencies>
         <dependency>
