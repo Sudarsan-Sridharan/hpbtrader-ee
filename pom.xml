@@ -10,7 +10,7 @@
         <module>htr-ibapi-client</module>
         <module>htr-ibapi-lib</module>
         <module>htr-mktdata-logic</module>
-        <module>htr-mktdata-app</module>
+        <module>htr-gui</module>
         <module>htr-exec</module>
         <module>htr-strategy</module>
         <module>htr-shared-lib</module>
