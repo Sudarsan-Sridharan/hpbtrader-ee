@@ -17,6 +17,7 @@ import com.highpowerbear.hpbtrader.strategy.process.logic.MacdCrossStrategyLogic
 import com.highpowerbear.hpbtrader.strategy.process.logic.TestStrategyLogic;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.ApplicationScoped;
@@ -24,6 +25,7 @@ import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,11 +55,21 @@ public class StrategyController implements Serializable {
     private Map<Strategy, ProcessContext> backtestContextMap = new ConcurrentHashMap<>();
     private Map<Strategy, Boolean> backtestStatusMap = new ConcurrentHashMap<>(); // false = in progress, true = finished
     private BlockingQueue<GenericTuple<Strategy, TimeFrame>> backtestQueue = new ArrayBlockingQueue<>(HtrDefinitions.BLOCKING_QUEUE_CAPACITY);
+    private final String POISON_PROCESS = "NO_SERIES";
+    private final GenericTuple<Strategy, TimeFrame> POISON_BACKTEST = new GenericTuple<>(null, null);
 
     @PostConstruct
-    public void init() {
+    private void init() {
         initProcess();
         initBacktest();
+    }
+
+    @PreDestroy
+    public void finish() {
+        for (Strategy strategy : strategyDao.getStrategies()) {
+            queueProcessStrategy(strategy, POISON_PROCESS);
+        }
+        queueBacktestStrategy(POISON_BACKTEST);
     }
 
     private void initProcess() {
@@ -68,9 +80,10 @@ public class StrategyController implements Serializable {
             BlockingQueue<String> queue = new ArrayBlockingQueue<>(HtrDefinitions.BLOCKING_QUEUE_CAPACITY);
             tradingQueueMap.put(strategy, queue);
             managedExecutorService.submit(() -> {
-                while (true) {
+                String seriesAlias = null;
+                while (!Objects.equals(seriesAlias, POISON_PROCESS)) {
                     try {
-                        String seriesAlias = queue.take();
+                        seriesAlias = queue.take();
                         l.info("Process strategy request detected, strategy id=" + strategy.getId() + ", triggered by series=" + seriesAlias);
                         processStrategy(tradingLogicMap.get(strategy));
                     } catch (InterruptedException ie) {
@@ -83,16 +96,18 @@ public class StrategyController implements Serializable {
 
     private void initBacktest() {
         managedExecutorService.submit(() -> {
-            while (true) {
+            GenericTuple<Strategy, TimeFrame> backtestParam = null;
+            while (!Objects.equals(backtestParam, POISON_BACKTEST)) {
                 try {
-                    GenericTuple<Strategy, TimeFrame> backtestParam = backtestQueue.take();
+                    backtestParam = backtestQueue.take();
                     l.info("Backtest strategy request detected, processing...");
                     Strategy strategy = backtestParam.getFirst();
-                    Calendar fromDate = backtestParam.getSecond().getFromDate();
-                    Calendar toDate = backtestParam.getSecond().getToDate();
-                    backtestStatusMap.put(strategy, Boolean.FALSE);
-                    backtestStrategy(strategy, fromDate, toDate);
-                    backtestStatusMap.put(strategy, Boolean.TRUE);
+                    TimeFrame timeFrame = backtestParam.getSecond();
+                    if (timeFrame.isValid()) {
+                        backtestStatusMap.put(strategy, Boolean.FALSE);
+                        backtestStrategy(strategy, timeFrame.getFromDate(), timeFrame.getToDate());
+                        backtestStatusMap.put(strategy, Boolean.TRUE);
+                    }
                 } catch (InterruptedException ie) {
                     l.warning(ie.getMessage());
                 }
@@ -135,9 +150,9 @@ public class StrategyController implements Serializable {
         }
     }
 
-    public void queueBacktestStrategy(Strategy strategy, TimeFrame timeFrame) {
+    public void queueBacktestStrategy(GenericTuple<Strategy, TimeFrame> backtestParam) {
         try {
-            backtestQueue.put(new GenericTuple<>(strategy, timeFrame));
+            backtestQueue.put(backtestParam);
         } catch (InterruptedException ie) {
             l.log(Level.SEVERE, "Error", ie);
         }

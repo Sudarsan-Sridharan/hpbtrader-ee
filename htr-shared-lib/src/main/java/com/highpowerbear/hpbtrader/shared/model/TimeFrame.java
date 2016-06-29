@@ -17,6 +17,10 @@ public class TimeFrame {
         this.toDate = toDate;
     }
 
+    public boolean isValid() {
+        return (fromDate != null && toDate != null && fromDate.before(toDate));
+    }
+
     public Calendar getFromDate() {
         return fromDate;
     }

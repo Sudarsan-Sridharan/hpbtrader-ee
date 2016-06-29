@@ -7,6 +7,7 @@ import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
 import com.highpowerbear.hpbtrader.strategy.process.OrderStateHandler;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -24,6 +25,11 @@ public class SingletonRepo {
     // should be used only in cases where spring cannot be used (jersey)
     public static SingletonRepo getInstance() {
         return srepo;
+    }
+
+    @PostConstruct
+    private void init() {
+        SingletonRepo.setInstance(this);
     }
 
     @Inject private DataSeriesDao dataSeriesDao;

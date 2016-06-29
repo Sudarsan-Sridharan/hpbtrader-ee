@@ -8,6 +8,7 @@ import com.highpowerbear.hpbtrader.mktdata.websocket.WebsocketController;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -19,12 +20,17 @@ public class SingletonRepo {
     private static SingletonRepo srepo;
 
     // should be used only within main to initialize
-    public static void setInstance(SingletonRepo instance) {
+    private static void setInstance(SingletonRepo instance) {
         srepo = instance;
     }
     // should be used only in cases where spring cannot be used (jersey)
     public static SingletonRepo getInstance() {
         return srepo;
+    }
+
+    @PostConstruct
+    private void init() {
+        SingletonRepo.setInstance(this);
     }
 
     @Inject private IbOrderDao ibOrderDao;

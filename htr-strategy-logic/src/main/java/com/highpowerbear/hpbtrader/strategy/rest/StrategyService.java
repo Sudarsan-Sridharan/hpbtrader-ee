@@ -3,6 +3,7 @@ package com.highpowerbear.hpbtrader.strategy.rest;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.*;
+import com.highpowerbear.hpbtrader.shared.model.GenericTuple;
 import com.highpowerbear.hpbtrader.shared.model.RestList;
 import com.highpowerbear.hpbtrader.shared.model.TimeFrame;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
@@ -57,7 +58,7 @@ public class StrategyService {
         }
         Calendar fromDate = timeFrame.getFromDate() == null ? HtrUtil.getCalendarMonthsOffset(HtrDefinitions.BACKTEST_DEFAULT_MONTHS) : timeFrame.getFromDate();
         Calendar toDate = timeFrame.getToDate() == null ? HtrUtil.getCalendar() : timeFrame.getToDate();
-        strategyController.queueBacktestStrategy(strategy, new TimeFrame(fromDate, toDate));
+        strategyController.queueBacktestStrategy(new GenericTuple<>(strategy, new TimeFrame(fromDate, toDate)));
         return Response.ok().build();
     }
 
