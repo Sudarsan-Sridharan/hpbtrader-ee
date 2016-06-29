@@ -13,8 +13,7 @@
         <module>htr-mktdata-app</module>
         <module>htr-exec-logic</module>
         <module>htr-exec-app</module>
-        <module>htr-strategy-logic</module>
-        <module>htr-strategy-app</module>
+        <module>htr-strategy</module>
         <module>htr-shared-lib</module>
     </modules>
     <packaging>pom</packaging>
