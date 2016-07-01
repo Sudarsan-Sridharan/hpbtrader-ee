@@ -11,6 +11,7 @@ import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.ib.client.EClientSocket;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -41,10 +42,15 @@ public class IbController {
     private void init() {
         ibAccountDao.getIbAccounts().forEach(ibAccount -> {
             EClientSocket eClientSocket = new EClientSocket(ibListeners.get().configure(ibAccount));
-            IbConnection ibConnection = new IbConnection(HtrEnums.IbConnectionType.EXEC, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId(), eClientSocket);
+            IbConnection ibConnection = new IbConnection(HtrEnums.IbConnectionType.EXEC, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getExecClientId(), eClientSocket);
             ibConnectionMap.put(ibAccount, ibConnection);
             validOrderIdMap.put(ibAccount, 1);
         });
+    }
+
+    @PreDestroy
+    private void finish() {
+        ibConnectionMap.keySet().forEach(this::disconnectExec);
     }
 
     public synchronized void setNextValidOrderId(IbAccount ibAccount, int nextValidOrderId) {

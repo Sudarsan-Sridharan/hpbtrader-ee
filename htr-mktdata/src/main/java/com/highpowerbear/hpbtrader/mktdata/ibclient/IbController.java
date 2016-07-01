@@ -10,10 +10,10 @@ import com.ib.client.Contract;
 import com.ib.client.EClientSocket;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,12 +38,16 @@ public class IbController {
 
     @PostConstruct
     private void init() {
-        ibAccountDao.getIbAccounts().forEach(ibAccount -> ibConnectionMap.put(ibAccount, createIbConnection(ibAccount)));
+        ibAccountDao.getIbAccounts().forEach(ibAccount -> {
+            EClientSocket eClientSocket = new EClientSocket(ibListeners.get().configure(ibAccount));
+            IbConnection ibConnection = new IbConnection(HtrEnums.IbConnectionType.MKTDATA, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId(), eClientSocket);
+            ibConnectionMap.put(ibAccount, ibConnection);
+        });
     }
 
-    private IbConnection createIbConnection(IbAccount ibAccount) {
-        EClientSocket eClientSocket = new EClientSocket(ibListeners.get().configure(ibAccount));
-        return new IbConnection(HtrEnums.IbConnectionType.MKTDATA, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId(), eClientSocket);
+    @PreDestroy
+    private void finish() {
+        ibConnectionMap.keySet().forEach(this::disconnectMktData);
     }
 
     private IbConnection getActiveMktDataConnection() {
