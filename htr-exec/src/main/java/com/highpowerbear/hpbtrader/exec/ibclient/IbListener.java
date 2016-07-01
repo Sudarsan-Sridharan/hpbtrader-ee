@@ -4,7 +4,7 @@ import com.highpowerbear.hpbtrader.exec.message.MqSender;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
-import com.highpowerbear.hpbtrader.shared.ibclient.AbstractIbListener;
+import com.highpowerbear.hpbtrader.shared.ibclient.GenerictIbListener;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.ib.client.Contract;
 import com.ib.client.OrderState;
@@ -17,7 +17,7 @@ import javax.inject.Inject;
  * @author rkolar
  */
 @Dependent
-public class IbListener extends AbstractIbListener {
+public class IbListener extends GenerictIbListener {
 
     @Inject private IbOrderDao ibOrderDao;
     @Inject private IbController ibController;

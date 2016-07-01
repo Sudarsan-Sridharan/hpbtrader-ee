@@ -9,7 +9,7 @@ import java.util.logging.Logger;
  *
  * @author rkolar
  */
-public abstract class AbstractIbListener implements EWrapper {
+public class GenerictIbListener implements EWrapper {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Override

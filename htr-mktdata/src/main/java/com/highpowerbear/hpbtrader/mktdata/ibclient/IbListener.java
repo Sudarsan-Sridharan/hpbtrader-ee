@@ -5,7 +5,7 @@ import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.entity.DataBar;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
-import com.highpowerbear.hpbtrader.shared.ibclient.AbstractIbListener;
+import com.highpowerbear.hpbtrader.shared.ibclient.GenerictIbListener;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -15,7 +15,7 @@ import javax.inject.Inject;
  * @author rkolar
  */
 @Dependent
-public class IbListener extends AbstractIbListener {
+public class IbListener extends GenerictIbListener {
 
     @Inject private HistDataController histDataController;
     @Inject private RtDataController rtDataController;
