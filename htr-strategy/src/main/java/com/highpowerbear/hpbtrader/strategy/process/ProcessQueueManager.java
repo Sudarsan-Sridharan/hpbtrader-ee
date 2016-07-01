@@ -72,13 +72,17 @@ public class ProcessQueueManager {
             tradingQueueMap.put(strategy, queue);
             managedExecutorService.submit(() -> {
                 String seriesAlias = null;
-                while (!Objects.equals(seriesAlias, POISON_PROCESS)) {
+                while (true) {
                     try {
                         seriesAlias = queue.take();
                         l.info("Process strategy request detected, strategy id=" + strategy.getId() + ", triggered by series=" + seriesAlias);
-                        ctrl.processStrategy(ctrl.tradingLogicMap.get(strategy));
                     } catch (InterruptedException ie) {
                         l.warning(ie.getMessage());
+                    }
+                    if (!Objects.equals(seriesAlias, POISON_PROCESS)) {
+                        ctrl.processStrategy(ctrl.tradingLogicMap.get(strategy));
+                    } else{
+                        return;
                     }
                 }
             });
@@ -88,19 +92,25 @@ public class ProcessQueueManager {
     private void initBacktest() {
         managedExecutorService.submit(() -> {
             GenericTuple<Strategy, TimeFrame> backtestParam = null;
-            while (!Objects.equals(backtestParam, POISON_BACKTEST)) {
+            while (true) {
                 try {
                     backtestParam = backtestQueue.take();
                     l.info("Backtest strategy request detected, processing...");
-                    Strategy strategy = backtestParam.getFirst();
-                    TimeFrame timeFrame = backtestParam.getSecond();
-                    if (timeFrame.isValid()) {
-                        ctrl.backtestStatusMap.put(strategy, Boolean.FALSE);
-                        ctrl.backtestStrategy(strategy, timeFrame.getFromDate(), timeFrame.getToDate());
-                        ctrl.backtestStatusMap.put(strategy, Boolean.TRUE);
-                    }
                 } catch (InterruptedException ie) {
                     l.warning(ie.getMessage());
+                }
+                if (!Objects.equals(backtestParam, POISON_BACKTEST)) {
+                    if (backtestParam != null) {
+                        Strategy strategy = backtestParam.getFirst();
+                        TimeFrame timeFrame = backtestParam.getSecond();
+                        if (timeFrame.isValid()) {
+                            ctrl.backtestStatusMap.put(strategy, Boolean.FALSE);
+                            ctrl.backtestStrategy(strategy, timeFrame.getFromDate(), timeFrame.getToDate());
+                            ctrl.backtestStatusMap.put(strategy, Boolean.TRUE);
+                        }
+                    }
+                } else {
+                    return;
                 }
             }
         });
