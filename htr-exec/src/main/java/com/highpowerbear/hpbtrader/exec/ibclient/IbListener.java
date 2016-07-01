@@ -1,6 +1,5 @@
 package com.highpowerbear.hpbtrader.exec.ibclient;
 
-import com.highpowerbear.hpbtrader.exec.common.SingletonRepo;
 import com.highpowerbear.hpbtrader.exec.message.MqSender;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
@@ -10,21 +9,26 @@ import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.ib.client.Contract;
 import com.ib.client.OrderState;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 /**
  *
  * @author rkolar
  */
-public class IbListenerImpl extends AbstractIbListener {
+@Dependent
+public class IbListener extends AbstractIbListener {
 
-    private IbOrderDao ibOrderDao = SingletonRepo.getInstance().getIbOrderDao();
-    private IbController ibController = SingletonRepo.getInstance().getIbController();
-    private HeartbeatControl heartbeatControl = SingletonRepo.getInstance().getHeartbeatControl();
-    private MqSender mqSender = SingletonRepo.getInstance().getMqSender();
+    @Inject private IbOrderDao ibOrderDao;
+    @Inject private IbController ibController;
+    @Inject private HeartbeatControl heartbeatControl;
+    @Inject private MqSender mqSender;
 
     private IbAccount ibAccount;
 
-    public IbListenerImpl(IbAccount ibAccount) {
+    public IbListener configure(IbAccount ibAccount) {
         this.ibAccount = ibAccount;
+        return this;
     }
 
     @Override

@@ -11,7 +11,9 @@ import com.ib.client.EClientSocket;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,8 @@ public class IbController {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject IbAccountDao ibAccountDao;
+    @Inject private Instance<IbListener> ibListeners;
+
     private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>(); // ibAccount --> ibConnection
 
     public IbConnection getIbConnection(IbAccount ibAccount) {
@@ -38,7 +42,7 @@ public class IbController {
     }
 
     private IbConnection createIbConnection(IbAccount ibAccount) {
-        EClientSocket eClientSocket = new EClientSocket(new IbListenerImpl(ibAccount));
+        EClientSocket eClientSocket = new EClientSocket(ibListeners.get().configure(ibAccount));
         return new IbConnection(HtrEnums.IbConnectionType.MKTDATA, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId(), eClientSocket);
     }
 

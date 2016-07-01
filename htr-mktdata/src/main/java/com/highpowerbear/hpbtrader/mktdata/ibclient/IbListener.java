@@ -1,6 +1,5 @@
 package com.highpowerbear.hpbtrader.mktdata.ibclient;
 
-import com.highpowerbear.hpbtrader.mktdata.common.SingletonRepo;
 import com.highpowerbear.hpbtrader.mktdata.process.HistDataController;
 import com.highpowerbear.hpbtrader.mktdata.process.RtDataController;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
@@ -8,19 +7,25 @@ import com.highpowerbear.hpbtrader.shared.entity.DataBar;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.ibclient.AbstractIbListener;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 /**
  *
  * @author rkolar
  */
-public class IbListenerImpl extends AbstractIbListener {
-    private HistDataController histDataController = SingletonRepo.getInstance().getHistDataController();
-    private RtDataController rtDataController = SingletonRepo.getInstance().getRtDataController();
-    private IbController ibController = SingletonRepo.getInstance().getIbController();
+@Dependent
+public class IbListener extends AbstractIbListener {
+
+    @Inject private HistDataController histDataController;
+    @Inject private RtDataController rtDataController;
+    @Inject private IbController ibController;
 
     private IbAccount ibAccount;
 
-    public IbListenerImpl(IbAccount ibAccount) {
+    public IbListener configure(IbAccount ibAccount) {
         this.ibAccount = ibAccount;
+        return this;
     }
 
     @Override

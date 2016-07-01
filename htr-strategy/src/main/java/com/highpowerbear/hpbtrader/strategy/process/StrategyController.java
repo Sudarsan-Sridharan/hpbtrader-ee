@@ -8,15 +8,16 @@ import com.highpowerbear.hpbtrader.shared.model.OperResult;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 import com.highpowerbear.hpbtrader.strategy.logic.StrategyLogic;
-import com.highpowerbear.hpbtrader.strategy.message.MqSender;
-import com.highpowerbear.hpbtrader.strategy.process.context.DatabaseCtx;
-import com.highpowerbear.hpbtrader.strategy.process.context.InMemoryCtx;
 import com.highpowerbear.hpbtrader.strategy.logic.impl.LuxorStrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.logic.impl.MacdCrossStrategyLogic;
 import com.highpowerbear.hpbtrader.strategy.logic.impl.TestStrategyLogic;
+import com.highpowerbear.hpbtrader.strategy.message.MqSender;
+import com.highpowerbear.hpbtrader.strategy.process.context.DatabaseCtx;
+import com.highpowerbear.hpbtrader.strategy.process.context.InMemoryCtx;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.Calendar;
@@ -38,6 +39,9 @@ public class StrategyController implements Serializable {
     @Inject private EmailSender emailSender;
     @Inject private MqSender mqSender;
 
+    @Inject private Instance<ProcessContext> processContexts;
+    @Inject private Instance<StrategyLogic> strategyLogics;
+
     Map<Strategy, ProcessContext> tradingContextMap = new ConcurrentHashMap<>();
     Map<Strategy, StrategyLogic> tradingLogicMap = new ConcurrentHashMap<>();
     Map<Strategy, ProcessContext> backtestContextMap = new ConcurrentHashMap<>();
@@ -46,7 +50,7 @@ public class StrategyController implements Serializable {
     @PostConstruct
     private void init() {
         for (Strategy strategy : strategyDao.getStrategies()) {
-            ProcessContext ctx = new DatabaseCtx(strategy);
+            ProcessContext ctx = processContexts.select(DatabaseCtx.class).get().configure(strategy);
             tradingContextMap.put(strategy, ctx);
             tradingLogicMap.put(strategy, createStrategyLogic(ctx));
         }
@@ -68,13 +72,13 @@ public class StrategyController implements Serializable {
     StrategyLogic createStrategyLogic(ProcessContext ctx) {
         StrategyLogic strategyLogic = null;
         if (HtrEnums.StrategyType.MACD_CROSS.equals(ctx.getStrategy().getStrategyType())) {
-            strategyLogic = new MacdCrossStrategyLogic(ctx);
+            strategyLogic = strategyLogics.select(MacdCrossStrategyLogic.class).get().configure(ctx);
 
         } else if (HtrEnums.StrategyType.TEST.equals(ctx.getStrategy().getStrategyType())) {
-            strategyLogic = new TestStrategyLogic(ctx);
+            strategyLogic = strategyLogics.select(TestStrategyLogic.class).get().configure(ctx);
 
         } else if (HtrEnums.StrategyType.LUXOR.equals(ctx.getStrategy().getStrategyType())) {
-            strategyLogic = new LuxorStrategyLogic(ctx);
+            strategyLogic = strategyLogics.select(LuxorStrategyLogic.class).get().configure(ctx);
         }
         return strategyLogic;
     }
@@ -139,7 +143,7 @@ public class StrategyController implements Serializable {
     void backtestStrategy(Strategy str, Calendar fromDate, Calendar toDate) {
         Strategy btStrategy = str.deepCopyTo(new Strategy()).resetStatistics();
         btStrategy.setStrategyMode(HtrEnums.StrategyMode.BTEST);
-        ProcessContext ctx = new InMemoryCtx(btStrategy);
+        ProcessContext ctx = processContexts.select(InMemoryCtx.class).get().configure(btStrategy);
         StrategyLogic sl = createStrategyLogic(ctx);
 
         String logMessage = " strategy, id=" + str.getId() + ", " + str.getDefaultInputSeriesAlias() + ", " + str.getStrategyType() + " --> " + sl.getClass().getSimpleName();

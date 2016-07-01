@@ -4,6 +4,7 @@ import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
 
+import javax.enterprise.context.Dependent;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -11,7 +12,9 @@ import java.util.stream.Collectors;
  *
  * @author robertk
  */
+@Dependent
 public class InMemoryCtx implements ProcessContext {
+
     private Strategy strategy;
     private Calendar currentDate;
 
@@ -25,8 +28,10 @@ public class InMemoryCtx implements ProcessContext {
     private Long nextTradeId = 1L;
     private Long nextTradeLogId = 1L;
 
-    public InMemoryCtx(Strategy strategy) {
+    @Override
+    public ProcessContext configure(Strategy strategy) {
         this.strategy = strategy;
+        return this;
     }
 
     @Override

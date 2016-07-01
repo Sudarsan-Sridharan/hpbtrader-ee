@@ -14,6 +14,7 @@ import java.util.Calendar;
  * @author robertk
  */
 public interface StrategyLogic {
+    StrategyLogic configure(ProcessContext ctx);
     Strategy getStrategy();
     ProcessContext getProcessContext();
     OperResult<Boolean, String> prepare();

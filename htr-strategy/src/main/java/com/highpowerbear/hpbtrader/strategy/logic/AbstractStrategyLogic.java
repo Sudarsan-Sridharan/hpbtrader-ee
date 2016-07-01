@@ -6,8 +6,6 @@ import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.shared.model.OperResult;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
-import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
-import com.highpowerbear.hpbtrader.strategy.common.SingletonRepo;
 import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
 
 import java.text.NumberFormat;
@@ -22,12 +20,10 @@ import java.util.Locale;
 public abstract class AbstractStrategyLogic implements StrategyLogic {
     private final int INDICATORS_LIST_SIZE = 10;
 
-    private DataSeriesDao dataSeriesDao = SingletonRepo.getInstance().getDataSeriesDao();
+    protected DataSeriesDao dataSeriesDao;
+
     private DataSeries inputDataSeries;
     private boolean offset;
-
-    protected TiCalculator tiCalculator = SingletonRepo.getInstance().getTiCalculator();
-    protected NumberFormat nf = NumberFormat.getInstance(Locale.US);
 
     protected ProcessContext ctx;
     protected List<DataBar> dataBars;
@@ -37,10 +33,15 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     protected Trade activeTrade;
     protected IbOrder ibOrder;
 
-    public AbstractStrategyLogic(ProcessContext ctx) {
-        this.inputDataSeries = dataSeriesDao.getDataSeriesByAlias(ctx.getStrategy().getDefaultInputSeriesAlias());
+    protected NumberFormat nf = NumberFormat.getInstance(Locale.US);
+
+    @Override
+    public StrategyLogic configure(ProcessContext ctx) {
+        this.ctx = ctx;
+        this.inputDataSeries = dataSeriesDao.getDataSeriesByAlias(this.ctx.getStrategy().getDefaultInputSeriesAlias());
         nf.setMinimumFractionDigits(6);
         nf.setMaximumFractionDigits(6);
+        return this;
     }
 
     @Override

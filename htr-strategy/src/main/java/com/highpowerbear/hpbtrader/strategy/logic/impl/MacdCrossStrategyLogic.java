@@ -2,18 +2,26 @@ package com.highpowerbear.hpbtrader.strategy.logic.impl;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.Trade;
+import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
+import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Macd;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Stochastics;
 import com.highpowerbear.hpbtrader.strategy.logic.AbstractStrategyLogic;
-import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 import java.util.List;
 
 /**
  *
  * @author robertk
  */
+@Dependent
 public class MacdCrossStrategyLogic extends AbstractStrategyLogic {
+
+    @Inject protected DataSeriesDao dataSeriesDao;
+    @Inject private TiCalculator tiCalculator;
+
     // strategy parameters
     private Integer stochOversold;
     private Integer stochOverbought;
@@ -24,10 +32,6 @@ public class MacdCrossStrategyLogic extends AbstractStrategyLogic {
     private Double prevMacdL;
     private Double macdL;
     private Double stochD;
-
-    public MacdCrossStrategyLogic(ProcessContext ctx) {
-        super(ctx);
-    }
 
     @Override
     public void process() {

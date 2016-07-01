@@ -12,6 +12,7 @@ import com.ib.client.EClientSocket;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,8 @@ public class IbController {
     @Inject private IbOrderDao ibOrderDao;
     @Inject private HeartbeatControl heartbeatControl;
     @Inject private IbAccountDao ibAccountDao;
+    @Inject private Instance<IbListener> ibListeners;
+
     private Map<IbAccount, IbConnection> ibConnectionMap = new HashMap<>(); // ibAccount --> ibConnection
     private Map<IbAccount, Integer> validOrderIdMap = new HashMap<>();
 
@@ -37,7 +40,7 @@ public class IbController {
     @PostConstruct
     private void init() {
         ibAccountDao.getIbAccounts().forEach(ibAccount -> {
-            EClientSocket eClientSocket = new EClientSocket(new IbListenerImpl(ibAccount));
+            EClientSocket eClientSocket = new EClientSocket(ibListeners.get().configure(ibAccount));
             IbConnection ibConnection = new IbConnection(HtrEnums.IbConnectionType.EXEC, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId(), eClientSocket);
             ibConnectionMap.put(ibAccount, ibConnection);
             validOrderIdMap.put(ibAccount, 1);

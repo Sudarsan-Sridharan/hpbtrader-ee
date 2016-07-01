@@ -5,25 +5,29 @@ import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
-import com.highpowerbear.hpbtrader.strategy.common.SingletonRepo;
 import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 import java.util.Calendar;
 import java.util.List;
 
 /**
  * Created by robertk on 5/13/2016.
  */
+@Dependent
 public class DatabaseCtx implements ProcessContext {
+
+    @Inject private TradeDao tradeDao;
+    @Inject private StrategyDao strategyDao;
+    @Inject private IbOrderDao ibOrderDao;
 
     private Strategy strategy;
 
-    private TradeDao tradeDao = SingletonRepo.getInstance().getTradeDao();
-    private StrategyDao strategyDao = SingletonRepo.getInstance().getStrategyDao();
-    private IbOrderDao ibOrderDao = SingletonRepo.getInstance().getIbOrderDao();
-
-    public DatabaseCtx(Strategy strategy) {
+    @Override
+    public ProcessContext configure(Strategy strategy) {
         this.strategy = strategy;
+        return this;
     }
 
     @Override

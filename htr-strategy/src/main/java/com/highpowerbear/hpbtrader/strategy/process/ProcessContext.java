@@ -9,6 +9,8 @@ import java.util.List;
  * Created by robertk on 5/13/2016.
  */
 public interface ProcessContext {
+    ProcessContext configure(Strategy strategy);
+
     void setCurrentDate(Calendar currentDate);
     Calendar getCurrentDate();
 

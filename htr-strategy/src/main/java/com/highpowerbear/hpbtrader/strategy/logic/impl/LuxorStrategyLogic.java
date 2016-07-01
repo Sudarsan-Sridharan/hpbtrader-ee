@@ -2,10 +2,13 @@ package com.highpowerbear.hpbtrader.strategy.logic.impl;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.entity.Trade;
+import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
+import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Ema;
 import com.highpowerbear.hpbtrader.strategy.logic.AbstractStrategyLogic;
-import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 import java.util.Calendar;
 import java.util.List;
 
@@ -13,7 +16,12 @@ import java.util.List;
  *
  * @author rkolar
  */
+@Dependent
 public class LuxorStrategyLogic extends AbstractStrategyLogic {
+
+    @Inject protected DataSeriesDao dataSeriesDao;
+    @Inject private TiCalculator tiCalculator;
+
     // strategy parameters
     private Double stopPct; // trailing stop calculated from current price
     private Double targetPct; // calculated from entry
@@ -27,10 +35,6 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
     private Double emaShortValue;
     private Double prevEmaLongValue;
     private Double emaLongValue;
-
-    public LuxorStrategyLogic(ProcessContext ctx) {
-         super(ctx);
-    }
 
     @Override
     public void process() {
