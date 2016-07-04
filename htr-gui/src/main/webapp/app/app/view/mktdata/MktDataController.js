@@ -18,7 +18,7 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
             dataSeriesGrid = me.lookupReference('dataSeriesGrid');
 
         if (ibAccounts) {
-            ibAccounts.getProxy().setUrl(HtrGui.common.Definitions.urlPrefix + '/ibaccounts');
+            ibAccounts.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixMktData + '/ibaccounts');
             ibAccounts.load(function(records, operation, success) {
                 if (success) {
                     console.log('loaded ibAccounts');
@@ -26,7 +26,7 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
             });
         }
         if (dataSeriesStore) {
-            dataSeriesStore.getProxy().setUrl(HtrGui.common.Definitions.urlPrefix + '/dataseries');
+            dataSeriesStore.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixMktData + '/dataseries');
             dataSeriesStore.load(function(records, operation, success) {
                 if (success) {
                     console.log('loaded dataSeriesStore');
@@ -35,7 +35,7 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
             });
         }
         if (rtDataStore) {
-            rtDataStore.getProxy().setUrl(HtrGui.common.Definitions.urlPrefix + '/dataseries/rtdata');
+            rtDataStore.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixMktData + '/dataseries/rtdata');
             rtDataStore.load(function(records, operation, success) {
                 if (success) {
                     console.log('loaded rtDataStore');
@@ -43,7 +43,7 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
             });
         }
 
-        var ws = new WebSocket(HtrGui.common.Definitions.wsUrl);
+        var ws = new WebSocket(HtrGui.common.Definitions.wsUrlMktData);
         ws.onopen = function(evt) {
             console.log('WS opened');
         };
@@ -111,7 +111,7 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
 
         Ext.Ajax.request({
             method: 'PUT',
-            url: HtrGui.common.Definitions.urlPrefix + '/ibaccounts/' + accountId + '/connect/' + (con ? 'true' : 'false'),
+            url: HtrGui.common.Definitions.urlPrefixMktData + '/ibaccounts/' + accountId + '/connect/' + (con ? 'true' : 'false'),
             success: function(response) {
                 box.hide();
                 grid.getStore().reload();
@@ -131,7 +131,7 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
 
         me.dataSeriesId = record.data.id;
         dataBarsGrid.setTitle('Data Bars, dataSeriesId=' + me.dataSeriesId + ', symbol=' + record.data.symbol + ', interval=' + record.data.interval);
-        dataBars.getProxy().setUrl(HtrGui.common.Definitions.urlPrefix + '/dataseries/' + me.dataSeriesId  + '/pageddatabars');
+        dataBars.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixMktData + '/dataseries/' + me.dataSeriesId  + '/pageddatabars');
 
         if (dataBarsPaging.getStore().isLoaded()) {
             dataBarsPaging.moveFirst();
@@ -150,7 +150,7 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
 
         Ext.Ajax.request({
             method: 'PUT',
-            url: HtrGui.common.Definitions.urlPrefix + '/dataseries/' + dataSeriesId + '/rtdata/toggle',
+            url: HtrGui.common.Definitions.urlPrefixMktData + '/dataseries/' + dataSeriesId + '/rtdata/toggle',
             success: function(response) {
                 rtDataStore.reload();
             }
@@ -162,7 +162,7 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
 
         Ext.Ajax.request({
             method: 'PUT',
-            url: HtrGui.common.Definitions.urlPrefix + '/dataseries/' + dataSeriesId + '/backfill'
+            url: HtrGui.common.Definitions.urlPrefixMktData + '/dataseries/' + dataSeriesId + '/backfill'
         });
     }
 });

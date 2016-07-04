@@ -4,9 +4,9 @@
 Ext.define('HtrGui.common.Definitions', {
     statics: {
         //urlPrefix: 'http://localhost:28080/htr-mktdata/rest',
-        urlPrefix: 'http://' + window.location.host + '/htr-mktdata/rest',
+        urlPrefixMktData: 'http://' + window.location.host + '/htr-mktdata/rest',
 
         //wsUrl: 'ws://localhost:28080/htr-mktdata/websocket/mktdata'
-        wsUrl: 'ws://' + window.location.host + '/htr-mktdata/websocket/mktdata'
+        wsUrlMktData: 'ws://' + window.location.host + '/htr-mktdata/websocket/mktdata'
     }
 });

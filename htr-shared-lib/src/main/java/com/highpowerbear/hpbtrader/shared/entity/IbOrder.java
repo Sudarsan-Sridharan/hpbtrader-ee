@@ -48,11 +48,11 @@ public class IbOrder implements Serializable {
     private Calendar createdDate;
     @OneToMany(mappedBy = "ibOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("eventDate ASC")
-    private List<OrderEvent> events = new ArrayList<>();
+    private List<IbOrderEvent> events = new ArrayList<>();
 
     public void addEvent(HtrEnums.IbOrderStatus status, Calendar date) {
         this.status = status;
-        OrderEvent event = new OrderEvent();
+        IbOrderEvent event = new IbOrderEvent();
         event.setIbOrder(this);
         event.setEventDate(date);
         event.setStatus(status);
@@ -63,8 +63,8 @@ public class IbOrder implements Serializable {
     }
 
     public Calendar getEventDate(HtrEnums.IbOrderStatus ibOrderStatus) {
-        OrderEvent orderEvent = events.stream().filter(oe -> ibOrderStatus.equals(oe.getStatus())).findAny().orElse(null);
-        return (orderEvent != null ? orderEvent.getEventDate() : null);
+        IbOrderEvent ibOrderEvent = events.stream().filter(oe -> ibOrderStatus.equals(oe.getStatus())).findAny().orElse(null);
+        return (ibOrderEvent != null ? ibOrderEvent.getEventDate() : null);
     }
 
     public boolean isOpeningOrder() {
@@ -240,11 +240,11 @@ public class IbOrder implements Serializable {
         this.createdDate = dateCreated;
     }
 
-    public List<OrderEvent> getEvents() {
+    public List<IbOrderEvent> getEvents() {
         return events;
     }
 
-    public void setEvents(List<OrderEvent> events) {
+    public void setEvents(List<IbOrderEvent> events) {
         this.events = events;
     }
 }

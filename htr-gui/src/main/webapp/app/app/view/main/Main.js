@@ -12,6 +12,8 @@ Ext.define('HtrGui.view.main.Main', {
         'Ext.layout.container.VBox',
         'HtrGui.common.Glyphs',
         'HtrGui.view.mktdata.MktData',
+        'HtrGui.view.strategy.Strategy',
+        'HtrGui.view.exec.Exec',
         'HtrGui.view.main.MainController',
         'HtrGui.view.main.MainModel'
     ],
@@ -28,6 +30,16 @@ Ext.define('HtrGui.view.main.Main', {
         align: 'stretch'
     },
     items: [{
-        xtype: 'htr-mktdata'
+        xtype: 'htr-mktdata',
+        reference: 'mktDataPanel',
+        title: 'Market Data'
+    }, {
+        xtype: 'htr-strategy',
+        reference: 'strategyPanel',
+        title: 'Strategies'
+    }, {
+        xtype: 'htr-exec',
+        reference: 'executionPanel',
+        title: 'Execution'
     }]
 });

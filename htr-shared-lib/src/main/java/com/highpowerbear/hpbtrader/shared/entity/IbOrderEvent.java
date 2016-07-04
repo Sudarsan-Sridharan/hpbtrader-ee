@@ -15,7 +15,7 @@ import java.util.Calendar;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "orderevent", schema = "hpbtrader", catalog = "hpbtrader")
-public class OrderEvent implements Serializable {
+public class IbOrderEvent implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableGenerator(name="orderevent", table="sequence", schema = "hpbtrader", catalog = "hpbtrader", pkColumnName="seq_name", valueColumnName="seq_count")
@@ -34,7 +34,7 @@ public class OrderEvent implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        OrderEvent that = (OrderEvent) o;
+        IbOrderEvent that = (IbOrderEvent) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
     }
