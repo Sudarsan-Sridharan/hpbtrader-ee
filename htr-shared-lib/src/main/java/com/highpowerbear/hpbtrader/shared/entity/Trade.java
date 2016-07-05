@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,6 +28,7 @@ public class Trade implements Serializable {
     @GeneratedValue(generator="trade")
     private Long id;
     @ManyToOne
+    @XmlTransient
     private Strategy strategy;
     private Integer quantity;
     private Integer tradePosition = 0;
@@ -40,7 +42,6 @@ public class Trade implements Serializable {
     private Double stopLoss;
     private Double profitTarget;
     private Double unrealizedPl = 0d;
-    @XmlElement
     private Double realizedPl = 0d;
     @Enumerated(EnumType.STRING)
     private HtrEnums.TradeType tradeType;
@@ -49,10 +50,10 @@ public class Trade implements Serializable {
     @OneToMany(mappedBy = "trade", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy // by primary key
     private List<TradeIbOrder> tradeIbOrders = new ArrayList<>();
-    
+
     @XmlElement
-    public long getTimeInMillis() {
-        return (closeDate != null ? closeDate.getTimeInMillis() : HtrUtil.getCalendar().getTimeInMillis());
+    public Integer getStrategyId() {
+        return strategy.getId();
     }
     
     public void addTradeOrder(IbOrder ibOrder) {

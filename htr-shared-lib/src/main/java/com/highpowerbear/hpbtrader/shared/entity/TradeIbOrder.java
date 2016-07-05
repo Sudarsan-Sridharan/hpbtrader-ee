@@ -3,6 +3,8 @@ package com.highpowerbear.hpbtrader.shared.entity;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 
 /**
@@ -23,7 +25,13 @@ public class TradeIbOrder implements Serializable {
     @ManyToOne
     private IbOrder ibOrder;
     @ManyToOne
+    @XmlTransient
     private Trade trade;
+
+    @XmlElement
+    public Long getTradeId() {
+        return trade.getId();
+    }
 
     @Override
     public boolean equals(Object o) {

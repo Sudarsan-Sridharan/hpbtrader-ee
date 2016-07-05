@@ -5,6 +5,8 @@ import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 
 /**
@@ -23,6 +25,7 @@ public class Strategy implements Serializable {
     @ManyToOne
     private Instrument tradeInstrument;
     @ManyToOne
+    @XmlTransient
     private IbAccount ibAccount;
     private String inputSeriesAliases; // csv
     @Enumerated(EnumType.STRING)
@@ -43,6 +46,11 @@ public class Strategy implements Serializable {
     private Long numLongs = 0L;
     private Long numWinners = 0L;
     private Long numLosers = 0L;
+
+    @XmlElement
+    public String getIbAccountId() {
+        return ibAccount.getAccountId();
+    }
 
     public String getDefaultInputSeriesAlias() {
         return this.inputSeriesAliases.split(",")[0].trim();

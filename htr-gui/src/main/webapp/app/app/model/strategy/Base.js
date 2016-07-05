@@ -1,7 +1,7 @@
 /**
  * Created by robertk on 4.4.2016.
  */
-Ext.define('HtrGui.model.exec.Base', {
+Ext.define('HtrGui.model.strategy.Base', {
     extend: 'Ext.data.Model',
 
     idProperty: 'id',
@@ -9,8 +9,8 @@ Ext.define('HtrGui.model.exec.Base', {
         {name: 'id', type: 'string'}
     ],
     schema: {
-        id: 'execSchema',
-        namespace: 'HtrGui.model.exec',  // generate auto entityName,
+        id: 'strategySchema',
+        namespace: 'HtrGui.model.strategy',  // generate auto entityName,
         proxy: {
             type: 'ajax',
             actionMethods: {

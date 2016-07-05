@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -13,7 +14,7 @@ import java.util.Calendar;
  *
  * @author robertk
  */
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "strategylog", schema = "hpbtrader", catalog = "hpbtrader")
 public class StrategyLog  implements Serializable {
@@ -24,6 +25,7 @@ public class StrategyLog  implements Serializable {
     @GeneratedValue(generator="strategylog")
     private Long id;
     @ManyToOne
+    @XmlTransient
     private Strategy strategy;
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar logDate;
@@ -36,7 +38,6 @@ public class StrategyLog  implements Serializable {
     private Long numAllOrders;
     private Long numFilledOrders;
     private Integer currentPosition;
-    @XmlElement
     private Double cumulativePl;
     private Long numShorts;
     private Long numLongs;
@@ -44,8 +45,8 @@ public class StrategyLog  implements Serializable {
     private Long numLosers;
     
     @XmlElement
-    public long getTimeInMillis() {
-        return (logDate.getTimeInMillis());
+    public Integer getStrategyId() {
+        return strategy.getId();
     }
 
     @Override

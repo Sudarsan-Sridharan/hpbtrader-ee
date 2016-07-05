@@ -6,6 +6,7 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -26,6 +27,7 @@ public class TradeLog implements Serializable {
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar logDate;
     @ManyToOne
+    @XmlTransient
     private Trade trade;
     private Integer tradePosition;
     @XmlElement
@@ -38,10 +40,10 @@ public class TradeLog implements Serializable {
     private Double realizedPl;
     @Enumerated(EnumType.STRING)
     private HtrEnums.TradeStatus tradeStatus;
-    
+
     @XmlElement
-    public long getTimeInMillis() {
-        return (logDate.getTimeInMillis());
+    public Long getTradeId() {
+        return trade.getId();
     }
 
     @Override
