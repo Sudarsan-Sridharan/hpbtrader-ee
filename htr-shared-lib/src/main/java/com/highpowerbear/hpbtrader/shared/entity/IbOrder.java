@@ -5,6 +5,8 @@ import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,9 +29,9 @@ public class IbOrder implements Serializable {
     private Integer ibPermId;
     private Integer ibOrderId;
     @ManyToOne
+    @XmlTransient
     private Strategy strategy;
     @Enumerated(EnumType.STRING)
-    // must be present in trade order, since it can change during the existence of strategy
     private HtrEnums.StrategyMode strategyMode;
     private String triggerDesc;
     @Enumerated(EnumType.STRING)
@@ -37,6 +39,7 @@ public class IbOrder implements Serializable {
     @Enumerated(EnumType.STRING)
     private HtrEnums.OrderAction orderAction;
     private Integer quantity;
+    private String symbol;
     @Enumerated(EnumType.STRING)
     private HtrEnums.OrderType orderType;
     private Double limitPrice;
@@ -49,6 +52,16 @@ public class IbOrder implements Serializable {
     @OneToMany(mappedBy = "ibOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("eventDate ASC")
     private List<IbOrderEvent> events = new ArrayList<>();
+
+    @XmlElement
+    public Integer getStrategyId() {
+        return strategy.getId();
+    }
+
+    @XmlElement
+    public Instrument getInstrument() {
+        return strategy.getTradeInstrument();
+    }
 
     public void addEvent(HtrEnums.IbOrderStatus status, Calendar date) {
         this.status = status;
@@ -91,7 +104,7 @@ public class IbOrder implements Serializable {
     }
 
     public String getDescription() {
-        return strategy.getTradeInstrument().getSymbol() + ", " +  strategy.getStrategyType().name().toLowerCase() + ": " + orderAction.toString();
+        return symbol + ", " +  strategy.getStrategyType().name().toLowerCase() + ": " + orderAction.name();
     }
 
     public com.ib.client.Order createOrder() {
@@ -214,6 +227,14 @@ public class IbOrder implements Serializable {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 
     public Double getFillPrice() {

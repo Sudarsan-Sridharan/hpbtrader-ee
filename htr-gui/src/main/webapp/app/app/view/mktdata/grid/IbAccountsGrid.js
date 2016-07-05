@@ -35,7 +35,7 @@ Ext.define('HtrGui.view.mktdata.grid.IbAccountsGrid', {
         text: 'Status',
         width: 80,
         align: 'center',
-        dataIndex: 'mdcIsConnected',
+        dataIndex: 'mdcConnected',
         renderer: 'connectStatusRenderer'
     }, {
         text: 'Accounts',

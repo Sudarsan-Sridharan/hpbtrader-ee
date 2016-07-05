@@ -12,6 +12,6 @@ Ext.define('HtrGui.model.mktdata.IbAccount', {
         'mktDataClientId',
         'execClientId',
         {name: 'mdcAccounts', mapping: 'mktDataConnection.accounts'},
-        {name: 'mdcIsConnected', mapping: 'mktDataConnection.isConnected'}
+        {name: 'mdcConnected', mapping: 'mktDataConnection.connected'}
     ]
 });

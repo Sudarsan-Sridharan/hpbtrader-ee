@@ -11,7 +11,7 @@ Ext.define('HtrGui.model.exec.IbAccount', {
         'port',
         'mktDataClientId',
         'execClientId',
-        {name: 'mdcAccounts', mapping: 'mktDataConnection.accounts'},
-        {name: 'mdcIsConnected', mapping: 'mktDataConnection.isConnected'}
+        {name: 'ecAccounts', mapping: 'execConnection.accounts'},
+        {name: 'ecConnected', mapping: 'execConnection.connected'}
     ]
 });

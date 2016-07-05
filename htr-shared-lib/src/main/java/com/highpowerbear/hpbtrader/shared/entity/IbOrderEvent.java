@@ -5,6 +5,8 @@ import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -27,7 +29,13 @@ public class IbOrderEvent implements Serializable {
     @Temporal(value=TemporalType.TIMESTAMP)
     private Calendar eventDate;
     @ManyToOne
+    @XmlTransient
     private IbOrder ibOrder;
+
+    @XmlElement
+    public Long getIbOrderId() {
+        return (ibOrder != null ? ibOrder.getId() : null);
+    }
 
     @Override
     public boolean equals(Object o) {

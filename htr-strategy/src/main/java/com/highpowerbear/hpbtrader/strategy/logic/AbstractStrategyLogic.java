@@ -119,6 +119,7 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
         ibOrder.setStrategyMode(ctx.getStrategy().getStrategyMode());
         ibOrder.setSubmitType(HtrEnums.SubmitType.AUTO);
         ibOrder.setQuantity(ctx.getStrategy().getTradingQuantity());
+        ibOrder.setSymbol(ctx.getStrategy().getTradeInstrument().getSymbol());
         ibOrder.setOrderType(HtrEnums.OrderType.MKT);
         ibOrder.setLimitPrice(null); // N/A for market order
         ibOrder.setStopPrice(null); // N/A for market order
