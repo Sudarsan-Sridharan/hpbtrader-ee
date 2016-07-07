@@ -9,7 +9,6 @@ Ext.define('HtrGui.view.mktdata.grid.DataBarsGrid', {
         'Ext.toolbar.Paging'
     ],
     bind: '{dataBars}',
-    title: 'Data Bars',
     viewConfig: {
         stripeRows: true
     },

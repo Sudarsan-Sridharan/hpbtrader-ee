@@ -9,7 +9,6 @@ Ext.define('HtrGui.view.mktdata.grid.IbAccountsGrid', {
         'Ext.toolbar.Paging'
     ],
     bind: '{ibAccounts}',
-    title: 'IB Accounts',
     viewConfig: {
         stripeRows: true
     },

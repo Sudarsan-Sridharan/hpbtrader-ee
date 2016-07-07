@@ -9,7 +9,6 @@ Ext.define('HtrGui.view.mktdata.grid.DataSeriesGrid', {
         'Ext.toolbar.Paging'
     ],
     bind: '{dataSeriesStore}',
-    title: 'Data Series',
     viewConfig: {
         stripeRows: true
     },
