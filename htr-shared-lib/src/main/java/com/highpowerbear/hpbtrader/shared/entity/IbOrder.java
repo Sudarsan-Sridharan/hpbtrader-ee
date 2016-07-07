@@ -31,6 +31,9 @@ public class IbOrder implements Serializable {
     @ManyToOne
     @XmlTransient
     private Strategy strategy;
+    @ManyToOne
+    @XmlTransient
+    private IbAccount ibAccount;
     @Enumerated(EnumType.STRING)
     private HtrEnums.StrategyMode strategyMode;
     private String triggerDesc;
@@ -51,11 +54,18 @@ public class IbOrder implements Serializable {
     private Calendar createdDate;
     @OneToMany(mappedBy = "ibOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("eventDate ASC")
-    private List<IbOrderEvent> events = new ArrayList<>();
+    private List<IbOrderEvent> ibOrderEvents = new ArrayList<>();
+    @Transient
+    private Integer heartbeatCount;
 
     @XmlElement
     public Integer getStrategyId() {
         return strategy.getId();
+    }
+
+    @XmlElement
+    public String getIbAccountId() {
+        return ibAccount.getAccountId();
     }
 
     @XmlElement
@@ -69,14 +79,14 @@ public class IbOrder implements Serializable {
         event.setIbOrder(this);
         event.setEventDate(date);
         event.setStatus(status);
-        events.add(event);
+        ibOrderEvents.add(event);
         if (HtrEnums.IbOrderStatus.NEW.equals(event.getStatus())) {
             this.setCreatedDate(event.getEventDate());
         }
     }
 
     public Calendar getEventDate(HtrEnums.IbOrderStatus ibOrderStatus) {
-        IbOrderEvent ibOrderEvent = events.stream().filter(oe -> ibOrderStatus.equals(oe.getStatus())).findAny().orElse(null);
+        IbOrderEvent ibOrderEvent = ibOrderEvents.stream().filter(oe -> ibOrderStatus.equals(oe.getStatus())).findAny().orElse(null);
         return (ibOrderEvent != null ? ibOrderEvent.getEventDate() : null);
     }
 
@@ -163,6 +173,14 @@ public class IbOrder implements Serializable {
 
     public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
+    }
+
+    public IbAccount getIbAccount() {
+        return ibAccount;
+    }
+
+    public void setIbAccount(IbAccount ibAccount) {
+        this.ibAccount = ibAccount;
     }
 
     public HtrEnums.StrategyMode getStrategyMode() {
@@ -261,11 +279,19 @@ public class IbOrder implements Serializable {
         this.createdDate = dateCreated;
     }
 
-    public List<IbOrderEvent> getEvents() {
-        return events;
+    public List<IbOrderEvent> getIbOrderEvents() {
+        return ibOrderEvents;
     }
 
-    public void setEvents(List<IbOrderEvent> events) {
-        this.events = events;
+    public void setIbOrderEvents(List<IbOrderEvent> ibOrderEvents) {
+        this.ibOrderEvents = ibOrderEvents;
+    }
+
+    public Integer getHeartbeatCount() {
+        return heartbeatCount;
+    }
+
+    public void setHeartbeatCount(Integer heartbeatCount) {
+        this.heartbeatCount = heartbeatCount;
     }
 }

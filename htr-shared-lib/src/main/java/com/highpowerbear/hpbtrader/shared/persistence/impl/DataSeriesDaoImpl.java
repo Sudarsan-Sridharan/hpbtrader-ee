@@ -119,8 +119,8 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
 
     @Override
     public Long getNumDataBars(DataSeries dataSeries) {
-        Query query = em.createQuery("SELECT COUNT(b) FROM DataBar b WHERE b.dataSeries = :dataSeries");
-        query.setParameter("dataSeries", dataSeries);
-        return (Long) query.getSingleResult();
+        Query q = em.createQuery("SELECT COUNT(b) FROM DataBar b WHERE b.dataSeries = :dataSeries");
+        q.setParameter("dataSeries", dataSeries);
+        return (Long) q.getSingleResult();
     }
 }

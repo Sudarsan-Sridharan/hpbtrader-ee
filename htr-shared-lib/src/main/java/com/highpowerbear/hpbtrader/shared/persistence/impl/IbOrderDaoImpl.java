@@ -100,22 +100,23 @@ public class IbOrderDaoImpl implements IbOrderDao {
 
     @Override
     public Long getNumIbOrders(Strategy strategy) {
-        Query query = em.createQuery("SELECT COUNT(o) FROM IbOrder o WHERE o.strategy = :strategy");
-        query.setParameter("strategy", strategy);
-        return (Long) query.getSingleResult();
+        Query q = em.createQuery("SELECT COUNT(o) FROM IbOrder o WHERE o.strategy = :strategy");
+        q.setParameter("strategy", strategy);
+        return (Long) q.getSingleResult();
     }
 
     @Override
-    public List<IbOrder> getPagedIbOrders(int start, int limit) {
-        TypedQuery<IbOrder> q = em.createQuery("SELECT o FROM IbOrder o ORDER BY o.createdDate DESC", IbOrder.class);
+    public List<IbOrder> getPagedIbOrders(IbAccount ibAccount, int start, int limit) {
+        TypedQuery<IbOrder> q = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibAccount = :ibAccount ORDER BY o.createdDate DESC", IbOrder.class);
+        q.setParameter("ibAccount", ibAccount);
         q.setFirstResult(start);
         q.setMaxResults(limit);
         return q.getResultList();
     }
 
     @Override
-    public Long getNumIbOrders() {
-        Query query = em.createQuery("SELECT COUNT(o) FROM IbOrder o");
-        return (Long) query.getSingleResult();
+    public Long getNumIbOrders(IbAccount ibAccount) {
+        Query q = em.createQuery("SELECT COUNT(o) FROM IbOrder o");
+        return (Long) q.getSingleResult();
     }
 }

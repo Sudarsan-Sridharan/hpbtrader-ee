@@ -79,7 +79,7 @@ public class StrategyDaoImpl implements StrategyDao {
         q.setParameter("strategy", strategy);
         q.executeUpdate();
         for (IbOrder ibOrder : ibOrderDao.getIbOrders(strategy)) {
-            ibOrder.getEvents().forEach(em::remove);
+            ibOrder.getIbOrderEvents().forEach(em::remove);
             em.remove(ibOrder);
         }
         em.remove(strategy);
@@ -97,8 +97,8 @@ public class StrategyDaoImpl implements StrategyDao {
 
     @Override
     public Long getNumStrategyLogs(Strategy strategy) {
-        Query query = em.createQuery("SELECT COUNT(sl) FROM StrategyLog sl WHERE sl.strategy = :strategy");
-        query.setParameter("strategy", strategy);
-        return (Long) query.getSingleResult();
+        Query q = em.createQuery("SELECT COUNT(sl) FROM StrategyLog sl WHERE sl.strategy = :strategy");
+        q.setParameter("strategy", strategy);
+        return (Long) q.getSingleResult();
     }
 }

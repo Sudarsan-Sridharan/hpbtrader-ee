@@ -116,6 +116,7 @@ public abstract class AbstractStrategyLogic implements StrategyLogic {
     protected void createIbOrder() {
         this.ibOrder = new IbOrder();
         ibOrder.setStrategy(ctx.getStrategy());
+        ibOrder.setIbAccount(ctx.getStrategy().getIbAccount());
         ibOrder.setStrategyMode(ctx.getStrategy().getStrategyMode());
         ibOrder.setSubmitType(HtrEnums.SubmitType.AUTO);
         ibOrder.setQuantity(ctx.getStrategy().getTradingQuantity());

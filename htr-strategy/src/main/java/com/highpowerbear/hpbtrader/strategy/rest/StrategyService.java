@@ -84,6 +84,8 @@ public class StrategyService {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         ibOrder.setStrategy(strategy);
+        ibOrder.setIbAccount(strategy.getIbAccount());
+        ibOrder.setTriggerDesc(HtrDefinitions.MANUAL_ORDER);
         strategyController.manualOrder(ibOrder);
         return Response.ok().build();
     }

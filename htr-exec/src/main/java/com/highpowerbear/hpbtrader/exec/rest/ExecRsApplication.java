@@ -13,8 +13,7 @@ public class ExecRsApplication extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<>();
-        classes.add(IbAccountService.class);
-        classes.add(IbOrderService.class);
+        classes.add(ExecService.class);
         return classes;
     }
 }

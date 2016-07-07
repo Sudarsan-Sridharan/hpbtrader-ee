@@ -26,6 +26,7 @@ public class HtrDefinitions {
     public static final Integer INVALID_SIZE = -1;
     public static final Integer ONE_SECOND_MILLIS = 1000;
     public static final DateFormat DF = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+    public static final String MANUAL_ORDER = "Manual order";
 
     // settings
     public static final String LOGGER = "com.highpowerbear.hpbtrader";

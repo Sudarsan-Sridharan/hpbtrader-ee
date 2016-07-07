@@ -26,6 +26,10 @@ public class HeartbeatControl {
 
     private Map<IbAccount, Map<IbOrder, Integer>> openOrderHeartbeatMap = new HashMap<>(); // ibAccount --> (ibOrder --> number of failed heartbeats left before UNKNOWN)
 
+    public Map<IbAccount, Map<IbOrder, Integer>> getOpenOrderHeartbeatMap() {
+        return openOrderHeartbeatMap;
+    }
+
     @PostConstruct
     public void init() {
         ibAccountDao.getIbAccounts().forEach(ibAccount -> openOrderHeartbeatMap.put(ibAccount, new ConcurrentHashMap<>()));

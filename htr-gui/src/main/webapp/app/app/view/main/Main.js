@@ -15,7 +15,11 @@ Ext.define('HtrGui.view.main.Main', {
         'HtrGui.view.strategy.Strategy',
         'HtrGui.view.exec.Exec',
         'HtrGui.view.main.MainController',
-        'HtrGui.view.main.MainModel'
+        'HtrGui.view.main.MainModel',
+        'HtrGui.model.strategy.Trade',
+        'HtrGui.model.strategy.TradeIbOrder',
+        'HtrGui.model.exec.IbOrder',
+        'HtrGui.model.exec.IbOrderEvent'
     ],
 
     xtype: 'app-main',

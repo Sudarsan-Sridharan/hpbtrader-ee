@@ -19,6 +19,7 @@ Ext.define('HtrGui.model.exec.IbOrder', {
         'status',
         {name: 'createdDate', type: 'date', dateFormat: 'time'},
         'strategyId',
+        'ibAccountId',
         {name: 'symbol', mapping: 'instrument.symbol'},
         {name: 'underlying', mapping: 'instrument.underlying'},
         {name: 'secType', mapping: 'instrument.secType'},
