@@ -16,7 +16,7 @@ import java.util.List;
 @ApplicationScoped
 public class OrderStateHandler {
 
-    public void simulateFill(ProcessContext ctx, IbOrder ibOrder, Double price) {
+    public void simulateFill(ProcessContext ctx, IbOrder ibOrder, Double fillPrice) {
         Calendar t1 = HtrUtil.getCalendar();
         ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMIT_REQ, t1);
         Calendar t2 = HtrUtil.getCalendar();
@@ -28,8 +28,8 @@ public class OrderStateHandler {
         if (t3.getTimeInMillis() == t2.getTimeInMillis()) {
             t3.setTimeInMillis(t2.getTimeInMillis() + 1);
         }
-        ibOrder.setFillPrice(price);
-        ibOrder.addEvent(ibOrder.getStatus(), t3);
+        ibOrder.setFillPrice(fillPrice);
+        ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, t3);
         ctx.updateIbOrder(ibOrder);
         orderFilled(ctx, ibOrder);
     }

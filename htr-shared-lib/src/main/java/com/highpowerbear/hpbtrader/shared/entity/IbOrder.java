@@ -26,6 +26,8 @@ public class IbOrder implements Serializable {
     @Id
     @GeneratedValue(generator="iborder")
     private Long id;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Calendar createdDate;
     private Integer ibPermId;
     private Integer ibOrderId;
     @ManyToOne
@@ -45,13 +47,12 @@ public class IbOrder implements Serializable {
     private String symbol;
     @Enumerated(EnumType.STRING)
     private HtrEnums.OrderType orderType;
-    private Double limitPrice;
-    private Double stopPrice;
+    private Double orderPrice;
     private Double fillPrice;
     @Enumerated(EnumType.STRING)
     private HtrEnums.IbOrderStatus status;
     @Temporal(TemporalType.TIMESTAMP)
-    private Calendar createdDate;
+    private Calendar statusDate;
     @OneToMany(mappedBy = "ibOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @OrderBy("eventDate ASC")
     private List<IbOrderEvent> ibOrderEvents = new ArrayList<>();
@@ -75,14 +76,15 @@ public class IbOrder implements Serializable {
 
     public void addEvent(HtrEnums.IbOrderStatus status, Calendar date) {
         this.status = status;
+        this.statusDate = date;
         IbOrderEvent event = new IbOrderEvent();
         event.setIbOrder(this);
-        event.setEventDate(date);
-        event.setStatus(status);
-        ibOrderEvents.add(event);
-        if (HtrEnums.IbOrderStatus.NEW.equals(event.getStatus())) {
-            this.setCreatedDate(event.getEventDate());
+        event.setEventDate(this.statusDate);
+        event.setStatus(this.status);
+        if (HtrEnums.IbOrderStatus.NEW.equals(this.status)) {
+            this.setCreatedDate(this.statusDate);
         }
+        ibOrderEvents.add(event);
     }
 
     public Calendar getEventDate(HtrEnums.IbOrderStatus ibOrderStatus) {
@@ -121,8 +123,13 @@ public class IbOrder implements Serializable {
         com.ib.client.Order ord = new com.ib.client.Order();
         ord.m_action = (this.isBuyOrder() ? HtrEnums.Action.BUY.name() : HtrEnums.Action.SELL.name());
         ord.m_orderType = getOrderType().name();
-        ord.m_auxPrice = (this.stopPrice != null ? this.stopPrice : 0d);
-        ord.m_lmtPrice = (this.limitPrice!= null ? this.limitPrice : 0d);
+        if (this.orderPrice != null) {
+            if (HtrEnums.OrderType.LMT.equals(this.orderType)) {
+                ord.m_lmtPrice = this.orderPrice;
+            } else if (HtrEnums.OrderType.STP.equals(this.orderType)) {
+                ord.m_auxPrice = this.orderPrice;
+            }
+        }
         ord.m_totalQuantity = this.quantity;
         ord.m_tif = HtrEnums.Tif.GTC.name();
         return ord;
@@ -149,6 +156,14 @@ public class IbOrder implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Calendar getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Calendar dateCreated) {
+        this.createdDate = dateCreated;
     }
 
     public Integer getIbPermId() {
@@ -223,20 +238,12 @@ public class IbOrder implements Serializable {
         this.orderType = orderType;
     }
 
-    public Double getLimitPrice() {
-        return limitPrice;
+    public Double getOrderPrice() {
+        return orderPrice;
     }
 
-    public void setLimitPrice(Double limitPrice) {
-        this.limitPrice = limitPrice;
-    }
-
-    public Double getStopPrice() {
-        return stopPrice;
-    }
-
-    public void setStopPrice(Double stopPrice) {
-        this.stopPrice = stopPrice;
+    public void setOrderPrice(Double orderPrice) {
+        this.orderPrice = orderPrice;
     }
 
     public Integer getQuantity() {
@@ -271,12 +278,12 @@ public class IbOrder implements Serializable {
         this.status = ibOrderStatus;
     }
 
-    public Calendar getCreatedDate() {
-        return createdDate;
+    public Calendar getStatusDate() {
+        return statusDate;
     }
 
-    public void setCreatedDate(Calendar dateCreated) {
-        this.createdDate = dateCreated;
+    public void setStatusDate(Calendar statusDate) {
+        this.statusDate = statusDate;
     }
 
     public List<IbOrderEvent> getIbOrderEvents() {

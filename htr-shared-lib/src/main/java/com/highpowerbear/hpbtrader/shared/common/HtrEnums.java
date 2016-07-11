@@ -89,12 +89,13 @@ public class HtrEnums {
         NEW("new", DisplayColor.MAGENTA_BG),
         NEW_RETRY("newRetry", DisplayColor.MAGENTA_BG),
         SUBMIT_REQ("submitReq", DisplayColor.DODGER_BLUE_BG),
+        PRESUBMITTED ("preSubmitted", DisplayColor.BLUE_BG),
         SUBMITTED("submitted", DisplayColor.BLUE_BG),
         FILLED("filled", DisplayColor.GREEN_BG),
         CANCEL_REQ("cancelReq", DisplayColor.MAGENTA_BG),
         CANCELLED("cancelled", DisplayColor.RED_BG),
         UNKNOWN("unknown", DisplayColor.BROWN_BG);
-        
+
         private String displayText;
         private DisplayColor displayColor;
         
@@ -102,6 +103,7 @@ public class HtrEnums {
             this.displayText = displayText;
             this.displayColor = displayColor;
         }
+
         public String getDisplayText() {
             return displayText;
         }

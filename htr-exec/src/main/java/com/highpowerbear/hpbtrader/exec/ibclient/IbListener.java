@@ -2,6 +2,7 @@ package com.highpowerbear.hpbtrader.exec.ibclient;
 
 import com.highpowerbear.hpbtrader.exec.message.MqSender;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.ibclient.GenerictIbListener;
@@ -36,6 +37,7 @@ public class IbListener extends GenerictIbListener {
         super.orderStatus(orderId, status, filled, remaining, avgFillPrice, permId, parentId, lastFillPrice, clientId, whyHeld);
         
         if (!(  HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) ||
+                HtrEnums.IbOrderStatus.PRESUBMITTED.name().equalsIgnoreCase(status) ||
                 HtrEnums.IbOrderStatus.CANCELLED.name().equalsIgnoreCase(status) ||
                 HtrEnums.IbOrderStatus.FILLED.name().equalsIgnoreCase(status)))
         {
@@ -46,18 +48,25 @@ public class IbListener extends GenerictIbListener {
             return;
         }
 
-        if (HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) && HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
+        if ((HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) || HtrEnums.IbOrderStatus.PRESUBMITTED.name().equalsIgnoreCase(status)) && HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
             heartbeatControl.initHeartbeat(ibOrder);
 
         } else if (HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
+            ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, HtrUtil.getCalendar());
+            ibOrderDao.updateIbOrder(ibOrder);
             heartbeatControl.initHeartbeat(ibOrder);
             mqSender.notifyOrderStateChanged(ibOrder);
 
         } else if (HtrEnums.IbOrderStatus.CANCELLED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.CANCELLED.equals(ibOrder.getStatus())) {
+            ibOrder.addEvent(HtrEnums.IbOrderStatus.CANCELLED, HtrUtil.getCalendar());
+            ibOrderDao.updateIbOrder(ibOrder);
             heartbeatControl.removeHeartbeat(ibOrder);
             mqSender.notifyOrderStateChanged(ibOrder);
 
         } else if (HtrEnums.IbOrderStatus.FILLED.name().equalsIgnoreCase(status) && remaining == 0 && !HtrEnums.IbOrderStatus.FILLED.equals(ibOrder.getStatus())) {
+            ibOrder.setFillPrice(avgFillPrice);
+            ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, HtrUtil.getCalendar());
+            ibOrderDao.updateIbOrder(ibOrder);
             heartbeatControl.removeHeartbeat(ibOrder);
             mqSender.notifyOrderStateChanged(ibOrder);
         }
