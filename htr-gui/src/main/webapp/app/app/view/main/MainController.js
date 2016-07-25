@@ -13,8 +13,8 @@ Ext.define('HtrGui.view.main.MainController', {
     setGlyphs: function() {
         var me = this;
 
-        me.lookupReference('mktDataPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('mktdata'));
-        me.lookupReference('strategyPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('strategy'));
-        me.lookupReference('executionPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('exec'));
+        me.lookupReference('mktDataPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_area_chart'));
+        me.lookupReference('strategyPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_cogs'));
+        me.lookupReference('executionPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_exchange'));
     }
 });

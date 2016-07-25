@@ -6,21 +6,22 @@ Ext.define('HtrGui.common.Glyphs', {
 
     config: {
         webFont: 'FontAwesome',
-        add: 'xf067',
-        edit: 'xf040',
-        delete: 'xf1f8',
-        save: 'xf00c',
-        cancel: 'xf0e2',
-        refresh: 'xf021',
-        barchart: 'xf080',
-        orderedlist: 'xf0cb',
-        money: 'xf0d6',
-        gear: 'xf013',
-        rss: 'xf09e',
-        longarrowleft: 'xf177',
-        mktdata: 'xf1fe',
-        strategy: 'xf085',
-        exec: 'xf0ec'
+        fa_plus: 'xf067',
+        fa_pencil: 'xf040',
+        fa_trash: 'xf1f8',
+        fa_check: 'xf00c',
+        fa_rotateleft: 'xf0e2',
+        fa_refresh: 'xf021',
+        fa_bar_chart: 'xf080',
+        fa_list_ol: 'xf0cb',
+        fa_money: 'xf0d6',
+        fa_cog: 'xf013',
+        fa_feed: 'xf09e',
+        fa_long_arrow_left: 'xf177',
+        fa_area_chart: 'xf1fe',
+        fa_cogs: 'xf085',
+        fa_exchange: 'xf0ec',
+        fa_sort_amount_asc: 'xf160'
     },
 
     constructor: function(config) {

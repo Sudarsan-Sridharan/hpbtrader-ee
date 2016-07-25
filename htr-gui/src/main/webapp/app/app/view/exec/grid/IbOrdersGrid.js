@@ -10,7 +10,6 @@ Ext.define('HtrGui.view.exec.grid.IbOrdersGrid', {
         'HtrGui.view.exec.ExecController'
     ],
     bind: '{ibOrders}',
-    title: 'IB Orders',
     listeners: {
         'cellclick': 'showEvents'
     },

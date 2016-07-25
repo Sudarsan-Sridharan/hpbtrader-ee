@@ -63,7 +63,7 @@ Ext.define('HtrGui.view.mktdata.grid.DataSeriesGrid', {
             xtype: 'button',
             width: 30,
             tooltip: 'Toggle RT Data',
-            glyph: HtrGui.common.Glyphs.getGlyph('rss'),
+            glyph: HtrGui.common.Glyphs.getGlyph('fa_feed'),
             handler: 'toggleRtData'
         }
     }, {
@@ -73,7 +73,7 @@ Ext.define('HtrGui.view.mktdata.grid.DataSeriesGrid', {
             xtype: 'button',
             width: 30,
             tooltip: 'Backfill Data Bars',
-            glyph: HtrGui.common.Glyphs.getGlyph('longarrowleft'),
+            glyph: HtrGui.common.Glyphs.getGlyph('fa_long_arrow_left'),
             handler: 'backfillDataBars'
         }
     }],
