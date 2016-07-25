@@ -45,7 +45,7 @@ public class StrategyController implements Serializable {
     Map<Strategy, ProcessContext> tradingContextMap = new ConcurrentHashMap<>();
     Map<Strategy, StrategyLogic> tradingLogicMap = new ConcurrentHashMap<>();
     Map<Strategy, ProcessContext> backtestContextMap = new ConcurrentHashMap<>();
-    Map<Strategy, Boolean> backtestStatusMap = new ConcurrentHashMap<>(); // false = in progress, true = finished
+    Map<Strategy, Boolean> backtestInProgressMap = new ConcurrentHashMap<>(); // strategy -> true = inProgress, null = not inProgress
 
     @PostConstruct
     private void init() {
@@ -64,9 +64,16 @@ public class StrategyController implements Serializable {
         return backtestContextMap.get(strategy);
     }
 
-    public boolean isBacktestFinished(Strategy strategy) {
-        Boolean ready = backtestStatusMap.get(strategy);
-        return ready != null && Boolean.TRUE.equals(ready);
+    public HtrEnums.BacktestStatus getBacktestStatus(Strategy strategy) {
+        if (backtestContextMap.get(strategy) != null && backtestInProgressMap.get(strategy) != null) {
+            return HtrEnums.BacktestStatus.AVAILABLE_INPROGRESS;
+        } else if (backtestInProgressMap.get(strategy) != null) {
+            return HtrEnums.BacktestStatus.INPROGRESS;
+        } else if (backtestContextMap.get(strategy) != null) {
+            return HtrEnums.BacktestStatus.AVAILABLE;
+        } else {
+            return HtrEnums.BacktestStatus.NONE;
+        }
     }
 
     StrategyLogic createStrategyLogic(ProcessContext ctx) {
@@ -160,7 +167,6 @@ public class StrategyController implements Serializable {
             this.processStrategy(sl);
         }
         backtestContextMap.put(str, ctx);
-        backtestStatusMap.put(str, Boolean.TRUE);
         l.info("END backtestStrategy " + logMessage);
     }
 

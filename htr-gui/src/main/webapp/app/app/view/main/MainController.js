@@ -8,5 +8,13 @@
 Ext.define('HtrGui.view.main.MainController', {
     extend: 'Ext.app.ViewController',
 
-    alias: 'controller.main'
+    alias: 'controller.main',
+
+    setGlyphs: function() {
+        var me = this;
+
+        me.lookupReference('mktDataPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('mktdata'));
+        me.lookupReference('strategyPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('strategy'));
+        me.lookupReference('executionPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('exec'));
+    }
 });

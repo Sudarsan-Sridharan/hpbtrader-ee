@@ -298,4 +298,16 @@ public class HtrEnums {
         NEW_ORDER,
         ORDER_STATUS_CHANGED
     }
+
+    public enum BacktestStatus {
+        AVAILABLE_INPROGRESS,
+        INPROGRESS,
+        AVAILABLE,
+        NONE
+    }
+
+    public enum StrategyDataType {
+        TRADING,
+        BACKTEST
+    }
 }

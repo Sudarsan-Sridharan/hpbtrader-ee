@@ -104,9 +104,9 @@ public class ProcessQueueManager {
                         Strategy strategy = backtestParam.getFirst();
                         TimeFrame timeFrame = backtestParam.getSecond();
                         if (timeFrame.isValid()) {
-                            ctrl.backtestStatusMap.put(strategy, Boolean.FALSE);
+                            ctrl.backtestInProgressMap.put(strategy, Boolean.TRUE);
                             ctrl.backtestStrategy(strategy, timeFrame.getFromDate(), timeFrame.getToDate());
-                            ctrl.backtestStatusMap.put(strategy, Boolean.TRUE);
+                            ctrl.backtestInProgressMap.remove(strategy);
                         }
                     }
                 } else {

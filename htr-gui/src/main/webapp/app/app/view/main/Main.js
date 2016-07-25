@@ -28,10 +28,8 @@ Ext.define('HtrGui.view.main.Main', {
     viewModel: {
         type: 'main'
     },
-    scrollable: true,
-    layout: {
-        type: 'vbox',
-        align: 'stretch'
+    listeners: {
+        beforerender: 'setGlyphs'
     },
     items: [{
         xtype: 'htr-mktdata',

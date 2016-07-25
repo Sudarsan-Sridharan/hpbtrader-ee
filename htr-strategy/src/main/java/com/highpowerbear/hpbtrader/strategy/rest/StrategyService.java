@@ -1,6 +1,7 @@
 package com.highpowerbear.hpbtrader.strategy.rest;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.shared.model.GenericTuple;
@@ -66,13 +67,13 @@ public class StrategyService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{strategyid}/backtest/finished")
-    public Response isBacktestFinished(@PathParam("strategyid") Integer strategyId, TimeFrame timeFrame) {
+    @Path("{strategyid}/backtest/status")
+    public Response getBacktestStatus(@PathParam("strategyid") Integer strategyId, TimeFrame timeFrame) {
         Strategy strategy = strategyDao.findStrategy(strategyId);
         if (strategy == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        return Response.ok(strategyController.isBacktestFinished(strategy)).build();
+        return Response.ok(strategyController.getBacktestStatus(strategy)).build();
     }
 
     @POST
@@ -91,63 +92,16 @@ public class StrategyService {
     }
 
     @GET
-    @Path("{strategyid}/strategylogs")
+    @Path("{strategyid}/strategylogs/{type}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPagedStrategyLogs(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getPagedStrategyLogs(strategyId, false, start, limit);
-    }
+    public Response getStrategyLogs(
+            @PathParam("strategyid") Integer strategyId,
+            @PathParam("type") String type,
+            @QueryParam("start") Integer start,
+            @QueryParam("limit") Integer limit) {
 
-    @GET
-    @Path("{strategyid}/backtest/strategylogs")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getBacktestStrategyLogs(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getPagedStrategyLogs(strategyId, true, start, limit);
-    }
-
-    @GET
-    @Path("{strategyid}/iborders")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getPagedIbOrders(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getPagedIbOrders(strategyId, false, start, limit);
-    }
-
-    @GET
-    @Path("{strategyid}/backtest/iborders")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getPagedBacktestIbOrders(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getPagedIbOrders(strategyId, true, start, limit);
-    }
-
-    @GET
-    @Path("{strategyid}/trades")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getPagedTrades(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getPagedTrades(strategyId, false, start, limit);
-    }
-
-    @GET
-    @Path("{strategyid}/backtest/trades")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getPagedBacktestTrades(@PathParam("strategyid") Integer strategyId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getPagedTrades(strategyId, true, start, limit);
-    }
-
-    @GET
-    @Path("trade/{tradeid}/tradelogs")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getPagedTradeLogs(@PathParam("tradeid") Long tradeId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getPagedTradeLogs(tradeId, false, start, limit);
-    }
-
-    @GET
-    @Path("{tradeid}/backtest/tradelogs")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getBacktestTradeLogs(@PathParam("tradeid") Long tradeId, @QueryParam("start") Integer start, @QueryParam("limit") Integer limit) {
-        return getPagedTradeLogs(tradeId, false, start, limit);
-    }
-
-    private Response getPagedStrategyLogs(Integer strategyId, boolean backtest, Integer start, Integer limit) {
-        ProcessContext ctx = getProcessContext(strategyId, backtest);
+        boolean isBacktest = HtrEnums.StrategyDataType.BACKTEST.name().equalsIgnoreCase(type);
+        ProcessContext ctx = getProcessContext(strategyId, isBacktest);
         if (ctx == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -158,8 +112,17 @@ public class StrategyService {
         return Response.ok(new RestList<>(strategyLogs, numStrategyLogs)).build();
     }
 
-    private Response getPagedIbOrders(Integer strategyId, boolean backtest, Integer start, Integer limit) {
-        ProcessContext ctx = getProcessContext(strategyId, backtest);
+    @GET
+    @Path("{strategyid}/iborders/{type}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getIbOrders(
+            @PathParam("strategyid") Integer strategyId,
+            @PathParam("type") String type,
+            @QueryParam("start") Integer start,
+            @QueryParam("limit") Integer limit) {
+
+        boolean isBacktest = HtrEnums.StrategyDataType.BACKTEST.name().equalsIgnoreCase(type);
+        ProcessContext ctx = getProcessContext(strategyId, isBacktest);
         if (ctx == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -170,8 +133,17 @@ public class StrategyService {
         return Response.ok(new RestList<>(ibOrders, numIbOrders)).build();
     }
 
-    private Response getPagedTrades(Integer strategyId, boolean backtest, Integer start, Integer limit) {
-        ProcessContext ctx = getProcessContext(strategyId, backtest);
+    @GET
+    @Path("{strategyid}/trades/{type}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTrades(
+            @PathParam("strategyid") Integer strategyId,
+            @PathParam("type") String type,
+            @QueryParam("start") Integer start,
+            @QueryParam("limit") Integer limit) {
+
+        boolean isBacktest = HtrEnums.StrategyDataType.BACKTEST.name().equalsIgnoreCase(type);
+        ProcessContext ctx = getProcessContext(strategyId, isBacktest);
         if (ctx == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -182,12 +154,21 @@ public class StrategyService {
         return Response.ok(new RestList<>(trades, numTrades)).build();
     }
 
-    private Response getPagedTradeLogs(Long tradeId, boolean backtest, Integer start, Integer limit) {
+    @GET
+    @Path("trade/{tradeid}/tradelogs/{type}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTradeLogs(
+            @PathParam("tradeid") Long tradeId,
+            @PathParam("type") String type,
+            @QueryParam("start") Integer start,
+            @QueryParam("limit") Integer limit) {
+
+        boolean isBacktest = HtrEnums.StrategyDataType.BACKTEST.name().equalsIgnoreCase(type);
         Trade trade = tradeDao.findTrade(tradeId);
         if (trade == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        ProcessContext ctx = getProcessContext(trade.getStrategy().getId(), backtest);
+        ProcessContext ctx = getProcessContext(trade.getStrategy().getId(), isBacktest);
         if (ctx == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -198,11 +179,11 @@ public class StrategyService {
         return Response.ok(new RestList<>(tradeLogs, numTradeLogs)).build();
     }
 
-    private ProcessContext getProcessContext(Integer strategyId, boolean backtest) {
+    private ProcessContext getProcessContext(Integer strategyId, boolean isBacktest) {
         Strategy strategy = strategyDao.findStrategy(strategyId);
         if (strategy == null) {
             return null;
         }
-        return backtest ? strategyController.getBacktestContext(strategy) : strategyController.getTradingContext(strategy);
+        return isBacktest ? strategyController.getBacktestContext(strategy) : strategyController.getTradingContext(strategy);
     }
 }

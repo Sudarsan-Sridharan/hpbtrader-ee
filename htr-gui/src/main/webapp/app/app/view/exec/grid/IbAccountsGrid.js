@@ -8,6 +8,9 @@ Ext.define('HtrGui.view.exec.grid.IbAccountsGrid', {
         'Ext.grid.column.Date',
         'Ext.toolbar.Paging'
     ],
+    listeners: {
+        select: 'onAccountSelect'
+    },
     bind: '{ibAccounts}',
     viewConfig: {
         stripeRows: true

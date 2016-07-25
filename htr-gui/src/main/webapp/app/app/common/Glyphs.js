@@ -17,7 +17,10 @@ Ext.define('HtrGui.common.Glyphs', {
         money: 'xf0d6',
         gear: 'xf013',
         rss: 'xf09e',
-        longarrowleft: 'xf177'
+        longarrowleft: 'xf177',
+        mktdata: 'xf1fe',
+        strategy: 'xf085',
+        exec: 'xf0ec'
     },
 
     constructor: function(config) {

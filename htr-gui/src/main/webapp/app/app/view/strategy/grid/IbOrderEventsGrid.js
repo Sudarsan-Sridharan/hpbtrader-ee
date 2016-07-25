@@ -1,7 +1,7 @@
 /**
  * Created by robertk on 4/17/15.
  */
-Ext.define('HtrGui.view.exec.grid.EventsGrid', {
+Ext.define('HtrGui.view.strategy.grid.IbOrdersEventsGrid', {
     extend: 'Ext.grid.Panel',
 
     requires: [

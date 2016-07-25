@@ -5,7 +5,8 @@ Ext.define('HtrGui.view.exec.ExecController', {
     extend: 'Ext.app.ViewController',
 
     requires: [
-        'HtrGui.common.Definitions'
+        'HtrGui.common.Definitions',
+        'HtrGui.view.exec.grid.IbOrdersEventsGrid'
     ],
 
     alias: 'controller.htr-exec',
@@ -52,8 +53,8 @@ Ext.define('HtrGui.view.exec.ExecController', {
         var me = this;
 
         if (!me.eventsGrid) {
-            me.eventsGrid =  Ext.create('HanGui.view.exec.grid.EventsGrid');
-            me.eventsWindow = Ext.create('widget.han-exec-events-window');
+            me.eventsGrid =  Ext.create('HanGui.view.exec.grid.IbOrderEventsGrid');
+            me.eventsWindow = Ext.create('widget.htr-exec-events-window');
             me.eventsWindow.add(me.eventsGrid);
         }
         var permId = record.get(record.getFields()[1].getName());
