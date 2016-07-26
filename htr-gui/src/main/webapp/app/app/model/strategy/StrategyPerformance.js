@@ -1,16 +1,12 @@
 /**
  * Created by robertk on 4.7.2016.
  */
-Ext.define('HtrGui.model.strategy.StrategyLog', {
+Ext.define('HtrGui.model.strategy.StrategyPerformance', {
     extend: 'HtrGui.model.strategy.Base',
 
     fields: [
         'strategyId',
-        {name: 'logDate', type: 'date', dateFormat: 'time'},
-        'active',
-        'strategyMode',
-        'params',
-        'tradingQuantity',
+        {name: 'performanceDate', type: 'date', dateFormat: 'time'},
         'numAllOrders',
         'numFilledOrders',
         'currentPosition',

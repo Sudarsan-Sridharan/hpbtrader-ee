@@ -12,14 +12,17 @@ import java.util.Set;
  */
 @ApplicationPath("rest")
 public class MktDataRsApplication extends Application {
-    @Override
-    public Set<Class<?>> getClasses() {
-        final Set<Class<?>> classes = new HashSet<>();
-        // register root resources/providers
+    private Set<Class<?>> classes = new HashSet<>();
+
+    public MktDataRsApplication() {
         classes.add(IbAccountService.class);
         classes.add(DataSeriesService.class);
         classes.add(TechAnalysisService.class);
         classes.add(CodeMapService.class);
+    }
+
+    @Override
+    public Set<Class<?>> getClasses() {
         return classes;
     }
 }

@@ -18,7 +18,7 @@ public class InMemoryCtx implements ProcessContext {
     private Strategy strategy;
     private Calendar currentDate;
 
-    private List<StrategyLog> strategyLogs = new ArrayList<>();
+    private List<StrategyPerformance> strategyPerformances = new ArrayList<>();
     private List<IbOrder> ibOrders = new ArrayList<>(); // will include also OrderEvent list
     private List<Trade> trades = new ArrayList<>(); // will include also TradeIbOrder list
     private List<TradeLog> tradeLogs = new ArrayList<>();
@@ -51,13 +51,9 @@ public class InMemoryCtx implements ProcessContext {
 
     @Override
     public void updateStrategy() {
-        StrategyLog strategyLog = new StrategyLog();
-        strategyLog.setId(nextStrategyLogId++);
-        strategyLog.setStrategy(strategy);
-        strategyLog.setStrategyMode(HtrEnums.StrategyMode.BTEST);
-        strategyLog.setLogDate(currentDate);
-        strategy.copyValuesTo(strategyLog);
-        strategyLogs.add(strategyLog);
+        StrategyPerformance p = strategy.createPerformance();
+        p.setId(nextStrategyLogId++);
+        strategyPerformances.add(p);
     }
 
     @Override
@@ -123,15 +119,15 @@ public class InMemoryCtx implements ProcessContext {
     }
 
     @Override
-    public List<StrategyLog> getPagedStrategyLogs(int start, int limit) {
-        Collections.reverse(strategyLogs);
-        List<StrategyLog> strategyLogPage = new ArrayList<>();
-        for (int i = 0; i < strategyLogs.size(); i++) {
+    public List<StrategyPerformance> getPagedStrategyLogs(int start, int limit) {
+        Collections.reverse(strategyPerformances);
+        List<StrategyPerformance> strategyPerformancePage = new ArrayList<>();
+        for (int i = 0; i < strategyPerformances.size(); i++) {
             if (i >= start && i < (start + limit)) {
-                strategyLogPage.add(strategyLogs.get(i));
+                strategyPerformancePage.add(strategyPerformances.get(i));
             }
         }
-        return strategyLogPage;
+        return strategyPerformancePage;
     }
 
     @Override
@@ -172,7 +168,7 @@ public class InMemoryCtx implements ProcessContext {
 
     @Override
     public Long getNumStrategyLogs() {
-        return (long) strategyLogs.size();
+        return (long) strategyPerformances.size();
     }
 
     @Override

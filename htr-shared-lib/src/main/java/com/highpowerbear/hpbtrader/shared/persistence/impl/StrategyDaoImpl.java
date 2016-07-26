@@ -4,7 +4,7 @@ import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.entity.Strategy;
-import com.highpowerbear.hpbtrader.shared.entity.StrategyLog;
+import com.highpowerbear.hpbtrader.shared.entity.StrategyPerformance;
 import com.highpowerbear.hpbtrader.shared.entity.Trade;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
@@ -51,16 +51,8 @@ public class StrategyDaoImpl implements StrategyDao {
 
     @Override
     public void updateStrategy(Strategy strategy) {
-        Strategy dbStrategy = em.find(Strategy.class, strategy.getId());
-        em.detach(dbStrategy);
         em.merge(strategy);
-        if (!dbStrategy.valuesEqual(strategy)) {
-            StrategyLog strategyLog = new StrategyLog();
-            strategyLog.setStrategy(strategy);
-            strategyLog.setLogDate(HtrUtil.getCalendar());
-            strategy.copyValuesTo(strategyLog);
-            em.persist(strategyLog);
-        }
+        em.persist(strategy.createPerformance());
     }
 
     @Override
@@ -75,7 +67,7 @@ public class StrategyDaoImpl implements StrategyDao {
             q.executeUpdate();
             em.remove(trade);
         }
-        q = em.createQuery("DELETE FROM StrategyLog sl WHERE sl.strategy = :strategy");
+        q = em.createQuery("DELETE FROM StrategyPerformance sl WHERE sl.strategy = :strategy");
         q.setParameter("strategy", strategy);
         q.executeUpdate();
         for (IbOrder ibOrder : ibOrderDao.getIbOrders(strategy)) {
@@ -87,8 +79,8 @@ public class StrategyDaoImpl implements StrategyDao {
     }
 
     @Override
-    public List<StrategyLog> getPagedStrategyLogs(Strategy strategy, int start, int limit) {
-        TypedQuery<StrategyLog> q = em.createQuery("SELECT sl FROM StrategyLog sl WHERE sl.strategy = :strategy ORDER BY sl.logDate DESC", StrategyLog.class);
+    public List<StrategyPerformance> getPagedStrategyLogs(Strategy strategy, int start, int limit) {
+        TypedQuery<StrategyPerformance> q = em.createQuery("SELECT sl FROM StrategyPerformance sl WHERE sl.strategy = :strategy ORDER BY sl.performanceDate DESC", StrategyPerformance.class);
         q.setParameter("strategy", strategy);
         q.setFirstResult(start);
         q.setMaxResults(limit);
@@ -97,7 +89,7 @@ public class StrategyDaoImpl implements StrategyDao {
 
     @Override
     public Long getNumStrategyLogs(Strategy strategy) {
-        Query q = em.createQuery("SELECT COUNT(sl) FROM StrategyLog sl WHERE sl.strategy = :strategy");
+        Query q = em.createQuery("SELECT COUNT(sl) FROM StrategyPerformance sl WHERE sl.strategy = :strategy");
         q.setParameter("strategy", strategy);
         return (Long) q.getSingleResult();
     }

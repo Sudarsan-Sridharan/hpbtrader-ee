@@ -1,7 +1,5 @@
 package com.highpowerbear.hpbtrader.shared.entity;
 
-import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
-
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -16,25 +14,20 @@ import java.util.Calendar;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
-@Table(name = "strategylog", schema = "hpbtrader", catalog = "hpbtrader")
-public class StrategyLog  implements Serializable {
+@Table(name = "strategyperformance", schema = "hpbtrader", catalog = "hpbtrader")
+public class StrategyPerformance implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    @TableGenerator(name="strategylog", table="sequence", schema = "hpbtrader", catalog = "hpbtrader", pkColumnName="seq_name", valueColumnName="seq_count")
+    @TableGenerator(name="strategyperformance", table="sequence", schema = "hpbtrader", catalog = "hpbtrader", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="strategylog")
+    @GeneratedValue(generator="strategyperformance")
     private Long id;
     @ManyToOne
     @XmlTransient
     private Strategy strategy;
     @Temporal(value=TemporalType.TIMESTAMP)
-    private Calendar logDate;
-    
-    private boolean active;
-    @Enumerated(EnumType.STRING)
-    private HtrEnums.StrategyMode strategyMode;
-    private Integer tradingQuantity;
-    private String params;
+    private Calendar performanceDate;
+
     private Long numAllOrders;
     private Long numFilledOrders;
     private Integer currentPosition;
@@ -54,7 +47,7 @@ public class StrategyLog  implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        StrategyLog that = (StrategyLog) o;
+        StrategyPerformance that = (StrategyPerformance) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
     }
@@ -80,44 +73,12 @@ public class StrategyLog  implements Serializable {
         this.strategy = strategy;
     }
 
-    public HtrEnums.StrategyMode getStrategyMode() {
-        return strategyMode;
+    public Calendar getPerformanceDate() {
+        return performanceDate;
     }
 
-    public void setStrategyMode(HtrEnums.StrategyMode strategyMode) {
-        this.strategyMode = strategyMode;
-    }
-
-    public Calendar getLogDate() {
-        return logDate;
-    }
-
-    public void setLogDate(Calendar logDate) {
-        this.logDate = logDate;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Integer getTradingQuantity() {
-        return tradingQuantity;
-    }
-
-    public void setTradingQuantity(Integer tradingQuantity) {
-        this.tradingQuantity = tradingQuantity;
-    }
-
-    public String getParams() {
-        return params;
-    }
-
-    public void setParams(String params) {
-        this.params = params;
+    public void setPerformanceDate(Calendar logDate) {
+        this.performanceDate = logDate;
     }
 
     public Long getNumAllOrders() {

@@ -1,5 +1,7 @@
 package com.highpowerbear.hpbtrader.strategy.rest;
 
+import com.highpowerbear.hpbtrader.shared.rest.CodeMapService;
+
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,21 +12,15 @@ import java.util.Set;
  */
 @javax.ws.rs.ApplicationPath("rest")
 public class StrategyRsApplication extends Application {
-    private Set<Object> singletons = new HashSet<>();
     private Set<Class<?>> classes = new HashSet<>();
 
     public StrategyRsApplication(){
         classes.add(StrategyService.class);
-        // singletons.add(new RestService());
+        classes.add(CodeMapService.class);
     }
 
     @Override
     public Set<Class<?>> getClasses() {
         return classes;
-    }
-
-    @Override
-    public Set<Object> getSingletons() {
-        return singletons;
     }
 }

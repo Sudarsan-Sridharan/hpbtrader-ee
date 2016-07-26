@@ -107,9 +107,9 @@ public class StrategyService {
         }
         start = start == null ? 0 : start;
         limit = limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit;
-        List<StrategyLog> strategyLogs = ctx.getPagedStrategyLogs(start, limit);
+        List<StrategyPerformance> strategyPerformances = ctx.getPagedStrategyLogs(start, limit);
         Long numStrategyLogs = ctx.getNumStrategyLogs();
-        return Response.ok(new RestList<>(strategyLogs, numStrategyLogs)).build();
+        return Response.ok(new RestList<>(strategyPerformances, numStrategyLogs)).build();
     }
 
     @GET

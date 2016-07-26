@@ -1,7 +1,7 @@
 /**
  * Created by robertk on 4.7.2016.
  */
-Ext.define('HtrGui.view.strategy.grid.StrategyLogsGrid', {
+Ext.define('HtrGui.view.strategy.grid.StrategyPerformanceGrid', {
     extend: 'Ext.grid.Panel',
     xtype: 'htr-strategy-strategylogs-grid',
     requires: [
@@ -9,7 +9,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategyLogsGrid', {
         'Ext.toolbar.Paging',
         'HtrGui.view.strategy.StrategyController'
     ],
-    bind: '{strategyLogs}',
+    bind: '{strategyPerformance}',
     viewConfig: {
         stripeRows: true
     },
@@ -21,8 +21,8 @@ Ext.define('HtrGui.view.strategy.grid.StrategyLogsGrid', {
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',
-        reference: 'strategyLogsPaging',
-        bind: '{strategyLogs}',
+        reference: 'strategyPerformancePaging',
+        bind: '{strategyPerformance}',
         dock: 'bottom',
         displayInfo: true
     }]

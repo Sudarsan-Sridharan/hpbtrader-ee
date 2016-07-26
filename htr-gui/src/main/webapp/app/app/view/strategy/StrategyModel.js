@@ -19,8 +19,8 @@ Ext.define('HtrGui.view.strategy.StrategyModel', {
             model: 'HtrGui.model.strategy.Strategy',
             pageSize: 10
         },
-        strategyLogs: {
-            model: 'HtrGui.model.strategy.StrategyLog',
+        strategyPerformance: {
+            model: 'HtrGui.model.strategy.StrategyPerformance',
             pageSize: 20
         },
         trades: {

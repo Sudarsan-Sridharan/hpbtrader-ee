@@ -1,6 +1,7 @@
 package com.highpowerbear.hpbtrader.shared.entity;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -70,27 +71,19 @@ public class Strategy implements Serializable {
         cumulativePl += closedTrade.getRealizedPl();
     }
     
-    public Long getNumClosedTrades() {
-        return numShorts + numLongs;
-    }
-    
-    public StrategyLog copyValuesTo(StrategyLog sl) {
-        if (sl == null) {
-            return null;
-        }
-        sl.setActive(active);
-        sl.setStrategyMode(strategyMode);
-        sl.setTradingQuantity(tradingQuantity);
-        sl.setParams(getParams());
-        sl.setNumAllOrders(numAllOrders);
-        sl.setNumFilledOrders(numFilledOrders);
-        sl.setCurrentPosition(currentPosition);
-        sl.setCumulativePl(cumulativePl);
-        sl.setNumShorts(numShorts);
-        sl.setNumLongs(numLongs);
-        sl.setNumWinners(numWinners);
-        sl.setNumLosers(numLosers);
-        return sl;
+    public StrategyPerformance createPerformance() {
+        StrategyPerformance p = new StrategyPerformance();
+        p.setStrategy(this);
+        p.setPerformanceDate(HtrUtil.getCalendar());
+        p.setNumAllOrders(numAllOrders);
+        p.setNumFilledOrders(numFilledOrders);
+        p.setCurrentPosition(currentPosition);
+        p.setCumulativePl(cumulativePl);
+        p.setNumShorts(numShorts);
+        p.setNumLongs(numLongs);
+        p.setNumWinners(numWinners);
+        p.setNumLosers(numLosers);
+        return p;
     }
     
     public Strategy deepCopyTo(Strategy other) {
@@ -128,29 +121,6 @@ public class Strategy implements Serializable {
         setNumWinners(0L);
         setNumLosers(0L);
         return this;
-    }
-    
-    public boolean valuesEqual(Strategy otherStrategy) {
-        if (otherStrategy == null) {
-            return false;
-        }
-        if (    active == otherStrategy.isActive() &&
-                strategyMode.equals(otherStrategy.getStrategyMode()) &&
-                tradingQuantity.equals(otherStrategy.getTradingQuantity()) &&
-                params.equals(otherStrategy.getParams()) &&
-                numAllOrders.equals(otherStrategy.getNumAllOrders()) &&
-                numFilledOrders.equals(otherStrategy.getNumFilledOrders()) &&
-                currentPosition.equals(otherStrategy.getCurrentPosition()) &&
-                cumulativePl.equals(otherStrategy.getCumulativePl()) &&
-                numShorts.equals(otherStrategy.getNumShorts()) &&
-                numLongs.equals(otherStrategy.getNumLongs()) &&
-                numWinners.equals(otherStrategy.getNumWinners()) &&
-                numLosers.equals(otherStrategy.getNumLosers())
-           )
-        {
-            return true;
-        }
-        return false;
     }
 
     @Override

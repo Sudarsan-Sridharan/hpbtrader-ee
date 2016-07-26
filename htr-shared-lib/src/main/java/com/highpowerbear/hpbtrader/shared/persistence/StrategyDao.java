@@ -1,7 +1,7 @@
 package com.highpowerbear.hpbtrader.shared.persistence;
 
 import com.highpowerbear.hpbtrader.shared.entity.Strategy;
-import com.highpowerbear.hpbtrader.shared.entity.StrategyLog;
+import com.highpowerbear.hpbtrader.shared.entity.StrategyPerformance;
 
 import java.util.List;
 
@@ -14,6 +14,6 @@ public interface StrategyDao {
     Strategy findStrategy(Integer id);
     void updateStrategy(Strategy strategy);
     void deleteStrategy(Strategy strategy);
-    List<StrategyLog> getPagedStrategyLogs(Strategy strategy, int start, int limit);
+    List<StrategyPerformance> getPagedStrategyLogs(Strategy strategy, int start, int limit);
     Long getNumStrategyLogs(Strategy strategy);
 }

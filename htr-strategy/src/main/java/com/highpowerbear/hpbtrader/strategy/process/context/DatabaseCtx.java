@@ -81,7 +81,7 @@ public class DatabaseCtx implements ProcessContext {
     }
 
     @Override
-    public List<StrategyLog> getPagedStrategyLogs(int start, int limit) {
+    public List<StrategyPerformance> getPagedStrategyLogs(int start, int limit) {
         return strategyDao.getPagedStrategyLogs(this.strategy, start, limit);
     }
 
