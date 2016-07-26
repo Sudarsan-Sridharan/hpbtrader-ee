@@ -6,12 +6,15 @@ import com.highpowerbear.hpbtrader.shared.persistence.IbAccountDao;
 
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 /**
  * Created by robertk on 11/26/2015.
  */
 @Singleton
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class MktDataScheduler {
 
     @Inject private HistDataController histDataController;
