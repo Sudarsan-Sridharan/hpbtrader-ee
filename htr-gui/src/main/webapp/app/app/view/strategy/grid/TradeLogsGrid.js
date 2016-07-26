@@ -78,10 +78,7 @@ Ext.define('HtrGui.view.strategy.grid.TradeLogsGrid', {
         text: 'Status',
         width: 60,
         dataIndex: 'tradeStatus',
-        renderer: function(val, metadata, record) {
-            metadata.style = 'cursor: pointer; color: white; ' + (val == 'OPEN' ? 'background-color: green;' : 'background-color: brown;');
-            return val.toLowerCase();
-        }
+        renderer: 'tradeStatusRenderer'
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',

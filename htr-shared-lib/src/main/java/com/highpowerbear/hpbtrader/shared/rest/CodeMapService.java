@@ -1,8 +1,6 @@
 package com.highpowerbear.hpbtrader.shared.rest;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
-import com.highpowerbear.hpbtrader.shared.model.CodeMapEntry;
-import com.highpowerbear.hpbtrader.shared.model.RestList;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.GET;
@@ -10,8 +8,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by robertk on 6.4.2016.
@@ -21,90 +19,79 @@ import java.util.List;
 public class CodeMapService {
 
     @GET
-    @Path("iborderstatus/displaytext")
+    @Path("iborderstatus/texts")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOrderStatusDisplayTexts() {
-        List<CodeMapEntry<HtrEnums.IbOrderStatus, String>> entries = new ArrayList<>();
+    public Response getOrderStatusTexts() {
+        Map<HtrEnums.IbOrderStatus, String> map = new LinkedHashMap<>();
         for (HtrEnums.IbOrderStatus k : HtrEnums.IbOrderStatus.values()) {
-            entries.add(new CodeMapEntry<>(k, k.getDisplayText()));
+            map.put(k, k.getDisplayText());
         }
-        return Response.ok(new RestList<>(entries, (long) entries.size())).build();
+        return Response.ok(map).build();
     }
 
     @GET
-    @Path("iborderstatus/displaycolor")
+    @Path("iborderstatus/colors")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOrderStatusDisplayColors() {
-        List<CodeMapEntry<HtrEnums.IbOrderStatus, HtrEnums.DisplayColor>> entries = new ArrayList<>();
+    public Response getOrderStatusColors() {
+        Map<HtrEnums.IbOrderStatus, HtrEnums.DisplayColor> map = new LinkedHashMap<>();
         for (HtrEnums.IbOrderStatus k : HtrEnums.IbOrderStatus.values()) {
-            entries.add(new CodeMapEntry<>(k, k.getDisplayColor()));
+            map.put(k, k.getDisplayColor());
         }
-        return Response.ok(new RestList<>(entries, (long) entries.size())).build();
+        return Response.ok(map).build();
     }
 
     @GET
-    @Path("strategymode/displaycolor")
+    @Path("strategymode/colors")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getStrategyModeDisplayColors() {
-        List<CodeMapEntry<HtrEnums.StrategyMode, HtrEnums.DisplayColor>> entries = new ArrayList<>();
+    public Response getStrategyModeColors() {
+        Map<HtrEnums.StrategyMode, String> map = new LinkedHashMap<>();
         for (HtrEnums.StrategyMode k : HtrEnums.StrategyMode.values()) {
-            entries.add(new CodeMapEntry<>(k, k.getDisplayColor()));
+            map.put(k, k.getDisplayColor());
         }
-        return Response.ok(new RestList<>(entries, (long) entries.size())).build();
+        return Response.ok(map).build();
     }
 
     @GET
-    @Path("tradetype/displaytext")
+    @Path("tradetype/texts")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTradeTypeDisplayTexts() {
-        List<CodeMapEntry<HtrEnums.TradeType, String>> entries = new ArrayList<>();
+    public Response getTradeTypeTexts() {
+        Map<HtrEnums.TradeType, String> map = new LinkedHashMap<>();
         for (HtrEnums.TradeType k : HtrEnums.TradeType.values()) {
-            entries.add(new CodeMapEntry<>(k, k.getDisplayText()));
+            map.put(k, k.getDisplayText());
         }
-        return Response.ok(new RestList<>(entries, (long) entries.size())).build();
+        return Response.ok(map).build();
     }
 
     @GET
-    @Path("tradetype/displaycolor")
+    @Path("tradetype/colors")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTradeTypeDisplayColors() {
-        List<CodeMapEntry<HtrEnums.TradeType, HtrEnums.DisplayColor>> entries = new ArrayList<>();
+    public Response getTradeTypeColors() {
+        Map<HtrEnums.TradeType, String> map = new LinkedHashMap<>();
         for (HtrEnums.TradeType k : HtrEnums.TradeType.values()) {
-            entries.add(new CodeMapEntry<>(k, k.getDisplayColor()));
+            map.put(k, k.getDisplayColor());
         }
-        return Response.ok(new RestList<>(entries, (long) entries.size())).build();
+        return Response.ok(map).build();
     }
 
     @GET
-    @Path("tradestatus/displaytext")
+    @Path("tradestatus/texts")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTradeStatusDisplayTexts() {
-        List<CodeMapEntry<HtrEnums.TradeStatus, String>> entries = new ArrayList<>();
+    public Response getTradeStatusTexts() {
+        Map<HtrEnums.TradeStatus, String> map = new LinkedHashMap<>();
         for (HtrEnums.TradeStatus k : HtrEnums.TradeStatus.values()) {
-            entries.add(new CodeMapEntry<>(k, k.getDisplayText()));
+            map.put(k, k.getDisplayText());
         }
-        return Response.ok(new RestList<>(entries, (long) entries.size())).build();
+        return Response.ok(map).build();
     }
 
     @GET
-    @Path("tradestatus/displaycolor")
+    @Path("tradestatus/colors")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTradeStatusDisplayColors() {
-        List<CodeMapEntry<HtrEnums.TradeStatus, HtrEnums.DisplayColor>> entries = new ArrayList<>();
+    public Response getTradeStatusColors() {
+        Map<HtrEnums.TradeStatus, String> map = new LinkedHashMap<>();
         for (HtrEnums.TradeStatus k : HtrEnums.TradeStatus.values()) {
-            entries.add(new CodeMapEntry<>(k, k.getDisplayColor()));
+            map.put(k, k.getDisplayColor());
         }
-        return Response.ok(new RestList<>(entries, (long) entries.size())).build();
-    }
-
-    @GET
-    @Path("realtimestatus/displaycolor")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getRealtimeStatusDisplayColors() {
-        List<CodeMapEntry<HtrEnums.RealtimeStatus, HtrEnums.DisplayColor>> entries = new ArrayList<>();
-        for (HtrEnums.RealtimeStatus s : HtrEnums.RealtimeStatus.values()) {
-            entries.add(new CodeMapEntry<>(s, s.getDisplayColor()));
-        }
-        return Response.ok(new RestList<>(entries, (long) entries.size())).build();
+        return Response.ok(map).build();
     }
 }

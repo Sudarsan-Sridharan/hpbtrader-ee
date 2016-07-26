@@ -16,15 +16,33 @@ Ext.define('HtrGui.view.exec.ExecController', {
             ibAccounts = me.getStore('ibAccounts'),
             accountsGrid = me.lookupReference('accountsGrid');
 
-        if (ibAccounts) {
-            ibAccounts.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixExec + '/ibaccounts');
-            ibAccounts.load(function (records, operation, success) {
-                if (success) {
-                    console.log('loaded ibAccounts')
-                    accountsGrid.setSelection(ibAccounts.first());
-                }
-            });
-        }
+        Ext.Ajax.request({
+            url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/iborderstatus/texts',
+            success: function(response, opts) {
+                me.ibOrderStatusTexts = Ext.decode(response.responseText);
+                Ext.Ajax.request({
+                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/iborderstatus/colors',
+                    success: function(response, opts) {
+                        me.ibOrderStatusColors = Ext.decode(response.responseText);
+                        Ext.Ajax.request({
+                            url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/strategymode/colors',
+                            success: function(response, opts) {
+                                me.strategyModeColors = Ext.decode(response.responseText);
+                                if (ibAccounts) {
+                                    ibAccounts.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixExec + '/ibaccounts');
+                                    ibAccounts.load(function (records, operation, success) {
+                                        if (success) {
+                                            console.log('loaded ibAccounts')
+                                            accountsGrid.setSelection(ibAccounts.first());
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
     },
 
     onAccountSelect: function(grid, record, index, eOpts) {
@@ -63,9 +81,18 @@ Ext.define('HtrGui.view.exec.ExecController', {
         me.eventsWindow.show();
     },
 
-    statusRenderer: function(val, metadata, record) {
-        metadata.style = 'cursor: pointer; background-color: ' + HtrGui.common.Definitions.getIbOrderStatusColor(val) + '; color: white;';
-        return val.toLowerCase();
+    ibOrderStatusRenderer: function(val, metadata, record) {
+        var me = this;
+
+        metadata.style = 'cursor: pointer; background-color: ' + me.ibOrderStatusColors[val] + '; color: white;';
+        return me.ibOrderStatusTexts[val];
+    },
+
+    strategyRenderer: function(val, metadata, record) {
+        var me = this;
+
+        metadata.style = 'color: ' + me.strategyModeColors[val];
+        return record.data['strategyId'] + '/' + val;
     },
 
     connectStatusRenderer: function(val, metadata, record) {

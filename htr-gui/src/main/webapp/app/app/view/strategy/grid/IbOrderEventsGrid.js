@@ -29,9 +29,6 @@ Ext.define('HtrGui.view.strategy.grid.IbOrdersEventsGrid', {
         text: 'Status',
         width: 80,
         dataIndex: 'status',
-        renderer: function(val, metadata, record) {
-            metadata.style = 'background-color: ' + HanGui.common.Definitions.getIbOrderStatusColor(val) + '; color: white;';
-            return val.toLowerCase();
-        }
+        renderer: 'ibOrderStatusRenderer'
     }]
 });

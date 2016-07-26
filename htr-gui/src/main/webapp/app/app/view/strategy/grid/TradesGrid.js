@@ -32,10 +32,7 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
         text: 'Type',
         width: 80,
         dataIndex: 'tradeType',
-        renderer: function(val, metadata, record) {
-            metadata.style = (val == 'LONG' ? 'color: blue;' : 'color: brown;');
-            return val;
-        }
+        renderer: 'tradeTypeRenderer'
     }, {
         text: 'Quantity',
         width: 80,
@@ -116,10 +113,7 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
         text: 'Status',
         width: 60,
         dataIndex: 'tradeStatus',
-        renderer: function(val, metadata, record) {
-            metadata.style = 'cursor: pointer; color: white; ' + (val == 'OPEN' ? 'background-color: green;' : 'background-color: brown;');
-            return val.toLowerCase();
-        }
+        renderer: 'tradeStatusRenderer'
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',

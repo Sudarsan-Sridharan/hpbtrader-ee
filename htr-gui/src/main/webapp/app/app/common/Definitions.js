@@ -13,19 +13,12 @@ Ext.define('HtrGui.common.Definitions', {
         urlPrefixExec: 'http://' + window.location.host + '/htr-exec/rest',
 
         //wsUrlExec: 'ws://localhost:28080/htr-exec/websocket/exec'
-        wsUrlExec: 'ws://' + window.location.host + '/htr-exec/websocket/exec'
-    },
+        wsUrlExec: 'ws://' + window.location.host + '/htr-exec/websocket/exec',
 
-    getIbOrderStatusColor: function(status) {
-        var statusColor;
+        //urlPrefixStrategy: 'http://localhost:28080/htr-strategy/rest',
+        urlPrefixStrategy: 'http://' + window.location.host + '/htr-strategy/rest',
 
-        switch(status) {
-            case 'SUBMITTED':   statusColor = 'blue';   break;
-            case 'UPDATED':     statusColor = 'blue';   break;
-            case 'CANCELLED':   statusColor = 'brown';  break;
-            case 'FILLED':      statusColor = 'green';  break;
-            case 'UNKNOWN':     statusColor = 'gray';   break;
-        }
-        return statusColor;
+        //wsUrlStrategy: 'ws://localhost:28080/htr-exec/websocket/strategy'
+        wsUrlStrategy: 'ws://' + window.location.host + '/htr-strategyc/websocket/strategy'
     }
 });

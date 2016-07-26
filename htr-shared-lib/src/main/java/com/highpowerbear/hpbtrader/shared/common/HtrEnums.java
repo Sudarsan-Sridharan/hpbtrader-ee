@@ -86,15 +86,15 @@ public class HtrEnums {
     }
     
     public enum IbOrderStatus {
-        NEW("new", DisplayColor.MAGENTA_BG),
-        NEW_RETRY("newRetry", DisplayColor.MAGENTA_BG),
-        SUBMIT_REQ("submitReq", DisplayColor.DODGER_BLUE_BG),
-        PRESUBMITTED ("preSubmitted", DisplayColor.BLUE_BG),
-        SUBMITTED("submitted", DisplayColor.BLUE_BG),
-        FILLED("filled", DisplayColor.GREEN_BG),
-        CANCEL_REQ("cancelReq", DisplayColor.MAGENTA_BG),
-        CANCELLED("cancelled", DisplayColor.RED_BG),
-        UNKNOWN("unknown", DisplayColor.BROWN_BG);
+        NEW("new", DisplayColor.MAGENTA),
+        NEW_RETRY("newRetry", DisplayColor.MAGENTA),
+        SUBMIT_REQ("submitReq", DisplayColor.DODGER_BLUE),
+        PRESUBMITTED ("preSubmitted", DisplayColor.BLUE),
+        SUBMITTED("submitted", DisplayColor.BLUE),
+        FILLED("filled", DisplayColor.GREEN),
+        CANCEL_REQ("cancelReq", DisplayColor.MAGENTA),
+        CANCELLED("cancelled", DisplayColor.RED),
+        UNKNOWN("unknown", DisplayColor.BROWN);
 
         private String displayText;
         private DisplayColor displayColor;
@@ -145,14 +145,14 @@ public class HtrEnums {
             this.displayColor = displayColor;
         }
 
-        public DisplayColor getDisplayColor() {
-            return displayColor;
+        public String getDisplayColor() {
+            return displayColor.name().toLowerCase();
         }
     }
 
     public enum TradeType {
-        LONG("L", DisplayColor.BLUE_BG),
-        SHORT("S", DisplayColor.BROWN_BG);
+        LONG("L", DisplayColor.BLUE),
+        SHORT("S", DisplayColor.BROWN);
 
         private String displayText;
         private DisplayColor displayColor;
@@ -165,18 +165,18 @@ public class HtrEnums {
             return displayText;
         }
 
-        public DisplayColor getDisplayColor() {
-            return displayColor;
+        public String getDisplayColor() {
+            return displayColor.name().toLowerCase();
         }
     }
     
     public enum TradeStatus {
-        INIT_OPEN("initOpen", DisplayColor.BLUE_BG),
-        OPEN("open", DisplayColor.GREEN_BG),
+        INIT_OPEN("initOpen", DisplayColor.BLUE),
+        OPEN("open", DisplayColor.GREEN),
         INIT_CLOSE("initClose", DisplayColor.ORANGE_BG),
-        CLOSED("closed", DisplayColor.BROWN_BG),
-        CNC_CLOSED("cncClosed", DisplayColor.RED_BG),
-        ERR_CLOSED("errClosed", DisplayColor.RED_BG);
+        CLOSED("closed", DisplayColor.BROWN),
+        CNC_CLOSED("cncClosed", DisplayColor.RED),
+        ERR_CLOSED("errClosed", DisplayColor.RED);
         
         private String displayText;
         private DisplayColor displayColor;
@@ -189,8 +189,8 @@ public class HtrEnums {
             return displayText;
         }
 
-        public DisplayColor getDisplayColor() {
-            return displayColor;
+        public String getDisplayColor() {
+            return displayColor.name().toLowerCase();
         }
     }
     
@@ -244,8 +244,8 @@ public class HtrEnums {
             this.displayColor = displayColor;
         }
 
-        public DisplayColor getDisplayColor() {
-            return displayColor;
+        public String getDisplayColor() {
+            return displayColor.name().toLowerCase();
         }
     }
 
@@ -259,33 +259,20 @@ public class HtrEnums {
 
     public enum DisplayColor {
         MAGENTA,
-        MAGENTA_BG,
         BLUE,
-        BLUE_BG,
         DARK_BLUE,
-        DARK_BLUE_BG,
         GREEN,
-        GREEN_BG,
         DARK_GREEN,
-        DARK_GREEN_BG,
         RED,
-        RED_BG,
         DARK_RED,
-        DARK_RED_BG,
         ORANGE,
         ORANGE_BG,
         DARK_ORANGE,
-        DARK_ORANGE_BG,
         DARK_CYAN,
-        DARK_CYAN_BG,
         LIME,
-        LIME_BG,
         YELLOW,
-        YELLOW_BG,
         BROWN,
-        BROWN_BG,
         DODGER_BLUE,
-        DODGER_BLUE_BG
     }
 
     public enum IbConnectionType {

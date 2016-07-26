@@ -32,7 +32,7 @@ Ext.define('HtrGui.view.strategy.grid.IbOrdersGrid', {
         text: 'Status',
         width: 80,
         dataIndex: 'status',
-        renderer: 'statusRenderer'
+        renderer: 'ibOrderStatusRenderer'
     }, {
         text: 'IB Account',
         width: 100,
@@ -41,9 +41,7 @@ Ext.define('HtrGui.view.strategy.grid.IbOrdersGrid', {
         text: 'Strategy',
         width: 100,
         dataIndex: 'strategyId',
-        renderer: function(val, metadata, record) {
-            return record.data['strategyId'] + '/' + record.data['strategyMode'];
-        }
+        renderer: 'strategyRenderer'
     }, {
         text: 'PermId',
         width: 100,
