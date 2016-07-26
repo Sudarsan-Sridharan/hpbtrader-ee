@@ -20,5 +20,9 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         me.lookupReference('strategyLogsPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_sort_amount_asc'));
         me.lookupReference('ibOrdersPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_list_ol'));
         me.lookupReference('tradesPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_money'));
+    },
+
+    showTradeIbOrders: function() {
+        // TODO
     }
 });

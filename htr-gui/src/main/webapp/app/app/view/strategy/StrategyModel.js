@@ -6,7 +6,7 @@ Ext.define('HtrGui.view.strategy.StrategyModel', {
     extend: 'Ext.app.ViewModel',
     requires: [
         'HtrGui.model.strategy.Strategy',
-        'HtrGui.model.strategy.StrategyLog',
+        'HtrGui.model.strategy.StrategyPerformance',
         'HtrGui.model.strategy.Trade',
         'HtrGui.model.strategy.TradeLog',
         'HtrGui.model.strategy.IbOrder'

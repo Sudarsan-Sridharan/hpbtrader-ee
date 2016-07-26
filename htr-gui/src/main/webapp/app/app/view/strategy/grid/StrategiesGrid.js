@@ -17,7 +17,6 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
         text: 'ID',
         width: 80,
         dataIndex: 'id',
-        align: 'right',
         renderer: function (val, metadata, record) {
             var color = ('true' === record.data['active'] ? 'green' : 'red');
             return '<span style="color: ' + color + ';">' + val + '</span>';

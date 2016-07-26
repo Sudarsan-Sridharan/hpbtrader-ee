@@ -11,7 +11,7 @@ Ext.define('HtrGui.view.strategy.Strategy', {
         'HtrGui.view.strategy.StrategyModel',
         'HtrGui.view.strategy.grid.IbOrdersGrid',
         'HtrGui.view.strategy.grid.StrategiesGrid',
-        'HtrGui.view.strategy.grid.StrategyLogsGrid',
+        'HtrGui.view.strategy.grid.StrategyPerformanceGrid',
         'HtrGui.view.strategy.grid.TradeLogsGrid',
         'HtrGui.common.Glyphs',
         'Ext.tab.Panel'
@@ -38,7 +38,7 @@ Ext.define('HtrGui.view.strategy.Strategy', {
             beforerender: 'setGlyphs'
         },
         items: [{
-            xtype: 'htr-strategy-strategylogs-grid',
+            xtype: 'htr-strategy-strategyperformance-grid',
             title: 'Strategy Logs',
             reference: 'strategyLogsPanel'
         }, {

@@ -17,10 +17,11 @@ Ext.define('HtrGui.view.strategy.grid.IbOrdersGrid', {
         stripeRows: true
     },
     columns: [{
+        xtype: 'templatecolumn',
         text: 'ID',
-        width: 80,
+        width: 100,
         dataIndex: 'id',
-        align: 'right'
+        tpl: '{strategyId}/{id}'
     }, {
         text: 'Created Date',
         width: 180,

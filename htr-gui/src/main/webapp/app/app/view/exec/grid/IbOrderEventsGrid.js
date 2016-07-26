@@ -14,12 +14,11 @@ Ext.define('HtrGui.view.exec.grid.IbOrdersEventsGrid', {
         stripeRows: true
     },
     columns: [{
+        xtype: 'templatecolumn',
         text: 'ID',
         width: 100,
         dataIndex: 'id',
-        renderer: function(val, metadata, record) {
-            return record.data['id'] + '/' + record.data['ibOrderId'];
-        }
+        tpl: '{ibOrderId}/{id}'
     }, {
         text: 'Event Date',
         width: 180,
