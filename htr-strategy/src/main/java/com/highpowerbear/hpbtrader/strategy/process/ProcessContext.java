@@ -25,12 +25,12 @@ public interface ProcessContext {
     void createIbOrder(IbOrder ibOrder);
     void updateIbOrder(IbOrder ibOrder);
 
-    List<StrategyPerformance> getPagedStrategyLogs(int start, int limit);
-    List<IbOrder> getPagedIbOrders(int start, int limit);
-    List<Trade> getPagedTrades(int start, int limit);
-    List<TradeLog> getPagedTradeLogs(Trade trade, int start, int limit);
+    List<StrategyPerformance> getStrategyPerformances(int start, int limit);
+    List<IbOrder> getIbOrders(int start, int limit);
+    List<Trade> getTrades(int start, int limit);
+    List<TradeLog> getTradeLogs(Trade trade, int start, int limit);
 
-    Long getNumStrategyLogs();
+    Long getNumStrategyPerformances();
     Long getNumIbOrders();
     Long getNumTrades();
     Long getNumTradeLogs(Trade trade);

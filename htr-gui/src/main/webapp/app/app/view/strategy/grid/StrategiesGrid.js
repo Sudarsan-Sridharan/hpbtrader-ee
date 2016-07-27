@@ -9,6 +9,9 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
         'Ext.toolbar.Paging',
         'HtrGui.view.strategy.StrategyController'
     ],
+    listeners: {
+        select: 'onStrategySelect'
+    },
     bind: '{strategies}',
     viewConfig: {
         stripeRows: true

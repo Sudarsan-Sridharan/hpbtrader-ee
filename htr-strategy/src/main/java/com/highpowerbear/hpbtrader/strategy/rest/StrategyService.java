@@ -92,9 +92,9 @@ public class StrategyService {
     }
 
     @GET
-    @Path("{strategyid}/strategylogs/{type}")
+    @Path("{strategyid}/strategyperformances/{type}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getStrategyLogs(
+    public Response getStrategyPerformances(
             @PathParam("strategyid") Integer strategyId,
             @PathParam("type") String type,
             @QueryParam("start") Integer start,
@@ -107,9 +107,9 @@ public class StrategyService {
         }
         start = start == null ? 0 : start;
         limit = limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit;
-        List<StrategyPerformance> strategyPerformances = ctx.getPagedStrategyLogs(start, limit);
-        Long numStrategyLogs = ctx.getNumStrategyLogs();
-        return Response.ok(new RestList<>(strategyPerformances, numStrategyLogs)).build();
+        List<StrategyPerformance> strategyPerformances = ctx.getStrategyPerformances(start, limit);
+        Long numStrategyPerformances = ctx.getNumStrategyPerformances();
+        return Response.ok(new RestList<>(strategyPerformances, numStrategyPerformances)).build();
     }
 
     @GET
@@ -128,7 +128,7 @@ public class StrategyService {
         }
         start = start == null ? 0 : start;
         limit = limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit;
-        List<IbOrder> ibOrders = ctx.getPagedIbOrders(start, limit);
+        List<IbOrder> ibOrders = ctx.getIbOrders(start, limit);
         Long numIbOrders = ctx.getNumIbOrders();
         return Response.ok(new RestList<>(ibOrders, numIbOrders)).build();
     }
@@ -149,7 +149,7 @@ public class StrategyService {
         }
         start = start == null ? 0 : start;
         limit = limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit;
-        List<Trade> trades = ctx.getPagedTrades(start, limit);
+        List<Trade> trades = ctx.getTrades(start, limit);
         Long numTrades = ctx.getNumTrades();
         return Response.ok(new RestList<>(trades, numTrades)).build();
     }
@@ -174,7 +174,7 @@ public class StrategyService {
         }
         start = start == null ? 0 : start;
         limit = limit == null ? HtrDefinitions.JPA_MAX_RESULTS : limit;
-        List<TradeLog> tradeLogs = ctx.getPagedTradeLogs(trade, start, limit);
+        List<TradeLog> tradeLogs = ctx.getTradeLogs(trade, start, limit);
         Long numTradeLogs = ctx.getNumTradeLogs(trade);
         return Response.ok(new RestList<>(tradeLogs, numTradeLogs)).build();
     }

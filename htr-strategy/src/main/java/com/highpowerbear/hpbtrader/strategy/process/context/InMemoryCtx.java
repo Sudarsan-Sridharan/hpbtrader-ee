@@ -119,7 +119,7 @@ public class InMemoryCtx implements ProcessContext {
     }
 
     @Override
-    public List<StrategyPerformance> getPagedStrategyLogs(int start, int limit) {
+    public List<StrategyPerformance> getStrategyPerformances(int start, int limit) {
         Collections.reverse(strategyPerformances);
         List<StrategyPerformance> strategyPerformancePage = new ArrayList<>();
         for (int i = 0; i < strategyPerformances.size(); i++) {
@@ -131,7 +131,7 @@ public class InMemoryCtx implements ProcessContext {
     }
 
     @Override
-    public List<IbOrder> getPagedIbOrders(int start, int limit) {
+    public List<IbOrder> getIbOrders(int start, int limit) {
         Collections.reverse(ibOrders);
         List<IbOrder> ibOrdersPage = new ArrayList<>();
         for (int i = 0; i < ibOrders.size(); i++) {
@@ -143,7 +143,7 @@ public class InMemoryCtx implements ProcessContext {
     }
 
     @Override
-    public List<Trade> getPagedTrades(int start, int limit) {
+    public List<Trade> getTrades(int start, int limit) {
         Collections.reverse(trades);
         List<Trade> tradesPage = new ArrayList<>();
         for (int i = 0; i < trades.size(); i++) {
@@ -155,7 +155,7 @@ public class InMemoryCtx implements ProcessContext {
     }
 
     @Override
-    public List<TradeLog> getPagedTradeLogs(Trade trade, int start, int limit) {
+    public List<TradeLog> getTradeLogs(Trade trade, int start, int limit) {
         List<TradeLog> tradeLogsForTrade = getTradeLogsForTrade(trade);
         List<TradeLog> tradeLogsForTradePage = new ArrayList<>();
         for (int i = 0; i < tradeLogsForTrade.size(); i++) {
@@ -167,7 +167,7 @@ public class InMemoryCtx implements ProcessContext {
     }
 
     @Override
-    public Long getNumStrategyLogs() {
+    public Long getNumStrategyPerformances() {
         return (long) strategyPerformances.size();
     }
 

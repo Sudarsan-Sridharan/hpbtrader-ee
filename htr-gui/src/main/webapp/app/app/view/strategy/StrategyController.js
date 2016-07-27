@@ -11,50 +11,73 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
     alias: 'controller.htr-strategy',
 
     init: function() {
-        var me = this;
+        var me = this,
+            strategies = me.getStore('strategies'),
+            strategiesGrid = me.lookupReference('strategiesGrid');
 
-        Ext.Ajax.request({
-            url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/iborderstatus/texts',
-            success: function(response, opts) {
-                me.ibOrderStatusTexts = Ext.decode(response.responseText);
-                Ext.Ajax.request({
-                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/iborderstatus/colors',
-                    success: function(response, opts) {
-                        me.ibOrderStatusColors = Ext.decode(response.responseText);
-                        Ext.Ajax.request({
-                            url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/strategymode/colors',
-                            success: function(response, opts) {
-                                me.strategyModeColors = Ext.decode(response.responseText);
-                                Ext.Ajax.request({
-                                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/tradetype/texts',
-                                    success: function(response, opts) {
-                                        me.tradeTypeTexts = Ext.decode(response.responseText);
-                                        Ext.Ajax.request({
-                                            url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/tradetype/colors',
-                                            success: function(response, opts) {
-                                                me.tradeTypeColors = Ext.decode(response.responseText);
-                                                Ext.Ajax.request({
-                                                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/tradestatus/texts',
-                                                    success: function(response, opts) {
-                                                        me.tradeStatusTexts = Ext.decode(response.responseText);
-                                                        Ext.Ajax.request({
-                                                            url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/tradestatus/colors',
-                                                            success: function(response, opts) {
-                                                                me.tradeStatusColors = Ext.decode(response.responseText);
-                                                            }
-                                                        });
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
+        me.prepare(function() {
+            if (strategies) {
+                strategies.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixExec + '/strategies');
+                strategies.load(function (records, operation, success) {
+                    if (success) {
+                        console.log('loaded ibAccounts')
+                        strategiesGrid.setSelection(strategies.first());
                     }
                 });
             }
         });
+    },
+
+    prepare: function(callback) {
+        var me = this;
+
+        var ajaxQueue = function(step) {
+            switch(step) {
+                case 0: Ext.Ajax.request({
+                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/iborderstatus/texts',
+                    success: function (response, opts) {
+                        me.ibOrderStatusTexts = Ext.decode(response.responseText);
+                        ajaxQueue(1);
+                    }}); break;
+                case 1: Ext.Ajax.request({
+                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/iborderstatus/colors',
+                    success: function (response, opts) {
+                        me.ibOrderStatusColors = Ext.decode(response.responseText);
+                        ajaxQueue(2);
+                    }}); break;
+                case 2: Ext.Ajax.request({
+                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/strategymode/colors',
+                    success: function (response, opts) {
+                        me.strategyModeColors = Ext.decode(response.responseText);
+                        ajaxQueue(3);
+                    }}); break;
+                case 3: Ext.Ajax.request({
+                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/tradetype/texts',
+                    success: function (response, opts) {
+                        me.tradeTypeTexts = Ext.decode(response.responseText);
+                        ajaxQueue(4);
+                    }}); break;
+                case 4: Ext.Ajax.request({
+                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/tradetype/colors',
+                    success: function (response, opts) {
+                        me.tradeTypeColors = Ext.decode(response.responseText);
+                        ajaxQueue(5);
+                    }}); break;
+                case 5: Ext.Ajax.request({
+                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/tradestatus/texts',
+                    success: function (response, opts) {
+                        me.tradeStatusTexts = Ext.decode(response.responseText);
+                        ajaxQueue(6);
+                    }}); break;
+                case 6: Ext.Ajax.request({
+                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/tradestatus/colors',
+                    success: function (response, opts) {
+                        me.tradeStatusColors = Ext.decode(response.responseText);
+                        callback();
+                    }}); break;
+            }
+        };
+        ajaxQueue(0);
     },
 
     ibOrderStatusRenderer: function(val, metadata, record) {
@@ -83,6 +106,10 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
 
         metadata.style = 'cursor: pointer; color: white; background-color: ' + me.tradeStatusColors[val];
         return me.tradeStatusTexts[val];
+    },
+
+    onStrategySelect: function(grid, record, index, eOpts) {
+        // TODO
     },
 
     setGlyphs: function() {

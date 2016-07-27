@@ -1,9 +1,9 @@
 /**
  * Created by robertk on 4.7.2016.
  */
-Ext.define('HtrGui.view.strategy.grid.StrategyPerformanceGrid', {
+Ext.define('HtrGui.view.strategy.grid.StrategyPerformancesGrid', {
     extend: 'Ext.grid.Panel',
-    xtype: 'htr-strategy-strategyperformance-grid',
+    xtype: 'htr-strategy-strategyperformances-grid',
     requires: [
         'Ext.grid.column.Date',
         'Ext.toolbar.Paging',

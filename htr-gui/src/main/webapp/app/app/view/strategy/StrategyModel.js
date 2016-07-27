@@ -19,7 +19,7 @@ Ext.define('HtrGui.view.strategy.StrategyModel', {
             model: 'HtrGui.model.strategy.Strategy',
             pageSize: 10
         },
-        strategyPerformance: {
+        strategyPerformances: {
             model: 'HtrGui.model.strategy.StrategyPerformance',
             pageSize: 20
         },

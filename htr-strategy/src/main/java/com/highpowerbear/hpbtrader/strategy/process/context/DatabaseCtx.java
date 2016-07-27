@@ -81,27 +81,27 @@ public class DatabaseCtx implements ProcessContext {
     }
 
     @Override
-    public List<StrategyPerformance> getPagedStrategyLogs(int start, int limit) {
+    public List<StrategyPerformance> getStrategyPerformances(int start, int limit) {
         return strategyDao.getPagedStrategyLogs(this.strategy, start, limit);
     }
 
     @Override
-    public List<IbOrder> getPagedIbOrders(int start, int limit) {
+    public List<IbOrder> getIbOrders(int start, int limit) {
         return ibOrderDao.getPagedIbOrders(this.strategy, start, limit);
     }
 
     @Override
-    public List<Trade> getPagedTrades(int start, int limit) {
+    public List<Trade> getTrades(int start, int limit) {
         return tradeDao.getPagedTrades(this.strategy, start, limit);
     }
 
     @Override
-    public List<TradeLog> getPagedTradeLogs(Trade trade, int start, int limit) {
+    public List<TradeLog> getTradeLogs(Trade trade, int start, int limit) {
         return tradeDao.getPagedTradeLogs(trade, start, limit);
     }
 
     @Override
-    public Long getNumStrategyLogs() {
+    public Long getNumStrategyPerformances() {
         return strategyDao.getNumStrategyLogs(this.strategy);
     }
 
