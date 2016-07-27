@@ -39,8 +39,8 @@ Ext.define('HtrGui.view.strategy.Strategy', {
         },
         items: [{
             xtype: 'htr-strategy-strategyperformance-grid',
-            title: 'Strategy Logs',
-            reference: 'strategyLogsPanel'
+            title: 'Strategy Performance',
+            reference: 'strategyPerformancePanel'
         }, {
             xtype: 'htr-strategy-iborders-grid',
             title: 'IB Orders',

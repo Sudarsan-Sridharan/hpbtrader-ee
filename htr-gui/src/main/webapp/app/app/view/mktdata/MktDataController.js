@@ -45,10 +45,10 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
 
         var ws = new WebSocket(HtrGui.common.Definitions.wsUrlMktData);
         ws.onopen = function(evt) {
-            console.log('WS opened');
+            console.log('WS mktdata opened');
         };
         ws.onclose = function(evt) {
-            console.log('WS closed');
+            console.log('WS mktdata closed');
         };
         ws.onmessage = function(evt) {
             var msg = evt.data;
@@ -58,7 +58,7 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
             //console.log('WS message, content=' + evt.data);
         };
         ws.onerror = function(evt) {
-            console.log('WS error');
+            console.log('WS mktdata error');
         };
     },
 

@@ -43,6 +43,43 @@ Ext.define('HtrGui.view.exec.ExecController', {
                 });
             }
         });
+
+        var ws = new WebSocket(HtrGui.common.Definitions.wsUrlExec);
+        ws.onopen = function(evt) {
+            console.log('WS exec opened');
+        };
+        ws.onclose = function(evt) {
+            console.log('WS exec closed');
+        };
+        ws.onmessage = function(evt) {
+            var msg = evt.data,
+                arr = msg.split(",");
+
+            console.log(msg);
+            if (arr[0] == 'ibAccountId') {
+                me.reloadIbOrders(arr[1]);
+            }
+        };
+        ws.onerror = function(evt) {
+            console.log('WS exec error');
+        };
+    },
+
+    reloadIbOrders: function(ibAccountId) {
+        var me = this,
+            ibOrders = me.getStore('ibOrders');
+
+        if (me.ibAccountId == ibAccountId) {
+            if (ibOrders.isLoaded()) {
+                ibOrders.reload();
+            } else {
+                ibOrders.load(function(records, operation, success) {
+                    if (success) {
+                        console.log('loaded ibOrders for ibAccountId=' + me.ibAccountId)
+                    }
+                });
+            }
+        }
     },
 
     onAccountSelect: function(grid, record, index, eOpts) {
@@ -58,7 +95,7 @@ Ext.define('HtrGui.view.exec.ExecController', {
         } else {
             ibOrders.load(function(records, operation, success) {
                 if (success) {
-                    console.log('reloaded ibOrders for ibAccountId=' + me.ibAccountId)
+                    console.log('loaded ibOrders for ibAccountId=' + me.ibAccountId)
                 }
             });
         }

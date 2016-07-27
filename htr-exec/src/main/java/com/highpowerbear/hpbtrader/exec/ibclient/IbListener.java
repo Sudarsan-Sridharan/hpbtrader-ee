@@ -1,6 +1,7 @@
 package com.highpowerbear.hpbtrader.exec.ibclient;
 
 import com.highpowerbear.hpbtrader.exec.message.MqSender;
+import com.highpowerbear.hpbtrader.exec.websocket.WebsocketController;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbAccount;
@@ -24,6 +25,7 @@ public class IbListener extends GenerictIbListener {
     @Inject private IbController ibController;
     @Inject private HeartbeatControl heartbeatControl;
     @Inject private MqSender mqSender;
+    @Inject private WebsocketController websocketController;
 
     private IbAccount ibAccount;
 
@@ -53,23 +55,26 @@ public class IbListener extends GenerictIbListener {
 
         } else if (HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
             ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, HtrUtil.getCalendar());
-            ibOrderDao.updateIbOrder(ibOrder);
             heartbeatControl.initHeartbeat(ibOrder);
-            mqSender.notifyOrderStateChanged(ibOrder);
+            orderStateChanged(ibOrder);
 
         } else if (HtrEnums.IbOrderStatus.CANCELLED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.CANCELLED.equals(ibOrder.getStatus())) {
             ibOrder.addEvent(HtrEnums.IbOrderStatus.CANCELLED, HtrUtil.getCalendar());
-            ibOrderDao.updateIbOrder(ibOrder);
             heartbeatControl.removeHeartbeat(ibOrder);
-            mqSender.notifyOrderStateChanged(ibOrder);
+            orderStateChanged(ibOrder);
 
         } else if (HtrEnums.IbOrderStatus.FILLED.name().equalsIgnoreCase(status) && remaining == 0 && !HtrEnums.IbOrderStatus.FILLED.equals(ibOrder.getStatus())) {
             ibOrder.setFillPrice(avgFillPrice);
             ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, HtrUtil.getCalendar());
-            ibOrderDao.updateIbOrder(ibOrder);
             heartbeatControl.removeHeartbeat(ibOrder);
-            mqSender.notifyOrderStateChanged(ibOrder);
+            orderStateChanged(ibOrder);
         }
+    }
+
+    private void orderStateChanged(IbOrder ibOrder) {
+        ibOrderDao.updateIbOrder(ibOrder);
+        mqSender.notifyOrderStateChanged(ibOrder);
+        websocketController.notifyOrderStateChanged(ibOrder);
     }
 
     @Override

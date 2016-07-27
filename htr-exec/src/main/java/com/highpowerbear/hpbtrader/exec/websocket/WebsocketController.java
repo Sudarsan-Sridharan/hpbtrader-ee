@@ -1,6 +1,7 @@
 package com.highpowerbear.hpbtrader.exec.websocket;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.RemoteEndpoint;
@@ -33,8 +34,12 @@ public class WebsocketController {
         }
     }
 
-    public void broadcastMessage(String message) {
+    private void broadcastMessage(String message) {
         //l.l().debug("Sending websocket message=" + message + ", clients=" + seriesSessions.size());
         sessions.stream().filter(Session::isOpen).forEach(s -> sendMessage(s, message));
+    }
+
+    public void notifyOrderStateChanged(IbOrder ibOrder) {
+        broadcastMessage("ibAccountId," + ibOrder.getIbAccountId() + ",order state changed");
     }
 }
