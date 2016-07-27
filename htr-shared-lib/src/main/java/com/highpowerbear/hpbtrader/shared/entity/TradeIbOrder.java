@@ -1,5 +1,7 @@
 package com.highpowerbear.hpbtrader.shared.entity;
 
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,6 +25,7 @@ public class TradeIbOrder implements Serializable {
     private Long id;
     private Integer quantity;
     @ManyToOne
+    @XmlTransient
     private IbOrder ibOrder;
     @ManyToOne
     @XmlTransient
@@ -31,6 +34,28 @@ public class TradeIbOrder implements Serializable {
     @XmlElement
     public Long getTradeId() {
         return trade.getId();
+    }
+
+    @XmlElement
+    public Integer getIbOrderQuantity() {
+        return ibOrder.getQuantity();
+    }
+
+    @XmlElement
+    public String getIbOrderInfo() {
+        return  ibOrder.getId() + ", " +
+                HtrUtil.getFormattedDate(ibOrder.getCreatedDate()) + ", " +
+                ibOrder.getIbPermId() + ", " +
+                ibOrder.getIbOrderId() + ", " +
+                ibOrder.getStrategyMode().name() + ", " +
+                ibOrder.getSubmitType().name() + ", " +
+                ibOrder.getOrderAction().name() + ", " +
+                ibOrder.getQuantity() + ", " +
+                ibOrder.getSymbol() + ", " +
+                ibOrder.getOrderType().name() + ", " +
+                ibOrder.getOrderPrice() + ", " +
+                ibOrder.getFillPrice() + ", " +
+                ibOrder.getStatus().getDisplayText() + ", ";
     }
 
     @Override
