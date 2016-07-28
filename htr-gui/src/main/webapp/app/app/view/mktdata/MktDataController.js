@@ -135,12 +135,13 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
 
         if (dataBarsPaging.getStore().isLoaded()) {
             dataBarsPaging.moveFirst();
+        } else {
+            dataBars.load(function (records, operation, success) {
+                if (success) {
+                    console.log('loaded dataBars for dataSeriesId=' + me.dataSeriesId)
+                }
+            });
         }
-        dataBars.load(function(records, operation, success) {
-            if (success) {
-                console.log('loaded dataBars for dataSeriesId=' + me.dataSeriesId)
-            }
-        });
     },
 
     toggleRtData: function(button, evt) {

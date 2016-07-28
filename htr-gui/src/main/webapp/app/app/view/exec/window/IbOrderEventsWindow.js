@@ -1,9 +1,9 @@
 /**
  * Created by robertk on 25.7.2016.
  */
-Ext.define('HtrGui.view.strategy.window.EventsWindow', {
+Ext.define('HtrGui.view.exec.window.IbOrderEventsWindow', {
     extend: 'Ext.window.Window',
-    xtype: 'htr-strategy-events-window',
+    xtype: 'htr-exec-iborderevents-window',
 
     width: 600,
     scrollable: true,

@@ -11,7 +11,7 @@ Ext.define('HtrGui.view.exec.grid.IbOrdersGrid', {
     ],
     bind: '{ibOrders}',
     listeners: {
-        'cellclick': 'showEvents'
+        cellclick: 'showIbOrderEvents'
     },
     viewConfig: {
         stripeRows: true

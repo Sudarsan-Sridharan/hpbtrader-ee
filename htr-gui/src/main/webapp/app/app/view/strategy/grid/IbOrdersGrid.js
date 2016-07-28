@@ -11,7 +11,7 @@ Ext.define('HtrGui.view.strategy.grid.IbOrdersGrid', {
     ],
     bind: '{ibOrders}',
     listeners: {
-        'cellclick': 'showEvents'
+        cellclick: 'showIbOrderEvents'
     },
     viewConfig: {
         stripeRows: true
@@ -118,7 +118,7 @@ Ext.define('HtrGui.view.strategy.grid.IbOrdersGrid', {
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',
-        reference: 'ordersPaging',
+        reference: 'ibOrdersPaging',
         bind: '{ibOrders}',
         dock: 'bottom',
         displayInfo: true

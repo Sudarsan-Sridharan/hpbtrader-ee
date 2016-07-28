@@ -20,7 +20,7 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
                 strategies.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixExec + '/strategies');
                 strategies.load(function (records, operation, success) {
                     if (success) {
-                        console.log('loaded ibAccounts')
+                        console.log('loaded ibAccounts');
                         strategiesGrid.setSelection(strategies.first());
                     }
                 });
@@ -29,48 +29,49 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
     },
 
     prepare: function(callback) {
-        var me = this;
+        var me = this,
+            prefix = HtrGui.common.Definitions.urlPrefixExec;
 
         var ajaxQueue = function(step) {
             switch(step) {
                 case 0: Ext.Ajax.request({
-                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/iborderstatus/texts',
+                    url: prefix + '/codemap/iborderstatus/texts',
                     success: function (response, opts) {
                         me.ibOrderStatusTexts = Ext.decode(response.responseText);
                         ajaxQueue(1);
                     }}); break;
                 case 1: Ext.Ajax.request({
-                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/iborderstatus/colors',
+                    url: prefix + '/codemap/iborderstatus/colors',
                     success: function (response, opts) {
                         me.ibOrderStatusColors = Ext.decode(response.responseText);
                         ajaxQueue(2);
                     }}); break;
                 case 2: Ext.Ajax.request({
-                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/strategymode/colors',
+                    url: prefix + '/codemap/strategymode/colors',
                     success: function (response, opts) {
                         me.strategyModeColors = Ext.decode(response.responseText);
                         ajaxQueue(3);
                     }}); break;
                 case 3: Ext.Ajax.request({
-                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/tradetype/texts',
+                    url: prefix + '/codemap/tradetype/texts',
                     success: function (response, opts) {
                         me.tradeTypeTexts = Ext.decode(response.responseText);
                         ajaxQueue(4);
                     }}); break;
                 case 4: Ext.Ajax.request({
-                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/tradetype/colors',
+                    url: prefix + '/codemap/tradetype/colors',
                     success: function (response, opts) {
                         me.tradeTypeColors = Ext.decode(response.responseText);
                         ajaxQueue(5);
                     }}); break;
                 case 5: Ext.Ajax.request({
-                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/tradestatus/texts',
+                    url: prefix + '/codemap/tradestatus/texts',
                     success: function (response, opts) {
                         me.tradeStatusTexts = Ext.decode(response.responseText);
                         ajaxQueue(6);
                     }}); break;
                 case 6: Ext.Ajax.request({
-                    url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/tradestatus/colors',
+                    url: prefix + '/codemap/tradestatus/colors',
                     success: function (response, opts) {
                         me.tradeStatusColors = Ext.decode(response.responseText);
                         callback();
@@ -109,7 +110,102 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
     },
 
     onStrategySelect: function(grid, record, index, eOpts) {
-        // TODO
+        var me = this,
+            strategyPerformances = me.getStore('strategyPerformances'),
+            strategyPerformancesPaging = me.lookupReference('strategyPerformancesPaging'),
+            ibOrders = me.getStore('ibOrders'),
+            ibOrdersPaging = me.lookupReference('ibOrdersPaging'),
+            trades = me.getStore('trades'),
+            tradesPaging = me.lookupReference('tradesPaging'),
+            tradesGrid = me.lookupReference('tradesGrid'),
+            prefix = HtrGui.common.Definitions.urlPrefixStrategy;
+
+        me.strategyId = record.data.id;
+        strategyPerformances.getProxy().setUrl(prefix + '/' + me.strategyId + '/strategyperformances/trading');
+        ibOrders.getProxy().setUrl(prefix + '/' + me.strategyId + '/iborders/trading');
+        trades.getProxy().setUrl(prefix + '/' + me.strategyId + '/trades/trading');
+
+        if (strategyPerformances.isLoaded()) {
+            strategyPerformancesPaging.moveFirst();
+        } else {
+            strategyPerformances.load(function (records, operation, success) {
+                if (success) {
+                    console.log('loaded strategyPerformances for strategyId=' + me.strategyId);
+                }
+            });
+        }
+        if (ibOrders.isLoaded()) {
+            ibOrdersPaging.moveFirst();
+        } else {
+            ibOrders.load(function (records, operation, success) {
+                if (success) {
+                    console.log('loaded ibOrders for for strategyId=' + me.strategyId);
+                }
+            });
+        }
+        if (trades.isLoaded()) {
+            tradesPaging.moveFirst();
+        } else {
+            trades.load(function (records, operation, success) {
+                if (success) {
+                    console.log('loaded trades for for strategyId=' + me.strategyId);
+                    tradesGrid.setSelection(trades.first());
+                }
+            });
+        }
+    },
+
+    showIbOrderEvents: function (view, cell, cellIndex, record, row, rowIndex, e) {
+        if (cellIndex != 2) {
+            return;
+        }
+        var me = this;
+
+        if (!me.ibOrderEventsGrid) {
+            me.ibOrderEventsGrid =  Ext.create('HtrGui.view.exec.grid.IbOrderEventsGrid');
+            me.ibOrderEventsWindow = Ext.create('widget.htr-strategy-iborderevents-window');
+            me.ibOrderEventsWindow.add(me.ibOrderEventsGrid);
+        }
+        var permId = record.get(record.getFields()[1].getName());
+        me.ibOrderEventsGrid.setStore(record.ibOrderEvents());
+        me.ibOrderEventsWindow.setTitle("IB Order Events, permId=" + permId);
+        me.ibOrderEventsWindow.show();
+    },
+
+    showTradeIbOrders: function (view, cell, cellIndex, record, row, rowIndex, e) {
+        if (cellIndex != 2) {
+            return;
+        }
+        var me = this;
+
+        if (!me.tradeIbOrdersGrid) {
+            me.tradeIbOrdersGrid =  Ext.create('HtrGui.view.exec.grid.TradeIbOrdersGrid');
+            me.tradeIbOrdersWindow = Ext.create('widget.htr-strategy-tradeiborders-window');
+            me.tradeIbOrdersWindow.add(me.tradeIbOrdersGrid);
+        }
+        var tradeId = record.get(record.getFields()[0].getName());
+        me.tradeIbOrdersGrid.setStore(record.tradeIbOrders());
+        me.tradeIbOrdersWindow.setTitle("Trade IB Orders, tradeId=" + tradeId);
+        me.tradeIbOrdersWindow.show();
+    },
+
+    onTradeSelect: function(grid, record, index, eOpts) {
+        var me = this,
+            tradeLogs = me.getStore('tradeLogs'),
+            tradeLogsPaging = me.lookupReference('tradeLogsPaging');
+
+        me.tradeId = record.data.id;
+        tradeLogs.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/' + me.tradeId + '/tradelogs/trading');
+
+        if (tradeLogs.isLoaded()) {
+            tradeLogsPaging.moveFirst();
+        } else {
+            tradeLogs.load(function (records, operation, success) {
+                if (success) {
+                    console.log('loaded tradeLogs for tradeId=' + me.tradeId);
+                }
+            });
+        }
     },
 
     setGlyphs: function() {
@@ -118,9 +214,5 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         me.lookupReference('strategyLogsPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_sort_amount_asc'));
         me.lookupReference('ibOrdersPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_list_ol'));
         me.lookupReference('tradesPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_money'));
-    },
-
-    showTradeIbOrders: function() {
-        // TODO
     }
 });

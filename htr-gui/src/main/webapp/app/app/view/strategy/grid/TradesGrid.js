@@ -9,12 +9,13 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
         'Ext.toolbar.Paging',
         'HtrGui.view.strategy.StrategyController'
     ],
+    listeners: {
+        select: 'onTradeSelect',
+        cellclick: 'showTradeIbOrders'
+    },
     bind: '{trades}',
     viewConfig: {
         stripeRows: true
-    },
-    listeners: {
-        'cellclick': 'showTradeIbOrders'
     },
     columns: [{
         xtype: 'templatecolumn',
@@ -28,6 +29,11 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
         dataIndex: 'initOpenDate',
         xtype: 'datecolumn',
         format: 'm/d/Y H:i:s.u'
+    }, {
+        text: 'Status',
+        width: 60,
+        dataIndex: 'tradeStatus',
+        renderer: 'tradeStatusRenderer'
     }, {
         text: 'Type',
         width: 80,
@@ -109,11 +115,6 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
         }
     }, {
         flex: 1
-    }, {
-        text: 'Status',
-        width: 60,
-        dataIndex: 'tradeStatus',
-        renderer: 'tradeStatusRenderer'
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',

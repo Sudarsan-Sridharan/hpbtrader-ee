@@ -6,7 +6,8 @@ Ext.define('HtrGui.view.exec.ExecController', {
 
     requires: [
         'HtrGui.common.Definitions',
-        'HtrGui.view.exec.grid.IbOrdersEventsGrid'
+        'HtrGui.view.exec.grid.IbOrderEventsGrid',
+        'HtrGui.view.exec.window.IbOrderEventsWindow'
     ],
 
     alias: 'controller.htr-exec',
@@ -82,7 +83,7 @@ Ext.define('HtrGui.view.exec.ExecController', {
         }
     },
 
-    onAccountSelect: function(grid, record, index, eOpts) {
+    onIbAccountSelect: function(grid, record, index, eOpts) {
         var me = this,
             ibOrders = me.getStore('ibOrders'),
             ordersPaging = me.lookupReference('ordersPaging');
@@ -101,21 +102,21 @@ Ext.define('HtrGui.view.exec.ExecController', {
         }
     },
 
-    showEvents: function (view, cell, cellIndex, record, row, rowIndex, e) {
+    showIbOrderEvents: function (view, cell, cellIndex, record, row, rowIndex, e) {
         if (cellIndex != 2) {
             return;
         }
         var me = this;
 
-        if (!me.eventsGrid) {
-            me.eventsGrid =  Ext.create('HanGui.view.exec.grid.IbOrderEventsGrid');
-            me.eventsWindow = Ext.create('widget.htr-exec-events-window');
-            me.eventsWindow.add(me.eventsGrid);
+        if (!me.ibOrderEventsGrid) {
+            me.ibOrderEventsGrid =  Ext.create('HtrGui.view.exec.grid.IbOrderEventsGrid');
+            me.ibOrderEventsWindow = Ext.create('widget.htr-exec-iborderevents-window');
+            me.ibOrderEventsWindow.add(me.ibOrderEventsGrid);
         }
         var permId = record.get(record.getFields()[1].getName());
-        me.eventsGrid.setStore(record.ibOrderEvents());
-        me.eventsWindow.setTitle("IB Order Events, permId=" + permId);
-        me.eventsWindow.show();
+        me.ibOrderEventsGrid.setStore(record.ibOrderEvents());
+        me.ibOrderEventsWindow.setTitle("IB Order Events, permId=" + permId);
+        me.ibOrderEventsWindow.show();
     },
 
     ibOrderStatusRenderer: function(val, metadata, record) {

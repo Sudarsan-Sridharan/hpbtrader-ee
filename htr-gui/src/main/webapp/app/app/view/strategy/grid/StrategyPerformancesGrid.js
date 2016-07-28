@@ -9,7 +9,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategyPerformancesGrid', {
         'Ext.toolbar.Paging',
         'HtrGui.view.strategy.StrategyController'
     ],
-    bind: '{strategyPerformance}',
+    bind: '{strategyPerformances}',
     viewConfig: {
         stripeRows: true
     },
@@ -57,8 +57,8 @@ Ext.define('HtrGui.view.strategy.grid.StrategyPerformancesGrid', {
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',
-        reference: 'strategyPerformancePaging',
-        bind: '{strategyPerformance}',
+        reference: 'strategyPerformancesPaging',
+        bind: '{strategyPerformances}',
         dock: 'bottom',
         displayInfo: true
     }]

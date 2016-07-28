@@ -5,7 +5,7 @@ Ext.define('HtrGui.model.exec.IbOrderEvent', {
     extend: 'HtrGui.model.exec.Base',
 
     fields: [
-        {name: 'ibOrderId', type: 'string', reference: {type: 'IbOrder', inverse: 'events'}},
+        {name: 'ibOrderId', type: 'string', reference: {type: 'IbOrder', inverse: 'ibOrderEvents'}},
         {name: 'eventDate', type: 'date', dateFormat: 'time'},
         'status'
     ]

@@ -9,7 +9,7 @@ Ext.define('HtrGui.view.exec.grid.IbAccountsGrid', {
         'Ext.toolbar.Paging'
     ],
     listeners: {
-        select: 'onAccountSelect'
+        select: 'onIbAccountSelect'
     },
     bind: '{ibAccounts}',
     viewConfig: {
