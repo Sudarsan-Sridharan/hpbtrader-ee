@@ -6,6 +6,7 @@ import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 import com.highpowerbear.hpbtrader.shared.persistence.TradeDao;
 import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
+import com.highpowerbear.hpbtrader.strategy.websocket.WebsocketController;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -21,6 +22,7 @@ public class DatabaseCtx implements ProcessContext {
     @Inject private TradeDao tradeDao;
     @Inject private StrategyDao strategyDao;
     @Inject private IbOrderDao ibOrderDao;
+    @Inject private WebsocketController websocketController;
 
     private Strategy strategy;
 
@@ -48,6 +50,7 @@ public class DatabaseCtx implements ProcessContext {
     @Override
     public void updateStrategy() {
         strategyDao.updateStrategy(this.strategy);
+        websocketController.notifyStrategyUpdated(strategy);
     }
 
     @Override
@@ -58,6 +61,7 @@ public class DatabaseCtx implements ProcessContext {
     @Override
     public void updateOrCreateTrade(Trade trade, Double currentPrice) {
         tradeDao.updateOrCreateTrade(trade, this.getCurrentDate(), currentPrice);
+        websocketController.notifyTradeUpdatedOrCreated(trade);
     }
 
     @Override
@@ -73,6 +77,7 @@ public class DatabaseCtx implements ProcessContext {
     @Override
     public void createIbOrder(IbOrder ibOrder) {
         ibOrderDao.createIbOrder(ibOrder);
+        websocketController.notifyIbOrderUpdatedOrCreated(ibOrder);
     }
 
     @Override

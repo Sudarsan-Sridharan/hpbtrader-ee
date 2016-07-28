@@ -39,7 +39,7 @@ public class WebsocketController {
         sessions.stream().filter(Session::isOpen).forEach(s -> sendMessage(s, message));
     }
 
-    public void notifyOrderStateChanged(IbOrder ibOrder) {
-        broadcastMessage("ibAccountId," + ibOrder.getIbAccountId() + ",order state changed");
+    public void notifyIbOrderUpdated(IbOrder ibOrder) {
+        broadcastMessage("ibAccountId," + ibOrder.getIbAccountId() + ",ib order updated");
     }
 }

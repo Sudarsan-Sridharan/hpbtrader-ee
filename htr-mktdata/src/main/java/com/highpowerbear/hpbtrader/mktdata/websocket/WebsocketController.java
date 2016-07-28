@@ -39,7 +39,7 @@ public class WebsocketController {
         sessions.stream().filter(Session::isOpen).forEach(s -> sendMessage(s, message));
     }
 
-    public void notifyCreateDataBars(DataSeries dataSeries) {
+    public void notifyDataBarsCreated(DataSeries dataSeries) {
         broadcastMessage("dataSeriesId," + dataSeries.getId() + ",data bars created");
     }
 }

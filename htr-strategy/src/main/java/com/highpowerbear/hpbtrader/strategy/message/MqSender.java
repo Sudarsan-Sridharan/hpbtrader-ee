@@ -24,10 +24,10 @@ public class MqSender {
     @Resource(lookup = HtrDefinitions.STRATEGY_TO_EXEC_QUEUE)
     private Queue strategyToExecQ;
 
-    public void newOrder(IbOrder ibOrder) {
+    public void notifyIbOrderCreated(IbOrder ibOrder) {
         try {
             String corId = String.valueOf(ibOrder.getId());
-            String msg = HtrUtil.constructMessage(HtrEnums.MessageType.NEW_ORDER, ibOrder.getDescription());
+            String msg = HtrUtil.constructMessage(HtrEnums.MessageType.IBORDER_CREATED, ibOrder.getDescription());
             l.info("BEGIN send message to MQ=" + HtrDefinitions.STRATEGY_TO_EXEC_QUEUE + ", corId=" + corId + ", msg=" + msg);
             JMSProducer producer = jmsContext.createProducer();
             TextMessage message = jmsContext.createTextMessage(msg);

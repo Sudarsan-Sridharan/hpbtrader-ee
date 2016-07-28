@@ -14,7 +14,7 @@ import java.util.List;
  * Created by rkolar on 4/23/14.
  */
 @ApplicationScoped
-public class OrderStateHandler {
+public class IbOrderStateHandler {
 
     public void simulateFill(ProcessContext ctx, IbOrder ibOrder, Double fillPrice) {
         Calendar t1 = HtrUtil.getCalendar();
@@ -31,21 +31,21 @@ public class OrderStateHandler {
         ibOrder.setFillPrice(fillPrice);
         ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, t3);
         ctx.updateIbOrder(ibOrder);
-        orderFilled(ctx, ibOrder);
+        filled(ctx, ibOrder);
     }
 
-    public void orderStateChanged(ProcessContext ctx, IbOrder ibOrder) {
+    public void stateChanged(ProcessContext ctx, IbOrder ibOrder) {
         HtrEnums.IbOrderStatus status = ibOrder.getStatus();
         if (HtrEnums.IbOrderStatus.FILLED.equals(status)) {
-            orderFilled(ctx, ibOrder);
+            filled(ctx, ibOrder);
         } else if (HtrEnums.IbOrderStatus.CANCELLED.equals(status)) {
-            orderCanceled(ctx, ibOrder);
+            canceled(ctx, ibOrder);
         } else if (HtrEnums.IbOrderStatus.UNKNOWN.equals(status)) {
-            orderUnknown(ctx, ibOrder);
+            unknown(ctx, ibOrder);
         }
     }
 
-    private void orderFilled(ProcessContext ctx, IbOrder ibOrder) {
+    private void filled(ProcessContext ctx, IbOrder ibOrder) {
         Strategy str = ctx.getStrategy();
         List<Trade> trades = ctx.getTradesByOrder(ibOrder);
         Trade trade1 = trades.get(0);
@@ -69,7 +69,7 @@ public class OrderStateHandler {
         ctx.updateStrategy();
     }
 
-    private void orderCanceled(ProcessContext ctx, IbOrder ibOrder) {
+    private void canceled(ProcessContext ctx, IbOrder ibOrder) {
         List<Trade> trades = ctx.getTradesByOrder(ibOrder);
         trades.forEach(t -> {
             t.cncClose();
@@ -77,7 +77,7 @@ public class OrderStateHandler {
         });
     }
 
-    private void orderUnknown(ProcessContext ctx, IbOrder ibOrder) {
+    private void unknown(ProcessContext ctx, IbOrder ibOrder) {
         List<Trade> trades = ctx.getTradesByOrder(ibOrder);
         trades.forEach(t -> {
             t.errClose();

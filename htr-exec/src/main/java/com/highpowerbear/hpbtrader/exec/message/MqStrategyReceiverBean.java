@@ -28,7 +28,7 @@ import java.util.logging.Logger;
         @ActivationConfigProperty(propertyName = "maxSession", propertyValue = "5")
 })
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-public class MqReceiverBean implements MessageListener {
+public class MqStrategyReceiverBean implements MessageListener {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject private IbOrderDao ibOrderDao;
@@ -42,7 +42,7 @@ public class MqReceiverBean implements MessageListener {
                 String corId = message.getJMSCorrelationID();
                 l.info("Text message received from MQ=" + HtrDefinitions.STRATEGY_TO_EXEC_QUEUE + ", corId=" + corId + ", msg=" + msg);
                 HtrEnums.MessageType messageType = HtrUtil.parseMessageType(msg);
-                if (HtrEnums.MessageType.NEW_ORDER.equals(messageType)) {
+                if (HtrEnums.MessageType.IBORDER_CREATED.equals(messageType)) {
                     Long id = Long.valueOf(corId);
                     IbOrder ibOrder = ibOrderDao.findIbOrder(id);
                     if (ibOrder != null) {

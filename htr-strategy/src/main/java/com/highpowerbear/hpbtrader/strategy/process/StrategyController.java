@@ -35,7 +35,7 @@ public class StrategyController implements Serializable {
     @Inject private StrategyDao strategyDao;
     @Inject private DataSeriesDao dataSeriesDao;
 
-    @Inject private OrderStateHandler orderStateHandler;
+    @Inject private IbOrderStateHandler ibOrderStateHandler;
     @Inject private EmailSender emailSender;
     @Inject private MqSender mqSender;
 
@@ -140,9 +140,9 @@ public class StrategyController implements Serializable {
 
         if (HtrEnums.StrategyMode.IB.equals(str.getStrategyMode())) {
             emailSender.sendEmail(sl.getIbOrder().getDescription(), sl.getIbOrder().getTriggerDesc() + "\n" + sl.getLastDataBar().print());
-            mqSender.newOrder(sl.getIbOrder());
+            mqSender.notifyIbOrderCreated(sl.getIbOrder());
         } else {
-            orderStateHandler.simulateFill(ctx, sl.getIbOrder(), sl.getLastDataBar().getbBarClose());
+            ibOrderStateHandler.simulateFill(ctx, sl.getIbOrder(), sl.getLastDataBar().getbBarClose());
         }
         l.info("END postProcess " + logMessage);
     }
@@ -192,9 +192,9 @@ public class StrategyController implements Serializable {
         emailSender.sendEmail(ibOrder.getDescription(), ibOrder.getTriggerDesc() + "\n" + dataBar.print());
 
         if (HtrEnums.StrategyMode.IB.equals(str.getStrategyMode())) {
-            mqSender.newOrder(ibOrder);
+            mqSender.notifyIbOrderCreated(ibOrder);
         } else {
-            orderStateHandler.simulateFill(ctx, ibOrder, dataBar.getbBarClose());
+            ibOrderStateHandler.simulateFill(ctx, ibOrder, dataBar.getbBarClose());
         }
         l.info("END manualOrder " + logMessage + ", new order, trigger=" + ibOrder.getTriggerDesc());
     }

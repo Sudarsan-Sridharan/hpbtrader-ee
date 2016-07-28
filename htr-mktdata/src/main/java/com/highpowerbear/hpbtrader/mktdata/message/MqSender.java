@@ -23,10 +23,10 @@ public class MqSender {
     @Resource(lookup = HtrDefinitions.MKTDATA_TO_STRATEGY_QUEUE)
     private Queue mktDataToStrategyQ;
 
-    public void notifyBarsAdded(DataSeries dataSeries) {
+    public void notifyDataBarsCreated(DataSeries dataSeries) {
         try {
             String corId = String.valueOf(dataSeries.getId());
-            String msg = HtrUtil.constructMessage(HtrEnums.MessageType.BARS_ADDED, dataSeries.getAlias());
+            String msg = HtrUtil.constructMessage(HtrEnums.MessageType.DATABARS_CREATED, dataSeries.getAlias());
             l.info("BEGIN send message to MQ=" + HtrDefinitions.MKTDATA_TO_STRATEGY_QUEUE + ", corId=" + corId + ", msg=" + msg);
             JMSProducer producer = jmsContext.createProducer();
             TextMessage message = jmsContext.createTextMessage(msg);

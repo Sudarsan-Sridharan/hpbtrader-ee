@@ -57,11 +57,11 @@ public class HistDataController {
                 .forEach(barsReceivedMap.get(dataSeries)::remove);
         List<DataBar> barsToCreate = new ArrayList<>(barsReceivedMap.get(dataSeries).values());
         dataSeriesDao.createDataBars(dataSeries, barsToCreate);
-        websocketController.notifyCreateDataBars(dataSeries);
+        websocketController.notifyDataBarsCreated(dataSeries);
         DataBar lastDataBar = barsToCreate.get(barsToCreate.size() - 1);
         boolean isCurrentLastBar = ((lastDataBar.getBarCloseDateMillis() + dataSeries.getBarType().getMillis()) > System.currentTimeMillis());
         if (isCurrentLastBar) {
-            mqSender.notifyBarsAdded(dataSeries);
+            mqSender.notifyDataBarsCreated(dataSeries);
         }
         barsReceivedMap.remove(dataSeries);
     }

@@ -23,10 +23,10 @@ public class MqSender {
     @Resource(lookup = HtrDefinitions.EXEC_TO_STRATEGY_QUEUE)
     private Queue execToStrategyQ;
 
-    public void notifyOrderStateChanged(IbOrder ibOrder) {
+    public void notifyIbOrderUpdated(IbOrder ibOrder) {
         try {
             String corId = String.valueOf(ibOrder.getId());
-            String msg = HtrUtil.constructMessage(HtrEnums.MessageType.ORDER_STATUS_CHANGED, ibOrder.getDescription() + ", status=" + ibOrder.getStatus());
+            String msg = HtrUtil.constructMessage(HtrEnums.MessageType.IBORDER_UPDATED, ibOrder.getDescription() + ", status=" + ibOrder.getStatus());
             l.info("BEGIN send message to MQ=" + HtrDefinitions.EXEC_TO_STRATEGY_QUEUE + ", corId=" + corId + ", msg=" + msg);
             JMSProducer producer = jmsContext.createProducer();
             TextMessage message = jmsContext.createTextMessage(msg);

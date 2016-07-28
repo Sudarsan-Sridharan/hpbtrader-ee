@@ -56,25 +56,25 @@ public class IbListener extends GenerictIbListener {
         } else if (HtrEnums.IbOrderStatus.SUBMITTED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.SUBMITTED.equals(ibOrder.getStatus())) {
             ibOrder.addEvent(HtrEnums.IbOrderStatus.SUBMITTED, HtrUtil.getCalendar());
             heartbeatControl.initHeartbeat(ibOrder);
-            orderStateChanged(ibOrder);
+            ibOrderStateChanged(ibOrder);
 
         } else if (HtrEnums.IbOrderStatus.CANCELLED.name().equalsIgnoreCase(status) && !HtrEnums.IbOrderStatus.CANCELLED.equals(ibOrder.getStatus())) {
             ibOrder.addEvent(HtrEnums.IbOrderStatus.CANCELLED, HtrUtil.getCalendar());
             heartbeatControl.removeHeartbeat(ibOrder);
-            orderStateChanged(ibOrder);
+            ibOrderStateChanged(ibOrder);
 
         } else if (HtrEnums.IbOrderStatus.FILLED.name().equalsIgnoreCase(status) && remaining == 0 && !HtrEnums.IbOrderStatus.FILLED.equals(ibOrder.getStatus())) {
             ibOrder.setFillPrice(avgFillPrice);
             ibOrder.addEvent(HtrEnums.IbOrderStatus.FILLED, HtrUtil.getCalendar());
             heartbeatControl.removeHeartbeat(ibOrder);
-            orderStateChanged(ibOrder);
+            ibOrderStateChanged(ibOrder);
         }
     }
 
-    private void orderStateChanged(IbOrder ibOrder) {
+    private void ibOrderStateChanged(IbOrder ibOrder) {
         ibOrderDao.updateIbOrder(ibOrder);
-        mqSender.notifyOrderStateChanged(ibOrder);
-        websocketController.notifyOrderStateChanged(ibOrder);
+        mqSender.notifyIbOrderUpdated(ibOrder);
+        websocketController.notifyIbOrderUpdated(ibOrder);
     }
 
     @Override

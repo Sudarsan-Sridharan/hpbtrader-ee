@@ -5,9 +5,10 @@ import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
-import com.highpowerbear.hpbtrader.strategy.process.OrderStateHandler;
+import com.highpowerbear.hpbtrader.strategy.process.IbOrderStateHandler;
 import com.highpowerbear.hpbtrader.strategy.process.ProcessContext;
 import com.highpowerbear.hpbtrader.strategy.process.StrategyController;
+import com.highpowerbear.hpbtrader.strategy.websocket.WebsocketController;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -35,7 +36,8 @@ public class MqExecReceiverBean implements MessageListener {
 
     @Inject private IbOrderDao ibOrderDao;
     @Inject private StrategyController strategyController;
-    @Inject private OrderStateHandler orderStateHandler;
+    @Inject private IbOrderStateHandler ibOrderStateHandler;
+    @Inject private WebsocketController websocketController;
 
     @Override
     public void onMessage(Message message) {
@@ -47,9 +49,10 @@ public class MqExecReceiverBean implements MessageListener {
                 Long id = Long.valueOf(corId);
                 IbOrder ibOrder = ibOrderDao.findIbOrder(id);
                 HtrEnums.MessageType messageType = HtrUtil.parseMessageType(msg);
-                if (HtrEnums.MessageType.ORDER_STATUS_CHANGED.equals(messageType)) {
+                if (HtrEnums.MessageType.IBORDER_UPDATED.equals(messageType)) {
                     ProcessContext ctx = strategyController.getTradingContext(ibOrder.getStrategy());
-                    orderStateHandler.orderStateChanged(ctx, ibOrder);
+                    ibOrderStateHandler.stateChanged(ctx, ibOrder);
+                    websocketController.notifyIbOrderUpdatedOrCreated(ibOrder);
                 }
             } else {
                 l.warning("Non-text message received from MQ=" + HtrDefinitions.EXEC_TO_STRATEGY_QUEUE + ", ignoring");

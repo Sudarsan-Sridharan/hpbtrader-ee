@@ -281,9 +281,9 @@ public class HtrEnums {
     }
 
     public enum MessageType {
-        BARS_ADDED,
-        NEW_ORDER,
-        ORDER_STATUS_CHANGED
+        DATABARS_CREATED,
+        IBORDER_CREATED,
+        IBORDER_UPDATED
     }
 
     public enum BacktestStatus {

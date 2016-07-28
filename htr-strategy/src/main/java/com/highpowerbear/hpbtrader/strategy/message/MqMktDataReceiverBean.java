@@ -44,7 +44,7 @@ public class MqMktDataReceiverBean implements MessageListener {
                 String corId = message.getJMSCorrelationID();
                 l.info("Text message received from MQ=" + HtrDefinitions.MKTDATA_TO_STRATEGY_QUEUE + ", corId=" + corId + ", msg=" + msg);
                 HtrEnums.MessageType messageType = HtrUtil.parseMessageType(msg);
-                if (HtrEnums.MessageType.BARS_ADDED.equals(messageType)) {
+                if (HtrEnums.MessageType.DATABARS_CREATED.equals(messageType)) {
                     String seriesAlias = HtrUtil.parseMessageContent(msg);
                     List<Strategy> strategies = strategyDao.getStrategiesByInputSeriesAlias(seriesAlias);
                     strategies.forEach(str -> processQueueManager.queueProcessStrategy(str, seriesAlias));

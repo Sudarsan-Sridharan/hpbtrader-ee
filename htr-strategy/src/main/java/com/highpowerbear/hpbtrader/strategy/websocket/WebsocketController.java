@@ -1,6 +1,9 @@
 package com.highpowerbear.hpbtrader.strategy.websocket;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
+import com.highpowerbear.hpbtrader.shared.entity.Strategy;
+import com.highpowerbear.hpbtrader.shared.entity.Trade;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.Session;
@@ -34,5 +37,17 @@ public class WebsocketController implements Serializable {
     public void broadcastMessage(String message) {
         //l.l().debug("Sending websocket message=" + message + ", clients=" + sessions.size());
         sessions.stream().filter(Session::isOpen).forEach(s -> sendMessage(s, message));
+    }
+
+    public void notifyIbOrderUpdatedOrCreated(IbOrder ibOrder) {
+        broadcastMessage("ibAccountId," + ibOrder.getIbAccountId() + ",ib order updated or created");
+    }
+
+    public void notifyTradeUpdatedOrCreated(Trade trade) {
+        broadcastMessage("tradeId," + trade.getId() + ",trade updated or created");
+    }
+
+    public void notifyStrategyUpdated(Strategy strategy) {
+        broadcastMessage("strategyId," + strategy.getId() + ",strategy updated");
     }
 }
