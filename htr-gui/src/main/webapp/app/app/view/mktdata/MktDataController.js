@@ -56,11 +56,10 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
 
             if (arr[0] == 'rt') {
                 me.updateRtData(msg);
-            } else if (arr[0] == 'dataSeriesId') {
+            } else if (arr[0] == 'dataBar') {
                 console.log('WS mktdata message: ' + msg);
-                var dataSeriesId = arr[1];
-                if (me.dataSeriesId == dataSeriesId) {
-                    me.reloadDataBars(dataSeriesId);
+                if (me.dataSeriesId == arr[3]) {
+                    me.reloadDataBars();
                 }
             }
         };
@@ -94,7 +93,7 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
         }
     },
 
-    reloadDataBars: function(dataSeriesId) {
+    reloadDataBars: function() {
         var me = this,
             dataBars = me.getStore('dataBars');
 

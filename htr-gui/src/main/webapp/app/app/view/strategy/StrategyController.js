@@ -26,6 +26,69 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
                 });
             }
         });
+
+        var ws = new WebSocket(HtrGui.common.Definitions.wsUrlStrategy);
+        ws.onopen = function(evt) {
+            console.log('WS strategy opened');
+        };
+        ws.onclose = function(evt) {
+            console.log('WS strategy closed');
+        };
+        ws.onmessage = function(evt) {
+            var msg = evt.data,
+                arr = msg.split(","),
+                strategyId;
+
+            console.log('WS strategy message: ' + msg);
+            if (arr[0] == 'strategyId') {
+                me.reloadStore(me.getStore('strategies'), 'strategies');
+                if (me.strategyId == arr[1]) {
+                    me.reloadStore(me.getStore('strategyPerformances'), 'strategyPerformances');
+                }
+            } else if (arr[0] == 'ibOrder') {
+                if (me.strategyId == arr[3]) {
+                    me.reloadStore(me.getStore('ibOrders'), 'ibOrders');
+                }
+            } else if (arr[0] == 'trade') {
+                if (me.strategyId == arr[3]) {
+                    me.reloadStore(me.getStore('trades'), 'trades');
+                }
+            }
+        };
+        ws.onerror = function(evt) {
+            console.log('WS exec error');
+        };
+    },
+
+    reloadStore: function(store, storeName) {
+        var me = this;
+
+        if (store.isLoaded()) {
+            store.reload();
+        } else {
+            store.load(function (records, operation, success) {
+                if (success) {
+                    console.log('loaded ' + storeName + ' for strategyId=' + me.strategyId);
+                }
+            });
+        }
+    },
+
+    moveFirstOrLoadStore: function(paging, storeName) {
+        var me = this;
+
+        if (paging.getStore().isLoaded()) {
+            paging.moveFirst();
+        } else {
+            paging.getStore().load(function (records, operation, success) {
+                if (success) {
+                    console.log('loaded ' + storeName + ' for strategyId=' + me.strategyId);
+                    if ('trades' == storeName) {
+                        me.lookupReference('tradesGrid').setSelection(paging.getStore().first());
+                    }
+                }
+            });
+        }
     },
 
     prepare: function(callback) {
@@ -116,43 +179,16 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
             ibOrders = me.getStore('ibOrders'),
             ibOrdersPaging = me.lookupReference('ibOrdersPaging'),
             trades = me.getStore('trades'),
-            tradesPaging = me.lookupReference('tradesPaging'),
-            tradesGrid = me.lookupReference('tradesGrid'),
-            prefix = HtrGui.common.Definitions.urlPrefixStrategy;
+            tradesPaging = me.lookupReference('tradesPaging');
 
         me.strategyId = record.data.id;
-        strategyPerformances.getProxy().setUrl(prefix + '/' + me.strategyId + '/strategyperformances/trading');
-        ibOrders.getProxy().setUrl(prefix + '/' + me.strategyId + '/iborders/trading');
-        trades.getProxy().setUrl(prefix + '/' + me.strategyId + '/trades/trading');
+        strategyPerformances.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/' + me.strategyId + '/strategyperformances/trading');
+        ibOrders.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/' + me.strategyId + '/iborders/trading');
+        trades.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/' + me.strategyId + '/trades/trading');
 
-        if (strategyPerformances.isLoaded()) {
-            strategyPerformancesPaging.moveFirst();
-        } else {
-            strategyPerformances.load(function (records, operation, success) {
-                if (success) {
-                    console.log('loaded strategyPerformances for strategyId=' + me.strategyId);
-                }
-            });
-        }
-        if (ibOrders.isLoaded()) {
-            ibOrdersPaging.moveFirst();
-        } else {
-            ibOrders.load(function (records, operation, success) {
-                if (success) {
-                    console.log('loaded ibOrders for for strategyId=' + me.strategyId);
-                }
-            });
-        }
-        if (trades.isLoaded()) {
-            tradesPaging.moveFirst();
-        } else {
-            trades.load(function (records, operation, success) {
-                if (success) {
-                    console.log('loaded trades for for strategyId=' + me.strategyId);
-                    tradesGrid.setSelection(trades.first());
-                }
-            });
-        }
+        me.moveFirstOrLoadStore(strategyPerformancesPaging, 'strategyPerformances');
+        me.moveFirstOrLoadStore(ibOrdersPaging, 'ibOrders');
+        me.moveFirstOrLoadStore(tradesPaging, 'trades');
     },
 
     showIbOrderEvents: function (view, cell, cellIndex, record, row, rowIndex, e) {

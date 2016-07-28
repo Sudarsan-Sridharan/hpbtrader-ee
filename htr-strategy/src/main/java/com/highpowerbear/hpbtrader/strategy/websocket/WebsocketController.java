@@ -39,15 +39,15 @@ public class WebsocketController implements Serializable {
         sessions.stream().filter(Session::isOpen).forEach(s -> sendMessage(s, message));
     }
 
+    public void notifyStrategyUpdated(Strategy strategy) {
+        broadcastMessage("strategyId," + strategy.getId() + ",strategy updated");
+    }
+
     public void notifyIbOrderUpdatedOrCreated(IbOrder ibOrder) {
-        broadcastMessage("ibAccountId," + ibOrder.getIbAccountId() + ",ib order updated or created");
+        broadcastMessage("ibOrder," + ibOrder.getId() + ",strategyId," + ibOrder.getStrategy().getId() + ",ib order updated or created");
     }
 
     public void notifyTradeUpdatedOrCreated(Trade trade) {
-        broadcastMessage("tradeId," + trade.getId() + ",trade updated or created");
-    }
-
-    public void notifyStrategyUpdated(Strategy strategy) {
-        broadcastMessage("strategyId," + strategy.getId() + ",strategy updated");
+        broadcastMessage("trade," + trade.getId() + ",strategyId," + trade.getStrategy().getId() + ",trade updated or created");
     }
 }

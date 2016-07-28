@@ -40,6 +40,6 @@ public class WebsocketController {
     }
 
     public void notifyIbOrderUpdated(IbOrder ibOrder) {
-        broadcastMessage("ibAccountId," + ibOrder.getIbAccountId() + ",ib order updated");
+        broadcastMessage("ibOrder," + ibOrder.getId() + ",ibAccountId," + ibOrder.getIbAccountId() + ",ib order updated");
     }
 }

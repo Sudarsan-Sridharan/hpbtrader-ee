@@ -40,6 +40,6 @@ public class WebsocketController {
     }
 
     public void notifyDataBarsCreated(DataSeries dataSeries) {
-        broadcastMessage("dataSeriesId," + dataSeries.getId() + ",data bars created");
+        broadcastMessage("dataBar," + "*" + ",dataSeriesId," + dataSeries.getId() + ",data bars created");
     }
 }
