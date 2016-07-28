@@ -1,6 +1,7 @@
 package com.highpowerbear.hpbtrader.mktdata.websocket;
 
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
+import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.RemoteEndpoint;
@@ -36,5 +37,9 @@ public class WebsocketController {
     public void broadcastMessage(String message) {
         //l.l().debug("Sending websocket message=" + message + ", clients=" + seriesSessions.size());
         sessions.stream().filter(Session::isOpen).forEach(s -> sendMessage(s, message));
+    }
+
+    public void notifyCreateDataBars(DataSeries dataSeries) {
+        broadcastMessage("dataSeriesId," + dataSeries.getId() + ",data bars created");
     }
 }

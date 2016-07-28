@@ -2,6 +2,7 @@ package com.highpowerbear.hpbtrader.mktdata.process;
 
 import com.highpowerbear.hpbtrader.mktdata.ibclient.IbController;
 import com.highpowerbear.hpbtrader.mktdata.message.MqSender;
+import com.highpowerbear.hpbtrader.mktdata.websocket.WebsocketController;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
 import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
@@ -27,6 +28,8 @@ public class HistDataController {
     @Inject private DataSeriesDao dataSeriesDao;
     @Inject private IbController ibController;
     @Inject private MqSender mqSender;
+    @Inject private WebsocketController websocketController;
+
     private DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
     private Map<DataSeries, Map<Long, DataBar>> barsReceivedMap = new HashMap<>(); // series --> (timeInMillisBarClose --> bar)
 
@@ -54,6 +57,7 @@ public class HistDataController {
                 .forEach(barsReceivedMap.get(dataSeries)::remove);
         List<DataBar> barsToCreate = new ArrayList<>(barsReceivedMap.get(dataSeries).values());
         dataSeriesDao.createDataBars(dataSeries, barsToCreate);
+        websocketController.notifyCreateDataBars(dataSeries);
         DataBar lastDataBar = barsToCreate.get(barsToCreate.size() - 1);
         boolean isCurrentLastBar = ((lastDataBar.getBarCloseDateMillis() + dataSeries.getBarType().getMillis()) > System.currentTimeMillis());
         if (isCurrentLastBar) {

@@ -51,11 +51,18 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
             console.log('WS mktdata closed');
         };
         ws.onmessage = function(evt) {
-            var msg = evt.data;
-            if (msg.substring(0, 2) === 'rt') {
+            var msg = evt.data,
+                arr = msg.split(",");
+
+            if (arr[0] == 'rt') {
                 me.updateRtData(msg);
+            } else if (arr[0] == 'dataSeriesId') {
+                console.log('WS mktdata message: ' + msg);
+                var dataSeriesId = arr[1];
+                if (me.dataSeriesId == dataSeriesId) {
+                    me.reloadDataBars(dataSeriesId);
+                }
             }
-            //console.log('WS message, content=' + evt.data);
         };
         ws.onerror = function(evt) {
             console.log('WS mktdata error');
@@ -84,6 +91,21 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
             if (div) {
                 div.innerHTML = fieldValue;
             }
+        }
+    },
+
+    reloadDataBars: function(dataSeriesId) {
+        var me = this,
+            dataBars = me.getStore('dataBars');
+
+        if (dataBars.isLoaded()) {
+            dataBars.reload();
+        } else {
+            dataBars.load(function(records, operation, success) {
+                if (success) {
+                    console.log('loaded dataBars for dataSeriesId=' + me.dataSeriesId)
+                }
+            });
         }
     },
 

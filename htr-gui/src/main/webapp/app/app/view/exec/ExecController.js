@@ -56,9 +56,12 @@ Ext.define('HtrGui.view.exec.ExecController', {
             var msg = evt.data,
                 arr = msg.split(",");
 
-            console.log(msg);
+            console.log('WS exec message: ' + msg);
             if (arr[0] == 'ibAccountId') {
-                me.reloadIbOrders(arr[1]);
+                var ibAccountId = arr[1];
+                if (me.ibAccountId == ibAccountId) {
+                    me.reloadIbOrders(ibAccountId);
+                }
             }
         };
         ws.onerror = function(evt) {
@@ -70,16 +73,14 @@ Ext.define('HtrGui.view.exec.ExecController', {
         var me = this,
             ibOrders = me.getStore('ibOrders');
 
-        if (me.ibAccountId == ibAccountId) {
-            if (ibOrders.isLoaded()) {
-                ibOrders.reload();
-            } else {
-                ibOrders.load(function(records, operation, success) {
-                    if (success) {
-                        console.log('loaded ibOrders for ibAccountId=' + me.ibAccountId)
-                    }
-                });
-            }
+        if (ibOrders.isLoaded()) {
+            ibOrders.reload();
+        } else {
+            ibOrders.load(function(records, operation, success) {
+                if (success) {
+                    console.log('loaded ibOrders for ibAccountId=' + me.ibAccountId)
+                }
+            });
         }
     },
 
