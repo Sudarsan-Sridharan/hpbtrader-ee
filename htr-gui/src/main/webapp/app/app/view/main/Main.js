@@ -6,7 +6,7 @@
  * TODO - Replace this content of this view to suite the needs of your application.
  */
 Ext.define('HtrGui.view.main.Main', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.tab.Panel',
     requires: [
         'Ext.button.Button',
         'Ext.layout.container.VBox',
@@ -38,7 +38,7 @@ Ext.define('HtrGui.view.main.Main', {
     }, {
         xtype: 'htr-strategy',
         reference: 'strategyPanel',
-        title: 'Strategies'
+        title: 'Strategy'
     }, {
         xtype: 'htr-exec',
         reference: 'executionPanel',

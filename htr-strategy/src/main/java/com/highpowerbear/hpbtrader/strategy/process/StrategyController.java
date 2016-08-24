@@ -17,6 +17,8 @@ import com.highpowerbear.hpbtrader.strategy.process.context.InMemoryCtx;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -47,8 +49,7 @@ public class StrategyController implements Serializable {
     Map<Strategy, ProcessContext> backtestContextMap = new ConcurrentHashMap<>();
     Map<Strategy, Boolean> backtestInProgressMap = new ConcurrentHashMap<>(); // strategy -> true = inProgress, null = not inProgress
 
-    @PostConstruct
-    private void init() {
+    private void init(@Observes @Initialized(ApplicationScoped.class) Object evt) { // mechanism for cdi eager initialization without using singleton ejb
         for (Strategy strategy : strategyDao.getStrategies()) {
             ProcessContext ctx = processContexts.select(DatabaseCtx.class).get().configure(strategy);
             tradingContextMap.put(strategy, ctx);

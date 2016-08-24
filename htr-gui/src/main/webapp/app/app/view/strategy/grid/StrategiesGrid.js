@@ -21,7 +21,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
         width: 80,
         dataIndex: 'id',
         renderer: function (val, metadata, record) {
-            var color = ('true' === record.data['active'] ? 'green' : 'red');
+            var color = (true == record.data['active'] ? 'green' : 'red');
             return '<span style="color: ' + color + ';">' + val + '</span>';
         }
     }, {
@@ -30,8 +30,11 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
         dataIndex: 'ibAccountId'
     }, {
         text: 'Type',
-        width: 80,
-        dataIndex: 'strategyType'
+        width: 120,
+        dataIndex: 'strategyType',
+        renderer: function(val, metadata, record) {
+            return val.toLowerCase();
+        }
     }, {
         text: 'Mode',
         width: 80,
@@ -59,7 +62,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
             return record.data['numAllOrders'] + '-' + record.data['numFilledOrders'];
         }
     }, {
-        text: 'Sho-Lon',
+        text: 'Sho-Lo',
         width: 80,
         dataIndex: 'numShorts',
         align: 'right',
@@ -76,10 +79,10 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
         }
     }, {
         text: 'Instrument',
-        width: 200,
+        width: 250,
         dataIndex: 'symbol',
         renderer: function(val, metadata, record) {
-            return record.data['symbol'] + '/' + record.data['underlying'] + '/' + record.data['secType'] + '/' + record.data['currency'] + '/' + record.data['exchange'];
+            return (record.data['symbol'] + '/' + record.data['underlying'] + '/' + record.data['secType'] + '/' + record.data['currency'] + '/' + record.data['exchange']).toLowerCase();
         }
     }, {
         text: 'PL',
@@ -89,7 +92,10 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
     }, {
         text: 'Input Series',
         flex: 1,
-        dataIndex: 'inputSeriesAliases'
+        dataIndex: 'inputSeriesAliases',
+        renderer: function(val, metadata, record) {
+            return val.toLowerCase();
+        }
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',

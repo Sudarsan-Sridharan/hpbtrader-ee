@@ -55,7 +55,10 @@ Ext.define('HtrGui.view.mktdata.grid.DataSeriesGrid', {
     }, {
         text: 'Alias',
         flex: 1,
-        dataIndex: 'alias'
+        dataIndex: 'alias',
+        renderer: function(val, metadata, record) {
+            return val.toLowerCase();
+        }
     }, {
         xtype: 'widgetcolumn',
         width: 50,

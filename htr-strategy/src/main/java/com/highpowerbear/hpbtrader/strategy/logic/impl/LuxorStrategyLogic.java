@@ -7,6 +7,7 @@ import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Ema;
 import com.highpowerbear.hpbtrader.strategy.logic.AbstractStrategyLogic;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.util.Calendar;
@@ -19,7 +20,7 @@ import java.util.List;
 @Dependent
 public class LuxorStrategyLogic extends AbstractStrategyLogic {
 
-    @Inject protected DataSeriesDao dataSeriesDao;
+    @Inject private DataSeriesDao dataSeriesDao;
     @Inject private TiCalculator tiCalculator;
 
     // strategy parameters
@@ -35,6 +36,11 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
     private Double emaShortValue;
     private Double prevEmaLongValue;
     private Double emaLongValue;
+
+    @PostConstruct
+    private void postConstruct() {
+        super.dataSeriesDao = dataSeriesDao;
+    }
 
     @Override
     public void process() {

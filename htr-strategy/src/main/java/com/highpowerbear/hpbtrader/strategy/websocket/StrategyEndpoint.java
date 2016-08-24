@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 /**
  * Created by rkolar on 5/12/14.
  */
-@ServerEndpoint("/websocket/series")
+@ServerEndpoint("/websocket")
 public class StrategyEndpoint {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
     @Inject private WebsocketController websocketController;

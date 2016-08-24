@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 25.11.2015.
  */
-@ServerEndpoint("/websocket/mktdata")
+@ServerEndpoint("/websocket")
 public class MktDataEndpoint {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 

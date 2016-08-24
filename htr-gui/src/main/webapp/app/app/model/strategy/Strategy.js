@@ -21,10 +21,10 @@ Ext.define('HtrGui.model.strategy.Strategy', {
         'numLongs',
         'numWinners',
         'numLosers',
-        {name: 'symbol', mapping: 'instrument.symbol'},
-        {name: 'underlying', mapping: 'instrument.underlying'},
-        {name: 'secType', mapping: 'instrument.secType'},
-        {name: 'currency', mapping: 'instrument.currency'},
-        {name: 'exchange', mapping: 'instrument.exchange'}
+        {name: 'symbol', mapping: 'tradeInstrument.symbol'},
+        {name: 'underlying', mapping: 'tradeInstrument.underlying'},
+        {name: 'secType', mapping: 'tradeInstrument.secType'},
+        {name: 'currency', mapping: 'tradeInstrument.currency'},
+        {name: 'exchange', mapping: 'tradeInstrument.exchange'}
     ]
 });

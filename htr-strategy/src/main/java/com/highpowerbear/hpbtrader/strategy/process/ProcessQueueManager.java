@@ -12,6 +12,8 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.Map;
 import java.util.Objects;
@@ -37,8 +39,7 @@ public class ProcessQueueManager {
     private final String POISON_PROCESS = "NO_SERIES";
     private final GenericTuple<Strategy, TimeFrame> POISON_BACKTEST = new GenericTuple<>(null, null);
 
-    @PostConstruct
-    private void init() {
+    private void init(@Observes @Initialized(ApplicationScoped.class) Object evt) { // mechanism for cdi eager initialization without using singleton ejb
         initTrading();
         initBacktest();
     }

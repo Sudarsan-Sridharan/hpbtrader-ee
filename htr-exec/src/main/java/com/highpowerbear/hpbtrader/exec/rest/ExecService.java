@@ -23,7 +23,7 @@ import java.util.Map;
  * Created by robertk on 18.5.2016.
  */
 @ApplicationScoped
-@Path("exec")
+@Path("ibaccounts")
 public class ExecService {
 
     @Inject private IbAccountDao ibAccountDao;
@@ -42,7 +42,6 @@ public class ExecService {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("ibaccounts")
     public Response updateIbAccount(IbAccount ibAccount) {
         IbAccount ibAccountDb = ibAccountDao.findIbAccount(ibAccount.getAccountId());
         if (ibAccountDb == null) {
@@ -53,7 +52,7 @@ public class ExecService {
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("ibaccounts/{accountId}/connect/{connect}")
+    @Path("{accountId}/connect/{connect}")
     public Response connectIbAccount(@PathParam("accountId") String accountId,  @PathParam("connect") Boolean connect) {
         IbAccount ibAccount = ibAccountDao.findIbAccount(accountId);
         if (ibAccount == null) {
@@ -71,7 +70,7 @@ public class ExecService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("ibaccounts/{accountId}/iborders")
+    @Path("{accountId}/iborders")
     public Response getPagedIbOrders(
             @PathParam("accountId") String accountId,
             @QueryParam("filter") String jsonFilter,

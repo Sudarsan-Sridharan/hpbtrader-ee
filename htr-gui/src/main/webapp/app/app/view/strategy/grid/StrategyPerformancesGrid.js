@@ -34,7 +34,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategyPerformancesGrid', {
             return record.data['numAllOrders'] + '-' + record.data['numFilledOrders'];
         }
     }, {
-        text: 'Sho-Lon',
+        text: 'Sho-Lo',
         width: 80,
         dataIndex: 'numShorts',
         align: 'right',

@@ -10,6 +10,8 @@ import com.highpowerbear.hpbtrader.shared.persistence.IbOrderDao;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,8 +32,7 @@ public class HeartbeatControl {
         return openOrderHeartbeatMap;
     }
 
-    @PostConstruct
-    public void init() {
+    private void init(@Observes @Initialized(ApplicationScoped.class) Object evt) { // mechanism for cdi eager initialization without using singleton ejb
         ibAccountDao.getIbAccounts().forEach(ibAccount -> openOrderHeartbeatMap.put(ibAccount, new ConcurrentHashMap<>()));
         ibAccountDao.getIbAccounts().stream()
                 .flatMap(ibAccount -> ibOrderDao.getOpenIbOrders(ibAccount).stream())

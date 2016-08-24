@@ -12,6 +12,8 @@ import com.ib.client.EClientSocket;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -36,8 +38,7 @@ public class IbController {
         return ibConnectionMap.get(ibAccount);
     }
 
-    @PostConstruct
-    private void init() {
+    private void init(@Observes @Initialized(ApplicationScoped.class) Object evt) { // mechanism for cdi eager initialization without using singleton ejb
         ibAccountDao.getIbAccounts().forEach(ibAccount -> {
             EClientSocket eClientSocket = new EClientSocket(ibListeners.get().configure(ibAccount));
             IbConnection ibConnection = new IbConnection(HtrEnums.IbConnectionType.MKTDATA, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId(), eClientSocket);

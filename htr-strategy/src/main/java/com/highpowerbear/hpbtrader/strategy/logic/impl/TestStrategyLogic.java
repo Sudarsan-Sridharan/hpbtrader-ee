@@ -6,6 +6,7 @@ import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
 import com.highpowerbear.hpbtrader.shared.techanalysis.TiCalculator;
 import com.highpowerbear.hpbtrader.strategy.logic.AbstractStrategyLogic;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
@@ -16,12 +17,17 @@ import javax.inject.Inject;
 @Dependent
 public class TestStrategyLogic extends AbstractStrategyLogic {
 
-    @Inject protected DataSeriesDao dataSeriesDao;
+    @Inject private DataSeriesDao dataSeriesDao;
     @Inject private TiCalculator tiCalculator;
 
     // strategy parameters
     private Double stopPct;
     private Double targetPct;
+
+    @PostConstruct
+    private void postConstruct() {
+        super.dataSeriesDao = dataSeriesDao;
+    }
 
     @Override
     public void process() {

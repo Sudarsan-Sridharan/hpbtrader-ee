@@ -15,7 +15,7 @@ Ext.define('HtrGui.view.exec.ExecController', {
     init: function () {
         var me = this,
             ibAccounts = me.getStore('ibAccounts'),
-            accountsGrid = me.lookupReference('accountsGrid');
+            ibAccountsGrid = me.lookupReference('ibAccountsGrid');
 
         Ext.Ajax.request({
             url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/iborderstatus/texts',
@@ -34,7 +34,7 @@ Ext.define('HtrGui.view.exec.ExecController', {
                                     ibAccounts.load(function (records, operation, success) {
                                         if (success) {
                                             console.log('loaded ibAccounts')
-                                            accountsGrid.setSelection(ibAccounts.first());
+                                            ibAccountsGrid.setSelection(ibAccounts.first());
                                         }
                                     });
                                 }

@@ -13,19 +13,23 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
     init: function() {
         var me = this,
             strategies = me.getStore('strategies'),
-            strategiesGrid = me.lookupReference('strategiesGrid');
+            strategiesGrid;
 
-        me.prepare(function() {
-            if (strategies) {
-                strategies.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixExec + '/strategies');
-                strategies.load(function (records, operation, success) {
-                    if (success) {
-                        console.log('loaded ibAccounts');
-                        strategiesGrid.setSelection(strategies.first());
-                    }
-                });
-            }
-        });
+        // strange bug, strategiesGrid reference ready only after some time
+        setTimeout(function() {
+            strategiesGrid = me.lookupReference('strategiesGrid');
+            me.prepare(function() {
+                if (strategies) {
+                    strategies.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies');
+                    strategies.load(function (records, operation, success) {
+                        if (success) {
+                            console.log('loaded strategies');
+                            strategiesGrid.setSelection(strategies.first());
+                        }
+                    });
+                }
+            });
+        }, 100);
 
         var ws = new WebSocket(HtrGui.common.Definitions.wsUrlStrategy);
         ws.onopen = function(evt) {
@@ -75,16 +79,17 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
     },
 
     moveFirstOrLoadStore: function(paging, storeName) {
-        var me = this;
+        var me = this,
+            store = me.getStore(storeName);
 
-        if (paging.getStore().isLoaded()) {
+        if (store.isLoaded() && store.getTotalCount() > 0) {
             paging.moveFirst();
         } else {
-            paging.getStore().load(function (records, operation, success) {
+            store.load(function (records, operation, success) {
                 if (success) {
                     console.log('loaded ' + storeName + ' for strategyId=' + me.strategyId);
                     if ('trades' == storeName) {
-                        me.lookupReference('tradesGrid').setSelection(paging.getStore().first());
+                        me.lookupReference('tradesGrid').setSelection(store.first());
                     }
                 }
             });
@@ -182,9 +187,9 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
             tradesPaging = me.lookupReference('tradesPaging');
 
         me.strategyId = record.data.id;
-        strategyPerformances.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/' + me.strategyId + '/strategyperformances/trading');
-        ibOrders.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/' + me.strategyId + '/iborders/trading');
-        trades.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/' + me.strategyId + '/trades/trading');
+        strategyPerformances.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/' + me.strategyId + '/strategyperformances/trading');
+        ibOrders.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/' + me.strategyId + '/iborders/trading');
+        trades.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/' + me.strategyId + '/trades/trading');
 
         me.moveFirstOrLoadStore(strategyPerformancesPaging, 'strategyPerformances');
         me.moveFirstOrLoadStore(ibOrdersPaging, 'ibOrders');
@@ -247,8 +252,8 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
     setGlyphs: function() {
         var me = this;
 
-        me.lookupReference('strategyLogsPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_sort_amount_asc'));
-        me.lookupReference('ibOrdersPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_list_ol'));
+        me.lookupReference('strategyPerformancesGrid').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_sort_amount_asc'));
+        me.lookupReference('ibOrdersGrid').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_list_ol'));
         me.lookupReference('tradesPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_money'));
     }
 });

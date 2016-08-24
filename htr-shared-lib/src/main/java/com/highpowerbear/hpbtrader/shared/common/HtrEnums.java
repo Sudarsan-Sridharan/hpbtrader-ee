@@ -135,9 +135,9 @@ public class HtrEnums {
     }
     
     public enum StrategyMode {
-        IB(DisplayColor.ORANGE_BG),
-        SIM(null),
-        BTEST(null);
+        IB(DisplayColor.DARK_GREEN),
+        SIM(DisplayColor.ORANGE),
+        BTEST(DisplayColor.BLUE);
 
         private DisplayColor displayColor;
 
@@ -173,7 +173,7 @@ public class HtrEnums {
     public enum TradeStatus {
         INIT_OPEN("initOpen", DisplayColor.BLUE),
         OPEN("open", DisplayColor.GREEN),
-        INIT_CLOSE("initClose", DisplayColor.ORANGE_BG),
+        INIT_CLOSE("initClose", DisplayColor.ORANGE),
         CLOSED("closed", DisplayColor.BROWN),
         CNC_CLOSED("cncClosed", DisplayColor.RED),
         ERR_CLOSED("errClosed", DisplayColor.RED);
@@ -266,7 +266,6 @@ public class HtrEnums {
         RED,
         DARK_RED,
         ORANGE,
-        ORANGE_BG,
         DARK_ORANGE,
         DARK_CYAN,
         LIME,

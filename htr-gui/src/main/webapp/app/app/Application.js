@@ -12,7 +12,7 @@ Ext.define('HtrGui.Application', {
         'HtrGui.view.main.Main'
     ],
 
-    name: 'HtrGui',
+    name: 'HPB Trader',
 
     stores: [
     ],

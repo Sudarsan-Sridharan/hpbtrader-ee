@@ -12,6 +12,7 @@ Ext.define('HtrGui.view.strategy.Strategy', {
         'HtrGui.view.strategy.grid.IbOrdersGrid',
         'HtrGui.view.strategy.grid.StrategiesGrid',
         'HtrGui.view.strategy.grid.StrategyPerformancesGrid',
+        'HtrGui.view.strategy.grid.TradesGrid',
         'HtrGui.view.strategy.grid.TradeLogsGrid',
         'HtrGui.common.Glyphs',
         'Ext.tab.Panel'
@@ -39,7 +40,7 @@ Ext.define('HtrGui.view.strategy.Strategy', {
         },
         items: [{
             xtype: 'htr-strategy-strategyperformances-grid',
-            title: 'Strategy Performance',
+            title: 'Performance',
             reference: 'strategyPerformancesGrid'
         }, {
             xtype: 'htr-strategy-iborders-grid',

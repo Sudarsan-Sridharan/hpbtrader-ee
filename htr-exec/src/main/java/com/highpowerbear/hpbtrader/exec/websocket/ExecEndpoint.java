@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 18.5.2016.
  */
-@ServerEndpoint("/websocket/exec")
+@ServerEndpoint("/websocket")
 public class ExecEndpoint {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 

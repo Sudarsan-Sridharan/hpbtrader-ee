@@ -8,6 +8,7 @@ import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Macd;
 import com.highpowerbear.hpbtrader.shared.techanalysis.indicator.Stochastics;
 import com.highpowerbear.hpbtrader.strategy.logic.AbstractStrategyLogic;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
 @Dependent
 public class MacdCrossStrategyLogic extends AbstractStrategyLogic {
 
-    @Inject protected DataSeriesDao dataSeriesDao;
+    @Inject private DataSeriesDao dataSeriesDao;
     @Inject private TiCalculator tiCalculator;
 
     // strategy parameters
@@ -32,6 +33,11 @@ public class MacdCrossStrategyLogic extends AbstractStrategyLogic {
     private Double prevMacdL;
     private Double macdL;
     private Double stochD;
+
+    @PostConstruct
+    private void postConstruct() {
+        super.dataSeriesDao = dataSeriesDao;
+    }
 
     @Override
     public void process() {
