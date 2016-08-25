@@ -17,12 +17,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
  * Created by rkolar on 5/9/14.
  */
 @ApplicationScoped
 public class HeartbeatControl {
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
+
     @Inject private IbOrderDao ibOrderDao;
     @Inject private IbAccountDao ibAccountDao;
 
@@ -33,10 +36,12 @@ public class HeartbeatControl {
     }
 
     private void init(@Observes @Initialized(ApplicationScoped.class) Object evt) { // mechanism for cdi eager initialization without using singleton ejb
+        l.info("BEGIN HeartbeatControl.init");
         ibAccountDao.getIbAccounts().forEach(ibAccount -> openOrderHeartbeatMap.put(ibAccount, new ConcurrentHashMap<>()));
         ibAccountDao.getIbAccounts().stream()
                 .flatMap(ibAccount -> ibOrderDao.getOpenIbOrders(ibAccount).stream())
                 .forEach(this::initHeartbeat);
+        l.info("END HeartbeatControl.init");
     }
 
     public void updateHeartbeats(IbAccount ibAccount) {

@@ -4,9 +4,11 @@
 Ext.define('HtrGui.model.mktdata.DataBar', {
     extend: 'HtrGui.model.mktdata.Base',
 
+    idProperty: 'barCloseDate',
+
     fields: [
-        'dataSeriesId',
         {name: 'barCloseDate', type: 'date', dateFormat: 'time'},
+        'dataSeriesId',
         'barOpen',
         'barHigh',
         'barLow',

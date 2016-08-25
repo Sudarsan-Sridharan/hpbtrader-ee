@@ -16,7 +16,7 @@ public interface DataSeriesDao {
     DataSeries getDataSeriesByAlias(String alias);
     DataSeries findDataSeries(Integer id);
 
-    void createDataBars(DataSeries dataSeries, List<DataBar> dataBars);
+    void createOrUpdateDataBars(DataSeries dataSeries, List<DataBar> dataBars);
     List<DataBar> getLastDataBars(DataSeries dataSeries, int numBars);
     List<DataBar> getDataBars(DataSeries dataSeries, int numBars, Calendar lastDate);
     List<DataBar> getPagedDataBars(DataSeries dataSeries, int start, int limit);

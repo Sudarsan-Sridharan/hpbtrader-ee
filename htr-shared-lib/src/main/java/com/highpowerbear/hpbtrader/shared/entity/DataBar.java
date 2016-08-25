@@ -20,15 +20,12 @@ import java.util.Calendar;
 public class DataBar implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @TableGenerator(name="databar", table="sequence", schema = "hpbtrader", catalog = "hpbtrader", pkColumnName="seq_name", valueColumnName="seq_count")
     @Id
-    @GeneratedValue(generator="databar")
-    private Long id;
+    @Temporal(value=TemporalType.TIMESTAMP)
+    private Calendar barCloseDate;
     @ManyToOne
     @XmlTransient
     private DataSeries dataSeries;
-    @Temporal(value=TemporalType.TIMESTAMP)
-    private Calendar barCloseDate;
     private Double barOpen;
     private Double barHigh;
     private Double barLow;
@@ -69,28 +66,13 @@ public class DataBar implements Serializable {
 
         DataBar dataBar = (DataBar) o;
 
-        return !(id != null ? !id.equals(dataBar.id) : dataBar.id != null);
+        return barCloseDate != null ? barCloseDate.equals(dataBar.barCloseDate) : dataBar.barCloseDate == null;
+
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public DataSeries getDataSeries() {
-        return dataSeries;
-    }
-
-    public void setDataSeries(DataSeries dataSeries) {
-        this.dataSeries = dataSeries;
+        return barCloseDate != null ? barCloseDate.hashCode() : 0;
     }
 
     public Calendar getBarCloseDate() {
@@ -99,6 +81,14 @@ public class DataBar implements Serializable {
 
     public void setbBarCloseDate(Calendar bCloseDate) {
         this.barCloseDate = bCloseDate;
+    }
+
+    public DataSeries getDataSeries() {
+        return dataSeries;
+    }
+
+    public void setDataSeries(DataSeries dataSeries) {
+        this.dataSeries = dataSeries;
     }
 
     public Double getbBarOpen() {

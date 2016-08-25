@@ -12,6 +12,7 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Destroyed;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -36,16 +37,18 @@ public class ProcessQueueManager {
 
     private Map<Strategy, BlockingQueue<String>> tradingQueueMap = new ConcurrentHashMap<>();
     private BlockingQueue<GenericTuple<Strategy, TimeFrame>> backtestQueue = new ArrayBlockingQueue<>(HtrDefinitions.BLOCKING_QUEUE_CAPACITY);
-    private final String POISON_PROCESS = "NO_SERIES";
+    private final String POISON_PROCESS = "POISON_PROCESS";
     private final GenericTuple<Strategy, TimeFrame> POISON_BACKTEST = new GenericTuple<>(null, null);
 
     private void init(@Observes @Initialized(ApplicationScoped.class) Object evt) { // mechanism for cdi eager initialization without using singleton ejb
+        l.info("BEGIN ProcessQueueManager.init");
         initTrading();
         initBacktest();
+        l.info("END ProcessQueueManager.init");
     }
 
-    @PreDestroy
-    public void finish() {
+    private void finish(@Observes @Destroyed(ApplicationScoped.class) Object evt) {
+        l.info("BEGIN ProcessQueueManager.finish");
         for (Strategy strategy : strategyDao.getStrategies()) {
             queueProcessStrategy(strategy, POISON_PROCESS);
         }
@@ -53,8 +56,8 @@ public class ProcessQueueManager {
         boolean stillRuning = true;
         while (stillRuning) {
             stillRuning = false;
-            for (Strategy strategy : strategyDao.getStrategies()) {
-                if (tradingQueueMap.get(strategy).peek() != null) {
+            for (BlockingQueue<String> tradingQueue : tradingQueueMap.values()) {
+                if (tradingQueue.peek() != null) {
                     stillRuning = true;
                 }
             }
@@ -65,28 +68,31 @@ public class ProcessQueueManager {
                 HtrUtil.waitMilliseconds(100);
             }
         }
+        l.info("END ProcessQueueManager.finish");
     }
 
     private void initTrading() {
         for (Strategy strategy : strategyDao.getStrategies()) {
-            BlockingQueue<String> queue = new ArrayBlockingQueue<>(HtrDefinitions.BLOCKING_QUEUE_CAPACITY);
-            tradingQueueMap.put(strategy, queue);
-            managedExecutorService.submit(() -> {
-                String seriesAlias = null;
-                while (true) {
-                    try {
-                        seriesAlias = queue.take();
-                        l.info("Process strategy request detected, strategy id=" + strategy.getId() + ", triggered by series=" + seriesAlias);
-                    } catch (InterruptedException ie) {
-                        l.warning(ie.getMessage());
+            if (strategy.isActive()) {
+                BlockingQueue<String> queue = new ArrayBlockingQueue<>(HtrDefinitions.BLOCKING_QUEUE_CAPACITY);
+                tradingQueueMap.put(strategy, queue);
+                managedExecutorService.submit(() -> {
+                    String seriesAlias = null;
+                    while (true) {
+                        try {
+                            seriesAlias = queue.take();
+                            l.info("Process strategy request detected, strategy id=" + strategy.getId() + ", triggered by series=" + seriesAlias);
+                        } catch (InterruptedException ie) {
+                            l.warning(ie.getMessage());
+                        }
+                        if (!Objects.equals(POISON_PROCESS, seriesAlias)) {
+                            ctrl.processStrategy(strategy);
+                        } else {
+                            return;
+                        }
                     }
-                    if (!Objects.equals(seriesAlias, POISON_PROCESS) && strategy.isActive()) {
-                        ctrl.processStrategy(ctrl.tradingLogicMap.get(strategy));
-                    } else{
-                        return;
-                    }
-                }
-            });
+                });
+            }
         }
     }
 
@@ -118,19 +124,28 @@ public class ProcessQueueManager {
     }
 
     public void queueProcessStrategy(Strategy strategy, String seriesAlias) {
-        try {
-            tradingQueueMap.get(strategy).put(seriesAlias);
-        } catch (InterruptedException ie) {
-            l.log(Level.SEVERE, "Error", ie);
+        if (strategy.isActive()) {
+            try {
+                BlockingQueue<String> queue = tradingQueueMap.get(strategy);
+                if (queue != null) {
+                    int rc = tradingQueueMap.get(strategy).remainingCapacity();
+                    l.info("Adding item to trading queue, strategy=" + strategy.getId() + ", seriesAlias=" + seriesAlias + ", remaining capacity=" + rc);
+                    tradingQueueMap.get(strategy).put(seriesAlias);
+                }
+            } catch (InterruptedException ie) {
+                l.log(Level.SEVERE, "Error", ie);
+            }
         }
     }
 
     public void queueBacktestStrategy(GenericTuple<Strategy, TimeFrame> backtestParam) {
         try {
+            int rc = backtestQueue.remainingCapacity();
+            Integer strategyId = backtestParam.getFirst() != null ? backtestParam.getFirst().getId() : null;
+            l.info("Adding item to backtest queue, strategy=" + strategyId + ", remaining capacity=" + rc);
             backtestQueue.put(backtestParam);
         } catch (InterruptedException ie) {
             l.log(Level.SEVERE, "Error", ie);
         }
     }
-
 }

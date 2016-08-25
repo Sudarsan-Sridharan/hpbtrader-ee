@@ -39,11 +39,13 @@ public class IbController {
     }
 
     private void init(@Observes @Initialized(ApplicationScoped.class) Object evt) { // mechanism for cdi eager initialization without using singleton ejb
+        l.info("BEGIN IbController.init");
         ibAccountDao.getIbAccounts().forEach(ibAccount -> {
             EClientSocket eClientSocket = new EClientSocket(ibListeners.get().configure(ibAccount));
             IbConnection ibConnection = new IbConnection(HtrEnums.IbConnectionType.MKTDATA, ibAccount.getHost(), ibAccount.getPort(), ibAccount.getMktDataClientId(), eClientSocket);
             ibConnectionMap.put(ibAccount, ibConnection);
         });
+        l.info("END IbController.init");
     }
 
     @PreDestroy

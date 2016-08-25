@@ -56,36 +56,12 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
     }
 
     @Override
-    public void createDataBars(DataSeries dataSeries, List<DataBar> dataBars) {
-        if (dataBars == null || dataBars.isEmpty()) {
-            return;
-        }
-        l.info("START createDataBars, symbol=" + dataSeries.getInstrument().getSymbol());
-        int created = 0;
-        int updated = 0;
+    public void createOrUpdateDataBars(DataSeries dataSeries, List<DataBar> dataBars) {
+        l.info("START createOrUpdateDataBars, symbol=" + dataSeries.getInstrument().getSymbol() + ", type=" + dataSeries.getBarType());
         for (DataBar dataBar : dataBars) {
-            if (!dataSeries.equals(dataBar.getDataSeries())) {
-                continue;
-            }
-            TypedQuery<DataBar> q = em.createQuery("SELECT b FROM DataBar b WHERE b.dataSeries = :dataSeries AND b.barCloseDate = :barCloseDate", DataBar.class);
-            q.setParameter("dataSeries", dataSeries);
-            q.setParameter("barCloseDate", dataBar.getBarCloseDate());
-            List<DataBar> bl = q.getResultList();
-            DataBar dbDataBar = (bl != null && !bl.isEmpty() ? bl.get(0) : null);
-            if (dbDataBar == null) {
-                // insert
-                l.fine("Adding " + dataBar.print());
-                created++;
-                em.persist(dataBar);
-            } else {
-                // update
-                l.fine(dbDataBar.print() + " --> " + dataBar.print());
-                updated++;
-                dbDataBar.mergeFrom(dataBar);
-                em.merge(dbDataBar);
-            }
+            em.merge(dataBar);
         }
-        l.info("END createDataBars, symbol=" + dataSeries.getInstrument().getSymbol() + ", added=" + created + ", updated=" + updated);
+        l.info("END createOrUpdateDataBars, symbol=" + dataSeries.getInstrument().getSymbol() + ", type=" + dataSeries.getBarType() + ", count=" + dataBars.size());
     }
 
     @Override

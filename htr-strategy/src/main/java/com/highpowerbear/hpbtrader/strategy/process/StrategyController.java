@@ -44,17 +44,19 @@ public class StrategyController implements Serializable {
     @Inject private Instance<ProcessContext> processContexts;
     @Inject private Instance<StrategyLogic> strategyLogics;
 
-    Map<Strategy, ProcessContext> tradingContextMap = new ConcurrentHashMap<>();
-    Map<Strategy, StrategyLogic> tradingLogicMap = new ConcurrentHashMap<>();
-    Map<Strategy, ProcessContext> backtestContextMap = new ConcurrentHashMap<>();
+    private Map<Strategy, ProcessContext> tradingContextMap = new ConcurrentHashMap<>();
+    private Map<Strategy, StrategyLogic> tradingLogicMap = new ConcurrentHashMap<>();
+    private Map<Strategy, ProcessContext> backtestContextMap = new ConcurrentHashMap<>();
     Map<Strategy, Boolean> backtestInProgressMap = new ConcurrentHashMap<>(); // strategy -> true = inProgress, null = not inProgress
 
     private void init(@Observes @Initialized(ApplicationScoped.class) Object evt) { // mechanism for cdi eager initialization without using singleton ejb
-        for (Strategy strategy : strategyDao.getStrategies()) {
+        l.info("BEGIN StrategyController.init");
+        strategyDao.getStrategies().stream().filter(Strategy::isActive).forEach(strategy -> {
             ProcessContext ctx = processContexts.select(DatabaseCtx.class).get().configure(strategy);
             tradingContextMap.put(strategy, ctx);
             tradingLogicMap.put(strategy, createStrategyLogic(ctx));
-        }
+        });
+        l.info("END StrategyController.init");
     }
 
     public ProcessContext getTradingContext(Strategy strategy) {
@@ -91,7 +93,11 @@ public class StrategyController implements Serializable {
         return strategyLogic;
     }
 
-    void processStrategy(StrategyLogic sl) {
+    void processStrategy(Strategy strategy) {
+        processStrategy(tradingLogicMap.get(strategy));
+    }
+
+    private void processStrategy(StrategyLogic sl) {
         ProcessContext ctx = sl.getProcessContext();
         Strategy str = sl.getStrategy();
         String logMessage = " strategy, id=" + str.getId() + ", " + str.getDefaultInputSeriesAlias() + ", " + str.getStrategyType() + " --> " + sl.getClass().getSimpleName();

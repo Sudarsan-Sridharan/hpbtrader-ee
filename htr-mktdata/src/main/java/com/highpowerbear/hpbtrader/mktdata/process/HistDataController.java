@@ -55,10 +55,10 @@ public class HistDataController {
                 .stream()
                 .filter(timeInMillisBarClose -> timeInMillisBarClose > System.currentTimeMillis())
                 .forEach(barsReceivedMap.get(dataSeries)::remove);
-        List<DataBar> barsToCreate = new ArrayList<>(barsReceivedMap.get(dataSeries).values());
-        dataSeriesDao.createDataBars(dataSeries, barsToCreate);
+        List<DataBar> bars = new ArrayList<>(barsReceivedMap.get(dataSeries).values());
+        dataSeriesDao.createOrUpdateDataBars(dataSeries, bars);
         websocketController.notifyDataBarsCreated(dataSeries);
-        DataBar lastDataBar = barsToCreate.get(barsToCreate.size() - 1);
+        DataBar lastDataBar = bars.get(bars.size() - 1);
         boolean isCurrentLastBar = ((lastDataBar.getBarCloseDateMillis() + dataSeries.getBarType().getMillis()) > System.currentTimeMillis());
         if (isCurrentLastBar) {
             mqSender.notifyDataBarsCreated(dataSeries);
