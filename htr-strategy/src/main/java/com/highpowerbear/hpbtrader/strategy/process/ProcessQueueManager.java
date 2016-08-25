@@ -80,7 +80,7 @@ public class ProcessQueueManager {
                     } catch (InterruptedException ie) {
                         l.warning(ie.getMessage());
                     }
-                    if (!Objects.equals(seriesAlias, POISON_PROCESS)) {
+                    if (!Objects.equals(seriesAlias, POISON_PROCESS) && strategy.isActive()) {
                         ctrl.processStrategy(ctrl.tradingLogicMap.get(strategy));
                     } else{
                         return;

@@ -94,9 +94,6 @@ public class StrategyController implements Serializable {
     void processStrategy(StrategyLogic sl) {
         ProcessContext ctx = sl.getProcessContext();
         Strategy str = sl.getStrategy();
-        if (str.isActive()) {
-            return;
-        }
         String logMessage = " strategy, id=" + str.getId() + ", " + str.getDefaultInputSeriesAlias() + ", " + str.getStrategyType() + " --> " + sl.getClass().getSimpleName();
 
         l.info("BEGIN prepare " + logMessage);

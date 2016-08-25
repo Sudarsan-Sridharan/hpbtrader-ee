@@ -46,7 +46,8 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
     public DataSeries getDataSeriesByAlias(String alias) {
         TypedQuery<DataSeries> q = em.createQuery("SELECT s FROM DataSeries s WHERE s.alias = :alias", DataSeries.class);
         q.setParameter("alias", alias);
-        return q.getResultList().get(0);
+        List<DataSeries> dataSeries = q.getResultList();
+        return dataSeries.isEmpty() ? null : dataSeries.get(0);
     }
 
     @Override
@@ -59,7 +60,7 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
         if (dataBars == null || dataBars.isEmpty()) {
             return;
         }
-        l.fine("START createDataBars, symbol=" + dataSeries.getInstrument().getSymbol());
+        l.info("START createDataBars, symbol=" + dataSeries.getInstrument().getSymbol());
         int created = 0;
         int updated = 0;
         for (DataBar dataBar : dataBars) {
@@ -84,7 +85,7 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
                 em.merge(dbDataBar);
             }
         }
-        l.fine("END createDataBars, symbol=" + dataSeries.getInstrument().getSymbol() + ", added=" + created + ", updated=" + updated);
+        l.info("END createDataBars, symbol=" + dataSeries.getInstrument().getSymbol() + ", added=" + created + ", updated=" + updated);
     }
 
     @Override

@@ -19,11 +19,14 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
     columns: [{
         text: 'ID',
         width: 80,
-        dataIndex: 'id',
-        renderer: function (val, metadata, record) {
-            var color = (true == record.data['active'] ? 'green' : 'red');
-            return '<span style="color: ' + color + ';">' + val + '</span>';
-        }
+        dataIndex: 'id'
+    }, {
+        text: 'Active',
+        width: 60,
+        dataIndex: 'active',
+        xtype: 'checkcolumn',
+        disabled: true,
+        disabledCls : '' // or don't add this config if you want the field to look disabled
     }, {
         text: 'IB Account',
         width: 120,
@@ -78,7 +81,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
             return record.data['numWinners'] + '-' + record.data['numLosers'];
         }
     }, {
-        text: 'Instrument',
+        text: 'Trade Instrument',
         width: 250,
         dataIndex: 'symbol',
         renderer: function(val, metadata, record) {

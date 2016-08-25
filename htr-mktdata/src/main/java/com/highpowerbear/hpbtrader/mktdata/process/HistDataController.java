@@ -106,7 +106,7 @@ public class HistDataController {
 
     public void backfill(DataSeries dataSeries) {
         if (!dataSeries.isActive()) {
-            l.info("Series not enabled, backfill won't be performed, seriesId=" + dataSeries.getId() + ", symbol=" + dataSeries.getInstrument().getSymbol());
+            l.info("Series not active, backfill won't be performed, seriesId=" + dataSeries.getId() + ", symbol=" + dataSeries.getInstrument().getSymbol());
             return;
         }
         l.info("START backfillManual, series=" + dataSeries.getId() + ", symbol=" + dataSeries.getInstrument().getSymbol());

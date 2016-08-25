@@ -11,7 +11,7 @@ Ext.define('HtrGui.model.mktdata.DataSeries', {
         {name: 'secType', mapping: 'instrument.secType'},
         {name: 'currency', mapping: 'instrument.currency'},
         {name: 'exchange', mapping: 'instrument.exchange'},
-        'interval',
+        'barType',
         'displayOrder',
         'active',
         'alias'

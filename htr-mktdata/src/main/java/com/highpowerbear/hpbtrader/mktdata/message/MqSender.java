@@ -6,7 +6,7 @@ import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.DataSeries;
 
 import javax.annotation.Resource;
-import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jms.*;
 import java.util.logging.Level;
@@ -15,7 +15,9 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 25.11.2015.
  */
-@ApplicationScoped
+// needs to be Stateless instead of ApplicationScoped since it is called from external thread, the following is reported:
+// Error - java.lang.RuntimeException: javax.naming.NameNotFoundException: java:comp/TransactionSynchronizationRegistry
+@Stateless
 public class MqSender {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 

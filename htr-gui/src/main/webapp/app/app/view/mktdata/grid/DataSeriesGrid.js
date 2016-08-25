@@ -16,13 +16,16 @@ Ext.define('HtrGui.view.mktdata.grid.DataSeriesGrid', {
         select: 'onDataSeriesSelect'
     },
     columns: [{
-        text: '#',
-        width: 60,
-        dataIndex: 'displayOrder'
-    }, {
         text: 'ID',
         width: 60,
         dataIndex: 'id'
+    }, {
+        text: 'Active',
+        width: 60,
+        dataIndex: 'active',
+        xtype: 'checkcolumn',
+        disabled: true,
+        disabledCls : '' // or don't add this config if you want the field to look disabled
     }, {
         text: 'Sec',
         width: 60,
@@ -44,14 +47,9 @@ Ext.define('HtrGui.view.mktdata.grid.DataSeriesGrid', {
         width: 120,
         dataIndex: 'exchange'
     }, {
-        text: 'Interval',
+        text: 'Bar',
         width: 80,
-        dataIndex: 'interval'
-    }, {
-        text: 'Active',
-        width: 60,
-        dataIndex: 'active',
-        xtype: 'checkcolumn'
+        dataIndex: 'barType'
     }, {
         text: 'Alias',
         flex: 1,
@@ -68,6 +66,12 @@ Ext.define('HtrGui.view.mktdata.grid.DataSeriesGrid', {
             tooltip: 'Toggle RT Data',
             glyph: HtrGui.common.Glyphs.getGlyph('fa_feed'),
             handler: 'toggleRtData'
+        },
+        onWidgetAttach: function(col, widget, rec) {
+            widget.show();
+            if (true != rec.data.active) {
+                widget.hide();
+            }
         }
     }, {
         xtype: 'widgetcolumn',
@@ -78,6 +82,12 @@ Ext.define('HtrGui.view.mktdata.grid.DataSeriesGrid', {
             tooltip: 'Backfill Data Bars',
             glyph: HtrGui.common.Glyphs.getGlyph('fa_long_arrow_left'),
             handler: 'backfillDataBars'
+        },
+        onWidgetAttach: function(col, widget, rec) {
+            widget.show();
+            if (true != rec.data.active) {
+                widget.hide();
+            }
         }
     }],
 
