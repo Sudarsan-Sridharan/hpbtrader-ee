@@ -15,7 +15,6 @@ import com.highpowerbear.hpbtrader.strategy.message.MqSender;
 import com.highpowerbear.hpbtrader.strategy.process.context.DatabaseCtx;
 import com.highpowerbear.hpbtrader.strategy.process.context.InMemoryCtx;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
@@ -51,10 +50,12 @@ public class StrategyController implements Serializable {
 
     private void init(@Observes @Initialized(ApplicationScoped.class) Object evt) { // mechanism for cdi eager initialization without using singleton ejb
         l.info("BEGIN StrategyController.init");
-        strategyDao.getStrategies().stream().filter(Strategy::isActive).forEach(strategy -> {
+        strategyDao.getStrategies().forEach(strategy -> {
             ProcessContext ctx = processContexts.select(DatabaseCtx.class).get().configure(strategy);
             tradingContextMap.put(strategy, ctx);
-            tradingLogicMap.put(strategy, createStrategyLogic(ctx));
+            if (strategy.isActive()) {
+                tradingLogicMap.put(strategy, createStrategyLogic(ctx));
+            }
         });
         l.info("END StrategyController.init");
     }
@@ -142,7 +143,7 @@ public class StrategyController implements Serializable {
         str.setNumAllOrders(str.getNumAllOrders() + 1);
         ctx.updateStrategy();
 
-        if (HtrEnums.StrategyMode.IB.equals(str.getStrategyMode())) {
+        if (HtrEnums.StrategyMode.LIVE.equals(str.getStrategyMode())) {
             emailSender.sendEmail(sl.getIbOrder().getDescription(), sl.getIbOrder().getTriggerDesc() + "\n" + sl.getLastDataBar().print());
             mqSender.notifyIbOrderCreated(sl.getIbOrder());
         } else {
@@ -195,7 +196,7 @@ public class StrategyController implements Serializable {
         ctx.updateStrategy();
         emailSender.sendEmail(ibOrder.getDescription(), ibOrder.getTriggerDesc() + "\n" + dataBar.print());
 
-        if (HtrEnums.StrategyMode.IB.equals(str.getStrategyMode())) {
+        if (HtrEnums.StrategyMode.LIVE.equals(str.getStrategyMode())) {
             mqSender.notifyIbOrderCreated(ibOrder);
         } else {
             ibOrderStateHandler.simulateFill(ctx, ibOrder, dataBar.getbBarClose());

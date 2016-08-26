@@ -85,7 +85,7 @@ public class IbOrderDaoImpl implements IbOrderDao {
         statuses.add(HtrEnums.IbOrderStatus.CANCEL_REQ);
         q.setParameter("ibAccount", ibAccount);
         q.setParameter("statuses", statuses);
-        q.setParameter("strategyMode", HtrEnums.StrategyMode.IB);
+        q.setParameter("strategyMode", HtrEnums.StrategyMode.LIVE);
         return q.getResultList();
     }
 
@@ -106,16 +106,17 @@ public class IbOrderDaoImpl implements IbOrderDao {
     }
 
     @Override
-    public List<IbOrder> getPagedIbOrders(IbAccount ibAccount, int start, int limit) {
-        TypedQuery<IbOrder> q = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibAccount = :ibAccount ORDER BY o.createdDate DESC", IbOrder.class);
+    public List<IbOrder> getPagedLiveIbOrders(IbAccount ibAccount, int start, int limit) {
+        TypedQuery<IbOrder> q = em.createQuery("SELECT o FROM IbOrder o WHERE o.ibAccount = :ibAccount AND o.strategyMode = :strategyMode ORDER BY o.createdDate DESC", IbOrder.class);
         q.setParameter("ibAccount", ibAccount);
+        q.setParameter("strategyMode", HtrEnums.StrategyMode.LIVE);
         q.setFirstResult(start);
         q.setMaxResults(limit);
         return q.getResultList();
     }
 
     @Override
-    public Long getNumIbOrders(IbAccount ibAccount) {
+    public Long getNumLiveIbOrders(IbAccount ibAccount) {
         Query q = em.createQuery("SELECT COUNT(o) FROM IbOrder o");
         return (Long) q.getSingleResult();
     }

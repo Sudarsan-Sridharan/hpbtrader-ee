@@ -38,10 +38,10 @@ Ext.define('HtrGui.view.strategy.grid.IbOrdersGrid', {
         width: 100,
         dataIndex: 'ibAccountId'
     }, {
-        text: 'Strategy',
+        text: 'Mode',
         width: 100,
-        dataIndex: 'strategyId',
-        renderer: 'strategyRenderer'
+        dataIndex: 'strategyMode',
+        renderer: 'strategyModeRenderer'
     }, {
         text: 'PermId',
         width: 100,

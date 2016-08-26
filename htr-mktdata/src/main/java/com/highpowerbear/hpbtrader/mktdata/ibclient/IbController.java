@@ -77,6 +77,8 @@ public class IbController {
         IbConnection c = getActiveMktDataConnection();
         if (c != null) {
             c.getClientSocket().reqHistoricalData(tickerId, contract, endDateTime, durationStr, barSizeSetting, whatToShow, useRTH, formatDate, null);
+        } else {
+            l.info("No active market data connection");
         }
     }
 
@@ -87,6 +89,8 @@ public class IbController {
             l.info("Requested realtime data, reqId=" + reqId + ", contract=" + HtrUtil.printIbContract(contract));
             c.getClientSocket().reqMktData(reqId, contract, "", false, null);
             requested = true;
+        } else {
+            l.info("No active market data connection");
         }
         return requested;
     }

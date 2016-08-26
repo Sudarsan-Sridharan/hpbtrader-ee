@@ -84,9 +84,13 @@ public class StrategyService {
         if (strategy == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
+        ibOrder.setCreatedDate(HtrUtil.getCalendar());
         ibOrder.setStrategy(strategy);
         ibOrder.setIbAccount(strategy.getIbAccount());
+        ibOrder.setSubmitType(HtrEnums.SubmitType.MANUAL);
+        ibOrder.setStrategyMode(strategy.getStrategyMode());
         ibOrder.setTriggerDesc(HtrDefinitions.MANUAL_ORDER);
+        ibOrder.setSymbol(strategy.getTradeInstrument().getSymbol());
         strategyController.manualOrder(ibOrder);
         return Response.ok().build();
     }

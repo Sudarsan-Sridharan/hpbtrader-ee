@@ -41,7 +41,8 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
     }, {
         text: 'Mode',
         width: 80,
-        dataIndex: 'strategyMode'
+        dataIndex: 'strategyMode',
+        renderer: 'strategyModeRendererStrategy'
     }, {
         text: 'Params',
         width: 80,

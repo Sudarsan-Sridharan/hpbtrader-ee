@@ -121,16 +121,8 @@ Ext.define('HtrGui.view.exec.ExecController', {
 
     ibOrderStatusRenderer: function(val, metadata, record) {
         var me = this;
-
         metadata.style = 'cursor: pointer; background-color: ' + me.ibOrderStatusColors[val] + '; color: white;';
         return me.ibOrderStatusTexts[val];
-    },
-
-    strategyRenderer: function(val, metadata, record) {
-        var me = this;
-
-        metadata.style = 'color: ' + me.strategyModeColors[val];
-        return record.data['strategyId'] + '/' + val;
     },
 
     connectStatusRenderer: function(val, metadata, record) {
@@ -138,6 +130,12 @@ Ext.define('HtrGui.view.exec.ExecController', {
             metadata.style = 'background-color: ' + (val ? 'green' : 'red') + '; color: white;';
         }
         return (val ? 'conn' : 'disconn');
+    },
+
+    strategyModeRenderer: function(val, metadata, record) {
+        var me = this;
+        metadata.style = 'background-color: ' + me.strategyModeColors[val];
+        return val;
     },
 
     connectIb: function(grid, rowIndex, colIndex) {

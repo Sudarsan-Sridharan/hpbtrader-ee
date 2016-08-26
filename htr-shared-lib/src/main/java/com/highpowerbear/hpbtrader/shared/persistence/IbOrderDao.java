@@ -20,6 +20,6 @@ public interface IbOrderDao {
     List<IbOrder> getOpenIbOrders(IbAccount ibAccount);
     List<IbOrder> getPagedIbOrders(Strategy strategy, int start, int limit);
     Long getNumIbOrders(Strategy strategy);
-    List<IbOrder> getPagedIbOrders(IbAccount ibAccount, int start, int limit);
-    Long getNumIbOrders(IbAccount ibAccount);
+    List<IbOrder> getPagedLiveIbOrders(IbAccount ibAccount, int start, int limit);
+    Long getNumLiveIbOrders(IbAccount ibAccount);
 }

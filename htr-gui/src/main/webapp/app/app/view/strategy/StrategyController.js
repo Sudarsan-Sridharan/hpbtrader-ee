@@ -151,28 +151,30 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
 
     ibOrderStatusRenderer: function(val, metadata, record) {
         var me = this;
-
         metadata.style = 'cursor: pointer; background-color: ' + me.ibOrderStatusColors[val] + '; color: white;';
         return me.ibOrderStatusTexts[val];
     },
 
-    strategyRenderer: function(val, metadata, record) {
+    strategyModeRendererStrategy: function(val, metadata, record) {
         var me = this;
+        metadata.style = record.data['active'] == true ? 'background-color: ' + me.strategyModeColors[val] : 'background-color: LightGray';
+        return val;
+    },
 
-        metadata.style = 'color: ' + me.strategyModeColors[val];
-        return record.data['strategyId'] + '/' + val;
+    strategyModeRenderer: function(val, metadata, record) {
+        var me = this;
+        metadata.style = 'background-color: ' + me.strategyModeColors[val];
+        return val;
     },
 
     tradeTypeRenderer: function(val, metadata, record) {
         var me = this;
-
         metadata.style = 'color: ' + me.tradeTypeColors[val];
         return me.tradeTypeTexts[val];
     },
 
     tradeStatusRenderer: function(val, metadata, record) {
         var me = this;
-
         metadata.style = 'cursor: pointer; color: white; background-color: ' + me.tradeStatusColors[val];
         return me.tradeStatusTexts[val];
     },

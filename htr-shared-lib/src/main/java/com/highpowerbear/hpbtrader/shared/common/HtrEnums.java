@@ -135,7 +135,7 @@ public class HtrEnums {
     }
     
     public enum StrategyMode {
-        IB(DisplayColor.DARK_GREEN),
+        LIVE(DisplayColor.DARK_GREEN),
         SIM(DisplayColor.ORANGE),
         BTEST(DisplayColor.BLUE);
 
@@ -208,14 +208,14 @@ public class HtrEnums {
             this.multiplier = multiplier;
         }
         public static Integer getMultiplierBySymbol(String futSymbol) {
-            return (futSymbol != null ? Arrays.asList(FutureMultiplier.values()).stream().filter(fm -> futSymbol.startsWith(fm.toString())).findAny().get().multiplier : 1);
+            return (futSymbol != null ? Arrays.stream(FutureMultiplier.values()).filter(fm -> futSymbol.startsWith(fm.toString())).findAny().get().multiplier : 1);
         }
     }
     
     public enum MiniOption {
         AMZN7, AAPL7, GOOG7,  GLD7, SPY7;
         public static boolean isMiniOption(String optionSymbol) {
-            return optionSymbol != null && Arrays.asList(MiniOption.values()).stream().filter(mo -> optionSymbol.startsWith(mo.name())).findAny().isPresent();
+            return optionSymbol != null && Arrays.stream(MiniOption.values()).filter(mo -> optionSymbol.startsWith(mo.name())).findAny().isPresent();
         }
     }
 

@@ -71,7 +71,7 @@ public class ExecService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{accountId}/iborders")
-    public Response getPagedIbOrders(
+    public Response getPagedLiveIbOrders(
             @PathParam("accountId") String accountId,
             @QueryParam("filter") String jsonFilter,
             @QueryParam("start") Integer start,
@@ -84,11 +84,11 @@ public class ExecService {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         List<IbOrder> ibOrders = new ArrayList<>();
-        for (IbOrder ibOrder : ibOrderDao.getPagedIbOrders(ibAccount, start, limit)) {
+        for (IbOrder ibOrder : ibOrderDao.getPagedLiveIbOrders(ibAccount, start, limit)) {
             Map<IbOrder, Integer> hm = heartbeatControl.getOpenOrderHeartbeatMap().get(ibOrder.getStrategy().getIbAccount());
             ibOrder.setHeartbeatCount(hm.get(ibOrder));
             ibOrders.add(ibOrder);
         }
-        return Response.ok(new RestList<>(ibOrders, ibOrderDao.getNumIbOrders(ibAccount))).build();
+        return Response.ok(new RestList<>(ibOrders, ibOrderDao.getNumLiveIbOrders(ibAccount))).build();
     }
 }

@@ -109,7 +109,7 @@ public class LuxorStrategyLogic extends AbstractStrategyLogic {
     
     private String getTriggerDesc(TriggerEvent te) {
         String desc = null;
-        boolean tLong = activeTrade.isLong();
+        boolean tLong = activeTrade != null && activeTrade.isLong();
         boolean caEma = crossAboveEma();
         String sPrice = "price=" + getPrice();
         String sTarget = "target=" + activeTrade.getProfitTarget();

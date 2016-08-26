@@ -7,8 +7,6 @@ import com.highpowerbear.hpbtrader.shared.model.GenericTuple;
 import com.highpowerbear.hpbtrader.shared.model.TimeFrame;
 import com.highpowerbear.hpbtrader.shared.persistence.StrategyDao;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.ApplicationScoped;
@@ -86,7 +84,11 @@ public class ProcessQueueManager {
                             l.warning(ie.getMessage());
                         }
                         if (!Objects.equals(POISON_PROCESS, seriesAlias)) {
-                            ctrl.processStrategy(strategy);
+                            try {
+                                ctrl.processStrategy(strategy);
+                            } catch (Exception e) {
+                                l.log(Level.SEVERE, "Error", e.getMessage());
+                            }
                         } else {
                             return;
                         }
@@ -112,7 +114,11 @@ public class ProcessQueueManager {
                         TimeFrame timeFrame = backtestParam.getSecond();
                         if (timeFrame.isValid()) {
                             ctrl.backtestInProgressMap.put(strategy, Boolean.TRUE);
-                            ctrl.backtestStrategy(strategy, timeFrame.getFromDate(), timeFrame.getToDate());
+                            try {
+                                ctrl.backtestStrategy(strategy, timeFrame.getFromDate(), timeFrame.getToDate());
+                            } catch (Exception e) {
+                                l.log(Level.SEVERE, "Error", e.getMessage());
+                            }
                             ctrl.backtestInProgressMap.remove(strategy);
                         }
                     }
