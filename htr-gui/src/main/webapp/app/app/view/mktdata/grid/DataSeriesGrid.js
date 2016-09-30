@@ -89,6 +89,16 @@ Ext.define('HtrGui.view.mktdata.grid.DataSeriesGrid', {
                 widget.hide();
             }
         }
+    }, {
+        xtype: 'widgetcolumn',
+        width : 50,
+        widget: {
+            xtype: 'button',
+            width: 30,
+            tooltip: 'Delete Data Series',
+            glyph: HtrGui.common.Glyphs.getGlyph('fa_trash'),
+            handler: 'deleteDataSeries'
+        }
     }],
 
     dockedItems: [{

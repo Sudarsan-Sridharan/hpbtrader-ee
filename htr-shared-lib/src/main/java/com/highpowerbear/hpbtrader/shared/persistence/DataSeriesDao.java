@@ -15,6 +15,7 @@ public interface DataSeriesDao {
     List<DataSeries> getDataSeriesByBarType(HtrEnums.BarType barType);
     DataSeries getDataSeriesByAlias(String alias);
     DataSeries findDataSeries(Integer id);
+    void deleteDataSeries(DataSeries dataSeries);
 
     void createOrUpdateDataBars(DataSeries dataSeries, List<DataBar> dataBars);
     List<DataBar> getLastDataBars(DataSeries dataSeries, int numBars);

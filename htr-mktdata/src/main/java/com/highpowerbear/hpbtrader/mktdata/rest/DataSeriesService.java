@@ -33,6 +33,17 @@ public class DataSeriesService {
         return new RestList<>(dataSeriesList, (long) dataSeriesList.size());
     }
 
+    @DELETE
+    @Path("{dataSeriesId}")
+    public Response deleteDataSeries(@PathParam("dataSeriesId") Integer dataSeriesId) {
+        DataSeries dataSeries = dataSeriesDao.findDataSeries(dataSeriesId);
+        if (dataSeries == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        dataSeriesDao.deleteDataSeries(dataSeries);
+        return Response.ok().build();
+    }
+
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{dataSeriesId}/backfill")

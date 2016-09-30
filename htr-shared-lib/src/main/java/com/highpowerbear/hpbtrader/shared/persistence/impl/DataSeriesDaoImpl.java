@@ -56,8 +56,22 @@ public class DataSeriesDaoImpl implements DataSeriesDao {
     }
 
     @Override
+    public void deleteDataSeries(DataSeries dataSeries) {
+        l.info("BEGIN deleteDataSeries, symbol=" + dataSeries.getInstrument().getSymbol() + ", type=" + dataSeries.getBarType());
+        DataSeries dataSeriesDb = em.find(DataSeries.class, dataSeries.getId());
+
+        TypedQuery<DataBar> q = em.createQuery("SELECT b FROM DataBar b where b.dataSeries = :dataSeries", DataBar.class);
+        q.setParameter("dataSeries", dataSeriesDb);
+        List<DataBar> dataBars = q.getResultList();
+        dataBars.forEach(em::remove);
+
+        em.remove(dataSeriesDb);
+        l.info("END deleteDataSeries, symbol=" + dataSeries.getInstrument().getSymbol() + ", type=" + dataSeries.getBarType() + ", dataBars=" + dataBars.size());
+    }
+
+    @Override
     public void createOrUpdateDataBars(DataSeries dataSeries, List<DataBar> dataBars) {
-        l.info("START createOrUpdateDataBars, symbol=" + dataSeries.getInstrument().getSymbol() + ", type=" + dataSeries.getBarType());
+        l.info("BEGIN createOrUpdateDataBars, symbol=" + dataSeries.getInstrument().getSymbol() + ", type=" + dataSeries.getBarType());
         for (DataBar dataBar : dataBars) {
             em.merge(dataBar);
         }

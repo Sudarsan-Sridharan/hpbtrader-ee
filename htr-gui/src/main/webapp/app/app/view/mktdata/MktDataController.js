@@ -186,5 +186,34 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
             method: 'PUT',
             url: HtrGui.common.Definitions.urlPrefixMktData + '/dataseries/' + dataSeriesId + '/backfill'
         });
+    },
+
+    deleteDataSeries: function(button, evt) {
+        var me = this,
+            dataSeriesStore = me.getStore('dataSeriesStore'),
+            dataSeriesGrid = me.lookupReference('dataSeriesGrid'),
+            dataSeriesId = button.getWidgetRecord().data.id;
+
+        Ext.Msg.show({
+            title: 'Delete DataSeries, id=' + dataSeriesId + '?',
+            message: 'All data bars will be deleted',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function(btn) {
+                if (btn === 'yes') {
+                    Ext.Ajax.request({
+                        method: 'DELETE',
+                        url: HtrGui.common.Definitions.urlPrefixMktData + '/dataseries/' + dataSeriesId,
+                        success: function(response, opts) {
+                            dataSeriesStore.load(function(records, operation, success) {
+                                if (success) {
+                                    dataSeriesGrid.setSelection(dataSeriesStore.first());
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
     }
 });
