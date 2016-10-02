@@ -9,6 +9,8 @@ import com.highpowerbear.hpbtrader.shared.ibclient.GenerictIbListener;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -16,6 +18,7 @@ import javax.inject.Inject;
  */
 @Dependent
 public class IbListener extends GenerictIbListener {
+    private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 
     @Inject private HistDataController histDataController;
     @Inject private RtDataController rtDataController;
@@ -32,19 +35,24 @@ public class IbListener extends GenerictIbListener {
     public void historicalData(int reqId, String date, double open, double high, double low, double close, int volume, int count, double WAP, boolean hasGaps) {
         //super.historicalData(reqId, date, open, high, low, close, volume, count, WAP, hasGaps);
 
-        if (date.startsWith(HtrDefinitions.FINISH)) {
-            histDataController.reqFinished(reqId);
-        } else {
-            DataBar dataBar = new DataBar();
-            dataBar.setbBarOpen(open);
-            dataBar.setbBarHigh(high);
-            dataBar.setbBarLow(low);
-            dataBar.setbBarClose(close);
-            dataBar.setVolume(volume == -1 ? 0 : volume);
-            dataBar.setCount(count);
-            dataBar.setWap(WAP);
-            dataBar.setHasGaps(hasGaps);
-            histDataController.barReceived(reqId, date, dataBar);
+        try {
+            if (date.startsWith(HtrDefinitions.FINISH)) {
+                histDataController.reqFinished(reqId);
+            } else {
+                DataBar dataBar = new DataBar();
+                dataBar.setbBarOpen(open);
+                dataBar.setbBarHigh(high);
+                dataBar.setbBarLow(low);
+                dataBar.setbBarClose(close);
+                dataBar.setVolume(volume == -1 ? 0 : volume);
+                dataBar.setCount(count);
+                dataBar.setWap(WAP);
+                dataBar.setHasGaps(hasGaps);
+                histDataController.barReceived(reqId, date, dataBar);
+            }
+        } catch (Exception e) {
+            l.log(Level.SEVERE, "Error", e);
+            throw e;
         }
     }
 
