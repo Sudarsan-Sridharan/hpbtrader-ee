@@ -6,8 +6,7 @@ Ext.define('HtrGui.view.exec.grid.IbOrdersGrid', {
     xtype: 'htr-exec-iborders-grid',
     requires: [
         'Ext.grid.column.Date',
-        'Ext.toolbar.Paging',
-        'HtrGui.view.exec.ExecController'
+        'Ext.toolbar.Paging'
     ],
     bind: '{ibOrders}',
     listeners: {
@@ -30,7 +29,7 @@ Ext.define('HtrGui.view.exec.grid.IbOrdersGrid', {
         format: 'm/d/Y H:i:s.u'
     }, {
         text: 'Status',
-        width: 80,
+        width: 100,
         dataIndex: 'status',
         renderer: 'ibOrderStatusRenderer'
     }, {

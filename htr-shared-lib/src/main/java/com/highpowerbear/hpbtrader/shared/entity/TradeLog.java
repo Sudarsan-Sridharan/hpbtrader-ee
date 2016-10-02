@@ -14,7 +14,7 @@ import java.util.Calendar;
  *
  * @author robertk
  */
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "tradelog", schema = "hpbtrader", catalog = "hpbtrader")
 public class TradeLog implements Serializable {

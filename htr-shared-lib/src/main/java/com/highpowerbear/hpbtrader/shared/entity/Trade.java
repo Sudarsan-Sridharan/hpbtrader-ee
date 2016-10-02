@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author robertk
  */
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "trade", schema = "hpbtrader", catalog = "hpbtrader")
 public class Trade implements Serializable {
@@ -48,7 +48,7 @@ public class Trade implements Serializable {
     @Enumerated(EnumType.STRING)
     private HtrEnums.TradeStatus tradeStatus;
     @OneToMany(mappedBy = "trade", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @OrderBy // by primary key
+    @OrderBy("id DESC")
     private List<TradeIbOrder> tradeIbOrders = new ArrayList<>();
 
     @XmlElement

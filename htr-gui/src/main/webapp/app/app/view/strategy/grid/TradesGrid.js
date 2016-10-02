@@ -6,8 +6,7 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
     xtype: 'htr-strategy-trades-grid',
     requires: [
         'Ext.grid.column.Date',
-        'Ext.toolbar.Paging',
-        'HtrGui.view.strategy.StrategyController'
+        'Ext.toolbar.Paging'
     ],
     listeners: {
         select: 'onTradeSelect',
@@ -31,22 +30,22 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
         format: 'm/d/Y H:i:s.u'
     }, {
         text: 'Status',
-        width: 60,
+        width: 90,
         dataIndex: 'tradeStatus',
         renderer: 'tradeStatusRenderer'
     }, {
         text: 'Type',
-        width: 80,
+        width: 90,
         dataIndex: 'tradeType',
         renderer: 'tradeTypeRenderer'
     }, {
         text: 'Quantity',
-        width: 80,
+        width: 90,
         dataIndex: 'quantity',
         align: 'right'
     }, {
         text: 'Position',
-        width: 80,
+        width: 90,
         dataIndex: 'tradePosition',
         align: 'right'
     }, {
@@ -63,7 +62,7 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
         dataIndex: 'initialStop',
         align: 'right',
         renderer: function(val, metadata, record) {
-            return Ext.util.Format.number(val, '0.00###');
+            return val ? Ext.util.Format.number(val, '0.00###') : '-';
         }
     }, {
         text: 'Stop',
@@ -71,7 +70,7 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
         dataIndex: 'stopLoss',
         align: 'right',
         renderer: function(val, metadata, record) {
-            return Ext.util.Format.number(val, '0.00###');
+            return val ? Ext.util.Format.number(val, '0.00###') : '-';
         }
     }, {
         text: 'target',
@@ -79,16 +78,13 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
         dataIndex: 'profitTarget',
         align: 'right',
         renderer: function(val, metadata, record) {
-            return Ext.util.Format.number(val, '0.00###');
+            return val ? Ext.util.Format.number(val, '0.00###') : '-';
         }
     }, {
         text: 'Close',
         width: 100,
         dataIndex: 'closePrice',
-        align: 'right',
-        renderer: function(val, metadata, record) {
-            return Ext.util.Format.number(val, '0.00###');
-        }
+        align: 'right'
     }, {
         text: 'Close Date',
         width: 180,
@@ -96,7 +92,7 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
         xtype: 'datecolumn',
         format: 'm/d/Y H:i:s.u'
     }, {
-        text: 'Unreal P/L',
+        text: 'Unrl P/L',
         width: 100,
         dataIndex: 'unrealizedPl',
         align: 'right',
@@ -105,7 +101,7 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
             return Ext.util.Format.number(val, '0.00');
         }
     }, {
-        text: 'Real P/L',
+        text: 'P/L',
         width: 100,
         dataIndex: 'realizedPl',
         align: 'right',

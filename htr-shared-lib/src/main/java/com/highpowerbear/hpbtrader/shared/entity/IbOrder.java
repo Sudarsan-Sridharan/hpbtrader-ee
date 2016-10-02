@@ -54,7 +54,7 @@ public class IbOrder implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar statusDate;
     @OneToMany(mappedBy = "ibOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @OrderBy("eventDate ASC")
+    @OrderBy("eventDate DESC, id DESC")
     private List<IbOrderEvent> ibOrderEvents = new ArrayList<>();
     @Transient
     private Integer heartbeatCount;

@@ -6,8 +6,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
     xtype: 'htr-strategy-strategies-grid',
     requires: [
         'Ext.grid.column.Date',
-        'Ext.toolbar.Paging',
-        'HtrGui.view.strategy.StrategyController'
+        'Ext.toolbar.Paging'
     ],
     listeners: {
         select: 'onStrategySelect'
@@ -45,7 +44,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
         renderer: 'strategyModeRendererStrategy'
     }, {
         text: 'Params',
-        width: 80,
+        width: 100,
         dataIndex: 'params'
     }, {
         text: 'Quant',
@@ -59,7 +58,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
         align: 'right'
     }, {
         text: 'All-Fil',
-        width: 80,
+        width: 100,
         dataIndex: 'numAllOrders',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -67,7 +66,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
         }
     }, {
         text: 'Sho-Lo',
-        width: 80,
+        width: 100,
         dataIndex: 'numShorts',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -75,7 +74,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
         }
     }, {
         text: 'Win-Los',
-        width: 80,
+        width: 100,
         dataIndex: 'numWinners',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -86,18 +85,23 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
         width: 250,
         dataIndex: 'symbol',
         renderer: function(val, metadata, record) {
-            return (record.data['symbol'] + '/' + record.data['underlying'] + '/' + record.data['secType'] + '/' + record.data['currency'] + '/' + record.data['exchange']).toLowerCase();
+            return (record.data['symbol'] + '-' + record.data['underlying'] + '-' + record.data['currency'] + '-' + record.data['secType'] + '-' + record.data['exchange']).toLowerCase();
         }
     }, {
         text: 'PL',
-        width: 80,
+        width: 100,
         dataIndex: 'cumulativePl',
-        align: 'right'
+        align: 'right',
+        renderer: function(val, metadata, record) {
+            metadata.style = val < 0 ? 'color: red;' : 'color: green;';
+            return Ext.util.Format.number(val, '0.00');
+        }
     }, {
         text: 'Input Series',
         flex: 1,
         dataIndex: 'inputSeriesAliases',
         renderer: function(val, metadata, record) {
+            metadata.tdAttr = 'data-qtip="' + val.toLowerCase() + '"';
             return val.toLowerCase();
         }
     }],

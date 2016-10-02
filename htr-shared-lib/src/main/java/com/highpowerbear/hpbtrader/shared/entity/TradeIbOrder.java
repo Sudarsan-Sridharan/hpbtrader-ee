@@ -55,7 +55,7 @@ public class TradeIbOrder implements Serializable {
                 ibOrder.getOrderType().name() + ", " +
                 ibOrder.getOrderPrice() + ", " +
                 ibOrder.getFillPrice() + ", " +
-                ibOrder.getStatus().getDisplayText() + ", ";
+                ibOrder.getStatus().getDisplayText();
     }
 
     @Override

@@ -6,8 +6,7 @@ Ext.define('HtrGui.view.strategy.grid.TradeLogsGrid', {
     xtype: 'htr-strategy-tradelogs-grid',
     requires: [
         'Ext.grid.column.Date',
-        'Ext.toolbar.Paging',
-        'HtrGui.view.strategy.StrategyController'
+        'Ext.toolbar.Paging'
     ],
     bind: '{tradeLogs}',
     viewConfig: {
@@ -26,8 +25,13 @@ Ext.define('HtrGui.view.strategy.grid.TradeLogsGrid', {
         xtype: 'datecolumn',
         format: 'm/d/Y H:i:s.u'
     }, {
+        text: 'Status',
+        width: 90,
+        dataIndex: 'tradeStatus',
+        renderer: 'tradeStatusRendererLog'
+    }, {
         text: 'Position',
-        width: 80,
+        width: 90,
         dataIndex: 'tradePosition',
         align: 'right'
     }, {
@@ -36,7 +40,7 @@ Ext.define('HtrGui.view.strategy.grid.TradeLogsGrid', {
         dataIndex: 'stopLoss',
         align: 'right',
         renderer: function(val, metadata, record) {
-            return Ext.util.Format.number(val, '0.00###');
+            return val ? Ext.util.Format.number(val, '0.00###') : '-';
         }
     }, {
         text: 'Price',
@@ -52,10 +56,10 @@ Ext.define('HtrGui.view.strategy.grid.TradeLogsGrid', {
         dataIndex: 'profitTarget',
         align: 'right',
         renderer: function(val, metadata, record) {
-            return Ext.util.Format.number(val, '0.00###');
+            return val ? Ext.util.Format.number(val, '0.00###') : '-';
         }
     }, {
-        text: 'Unreal P/L',
+        text: 'Unrl P/L',
         width: 100,
         dataIndex: 'unrealizedPl',
         align: 'right',
@@ -64,7 +68,7 @@ Ext.define('HtrGui.view.strategy.grid.TradeLogsGrid', {
             return Ext.util.Format.number(val, '0.00');
         }
     }, {
-        text: 'Real P/L',
+        text: 'P/L',
         width: 100,
         dataIndex: 'realizedPl',
         align: 'right',
@@ -74,11 +78,6 @@ Ext.define('HtrGui.view.strategy.grid.TradeLogsGrid', {
         }
     }, {
         flex: 1
-    }, {
-        text: 'Status',
-        width: 60,
-        dataIndex: 'tradeStatus',
-        renderer: 'tradeStatusRenderer'
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',

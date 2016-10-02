@@ -27,8 +27,8 @@ Ext.define('HtrGui.view.strategy.grid.IbOrderEventsGrid', {
         format: 'm/d/Y H:i:s.u'
     }, {
         text: 'Status',
-        width: 80,
+        flex: 1,
         dataIndex: 'status',
-        renderer: 'ibOrderStatusRenderer'
+        renderer: 'ibOrderStatusRendererEvents'
     }]
 });

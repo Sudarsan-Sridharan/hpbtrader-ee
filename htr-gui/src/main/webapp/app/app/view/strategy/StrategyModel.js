@@ -9,7 +9,9 @@ Ext.define('HtrGui.view.strategy.StrategyModel', {
         'HtrGui.model.strategy.StrategyPerformance',
         'HtrGui.model.strategy.Trade',
         'HtrGui.model.strategy.TradeLog',
-        'HtrGui.model.strategy.IbOrder'
+        'HtrGui.model.strategy.TradeIbOrder',
+        'HtrGui.model.strategy.IbOrder',
+        'HtrGui.model.strategy.IbOrderEvent'
     ],
 
     alias: 'viewmodel.htr-strategy',
@@ -21,15 +23,15 @@ Ext.define('HtrGui.view.strategy.StrategyModel', {
         },
         strategyPerformances: {
             model: 'HtrGui.model.strategy.StrategyPerformance',
-            pageSize: 20
+            pageSize: 10
         },
         trades: {
             model: 'HtrGui.model.strategy.Trade',
-            pageSize: 20
+            pageSize: 10
         },
         tradeLogs: {
             model: 'HtrGui.model.strategy.TradeLog',
-            pageSize: 20
+            pageSize: 10
         },
         ibOrders: {
             model: 'HtrGui.model.strategy.IbOrder',

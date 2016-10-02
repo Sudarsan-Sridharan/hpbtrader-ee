@@ -33,9 +33,9 @@ public class CodeMapService {
     @Path("iborderstatus/colors")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOrderStatusColors() {
-        Map<HtrEnums.IbOrderStatus, HtrEnums.DisplayColor> map = new LinkedHashMap<>();
+        Map<HtrEnums.IbOrderStatus, String> map = new LinkedHashMap<>();
         for (HtrEnums.IbOrderStatus k : HtrEnums.IbOrderStatus.values()) {
-            map.put(k, k.getDisplayColor());
+            map.put(k, k.getDisplayColor().toString().toLowerCase().replace("_", ""));
         }
         return Response.ok(map).build();
     }

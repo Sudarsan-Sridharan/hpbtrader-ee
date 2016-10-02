@@ -108,8 +108,8 @@ public class HtrEnums {
             return displayText;
         }
 
-        public DisplayColor getDisplayColor() {
-            return displayColor;
+        public String getDisplayColor() {
+            return displayColor.name().toLowerCase().replace("_", "");
         }
     }
     
@@ -146,13 +146,13 @@ public class HtrEnums {
         }
 
         public String getDisplayColor() {
-            return displayColor.name().toLowerCase();
+            return displayColor.name().toLowerCase().replace("_", "");
         }
     }
 
     public enum TradeType {
-        LONG("L", DisplayColor.BLUE),
-        SHORT("S", DisplayColor.BROWN);
+        LONG("LONG", DisplayColor.BLUE),
+        SHORT("SHORT", DisplayColor.BROWN);
 
         private String displayText;
         private DisplayColor displayColor;
@@ -166,7 +166,7 @@ public class HtrEnums {
         }
 
         public String getDisplayColor() {
-            return displayColor.name().toLowerCase();
+            return displayColor.name().toLowerCase().replace("_", "");
         }
     }
     
@@ -190,7 +190,7 @@ public class HtrEnums {
         }
 
         public String getDisplayColor() {
-            return displayColor.name().toLowerCase();
+            return displayColor.name().toLowerCase().replace("_", "");
         }
     }
     
@@ -245,7 +245,7 @@ public class HtrEnums {
         }
 
         public String getDisplayColor() {
-            return displayColor.name().toLowerCase();
+            return displayColor.name().toLowerCase().replace("_", "");
         }
     }
 
@@ -271,7 +271,7 @@ public class HtrEnums {
         LIME,
         YELLOW,
         BROWN,
-        DODGER_BLUE,
+        DODGER_BLUE
     }
 
     public enum IbConnectionType {

@@ -5,7 +5,11 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
     extend: 'Ext.app.ViewController',
 
     requires: [
-        'HtrGui.common.Definitions'
+        'HtrGui.common.Definitions',
+        'HtrGui.view.strategy.window.IbOrderEventsWindow',
+        'HtrGui.view.strategy.grid.IbOrderEventsGrid',
+        'HtrGui.view.strategy.window.TradeIbOrdersWindow',
+        'HtrGui.view.strategy.grid.TradeIbOrdersGrid'
     ],
 
     alias: 'controller.htr-strategy',
@@ -60,7 +64,7 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
             }
         };
         ws.onerror = function(evt) {
-            console.log('WS exec error');
+            console.log('WS strategy error');
         };
     },
 
@@ -98,7 +102,7 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
 
     prepare: function(callback) {
         var me = this,
-            prefix = HtrGui.common.Definitions.urlPrefixExec;
+            prefix = HtrGui.common.Definitions.urlPrefixStrategy;
 
         var ajaxQueue = function(step) {
             switch(step) {
@@ -155,15 +159,21 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         return me.ibOrderStatusTexts[val];
     },
 
+    ibOrderStatusRendererEvents: function(val, metadata, record) {
+        var me = this;
+        metadata.style = 'background-color: ' + me.ibOrderStatusColors[val] + '; color: white;';
+        return me.ibOrderStatusTexts[val];
+    },
+
     strategyModeRendererStrategy: function(val, metadata, record) {
         var me = this;
-        metadata.style = record.data['active'] == true ? 'background-color: ' + me.strategyModeColors[val] : 'background-color: LightGray';
+        metadata.style = record.data['active'] == true ? 'color: ' + me.strategyModeColors[val] : 'color: LightGray';
         return val;
     },
 
     strategyModeRenderer: function(val, metadata, record) {
         var me = this;
-        metadata.style = 'background-color: ' + me.strategyModeColors[val];
+        metadata.style = 'color: ' + me.strategyModeColors[val];
         return val;
     },
 
@@ -176,6 +186,12 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
     tradeStatusRenderer: function(val, metadata, record) {
         var me = this;
         metadata.style = 'cursor: pointer; color: white; background-color: ' + me.tradeStatusColors[val];
+        return me.tradeStatusTexts[val];
+    },
+
+    tradeStatusRendererLog: function(val, metadata, record) {
+        var me = this;
+        metadata.style = 'color: ' + me.tradeStatusColors[val];
         return me.tradeStatusTexts[val];
     },
 
@@ -205,13 +221,14 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         var me = this;
 
         if (!me.ibOrderEventsGrid) {
-            me.ibOrderEventsGrid =  Ext.create('HtrGui.view.exec.grid.IbOrderEventsGrid');
+            me.ibOrderEventsGrid =  Ext.create('HtrGui.view.strategy.grid.IbOrderEventsGrid');
             me.ibOrderEventsWindow = Ext.create('widget.htr-strategy-iborderevents-window');
             me.ibOrderEventsWindow.add(me.ibOrderEventsGrid);
+            me.getView().add(me.ibOrderEventsWindow);
         }
-        var permId = record.get(record.getFields()[1].getName());
+        var dbId = record.get(record.getFields()[0].getName());
         me.ibOrderEventsGrid.setStore(record.ibOrderEvents());
-        me.ibOrderEventsWindow.setTitle("IB Order Events, permId=" + permId);
+        me.ibOrderEventsWindow.setTitle("IB Order Events, id=" + dbId);
         me.ibOrderEventsWindow.show();
     },
 
@@ -222,9 +239,10 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         var me = this;
 
         if (!me.tradeIbOrdersGrid) {
-            me.tradeIbOrdersGrid =  Ext.create('HtrGui.view.exec.grid.TradeIbOrdersGrid');
+            me.tradeIbOrdersGrid =  Ext.create('HtrGui.view.strategy.grid.TradeIbOrdersGrid');
             me.tradeIbOrdersWindow = Ext.create('widget.htr-strategy-tradeiborders-window');
             me.tradeIbOrdersWindow.add(me.tradeIbOrdersGrid);
+            me.getView().add(me.tradeIbOrdersWindow);
         }
         var tradeId = record.get(record.getFields()[0].getName());
         me.tradeIbOrdersGrid.setStore(record.tradeIbOrders());
@@ -238,7 +256,7 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
             tradeLogsPaging = me.lookupReference('tradeLogsPaging');
 
         me.tradeId = record.data.id;
-        tradeLogs.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/' + me.tradeId + '/tradelogs/trading');
+        tradeLogs.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/trade/' + me.tradeId + '/tradelogs/trading');
 
         if (tradeLogs.isLoaded()) {
             tradeLogsPaging.moveFirst();

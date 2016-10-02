@@ -6,8 +6,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategyPerformancesGrid', {
     xtype: 'htr-strategy-strategyperformances-grid',
     requires: [
         'Ext.grid.column.Date',
-        'Ext.toolbar.Paging',
-        'HtrGui.view.strategy.StrategyController'
+        'Ext.toolbar.Paging'
     ],
     bind: '{strategyPerformances}',
     viewConfig: {
@@ -27,7 +26,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategyPerformancesGrid', {
         format: 'm/d/Y H:i:s.u'
     }, {
         text: 'All-Fil',
-        width: 80,
+        width: 100,
         dataIndex: 'numAllOrders',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -35,7 +34,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategyPerformancesGrid', {
         }
     }, {
         text: 'Sho-Lo',
-        width: 80,
+        width: 100,
         dataIndex: 'numShorts',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -43,7 +42,7 @@ Ext.define('HtrGui.view.strategy.grid.StrategyPerformancesGrid', {
         }
     }, {
         text: 'Win-Los',
-        width: 80,
+        width: 100,
         dataIndex: 'numWinners',
         align: 'right',
         renderer: function(val, metadata, record) {
@@ -51,9 +50,15 @@ Ext.define('HtrGui.view.strategy.grid.StrategyPerformancesGrid', {
         }
     }, {
         text: 'PL',
-        width: 80,
+        width: 100,
         dataIndex: 'cumulativePl',
-        align: 'right'
+        align: 'right',
+        renderer: function(val, metadata, record) {
+            metadata.style = val < 0 ? 'color: red;' : 'color: green;';
+            return Ext.util.Format.number(val, '0.00');
+        }
+    }, {
+        flex: 1
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',

@@ -5,8 +5,7 @@ Ext.define('HtrGui.view.strategy.grid.TradeIbOrdersGrid', {
     extend: 'Ext.grid.Panel',
     xtype: 'htr-strategy-tradeiborders-grid',
     requires: [
-        'Ext.grid.column.Date',
-        'HtrGui.view.strategy.StrategyController'
+        'Ext.grid.column.Date'
     ],
     viewConfig: {
         stripeRows: true
@@ -20,7 +19,7 @@ Ext.define('HtrGui.view.strategy.grid.TradeIbOrdersGrid', {
     }, {
         xtype: 'templatecolumn',
         text: 'Quantity',
-        width: 120,
+        width: 130,
         dataIndex: 'quantity',
         align: 'right',
         tpl: '{quantity} ({ibOrderQuantity})'
