@@ -20,12 +20,14 @@ import java.util.Calendar;
 public class DataBar implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @Temporal(value=TemporalType.TIMESTAMP)
-    private Calendar barCloseDate;
+    @EmbeddedId
+    @XmlTransient
+    private DataBarKey dataBarKey = new DataBarKey();
     @ManyToOne
+    @MapsId("dataSeriesId")
     @XmlTransient
     private DataSeries dataSeries;
+
     private Double barOpen;
     private Double barHigh;
     private Double barLow;
@@ -40,23 +42,17 @@ public class DataBar implements Serializable {
         return dataSeries.getId();
     }
 
+    @XmlElement
+    public Calendar getBarCloseDate() {
+        return dataBarKey.getBarCloseDate();
+    }
+
     public long getBarCloseDateMillis() {
-        return barCloseDate.getTimeInMillis();
+        return dataBarKey.getBarCloseDate().getTimeInMillis();
     }
 
     public String print() {
-        return dataSeries.getInstrument().getSymbol() + ": " + HtrUtil.getFormattedDate(barCloseDate) + ", " + barOpen + ", " + barHigh + ", " + barLow + ", " + barClose + ", " + volume + ", " + count + ", " + hasGaps;
-    }
-
-    public void mergeFrom(DataBar from) {
-        this.barOpen = from.getbBarOpen();
-        this.barHigh = from.getbBarHigh();
-        this.barLow = from.getbBarLow();
-        this.barClose = from.getbBarClose();
-        this.volume = from.getVolume();
-        this.count = from.getCount();
-        this.wap = from.getWap();
-        this.hasGaps = from.getHasGaps();
+        return dataSeries.getInstrument().getSymbol() + ": " + HtrUtil.getFormattedDate(dataBarKey.getBarCloseDate()) + ", " + barOpen + ", " + barHigh + ", " + barLow + ", " + barClose + ", " + volume + ", " + count + ", " + hasGaps;
     }
 
     @Override
@@ -66,21 +62,28 @@ public class DataBar implements Serializable {
 
         DataBar dataBar = (DataBar) o;
 
-        return barCloseDate != null ? barCloseDate.equals(dataBar.barCloseDate) : dataBar.barCloseDate == null;
+        if (dataBarKey != null ? !dataBarKey.equals(dataBar.dataBarKey) : dataBar.dataBarKey != null) return false;
+        return dataSeries != null ? dataSeries.equals(dataBar.dataSeries) : dataBar.dataSeries == null;
 
     }
 
     @Override
     public int hashCode() {
-        return barCloseDate != null ? barCloseDate.hashCode() : 0;
+        int result = dataBarKey != null ? dataBarKey.hashCode() : 0;
+        result = 31 * result + (dataSeries != null ? dataSeries.hashCode() : 0);
+        return result;
     }
 
-    public Calendar getBarCloseDate() {
-        return barCloseDate;
+    public DataBarKey getDataBarKey() {
+        return dataBarKey;
     }
 
-    public void setbBarCloseDate(Calendar bCloseDate) {
-        this.barCloseDate = bCloseDate;
+    public void setDataBarKey(DataBarKey dataBarKey) {
+        this.dataBarKey = dataBarKey;
+    }
+
+    public void setBarCloseDate(Calendar barCloseDate) {
+        this.dataBarKey.setBarCloseDate(barCloseDate);
     }
 
     public DataSeries getDataSeries() {
@@ -89,6 +92,7 @@ public class DataBar implements Serializable {
 
     public void setDataSeries(DataSeries dataSeries) {
         this.dataSeries = dataSeries;
+        this.dataBarKey.setDataSeriesId(dataSeries.getId());
     }
 
     public Double getbBarOpen() {

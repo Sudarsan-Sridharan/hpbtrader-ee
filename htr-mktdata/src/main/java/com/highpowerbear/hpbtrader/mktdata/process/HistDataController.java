@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
@@ -31,31 +32,31 @@ public class HistDataController {
     @Inject private WebsocketController websocketController;
 
     private DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
-    private Map<DataSeries, Map<Long, DataBar>> barsReceivedMap = new HashMap<>(); // series --> (timeInMillisBarClose --> bar)
+    private Map<Integer, Map<Long, DataBar>> barsReceivedMap = new ConcurrentHashMap<>(); // reqId --> (timeInMillisBarClose --> bar)
 
     public void barReceived(int reqId, String date, DataBar dataBar) {
         int seriesId = reqId / HtrDefinitions.IB_REQUEST_MULT;
         DataSeries dataSeries = dataSeriesDao.findDataSeries(seriesId);
-        barsReceivedMap.putIfAbsent(dataSeries, new LinkedHashMap<>());
+        barsReceivedMap.putIfAbsent(reqId, new LinkedHashMap<>());
         Calendar c = HtrUtil.getCalendar();
         c.setTimeInMillis(Long.valueOf(date) * 1000 + dataSeries.getBarType().getMillis()); // date-time stamp of the end of the bar
         if (HtrEnums.BarType.MIN_60.equals(dataSeries.getBarType())) {
             c.set(Calendar.MINUTE, 0); // needed in case of bars started at 9:30 (END 10:00 not 10:30) or 17:15 (END 18:00 not 18:15)
         }
-        dataBar.setbBarCloseDate(c);
+        dataBar.setBarCloseDate(c);
         dataBar.setDataSeries(dataSeries);
-        barsReceivedMap.get(dataSeries).put(dataBar.getBarCloseDateMillis(), dataBar);
+        barsReceivedMap.get(reqId).put(dataBar.getBarCloseDateMillis(), dataBar);
     }
 
     public void reqFinished(int reqId) {
         int seriesId = reqId / HtrDefinitions.IB_REQUEST_MULT;
         DataSeries dataSeries = dataSeriesDao.findDataSeries(seriesId);
         // remove last bar if it is not finished yet
-        new LinkedHashSet<>(barsReceivedMap.get(dataSeries).keySet())
+        new LinkedHashSet<>(barsReceivedMap.get(reqId).keySet())
                 .stream()
                 .filter(timeInMillisBarClose -> timeInMillisBarClose > System.currentTimeMillis())
-                .forEach(barsReceivedMap.get(dataSeries)::remove);
-        List<DataBar> bars = new ArrayList<>(barsReceivedMap.get(dataSeries).values());
+                .forEach(barsReceivedMap.get(reqId)::remove);
+        List<DataBar> bars = new ArrayList<>(barsReceivedMap.get(reqId).values());
         dataSeriesDao.createOrUpdateDataBars(dataSeries, bars);
         websocketController.notifyDataBarsCreated(dataSeries);
         DataBar lastDataBar = bars.get(bars.size() - 1);
@@ -63,7 +64,7 @@ public class HistDataController {
         if (isCurrentLastBar) {
             mqSender.notifyDataBarsCreated(dataSeries);
         }
-        barsReceivedMap.remove(dataSeries);
+        barsReceivedMap.remove(reqId);
     }
 
     void requestFiveMinBars() {
