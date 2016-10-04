@@ -69,12 +69,10 @@ public class HtrUtil {
     public static HtrEnums.MessageType parseMessageType(String msg) {
         HtrEnums.MessageType type = null;
         String[] parts = msg.split(":");
-        if (parts.length == 2) {
-            try {
-                type = HtrEnums.MessageType.valueOf(parts[0].trim());
-            } catch (Exception e) {
-                l.warning(e.getMessage());
-            }
+        try {
+            type = HtrEnums.MessageType.valueOf(parts[0].trim());
+        } catch (Exception e) {
+            l.warning(e.getMessage());
         }
         return type;
     }
