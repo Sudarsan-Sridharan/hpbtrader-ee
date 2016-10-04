@@ -214,6 +214,35 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         me.moveFirstOrLoadStore(tradesPaging, 'trades');
     },
 
+    deleteStrategy: function(button, evt) {
+        var me = this,
+            strategies = me.getStore('strategies'),
+            strategiesGrid = me.lookupReference('strategiesGrid'),
+            strategyId = button.getWidgetRecord().data.id;
+
+        Ext.Msg.show({
+            title: 'Delete strategy, id=' + strategyId + '?',
+            message: 'All associated data will be deleted',
+            buttons: Ext.Msg.YESNO,
+            icon: Ext.Msg.QUESTION,
+            fn: function(btn) {
+                if (btn === 'yes') {
+                    Ext.Ajax.request({
+                        method: 'DELETE',
+                        url: HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/' + strategyId,
+                        success: function(response, opts) {
+                            strategies.load(function(records, operation, success) {
+                                if (success) {
+                                    strategiesGrid.setSelection(strategies.first());
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    },
+
     showIbOrderEvents: function (view, cell, cellIndex, record, row, rowIndex, e) {
         if (cellIndex != 2) {
             return;

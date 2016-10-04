@@ -104,6 +104,16 @@ Ext.define('HtrGui.view.strategy.grid.StrategiesGrid', {
             metadata.tdAttr = 'data-qtip="' + val.toLowerCase() + '"';
             return val.toLowerCase();
         }
+    }, {
+        xtype: 'widgetcolumn',
+        width : 50,
+        widget: {
+            xtype: 'button',
+            width: 30,
+            tooltip: 'Delete Strategy',
+            glyph: HtrGui.common.Glyphs.getGlyph('fa_trash'),
+            handler: 'deleteStrategy'
+        }
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',

@@ -195,7 +195,7 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
             dataSeriesId = button.getWidgetRecord().data.id;
 
         Ext.Msg.show({
-            title: 'Delete DataSeries, id=' + dataSeriesId + '?',
+            title: 'Delete data series, id=' + dataSeriesId + '?',
             message: 'All data bars will be deleted',
             buttons: Ext.Msg.YESNO,
             icon: Ext.Msg.QUESTION,
