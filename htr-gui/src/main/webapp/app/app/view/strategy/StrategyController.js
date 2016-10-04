@@ -255,9 +255,8 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
             me.ibOrderEventsWindow.add(me.ibOrderEventsGrid);
             me.getView().add(me.ibOrderEventsWindow);
         }
-        var dbId = record.get(record.getFields()[0].getName());
         me.ibOrderEventsGrid.setStore(record.ibOrderEvents());
-        me.ibOrderEventsWindow.setTitle("IB Order Events, id=" + dbId);
+        me.ibOrderEventsWindow.setTitle("IB Order Events, id=" + record.get('id'));
         me.ibOrderEventsWindow.show();
     },
 

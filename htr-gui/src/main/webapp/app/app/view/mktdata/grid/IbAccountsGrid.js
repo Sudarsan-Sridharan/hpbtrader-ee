@@ -31,15 +31,22 @@ Ext.define('HtrGui.view.mktdata.grid.IbAccountsGrid', {
             handler: 'disconnectIb'
         }]
     }, {
-        text: 'Status',
+        text: 'Md Cli',
         width: 80,
-        align: 'center',
-        dataIndex: 'mdcConnected',
-        renderer: 'connectStatusRenderer'
-    }, {
-        text: 'Accounts',
-        width: 200,
-        dataIndex: 'mdcAccounts'
+        dataIndex: 'mktDataClientId',
+        align: 'right',
+        editor: {
+            xtype: 'numberfield',
+            minValue: 1,
+            maxValue: 65535,
+            allowDecimals: false
+        },
+        renderer: function(val, metadata, record) {
+            if (metadata) {
+                metadata.style = 'background-color: ' + (record.get('mdcConnected') ? 'green' : 'red') + '; color: white;';
+            }
+            return val;
+        }
     }, {
         text: 'Host',
         width: 150,
@@ -60,28 +67,8 @@ Ext.define('HtrGui.view.mktdata.grid.IbAccountsGrid', {
             allowDecimals: false
         }
     }, {
-        text: 'Md Cli',
-        width: 80,
-        dataIndex: 'mktDataClientId',
-        align: 'right',
-        editor: {
-            xtype: 'numberfield',
-            minValue: 1,
-            maxValue: 65535,
-            allowDecimals: false
-        }
-    }, {
-        text: 'Ex Cli',
-        width: 80,
-        dataIndex: 'execClientId',
-        align: 'right',
-        editor: {
-            xtype: 'numberfield',
-            minValue: 1,
-            maxValue: 65535,
-            allowDecimals: false
-        }
-    }, {
+        text: 'Accounts',
+        dataIndex: 'mdcAccounts',
         flex: 1
     }],
     dockedItems: [{

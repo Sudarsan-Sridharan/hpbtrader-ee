@@ -37,7 +37,7 @@ public class IbConnection {
     }
 
     private String print() {
-        return "mkt data, host=" + host + ", port=" + port + ", clientId=" + clientId;
+        return "type=" + type.name() + ", host=" + host + ", port=" + port + ", clientId=" + clientId;
     }
 
     public void connect() {

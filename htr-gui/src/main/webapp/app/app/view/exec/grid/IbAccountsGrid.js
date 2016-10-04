@@ -34,15 +34,22 @@ Ext.define('HtrGui.view.exec.grid.IbAccountsGrid', {
             handler: 'disconnectIb'
         }]
     }, {
-        text: 'Status',
+        text: 'Ex Cli',
         width: 80,
-        align: 'center',
-        dataIndex: 'mdcIsConnected',
-        renderer: 'connectStatusRenderer'
-    }, {
-        text: 'Accounts',
-        width: 200,
-        dataIndex: 'mdcAccounts'
+        dataIndex: 'execClientId',
+        align: 'right',
+        editor: {
+            xtype: 'numberfield',
+            minValue: 1,
+            maxValue: 65535,
+            allowDecimals: false
+        },
+        renderer: function(val, metadata, record) {
+            if (metadata) {
+                metadata.style = 'background-color: ' + (record.get('ecConnected') ? 'green' : 'red') + '; color: white;';
+            }
+            return val;
+        }
     }, {
         text: 'Host',
         width: 150,
@@ -63,28 +70,8 @@ Ext.define('HtrGui.view.exec.grid.IbAccountsGrid', {
             allowDecimals: false
         }
     }, {
-        text: 'Md Cli',
-        width: 80,
-        dataIndex: 'mktDataClientId',
-        align: 'right',
-        editor: {
-            xtype: 'numberfield',
-            minValue: 1,
-            maxValue: 65535,
-            allowDecimals: false
-        }
-    }, {
-        text: 'Ex Cli',
-        width: 80,
-        dataIndex: 'execClientId',
-        align: 'right',
-        editor: {
-            xtype: 'numberfield',
-            minValue: 1,
-            maxValue: 65535,
-            allowDecimals: false
-        }
-    }, {
+        text: 'Accounts',
+        dataIndex: 'ecAccounts',
         flex: 1
     }],
     dockedItems: [{

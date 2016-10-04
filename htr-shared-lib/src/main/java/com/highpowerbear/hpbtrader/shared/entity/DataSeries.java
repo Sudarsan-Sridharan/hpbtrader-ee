@@ -26,7 +26,7 @@ public class DataSeries implements Serializable {
     private HtrEnums.BarType barType;
     private Integer displayOrder;
     private boolean active;
-    private String alias; // symbol-currency-exchange-barType
+    private String alias; // symbol-exchange-barType
 
     @Override
     public boolean equals(Object o) {

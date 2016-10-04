@@ -113,9 +113,8 @@ Ext.define('HtrGui.view.exec.ExecController', {
             me.ibOrderEventsWindow = Ext.create('widget.htr-exec-iborderevents-window');
             me.ibOrderEventsWindow.add(me.ibOrderEventsGrid);
         }
-        var permId = record.get(record.getFields()[1].getName());
         me.ibOrderEventsGrid.setStore(record.ibOrderEvents());
-        me.ibOrderEventsWindow.setTitle("IB Order Events, permId=" + permId);
+        me.ibOrderEventsWindow.setTitle("IB Order Events, permId=" + record.get('ibPermId'));
         me.ibOrderEventsWindow.show();
     },
 
@@ -123,13 +122,6 @@ Ext.define('HtrGui.view.exec.ExecController', {
         var me = this;
         metadata.style = 'cursor: pointer; background-color: ' + me.ibOrderStatusColors[val] + '; color: white;';
         return me.ibOrderStatusTexts[val];
-    },
-
-    connectStatusRenderer: function(val, metadata, record) {
-        if (metadata) {
-            metadata.style = 'background-color: ' + (val ? 'green' : 'red') + '; color: white;';
-        }
-        return (val ? 'conn' : 'disconn');
     },
 
     strategyModeRenderer: function(val, metadata, record) {
@@ -150,7 +142,7 @@ Ext.define('HtrGui.view.exec.ExecController', {
         var me = this,
             ibAccounts = me.getStore('ibAccounts'),
             accountId = grid.getStore().getAt(rowIndex).get('accountId'),
-        box = Ext.MessageBox.wait(((con ? 'Connecting' : 'Disconnecting') + ' IB account ' + accountId), 'Action in progress');
+            box = Ext.MessageBox.wait(((con ? 'Connecting' : 'Disconnecting') + ' IB account ' + accountId), 'Action in progress');
 
         Ext.Ajax.request({
             method: 'PUT',

@@ -108,13 +108,6 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
         }
     },
 
-    connectStatusRenderer: function(val, metadata, record) {
-        if (metadata) {
-            metadata.style = 'background-color: ' + (val ? 'green' : 'red') + '; color: white;';
-        }
-        return (val ? 'conn' : 'disconn');
-    },
-
     connectIb: function(grid, rowIndex, colIndex) {
         this.connect(grid, rowIndex, colIndex, true);
     },
@@ -127,7 +120,7 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
         var me = this,
             ibAccounts = me.getStore('ibAccounts'),
             accountId = grid.getStore().getAt(rowIndex).get('accountId'),
-            rtDataStore = me.getStore('rtDataStore');
+            rtDataStore = me.getStore('rtDataStore'),
             box = Ext.MessageBox.wait(((con ? 'Connecting' : 'Disconnecting') + ' IB account ' + accountId), 'Action in progress');
 
         Ext.Ajax.request({

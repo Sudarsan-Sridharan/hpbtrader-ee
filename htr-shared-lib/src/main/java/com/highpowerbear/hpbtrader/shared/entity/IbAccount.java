@@ -32,7 +32,7 @@ public class IbAccount implements Serializable {
     private IbConnection execConnection;
 
     public String print() {
-        return accountId + ", " + host + ":" + port + ", d=" + mktDataClientId + ", e=" + execClientId;
+        return accountId + ", " + host + ":" + port + ", mktDataCli=" + mktDataClientId + ", execCli=" + execClientId;
     }
 
     @Override
