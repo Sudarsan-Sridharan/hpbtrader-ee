@@ -6,7 +6,7 @@ import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.IbOrder;
 
 import javax.annotation.Resource;
-import javax.enterprise.context.ApplicationScoped;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jms.*;
 import java.util.logging.Level;
@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 /**
  * Created by robertk on 18.5.2016.
  */
-@ApplicationScoped
+@Stateless
 public class MqSender {
     private static final Logger l = Logger.getLogger(HtrDefinitions.LOGGER);
 

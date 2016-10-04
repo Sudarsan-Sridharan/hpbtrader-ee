@@ -72,24 +72,27 @@ public class ProcessQueueManager {
     private void initTrading() {
         for (Strategy strategy : strategyDao.getStrategies()) {
             if (strategy.isActive()) {
+                l.info("Initializing trading for strategy id=" + strategy.getId());
                 BlockingQueue<String> queue = new ArrayBlockingQueue<>(HtrDefinitions.BLOCKING_QUEUE_CAPACITY);
                 tradingQueueMap.put(strategy, queue);
                 managedExecutorService.submit(() -> {
                     String seriesAlias = null;
                     while (true) {
                         try {
+                            l.info("Before take, strategy id=" + strategy.getId());
                             seriesAlias = queue.take();
                             l.info("Process strategy request detected, strategy id=" + strategy.getId() + ", triggered by series=" + seriesAlias);
-                        } catch (InterruptedException ie) {
-                            l.warning(ie.getMessage());
+                        } catch (Exception e) {
+                            l.log(Level.SEVERE, "Error", e);
                         }
                         if (!Objects.equals(POISON_PROCESS, seriesAlias)) {
                             try {
                                 ctrl.processStrategy(strategy);
                             } catch (Exception e) {
-                                l.log(Level.SEVERE, "Error", e.getMessage());
+                                l.log(Level.SEVERE, "Error", e);
                             }
                         } else {
+                            l.info("Process strategy poison detected, exiting loop");
                             return;
                         }
                     }
@@ -105,8 +108,8 @@ public class ProcessQueueManager {
                 try {
                     backtestParam = backtestQueue.take();
                     l.info("Backtest strategy request detected, processing...");
-                } catch (InterruptedException ie) {
-                    l.warning(ie.getMessage());
+                } catch (Exception e) {
+                    l.log(Level.SEVERE, "Error", e);
                 }
                 if (!Objects.equals(backtestParam, POISON_BACKTEST)) {
                     if (backtestParam != null) {
@@ -117,12 +120,13 @@ public class ProcessQueueManager {
                             try {
                                 ctrl.backtestStrategy(strategy, timeFrame.getFromDate(), timeFrame.getToDate());
                             } catch (Exception e) {
-                                l.log(Level.SEVERE, "Error", e.getMessage());
+                                l.log(Level.SEVERE, "Error", e);
                             }
                             ctrl.backtestInProgressMap.remove(strategy);
                         }
                     }
                 } else {
+                    l.info("Backtest strategy poison detected, exiting loop");
                     return;
                 }
             }
