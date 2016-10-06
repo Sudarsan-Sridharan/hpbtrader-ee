@@ -16,7 +16,7 @@ Ext.define('HtrGui.view.strategy.grid.IbOrderEventsGrid', {
     columns: [{
         xtype: 'templatecolumn',
         text: 'ID',
-        width: 100,
+        width: 120,
         dataIndex: 'id',
         tpl: '{ibOrderId}/{id}'
     }, {

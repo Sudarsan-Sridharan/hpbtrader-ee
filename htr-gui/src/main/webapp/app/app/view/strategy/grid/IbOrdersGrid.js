@@ -18,7 +18,7 @@ Ext.define('HtrGui.view.strategy.grid.IbOrdersGrid', {
     columns: [{
         xtype: 'templatecolumn',
         text: 'ID',
-        width: 100,
+        width: 120,
         dataIndex: 'id',
         tpl: '{strategyId}/{id}'
     }, {
@@ -43,7 +43,7 @@ Ext.define('HtrGui.view.strategy.grid.IbOrdersGrid', {
         renderer: 'strategyModeRenderer'
     }, {
         text: 'PermId',
-        width: 80,
+        width: 100,
         dataIndex: 'ibPermId',
         align: 'right',
         renderer: function(val, metadata, record) {

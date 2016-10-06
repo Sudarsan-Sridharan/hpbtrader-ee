@@ -116,7 +116,7 @@ public class IbOrder implements Serializable {
     }
 
     public String getDescription() {
-        return symbol + ", " +  strategy.getStrategyType().name().toLowerCase() + ", " + ", " + orderAction.name() + ", input=" + strategy.getInputSeriesAliases();
+        return symbol + ", " +  strategy.getStrategyType().name().toLowerCase() + ", " + orderAction.name() + ", " + strategy.getInputSeriesAliases();
     }
 
     public com.ib.client.Order createOrder() {

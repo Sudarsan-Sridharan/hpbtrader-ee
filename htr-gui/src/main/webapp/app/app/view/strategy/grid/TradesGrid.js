@@ -19,7 +19,7 @@ Ext.define('HtrGui.view.strategy.grid.TradesGrid', {
     columns: [{
         xtype: 'templatecolumn',
         text: 'ID',
-        width: 100,
+        width: 120,
         dataIndex: 'id',
         tpl: '{strategyId}/{id}'
     }, {

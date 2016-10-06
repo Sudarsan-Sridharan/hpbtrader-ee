@@ -5,7 +5,7 @@ Ext.define('HtrGui.view.strategy.window.TradeIbOrdersWindow', {
     extend: 'Ext.window.Window',
     xtype: 'htr-strategy-tradeiborders-window',
 
-    width: 950,
+    width: 970,
     scrollable: true,
     maximizable: false,
     modal: false,

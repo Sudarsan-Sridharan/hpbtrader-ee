@@ -5,7 +5,7 @@ Ext.define('HtrGui.view.strategy.window.IbOrderEventsWindow', {
     extend: 'Ext.window.Window',
     xtype: 'htr-strategy-iborderevents-window',
 
-    width: 390,
+    width: 410,
     scrollable: true,
     maximizable: false,
     modal: false,

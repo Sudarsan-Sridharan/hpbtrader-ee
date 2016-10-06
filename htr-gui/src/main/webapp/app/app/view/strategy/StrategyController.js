@@ -202,7 +202,9 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
             ibOrders = me.getStore('ibOrders'),
             ibOrdersPaging = me.lookupReference('ibOrdersPaging'),
             trades = me.getStore('trades'),
-            tradesPaging = me.lookupReference('tradesPaging');
+            tradesPaging = me.lookupReference('tradesPaging'),
+            tradeLogs = me.getStore('tradeLogs'),
+            tradesGrid = me.lookupReference('tradesGrid');
 
         me.strategyId = record.data.id;
         strategyPerformances.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/' + me.strategyId + '/strategyperformances/trading');
@@ -212,13 +214,21 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         me.moveFirstOrLoadStore(strategyPerformancesPaging, 'strategyPerformances');
         me.moveFirstOrLoadStore(ibOrdersPaging, 'ibOrders');
         me.moveFirstOrLoadStore(tradesPaging, 'trades');
+        if (trades.getCount() == 0) {
+            tradeLogs.removeAll();
+        } else {
+            tradesGrid.setSelection(trades.first());
+        }
     },
 
     deleteStrategy: function(button, evt) {
         var me = this,
             strategies = me.getStore('strategies'),
             strategiesGrid = me.lookupReference('strategiesGrid'),
-            strategyId = button.getWidgetRecord().data.id;
+            strategyId = button.getWidgetRecord().data.id,
+            ibOrders = me.getStore('ibOrders'),
+            trades = me.getStore('trades'),
+            tradeLogs = me.getStore('tradeLogs');
 
         Ext.Msg.show({
             title: 'Delete strategy, id=' + strategyId + '?',
@@ -233,7 +243,13 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
                         success: function(response, opts) {
                             strategies.load(function(records, operation, success) {
                                 if (success) {
-                                    strategiesGrid.setSelection(strategies.first());
+                                    if (strategies.getCount() == 0) {
+                                        ibOrders.removeAll();
+                                        trades.removeAll();
+                                        tradeLogs.removeAll();
+                                    } else {
+                                        strategiesGrid.setSelection(strategies.first());
+                                    }
                                 }
                             });
                         }

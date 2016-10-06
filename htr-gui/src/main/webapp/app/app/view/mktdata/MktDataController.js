@@ -185,7 +185,8 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
         var me = this,
             dataSeriesStore = me.getStore('dataSeriesStore'),
             dataSeriesGrid = me.lookupReference('dataSeriesGrid'),
-            dataSeriesId = button.getWidgetRecord().data.id;
+            dataSeriesId = button.getWidgetRecord().data.id,
+            dataBars = me.getStore('dataBars');
 
         Ext.Msg.show({
             title: 'Delete data series, id=' + dataSeriesId + '?',
@@ -200,7 +201,11 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
                         success: function(response, opts) {
                             dataSeriesStore.load(function(records, operation, success) {
                                 if (success) {
-                                    dataSeriesGrid.setSelection(dataSeriesStore.first());
+                                    if (dataSeriesStore.getCount() == 0) {
+                                        dataBars.removeAll();
+                                    } else {
+                                        dataSeriesGrid.setSelection(dataSeriesStore.first());
+                                    }
                                 }
                             });
                         }
