@@ -29,7 +29,7 @@ Ext.define('HtrGui.view.exec.grid.IbOrdersGrid', {
         format: 'm/d/Y H:i:s.u'
     }, {
         text: 'Status',
-        width: 100,
+        width: 90,
         dataIndex: 'status',
         renderer: 'ibOrderStatusRenderer'
     }, {
@@ -38,22 +38,24 @@ Ext.define('HtrGui.view.exec.grid.IbOrdersGrid', {
         dataIndex: 'ibAccountId'
     }, {
         text: 'Mode',
-        width: 100,
+        width: 80,
         dataIndex: 'strategyMode',
         renderer: 'strategyModeRenderer'
     }, {
         text: 'PermId',
         width: 100,
         dataIndex: 'ibPermId',
-        align: 'right'
+        align: 'right',
+        renderer: function(val, metadata, record) {
+            return (val ? val : '-');
+        }
     }, {
-        text: 'Undl',
-        width: 80,
-        dataIndex: 'underlying'
-    }, {
-        text: 'Cur',
-        width: 60,
-        dataIndex: 'currency'
+        text: 'Instrument',
+        width: 250,
+        dataIndex: 'symbol',
+        renderer: function(val, metadata, record) {
+            return (record.data['symbol'] + '-' + record.data['underlying'] + '-' + record.data['currency'] + '-' + record.data['secType'] + '-' + record.data['exchange']).toLowerCase();
+        }
     }, {
         text: 'Action',
         width: 60,
@@ -63,14 +65,6 @@ Ext.define('HtrGui.view.exec.grid.IbOrdersGrid', {
         width: 80,
         dataIndex: 'quantity',
         align: 'right'
-    }, {
-        text: 'Symbol',
-        width: 180,
-        dataIndex: 'symbol'
-    }, {
-        text: 'Sec',
-        width: 60,
-        dataIndex: 'secType'
     }, {
         text: 'Ord',
         width: 60,
@@ -103,17 +97,17 @@ Ext.define('HtrGui.view.exec.grid.IbOrdersGrid', {
         align: 'right'
     }, {
         text: 'Submit',
-        width: 60,
+        width: 80,
         dataIndex: 'submitType',
         align: 'right'
     }, {
-        text: 'Exchange',
-        width: 100,
-        dataIndex: 'exchange'
-    }, {
         text: 'Trigger',
         flex: 1,
-        dataIndex: 'triggerDesc'
+        dataIndex: 'triggerDesc',
+        renderer: function(val, metadata, record) {
+            metadata.tdAttr = 'data-qtip="' + val + '"';
+            return val;
+        }
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',

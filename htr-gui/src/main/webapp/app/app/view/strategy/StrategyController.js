@@ -272,7 +272,6 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
             me.getView().add(me.ibOrderEventsWindow);
         }
         me.ibOrderEventsGrid.setStore(record.ibOrderEvents());
-        me.ibOrderEventsWindow.setTitle("IB Order Events, id=" + record.get('id'));
         me.ibOrderEventsWindow.show();
     },
 
@@ -290,7 +289,6 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         }
         var tradeId = record.get(record.getFields()[0].getName());
         me.tradeIbOrdersGrid.setStore(record.tradeIbOrders());
-        me.tradeIbOrdersWindow.setTitle("Trade IB Orders, tradeId=" + tradeId);
         me.tradeIbOrdersWindow.show();
     },
 

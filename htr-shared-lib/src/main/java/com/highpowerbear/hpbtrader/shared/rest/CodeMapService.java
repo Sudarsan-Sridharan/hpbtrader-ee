@@ -35,7 +35,7 @@ public class CodeMapService {
     public Response getOrderStatusColors() {
         Map<HtrEnums.IbOrderStatus, String> map = new LinkedHashMap<>();
         for (HtrEnums.IbOrderStatus k : HtrEnums.IbOrderStatus.values()) {
-            map.put(k, k.getDisplayColor().toString().toLowerCase().replace("_", ""));
+            map.put(k, k.getDisplayColor().toLowerCase().replace("_", ""));
         }
         return Response.ok(map).build();
     }

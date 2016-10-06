@@ -17,7 +17,7 @@ Ext.define('HtrGui.view.exec.ExecModel', {
         },
         ibOrders: {
             model: 'HtrGui.model.exec.IbOrder',
-            pageSize: 10
+            pageSize: 20
         }
     }
 });

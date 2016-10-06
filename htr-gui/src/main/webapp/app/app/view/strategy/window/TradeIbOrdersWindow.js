@@ -5,6 +5,7 @@ Ext.define('HtrGui.view.strategy.window.TradeIbOrdersWindow', {
     extend: 'Ext.window.Window',
     xtype: 'htr-strategy-tradeiborders-window',
 
+    title: 'Trade IB Orders',
     width: 970,
     scrollable: true,
     maximizable: false,

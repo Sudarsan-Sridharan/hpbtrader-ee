@@ -112,9 +112,9 @@ Ext.define('HtrGui.view.exec.ExecController', {
             me.ibOrderEventsGrid =  Ext.create('HtrGui.view.exec.grid.IbOrderEventsGrid');
             me.ibOrderEventsWindow = Ext.create('widget.htr-exec-iborderevents-window');
             me.ibOrderEventsWindow.add(me.ibOrderEventsGrid);
+            me.getView().add(me.ibOrderEventsWindow);
         }
         me.ibOrderEventsGrid.setStore(record.ibOrderEvents());
-        me.ibOrderEventsWindow.setTitle("IB Order Events, permId=" + record.get('ibPermId'));
         me.ibOrderEventsWindow.show();
     },
 
@@ -124,9 +124,15 @@ Ext.define('HtrGui.view.exec.ExecController', {
         return me.ibOrderStatusTexts[val];
     },
 
+    ibOrderStatusRendererEvents: function(val, metadata, record) {
+        var me = this;
+        metadata.style = 'background-color: ' + me.ibOrderStatusColors[val] + '; color: white;';
+        return me.ibOrderStatusTexts[val];
+    },
+
     strategyModeRenderer: function(val, metadata, record) {
         var me = this;
-        metadata.style = 'background-color: ' + me.strategyModeColors[val];
+        metadata.style = 'color: ' + me.strategyModeColors[val];
         return val;
     },
 
