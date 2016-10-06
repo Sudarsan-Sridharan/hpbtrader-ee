@@ -13,6 +13,10 @@ Ext.define('HtrGui.view.mktdata.grid.RtDataGrid', {
         stripeRows: true
     },
     columns: [{
+        text: 'DSID',
+        width: 60,
+        dataIndex: 'dataSeriesId'
+    }, {
         text: 'Symbol',
         width: 180,
         dataIndex: 'symbol'

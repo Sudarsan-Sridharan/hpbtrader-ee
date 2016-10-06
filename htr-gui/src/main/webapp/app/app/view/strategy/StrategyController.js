@@ -86,13 +86,20 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         var me = this,
             store = me.getStore(storeName);
 
+
         if (store.isLoaded() && store.getTotalCount() > 0) {
             paging.moveFirst();
+            // moveFirst doesn't have a callback, so we need to use timeout
+            setTimeout(function () {
+                if ('trades' == storeName && store.getCount() > 0) {
+                    me.lookupReference('tradesGrid').setSelection(store.first());
+                }
+            }, 500);
         } else {
             store.load(function (records, operation, success) {
                 if (success) {
                     console.log('loaded ' + storeName + ' for strategyId=' + me.strategyId);
-                    if ('trades' == storeName) {
+                    if ('trades' == storeName && store.getCount() > 0) {
                         me.lookupReference('tradesGrid').setSelection(store.first());
                     }
                 }
@@ -202,9 +209,7 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
             ibOrders = me.getStore('ibOrders'),
             ibOrdersPaging = me.lookupReference('ibOrdersPaging'),
             trades = me.getStore('trades'),
-            tradesPaging = me.lookupReference('tradesPaging'),
-            tradeLogs = me.getStore('tradeLogs'),
-            tradesGrid = me.lookupReference('tradesGrid');
+            tradesPaging = me.lookupReference('tradesPaging');
 
         me.strategyId = record.data.id;
         strategyPerformances.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/' + me.strategyId + '/strategyperformances/trading');
@@ -214,11 +219,6 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         me.moveFirstOrLoadStore(strategyPerformancesPaging, 'strategyPerformances');
         me.moveFirstOrLoadStore(ibOrdersPaging, 'ibOrders');
         me.moveFirstOrLoadStore(tradesPaging, 'trades');
-        if (trades.getCount() == 0) {
-            tradeLogs.removeAll();
-        } else {
-            tradesGrid.setSelection(trades.first());
-        }
     },
 
     deleteStrategy: function(button, evt) {

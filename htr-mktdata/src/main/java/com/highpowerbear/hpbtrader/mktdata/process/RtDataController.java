@@ -10,11 +10,9 @@ import com.ib.client.TickType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Created by robertk on 20.11.2015.
@@ -25,10 +23,12 @@ public class RtDataController {
 
     @Inject private IbController ibController;
     @Inject private WebsocketController websocketController;
-    private Map<Integer, RealtimeData> realtimeDataMap = new LinkedHashMap<>(); // ib request id --> realtimeData
+    private Map<Integer, RealtimeData> realtimeDataMap = new HashMap<>(); // ib request id --> realtimeData
 
     public List<RealtimeData> getRealtimeDataList() {
-        return new ArrayList<>(realtimeDataMap.values());
+        List<Integer> ridList = new ArrayList<>(realtimeDataMap.keySet());
+        Collections.sort(ridList);
+        return ridList.stream().map(rid -> realtimeDataMap.get(rid)).collect(Collectors.toList());
     }
 
     public void tickPriceReceived(int tickerId, int field, double price) {

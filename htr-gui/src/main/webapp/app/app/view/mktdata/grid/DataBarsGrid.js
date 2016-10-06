@@ -13,6 +13,10 @@ Ext.define('HtrGui.view.mktdata.grid.DataBarsGrid', {
         stripeRows: true
     },
     columns: [{
+        text: 'DSID',
+        width: 60,
+        dataIndex: 'dataSeriesId'
+    }, {
         text: 'Bar Close Date',
         width: 180,
         dataIndex: 'barCloseDate',

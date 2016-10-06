@@ -144,7 +144,6 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
             dataBarsPaging = me.lookupReference('dataBarsPaging');
 
         me.dataSeriesId = record.data.id;
-        dataBarsGrid.setTitle('Data Bars, dataSeriesId=' + me.dataSeriesId + ', symbol=' + record.data.symbol + ', type=' + record.data.barType);
         dataBars.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixMktData + '/dataseries/' + me.dataSeriesId  + '/pageddatabars');
 
         if (dataBarsPaging.getStore().isLoaded()) {
