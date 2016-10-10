@@ -19,6 +19,7 @@ Ext.define('HtrGui.view.mktdata.MktData', {
     xtype: 'htr-mktdata',
     header: false,
     border: false,
+    scrollable: true,
     controller: 'htr-mktdata',
     viewModel: {
         type: 'htr-mktdata'

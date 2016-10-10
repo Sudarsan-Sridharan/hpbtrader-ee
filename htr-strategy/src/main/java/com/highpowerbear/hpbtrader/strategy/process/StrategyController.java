@@ -3,6 +3,7 @@ package com.highpowerbear.hpbtrader.strategy.process;
 import com.highpowerbear.hpbtrader.shared.common.EmailSender;
 import com.highpowerbear.hpbtrader.shared.common.HtrDefinitions;
 import com.highpowerbear.hpbtrader.shared.common.HtrEnums;
+import com.highpowerbear.hpbtrader.shared.common.HtrUtil;
 import com.highpowerbear.hpbtrader.shared.entity.*;
 import com.highpowerbear.hpbtrader.shared.model.OperResult;
 import com.highpowerbear.hpbtrader.shared.persistence.DataSeriesDao;
@@ -163,7 +164,7 @@ public class StrategyController implements Serializable {
 
         DataSeries inputDataSeries = dataSeriesDao.getDataSeriesByAlias(ctx.getStrategy().getDefaultInputSeriesAlias());
         int numIterations = (int) ((toDate.getTimeInMillis() - fromDate.getTimeInMillis()) / inputDataSeries.getBarType().getMillis());
-        Calendar iterDate = Calendar.getInstance();
+        Calendar iterDate = HtrUtil.getCalendar();
         iterDate.setTimeInMillis(fromDate.getTimeInMillis());
         int i = 0;
         while (iterDate.before(toDate)) {

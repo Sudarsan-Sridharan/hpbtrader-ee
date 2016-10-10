@@ -17,6 +17,7 @@ Ext.define('HtrGui.view.exec.Exec', {
     xtype: 'htr-exec',
     header: false,
     border: false,
+    scrollable: true,
     controller: 'htr-exec',
     viewModel: {
         type: 'htr-exec'
