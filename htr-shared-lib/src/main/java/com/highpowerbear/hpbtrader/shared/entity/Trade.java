@@ -48,7 +48,7 @@ public class Trade implements Serializable {
     @Enumerated(EnumType.STRING)
     private HtrEnums.TradeStatus tradeStatus;
     @OneToMany(mappedBy = "trade", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @OrderBy("id DESC")
+    @OrderBy("id ASC")
     private List<TradeIbOrder> tradeIbOrders = new ArrayList<>();
 
     @XmlElement
