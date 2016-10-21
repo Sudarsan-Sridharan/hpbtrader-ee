@@ -82,31 +82,6 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         }
     },
 
-    moveFirstOrLoadStore: function(paging, storeName) {
-        var me = this,
-            store = me.getStore(storeName);
-
-
-        if (store.isLoaded() && store.getTotalCount() > 0) {
-            paging.moveFirst();
-            // moveFirst doesn't have a callback, so we need to use timeout
-            setTimeout(function () {
-                if ('trades' == storeName && store.getCount() > 0) {
-                    me.lookupReference('tradesGrid').setSelection(store.first());
-                }
-            }, 500);
-        } else {
-            store.load(function (records, operation, success) {
-                if (success) {
-                    console.log('loaded ' + storeName + ' for strategyId=' + me.strategyId);
-                    if ('trades' == storeName && store.getCount() > 0) {
-                        me.lookupReference('tradesGrid').setSelection(store.first());
-                    }
-                }
-            });
-        }
-    },
-
     prepare: function(callback) {
         var me = this,
             prefix = HtrGui.common.Definitions.urlPrefixStrategy;
@@ -216,9 +191,22 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         ibOrders.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/' + me.strategyId + '/iborders/trading');
         trades.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/' + me.strategyId + '/trades/trading');
 
-        me.moveFirstOrLoadStore(strategyPerformancesPaging, 'strategyPerformances');
-        me.moveFirstOrLoadStore(ibOrdersPaging, 'ibOrders');
-        me.moveFirstOrLoadStore(tradesPaging, 'trades');
+        strategyPerformances.load(function (records, operation, success) {
+            if (success) {
+                console.log('loaded strategyPerformances for strategyId=' + me.strategyId);
+            }
+        });
+        ibOrders.load(function (records, operation, success) {
+            if (success) {
+                console.log('loaded ibOrders for strategyId=' + me.strategyId);
+            }
+        });
+        trades.load(function (records, operation, success) {
+            if (success) {
+                console.log('loaded trades for strategyId=' + me.strategyId);
+                me.lookupReference('tradesGrid').setSelection(trades.first());
+            }
+        });
     },
 
     deleteStrategy: function(button, evt) {
@@ -300,15 +288,11 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
         me.tradeId = record.data.id;
         tradeLogs.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/trade/' + me.tradeId + '/tradelogs/trading');
 
-        if (tradeLogs.isLoaded()) {
-            tradeLogsPaging.moveFirst();
-        } else {
-            tradeLogs.load(function (records, operation, success) {
-                if (success) {
-                    console.log('loaded tradeLogs for tradeId=' + me.tradeId);
-                }
-            });
-        }
+        tradeLogs.load(function (records, operation, success) {
+            if (success) {
+                console.log('loaded tradeLogs for tradeId=' + me.tradeId);
+            }
+        });
     },
 
     setGlyphs: function() {

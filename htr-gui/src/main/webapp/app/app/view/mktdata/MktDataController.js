@@ -146,15 +146,11 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
         me.dataSeriesId = record.data.id;
         dataBars.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixMktData + '/dataseries/' + me.dataSeriesId  + '/pageddatabars');
 
-        if (dataBarsPaging.getStore().isLoaded()) {
-            dataBarsPaging.moveFirst();
-        } else {
-            dataBars.load(function (records, operation, success) {
-                if (success) {
-                    console.log('loaded dataBars for dataSeriesId=' + me.dataSeriesId)
-                }
-            });
-        }
+        dataBars.load(function (records, operation, success) {
+            if (success) {
+                console.log('loaded dataBars for dataSeriesId=' + me.dataSeriesId)
+            }
+        });
     },
 
     toggleRtData: function(button, evt) {

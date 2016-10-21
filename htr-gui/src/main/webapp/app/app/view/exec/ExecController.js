@@ -91,15 +91,11 @@ Ext.define('HtrGui.view.exec.ExecController', {
         me.ibAccountId = record.data.accountId;
         ibOrders.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixExec + '/ibaccounts/' + me.ibAccountId  + '/iborders');
 
-        if (ordersPaging.getStore().isLoaded()) {
-            ordersPaging.moveFirst();
-        } else {
-            ibOrders.load(function(records, operation, success) {
-                if (success) {
-                    console.log('loaded ibOrders for ibAccountId=' + me.ibAccountId)
-                }
-            });
-        }
+        ibOrders.load(function(records, operation, success) {
+            if (success) {
+                console.log('loaded ibOrders for ibAccountId=' + me.ibAccountId)
+            }
+        });
     },
 
     showIbOrderEvents: function (view, cell, cellIndex, record, row, rowIndex, e) {
