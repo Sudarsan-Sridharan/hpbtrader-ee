@@ -7,7 +7,6 @@
     <version>3.0</version>
     <modules>
         <module>htr-doc</module>
-        <module>htr-ibapi-client</module>
         <module>htr-ibapi-lib</module>
         <module>htr-mktdata</module>
         <module>htr-gui</module>
