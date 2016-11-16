@@ -44,4 +44,5 @@ public class HtrDefinitions {
     public static final int JPA_MAX_RESULTS = 1000;
     public static final int BACKTEST_DEFAULT_MONTHS = 3;
     public static final int BLOCKING_QUEUE_CAPACITY = 5;
+    public static final int MAX_STRATEGY_PERFORMANCES_FORCHART_RETURNED = 180;
 }

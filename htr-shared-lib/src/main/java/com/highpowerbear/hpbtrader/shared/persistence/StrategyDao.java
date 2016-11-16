@@ -14,6 +14,7 @@ public interface StrategyDao {
     Strategy findStrategy(Integer id);
     void updateStrategy(Strategy strategy);
     void deleteStrategy(Strategy strategy);
-    List<StrategyPerformance> getPagedStrategyLogs(Strategy strategy, int start, int limit);
+    List<StrategyPerformance> getPagedStrategyPerformances(Strategy strategy, int start, int limit);
+    List<StrategyPerformance> getLatestStrategyPerformances(Strategy strategy, int limit);
     Long getNumStrategyLogs(Strategy strategy);
 }

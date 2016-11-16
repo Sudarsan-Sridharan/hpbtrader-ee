@@ -79,10 +79,19 @@ public class StrategyDaoImpl implements StrategyDao {
     }
 
     @Override
-    public List<StrategyPerformance> getPagedStrategyLogs(Strategy strategy, int start, int limit) {
+    public List<StrategyPerformance> getPagedStrategyPerformances(Strategy strategy, int start, int limit) {
         TypedQuery<StrategyPerformance> q = em.createQuery("SELECT sl FROM StrategyPerformance sl WHERE sl.strategy = :strategy ORDER BY sl.performanceDate DESC", StrategyPerformance.class);
         q.setParameter("strategy", strategy);
         q.setFirstResult(start);
+        q.setMaxResults(limit);
+        return q.getResultList();
+    }
+
+    @Override
+    public List<StrategyPerformance> getLatestStrategyPerformances(Strategy strategy, int limit) {
+        TypedQuery<StrategyPerformance> q = em.createQuery("SELECT sl FROM StrategyPerformance sl WHERE sl.strategy = :strategy ORDER BY sl.performanceDate DESC", StrategyPerformance.class);
+        q.setParameter("strategy", strategy);
+        q.setFirstResult(0);
         q.setMaxResults(limit);
         return q.getResultList();
     }
