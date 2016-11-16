@@ -120,14 +120,29 @@ public class InMemoryCtx implements ProcessContext {
 
     @Override
     public List<StrategyPerformance> getStrategyPerformances(int start, int limit) {
-        Collections.reverse(strategyPerformances);
+        List<StrategyPerformance> reversedList = new ArrayList<>(strategyPerformances);
+        Collections.reverse(reversedList);
         List<StrategyPerformance> strategyPerformancePage = new ArrayList<>();
-        for (int i = 0; i < strategyPerformances.size(); i++) {
+        for (int i = 0; i < reversedList.size(); i++) {
             if (i >= start && i < (start + limit)) {
-                strategyPerformancePage.add(strategyPerformances.get(i));
+                strategyPerformancePage.add(reversedList.get(i));
             }
         }
-        return strategyPerformancePage;
+        return strategyPerformancePage; //desc
+    }
+
+    @Override
+    public List<StrategyPerformance> getLatestStrategyPerformances(Integer limit) {
+        List<StrategyPerformance> list = new ArrayList<>(strategyPerformances);
+        Collections.reverse(list);
+        List<StrategyPerformance> latestStrategyPerformances = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if (i < limit) {
+                latestStrategyPerformances.add(list.get(i));
+            }
+        }
+        Collections.reverse(list);
+        return latestStrategyPerformances; //asc
     }
 
     @Override

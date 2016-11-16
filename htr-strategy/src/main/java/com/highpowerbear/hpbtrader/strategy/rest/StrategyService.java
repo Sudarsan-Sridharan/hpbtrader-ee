@@ -117,6 +117,19 @@ public class StrategyService {
     }
 
     @GET
+    @Path("{strategyid}/strategyperformances/{type}/chart")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getStrategyPerformancesForChart(@PathParam("strategyid") Integer strategyId, @PathParam("type") String type) {
+        boolean isBacktest = HtrEnums.StrategyDataType.BACKTEST.name().equalsIgnoreCase(type);
+        ProcessContext ctx = getProcessContext(strategyId, isBacktest);
+        if (ctx == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        List<StrategyPerformance> strategyPerformances = ctx.getLatestStrategyPerformances(HtrDefinitions.MAX_STRATEGY_PERFORMANCES_FORCHART_RETURNED);
+        return Response.ok(new RestList<>(strategyPerformances, (long) strategyPerformances.size())).build();
+    }
+
+    @GET
     @Path("{strategyid}/iborders/{type}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getIbOrders(

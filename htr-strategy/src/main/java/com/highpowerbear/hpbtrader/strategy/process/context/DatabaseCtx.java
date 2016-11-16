@@ -11,6 +11,7 @@ import com.highpowerbear.hpbtrader.strategy.websocket.WebsocketController;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -87,7 +88,14 @@ public class DatabaseCtx implements ProcessContext {
 
     @Override
     public List<StrategyPerformance> getStrategyPerformances(int start, int limit) {
-        return strategyDao.getPagedStrategyLogs(this.strategy, start, limit);
+        return strategyDao.getPagedStrategyPerformances(this.strategy, start, limit); // desc
+    }
+
+    @Override
+    public List<StrategyPerformance> getLatestStrategyPerformances(Integer limit) {
+        List<StrategyPerformance> latestStrategyPerformances = strategyDao.getLatestStrategyPerformances(this.strategy, limit); //desc
+        Collections.reverse(latestStrategyPerformances); //asc
+        return latestStrategyPerformances;
     }
 
     @Override

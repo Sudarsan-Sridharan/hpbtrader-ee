@@ -26,6 +26,7 @@ public interface ProcessContext {
     void updateIbOrder(IbOrder ibOrder);
 
     List<StrategyPerformance> getStrategyPerformances(int start, int limit);
+    List<StrategyPerformance> getLatestStrategyPerformances(Integer limit);
     List<IbOrder> getIbOrders(int start, int limit);
     List<Trade> getTrades(int start, int limit);
     List<TradeLog> getTradeLogs(Trade trade, int start, int limit);
