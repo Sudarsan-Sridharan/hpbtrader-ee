@@ -28,6 +28,7 @@ Ext.define('HtrGui.view.strategy.Strategy', {
         type: 'vbox',
         align: 'stretch'
     },
+
     items: [{
         xtype: 'htr-strategy-strategies-grid',
         title: 'Strategies',
@@ -39,13 +40,26 @@ Ext.define('HtrGui.view.strategy.Strategy', {
             beforerender: 'setGlyphs'
         },
         items: [{
-            xtype: 'htr-strategy-strategyperformances-grid',
+            xtype: 'panel',
             title: 'Performance',
-            reference: 'strategyPerformancesGrid'
+            reference: 'performancePanel',
+            items: [{
+                xtype: 'htr-strategy-strategyperformances-grid',
+                reference: 'strategyPerformancesGrid'
+            }, {
+                xtype: 'container',
+                reference: 'chartsContainer',
+                listeners: {
+                    afterrender: 'createPerformanceChart'
+                },
+                items: [{
+                    html: '<div id="hpb_cumulative_pl_chart" style="height: 600px; width: 1500px;"></div>'
+                }]
+            }]
         }, {
             xtype: 'htr-strategy-iborders-grid',
             title: 'IB Orders',
-            reference: 'ibOrdersGrid'
+            reference: 'ibOrdersGridStrategy'
         }, {
             xtype: 'panel',
             title: 'Trades',

@@ -17,23 +17,21 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
     init: function() {
         var me = this,
             strategies = me.getStore('strategies'),
-            strategiesGrid;
+            strategiesGrid; // strange bug, strategiesGrid reference ready only after some time
 
-        // strange bug, strategiesGrid reference ready only after some time
-        setTimeout(function() {
-            strategiesGrid = me.lookupReference('strategiesGrid');
-            me.prepare(function() {
-                if (strategies) {
-                    strategies.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies');
-                    strategies.load(function (records, operation, success) {
-                        if (success) {
-                            console.log('loaded strategies');
-                            strategiesGrid.setSelection(strategies.first());
-                        }
-                    });
-                }
-            });
-        }, 100);
+        me.prepare(function() {
+            if (strategies) {
+                strategies.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies');
+                strategies.load(function (records, operation, success) {
+                    if (success) {
+                        console.log('loaded strategies');
+                        strategies = me.getStore('strategies');
+                        strategiesGrid = me.lookupReference('strategiesGrid');
+                        strategiesGrid.setSelection(strategies.first());
+                    }
+                });
+            }
+        });
 
         var ws = new WebSocket(HtrGui.common.Definitions.wsUrlStrategy);
         ws.onopen = function(evt) {
@@ -180,6 +178,7 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
     onStrategySelect: function(grid, record, index, eOpts) {
         var me = this,
             strategyPerformances = me.getStore('strategyPerformances'),
+            performanceChartDataPoints = me.getStore('performanceChartDataPoints'),
             strategyPerformancesPaging = me.lookupReference('strategyPerformancesPaging'),
             ibOrders = me.getStore('ibOrders'),
             ibOrdersPaging = me.lookupReference('ibOrdersPaging'),
@@ -188,12 +187,19 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
 
         me.strategyId = record.data.id;
         strategyPerformances.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/' + me.strategyId + '/strategyperformances/trading');
+        performanceChartDataPoints.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/' + me.strategyId + '/strategyperformances/trading/chart');
         ibOrders.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/' + me.strategyId + '/iborders/trading');
         trades.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixStrategy + '/strategies/' + me.strategyId + '/trades/trading');
 
         strategyPerformances.load(function (records, operation, success) {
             if (success) {
                 console.log('loaded strategyPerformances for strategyId=' + me.strategyId);
+            }
+        });
+        performanceChartDataPoints.load(function (records, operation, success) {
+            if (success) {
+                console.log('loaded performanceChartDataPoints for strategyId=' + me.strategyId);
+                me.createPerformanceChart();
             }
         });
         ibOrders.load(function (records, operation, success) {
@@ -207,6 +213,27 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
                 me.lookupReference('tradesGrid').setSelection(trades.first());
             }
         });
+    },
+
+    createPerformanceChart: function(tabPanel, newCard, oldCard, eOpts) {
+        var me = this,
+            performanceChartDataPoints = me.getStore('performanceChartDataPoints'),
+            cumulativePl = [];
+
+        console.log('Creating performance chart');
+        if (!Ext.get('hpb_cumulative_pl_chart')) {
+            return;
+        }
+        cumulativePl.push(['Date', 'Cumulative PL']);
+        var cumPl = 0;
+        performanceChartDataPoints.each(function (record, id) {
+            var rd = record.data;
+            if (cumPl != rd.cumulativePl) { // filter out adjacent data points with the same pl
+                cumulativePl.push([new Date(rd.performanceDate), rd.cumulativePl]);
+                cumPl = rd.cumulativePl;
+            }
+        });
+        GoogleChart.ceateLineChart(cumulativePl, 'Cumulative PL', 'hpb_cumulative_pl_chart');
     },
 
     deleteStrategy: function(button, evt) {
@@ -296,10 +323,13 @@ Ext.define('HtrGui.view.strategy.StrategyController', {
     },
 
     setGlyphs: function() {
-        var me = this;
+        var me = this,
+            performancePanel = me.lookupReference('performancePanel'),
+            ibOrdersGrid = me.lookupReference('ibOrdersGridStrategy'),
+            tradesPanel = me.lookupReference('tradesPanel');
 
-        me.lookupReference('strategyPerformancesGrid').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_sort_amount_asc'));
-        me.lookupReference('ibOrdersGrid').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_list_ol'));
-        me.lookupReference('tradesPanel').setGlyph(HtrGui.common.Glyphs.getGlyph('fa_money'));
+            performancePanel.setGlyph(HtrGui.common.Glyphs.getGlyph('fa_sort_amount_asc'));
+            ibOrdersGrid.setGlyph(HtrGui.common.Glyphs.getGlyph('fa_list_ol'));
+            tradesPanel.setGlyph(HtrGui.common.Glyphs.getGlyph('fa_money'));
     }
 });

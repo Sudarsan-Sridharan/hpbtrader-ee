@@ -7,6 +7,7 @@ Ext.define('HtrGui.view.strategy.StrategyModel', {
     requires: [
         'HtrGui.model.strategy.Strategy',
         'HtrGui.model.strategy.StrategyPerformance',
+        'HtrGui.model.strategy.PerformanceChartDataPoint',
         'HtrGui.model.strategy.Trade',
         'HtrGui.model.strategy.TradeLog',
         'HtrGui.model.strategy.TradeIbOrder',
@@ -24,6 +25,9 @@ Ext.define('HtrGui.view.strategy.StrategyModel', {
         strategyPerformances: {
             model: 'HtrGui.model.strategy.StrategyPerformance',
             pageSize: 10
+        },
+        performanceChartDataPoints: {
+            model: 'HtrGui.model.strategy.PerformanceChartDataPoint',
         },
         trades: {
             model: 'HtrGui.model.strategy.Trade',

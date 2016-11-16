@@ -110,6 +110,12 @@
         {
             "path": "app.js",
             "bundle": true
+        },
+        {
+            "path": "https://www.gstatic.com/charts/loader.js"
+        },
+        {
+            "path": "resources/js/charts_google.js"
         }
     ],
 
