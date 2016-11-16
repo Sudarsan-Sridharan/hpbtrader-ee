@@ -15,22 +15,27 @@ Ext.define('HtrGui.view.mktdata.MktDataController', {
             ibAccounts = me.getStore('ibAccounts'),
             dataSeriesStore = me.getStore('dataSeriesStore'),
             rtDataStore = me.getStore('rtDataStore'),
+            dataSeriesGrid;
+
+        // strange bug, dataSeriesGrid reference ready only after some time
+        setTimeout(function() {
             dataSeriesGrid = me.lookupReference('dataSeriesGrid');
+            if (dataSeriesStore) {
+                dataSeriesStore.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixMktData + '/dataseries');
+                dataSeriesStore.load(function(records, operation, success) {
+                    if (success) {
+                        console.log('loaded dataSeriesStore');
+                        dataSeriesGrid.setSelection(dataSeriesStore.first());
+                    }
+                });
+            }
+        }, 100);
 
         if (ibAccounts) {
             ibAccounts.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixMktData + '/ibaccounts');
             ibAccounts.load(function(records, operation, success) {
                 if (success) {
                     console.log('loaded ibAccounts');
-                }
-            });
-        }
-        if (dataSeriesStore) {
-            dataSeriesStore.getProxy().setUrl(HtrGui.common.Definitions.urlPrefixMktData + '/dataseries');
-            dataSeriesStore.load(function(records, operation, success) {
-                if (success) {
-                    console.log('loaded dataSeriesStore');
-                    dataSeriesGrid.setSelection(dataSeriesStore.first());
                 }
             });
         }

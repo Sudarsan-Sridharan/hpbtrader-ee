@@ -76,7 +76,7 @@ Ext.define('HtrGui.view.exec.grid.IbAccountsGrid', {
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',
-        reference: 'ibAccountsPaging',
+        reference: 'ibAccountsPagingExec',
         bind: '{ibAccounts}',
         dock: 'bottom',
         displayInfo: true

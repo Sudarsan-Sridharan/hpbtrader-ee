@@ -28,11 +28,11 @@ Ext.define('HtrGui.view.exec.Exec', {
     },
     items: [{
         xtype: 'htr-exec-ibaccounts-grid',
-        reference: 'ibAccountsGrid',
+        reference: 'ibAccountsGridExec',
         title: 'IB Accounts'
     }, {
         xtype: 'htr-exec-iborders-grid',
-        reference: 'ibOrdersGrid',
+        reference: 'ibOrdersGridExec',
         title: 'IB Orders'
     }]
 });

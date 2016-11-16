@@ -120,7 +120,7 @@ Ext.define('HtrGui.view.strategy.grid.IbOrdersGrid', {
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',
-        reference: 'ibOrdersPaging',
+        reference: 'ibOrdersPagingStrategy',
         bind: '{ibOrders}',
         dock: 'bottom',
         displayInfo: true

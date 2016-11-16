@@ -30,7 +30,7 @@ Ext.define('HtrGui.view.mktdata.MktData', {
     },
     items: [{
         xtype: 'htr-mktdata-ibaccounts-grid',
-        reference: 'ibAccountsGrid',
+        reference: 'ibAccountsGridMktData',
         title: 'IB Accounts'
     }, {
         xtype: 'htr-mktdata-dataseries-grid',

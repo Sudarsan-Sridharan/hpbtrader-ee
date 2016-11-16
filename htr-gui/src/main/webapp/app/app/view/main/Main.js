@@ -29,7 +29,7 @@ Ext.define('HtrGui.view.main.Main', {
         type: 'main'
     },
     listeners: {
-        beforerender: 'setGlyphs'
+        afterrender: 'setGlyphs'
     },
     items: [{
         xtype: 'htr-mktdata',

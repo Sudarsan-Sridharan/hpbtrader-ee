@@ -73,7 +73,7 @@ Ext.define('HtrGui.view.mktdata.grid.IbAccountsGrid', {
     }],
     dockedItems: [{
         xtype: 'pagingtoolbar',
-        reference: 'ibAccountsPaging',
+        reference: 'ibAccountsPagingMktData',
         bind: '{ibAccounts}',
         dock: 'bottom',
         displayInfo: true

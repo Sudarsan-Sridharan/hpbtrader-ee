@@ -15,7 +15,7 @@ Ext.define('HtrGui.view.exec.ExecController', {
     init: function () {
         var me = this,
             ibAccounts = me.getStore('ibAccounts'),
-            ibAccountsGrid = me.lookupReference('ibAccountsGrid');
+            ibAccountsGrid; // strange bug, ibAccountsGrid reference ready only after some time
 
         Ext.Ajax.request({
             url: HtrGui.common.Definitions.urlPrefixExec + '/codemap/iborderstatus/texts',
@@ -34,6 +34,7 @@ Ext.define('HtrGui.view.exec.ExecController', {
                                     ibAccounts.load(function (records, operation, success) {
                                         if (success) {
                                             console.log('loaded ibAccounts')
+                                            ibAccountsGrid = me.lookupReference('ibAccountsGridExec');
                                             ibAccountsGrid.setSelection(ibAccounts.first());
                                         }
                                     });
