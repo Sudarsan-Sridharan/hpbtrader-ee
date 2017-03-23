@@ -1,4 +1,4 @@
-# hpbtrader
+# hpbtrader-ee
 Algorithmic trading platform, JEE 7, WildFly 10.1
 
 ![alt text](http://highpowerbear.com/resources/images/hpbtrader.png "HPB Trader")
